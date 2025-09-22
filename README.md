@@ -1,7 +1,7 @@
 # 2025-EasyMatch
 **EasyMatch** es una web para **organizar partidos** de pádel, tenis, volley playa, fútbol 7... con amigos (**privados**) o con desconocidos (**públicos**) de un nivel similar en los clubes disponibles. Incluye un chat para hablar con otros jugadores o para recibir ayuda por parte del club o del administrador. <br/><br/>
 
-<img width="780" height="552" alt="image" src="https://github.com/user-attachments/assets/d66eca59-6eaf-4471-bbae-96de99a4dc5f" />  <br/><br/>
+<img width="780" height="550" alt="image" src="https://github.com/user-attachments/assets/d66eca59-6eaf-4471-bbae-96de99a4dc5f" />  <br/><br/>
 
 En este documento <ins>**solamente**</ins> se han definido los objetivos funcionales y los objetivos técnicos de la aplicación EasyMatch. En ningún caso se ha iniciado todavía la fase de implementación del sistema.
 
@@ -39,13 +39,13 @@ La web se implementará con tecnologías contrastadas a nivel académico y profe
 ## Metodología
 El desarrollo de la página web se llevará a cabo siguiendo un enfoque **incremental** e **iterativo**, lo cual permite ir creando el sistema en **fases sucesivas**, entregando versiones funcionales al finalizar cada una de ellas.
 - Fases:
-  - <ins>**Fase 1 (1 al 15 de septiembre)**</ins> : **Definición de funcionalidades**. </br> En esta fase se han recogido y documentado los objetivos funcionales y técnicos de la web. La descripción de la funcionalidad general está en la sección _**Objetivos funcionales**_, en cambio, el detalle de cada una y a quién va dirigida se encuentra en la sección _**Funcionalidades detalladas**_.
+  - <ins>**Fase 1 (1 al 15 de septiembre)**</ins> : **Definición de funcionalidades**. </br> En esta fase se han recogido y documentado los objetivos funcionales y técnicos de la web. La descripción de la funcionalidad general está en la sección _**Objetivos**_ dentro de la subsección _**Objetivos funcionales**_, en cambio, el detalle de cada una y a quién va dirigida se encuentra en la sección _**Funcionalidades detalladas**_.
   - <ins>**Fase 2 (15 de septiembre al 15 de octubre)**</ins> : **Configuración de las tecnologías y herramientas de desarrollo con controles de calidad que se realizan de forma periódica.**
   - <ins>**Fases 3, 4, 5 (15 de octubre al 15 de abril)**</ins>: **Desarrollo iterativo e incremental de la aplicación. Al final de cada fase se publicará una versión (release).**
   - <ins>**Fase 6 (15 de abril al 15 de mayo)**</ins>: **Escritura de la memoria**.
   - <ins>**Fase 7 (15 mayo al 15 de junio)**</ins>: **Preparación de la presentación**.
 
-○	Se elaborará un diagrama de Gantt en el que se muestren gráficamente estas fases.
+<img width="780" height="550" alt="diagrama_gantt_proyecto" src="https://github.com/user-attachments/assets/be55f227-6ba2-4bf1-bab3-3e2af2c2d8c0" />
 
 ## Funcionalidades detalladas
 
