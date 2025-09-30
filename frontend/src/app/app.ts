@@ -1,12 +1,23 @@
-import { Component, signal,NgModule } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Match } from './match.model';
+import { MatchService } from './match.service';
+import { MatchComponent } from "./match";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,NgModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: false,
 })
-export class App {
-  protected readonly title = signal('frontend');
+export class AppComponent implements OnInit {
+  matches: Match[] = [];
+
+  constructor(private matchService: MatchService) {}
+
+  ngOnInit() {
+    this.matchService.getMatches().subscribe(data => {
+		console.log("Datos recibidos:",data);
+      this.matches = data;
+
+    });
+  }
 }
