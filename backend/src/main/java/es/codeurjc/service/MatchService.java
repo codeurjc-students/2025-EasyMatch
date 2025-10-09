@@ -17,6 +17,11 @@ import es.codeurjc.repository.MatchRepository;
 @Service
 public class MatchService {
 
+    public MatchService(MatchRepository matchRepository, MatchMapper mapper) {
+        this.matchRepository = matchRepository;
+        this.mapper = mapper;
+    }
+
     @Autowired
 	private MatchRepository matchRepository;
 
@@ -47,6 +52,10 @@ public class MatchService {
 		return matchRepository.findAll(pageable);
 	}
 
+    public MatchDTO getMatch(long id) {
+        return toDTO(findById(id).orElseThrow());
+    }
+    
     public Page<MatchDTO> getMatches(Pageable pageable) {
         return findAll(pageable).map(this::toDTO);
     }
@@ -58,7 +67,7 @@ public class MatchService {
         return matchRepository.save(match);
     }
 
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         Optional<Match> matchOptional = matchRepository.findById(id);
         if (matchOptional.isPresent()) {
             matchRepository.deleteById(id);
@@ -67,7 +76,5 @@ public class MatchService {
         }
     }
 
-    public MatchDTO getMatch(long id) {
-        return toDTO(findById(id).orElseThrow());
-    }
+    
 }

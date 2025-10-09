@@ -7,5 +7,4 @@ import es.codeurjc.model.Match;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long>{
-    
 }

@@ -1,0 +1,7 @@
+<div *ngIf="matches.length === 0">
+  <p>No hay partidos disponibles</p>
+</div>
+
+<div *ngFor="let m of matches">
+  <app-match [match]="m"></app-match>
+</div>

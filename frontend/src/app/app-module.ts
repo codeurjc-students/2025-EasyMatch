@@ -3,17 +3,19 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app';
-import { MatchComponent } from './match';
+import { MatchComponent } from './components/match/match';
+import { MatchListComponent } from "./components/match-list/match-list";
 
 @NgModule({
   declarations: [
     AppComponent,
-    MatchComponent
+    MatchComponent,
+    MatchListComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
-  ],
+    HttpClientModule,
+],
   providers: [],
   bootstrap: [AppComponent]
 })
