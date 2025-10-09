@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import es.codeurjc.model.Match;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.service.MatchService;
 
+@Tag("integration")
 @SpringBootTest(classes = es.codeurjc.easymatch.EasyMatchApplication.class)
 public class MatchServiceIntegrationTest {
 

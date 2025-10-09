@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -25,7 +26,7 @@ import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
+@Tag("unit")
 public class MatchServiceUnitaryTest {
 
     private MatchRepository matchRepository;
