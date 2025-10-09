@@ -44,4 +44,4 @@ jobs:
         run: npm install
 
       - name: Run Tests
-        run: ng test --include "src/**/*.unit.spec.ts"
+        run: npx ng test --include "src/**/*.unit.spec.ts"
