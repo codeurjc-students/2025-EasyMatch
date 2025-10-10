@@ -1,15 +1,16 @@
-name: Test on non-main branches (client + server)
+name: Full tests on PR to main
 
 on:
-  push:
+  pull_request:
     paths:
     - backend/src/**
     - backend/pom.xml
     - frontend/src/**
     - frontend/angular.json
-    branches-ignore: [ main ]
+    branches: [ main ]
 
 jobs:
+
   backend-tests:
     runs-on: ubuntu-latest
     defaults: 
@@ -26,9 +27,16 @@ jobs:
 
       - name: Run unit tests
         run: mvn test -Dgroups='unit'
+
+      - name: Run integration tests
+        run: mvn test -Dgroups='integration'
+
+      - name: Run system tests
+        run: mvn test -Dgroups='e2e'
+
   frontend-tests:
     runs-on: ubuntu-latest
-    defaults:
+    defaults: 
       run:
         working-directory: frontend
     steps:
@@ -40,8 +48,19 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Start backend server
+        run: |
+          cd ../backend
+          mvn spring-boot:run &
+          sleep 30
+
       - name: Install Dependencies
         run: npm install
 
       - name: Run unit tests
         run: npx ng test --include "src/**/*.unit.spec.ts" --watch=false --browsers=ChromeHeadless --no-progress
+
+      - name: Run integration tests
+        run: npx ng test --include "src/**/*.integration.spec.ts" --watch=false --browsers=ChromeHeadless --no-progress
+
+       
