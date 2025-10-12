@@ -63,7 +63,7 @@ jobs:
         env:
             SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/dbeasymatch?serverTimezone=UTC
             SPRING_DATASOURCE_USERNAME: root
-            SPRING_DATASOURCE_PASSWORD: 
+            SPRING_DATASOURCE_PASSWORD: ""
         run: mvn test -Dgroups='e2e'
 
   frontend-tests:
@@ -72,7 +72,8 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: 
+          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  
           MYSQL_DATABASE: dbeasymatch
         ports:
           - 3306:3306
@@ -95,9 +96,9 @@ jobs:
 
       - name: Start backend server
         env:
-            SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/dbeasymatch
+            SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/dbeasymatch?serverTimezone=UTC
             SPRING_DATASOURCE_USERNAME: root
-            SPRING_DATASOURCE_PASSWORD: 
+            SPRING_DATASOURCE_PASSWORD: ""
         run: |
           cd ../backend
           mvn spring-boot:run &
@@ -111,5 +112,6 @@ jobs:
 
       - name: Run integration tests
         run: npx ng test --include "src/**/*.integration.spec.ts" --watch=false --browsers=ChromeHeadless --no-progress
+
 
        
