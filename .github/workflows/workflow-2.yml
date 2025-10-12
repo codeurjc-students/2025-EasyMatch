@@ -87,7 +87,7 @@ jobs:
         working-directory: frontend
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -102,7 +102,7 @@ jobs:
         run: |
           cd ../backend
           mvn spring-boot:run &
-          sleep 30
+          sleep 40
 
       - name: Install Dependencies
         run: npm install
