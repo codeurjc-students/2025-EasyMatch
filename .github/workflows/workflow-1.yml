@@ -1,4 +1,4 @@
-name: Test on non-main branches (client + server)
+name: Test on non-main branches
 
 on:
   push:

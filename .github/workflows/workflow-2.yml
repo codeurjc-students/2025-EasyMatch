@@ -13,11 +13,27 @@ jobs:
 
   backend-tests:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: 
+          MYSQL_DATABASE: dbeasymatch
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     defaults: 
       run:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
+
+      - name: Wait for MySQL
+        run: sleep 20
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -29,13 +45,41 @@ jobs:
         run: mvn test -Dgroups='unit'
 
       - name: Run integration tests
+        env:
+            SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/dbeasymatch
+            SPRING_DATASOURCE_USERNAME: root
+            SPRING_DATASOURCE_PASSWORD: 
         run: mvn test -Dgroups='integration'
+      
+      - name: Start frontend
+        run: |
+          cd ../frontend
+          npm install
+          npm run start -- --port 4200 &
+          sleep 20
 
       - name: Run system tests
+        env:
+            SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/dbeasymatch
+            SPRING_DATASOURCE_USERNAME: root
+            SPRING_DATASOURCE_PASSWORD: 
         run: mvn test -Dgroups='e2e'
 
   frontend-tests:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: 
+          MYSQL_DATABASE: dbeasymatch
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     defaults: 
       run:
         working-directory: frontend
@@ -49,6 +93,10 @@ jobs:
           node-version: '20'
 
       - name: Start backend server
+        env:
+            SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/dbeasymatch
+            SPRING_DATASOURCE_USERNAME: root
+            SPRING_DATASOURCE_PASSWORD: 
         run: |
           cd ../backend
           mvn spring-boot:run &
