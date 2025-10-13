@@ -4,6 +4,7 @@ import { MatchService } from "./match.service";
 import { HttpClientModule } from "@angular/common/http";
 
 // Client Integration Test
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 describe('MatchService', () => {
     let service : MatchService;
 

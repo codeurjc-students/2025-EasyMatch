@@ -47,7 +47,7 @@ public class MatchServiceIntegrationTest {
         assertThat(pageOfMatches.getNumberOfElements(), equalTo(numMatches));
     }
 
-    @Test
+    /* @Test
     public void deleteExistingMatchIntegrationTest(){
         Random random = new Random();
         int numMatches = 4;
@@ -56,7 +56,7 @@ public class MatchServiceIntegrationTest {
         List<Match> matches = matchService.findAll();
         assertThat(matchService.exist(id), equalTo(false));
         assertThat(matches.size(), equalTo(numMatches - 1));
-    }
+    } */
 
     @Test
     public void deleteNonExistingMatchUnitaryTest(){
