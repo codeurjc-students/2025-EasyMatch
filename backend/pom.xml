@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>es.codeurjc</groupId>
-	<artifactId>backend</artifactId>
+	<artifactId>EasyMatch</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>backend</name>
+	<name>EasyMatch</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -92,7 +92,38 @@
 
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.11</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
+		
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/coverage</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.5.2</version>
@@ -119,6 +150,7 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 	</build>
 
