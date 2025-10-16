@@ -2,14 +2,15 @@
 
 ## 📋 Table of contents
 
-- [Introduction](#introduction)
-- [Technologies](#technologies)
-- [Tools](#tools)
-- [Architecture](#architecture)
-- [Quality Control](#quality-control)
-- [Development Process](#development-process)
+- [Introduction](#-introduction)
+- [Technologies](#-technologies)
+- [Tools](#-tools)
+- [Architecture](#-architecture)
+- [Quality Control](#-quality-control)
+- [Development Process](#-development-process)
+- [Code editing and execution](#-code-editing-and-execution)
 
-## 📖Introduction
+## 📖 Introduction
 
 The EasyMatch web application is developed as a **Single Page Application** (SPA) on the frontend. In a SPA, only a single HTML file is initially loaded, and the content is dynamically updated using TypeScript, rather than reloading complete pages from the server. This SPA, therefore frontend, was built using **Angular 20**.
 
@@ -31,7 +32,7 @@ On the backend, the application was developed using **Spring Boot**, offering a 
 | Deployment             | Docker                                                                      |
 | Development Process    | Iterative and incremental, version control with Git and CI/CD with GitHub Actions |
 
-## 💻Technologies
+## 💻 Technologies
 
 The website relies on the following technologies for its execution:
 
@@ -51,7 +52,7 @@ The website relies on the following technologies for its execution:
 - **MySQL**: database used to store and manage the application data. For more information, consult the [MySQL official website](https://www.mysql.com/).
 
 
-## 🔧Tools 
+## 🔧 Tools 
 
 The following IDEs and auxiliary tools were used during the development of this website:
 
@@ -69,7 +70,7 @@ The following IDEs and auxiliary tools were used during the development of this 
 
 - **Docker Desktop** which is a containerization platform that enables building, running, and managing applications within isolated containers. It will be used to package and deploy the web application consistently across different environments (CD).
 
-## 🏛️Architecture 
+## 🏛️ Architecture 
 
 ### Deployment Architecture
 
@@ -117,7 +118,7 @@ To make the documentation easier to explore, it has been converted to a static H
 
 In order to generate a report using JaCoCo, you only need to execute the following command in a terminal inside the folder backend: 
 
-```
+```bash
 mvn test
 ```
 
@@ -165,9 +166,8 @@ As it is shown in the previous code snippet, the coverage report is now generate
 
 In order to generate a report using ```Karma```, you only need to execute the following command inside a terminal in the folder frontend: 
 
-```
+```bash
 ng test --watch=false --code-coverage
-
 ```
 
 The next picture illustrates the coverage report of the executed tests:
@@ -221,3 +221,151 @@ This workflow ```workflow2.yml``` is triggered when a Pull Request is opened tar
 - **build-backend**: set up the Java environment (JDK 21) and prepare the backend for testing.
 
 - **frontend-integration-tests**: Execute frontend integration tests using the same test runner ```npx ng test --include "src/**/*.integration.spec.ts" --watch=false --browsers=ChromeHeadless --no-progress```
+
+## 👨‍💻 Code editing and execution
+
+### 📁 Repository cloning
+In order to **clone this GitHub repository**, run the following command in your terminal:
+```bash
+git clone https://github.com/codeurjc-students/2025-EasyMatch.git
+```
+Next, navigate to the project directory:
+
+```bash
+cd 2025-EasyMatch
+```
+#### Requirements
+
+<table>
+  <thead>
+    <tr>
+      <th>Software / Tool</th>
+      <th>Version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Java</td>
+      <td>21</td>
+    </tr>
+    <tr>
+      <td>Maven</td>
+      <td>3.9</td>
+    </tr>
+    <tr>
+      <td>Spring Boot</td>
+      <td>3.5</td>
+    </tr>
+    <tr>
+      <td>Node.js</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <td>npm</td>
+      <td>10.9</td>
+    </tr>
+    <tr>
+      <td>MySQL</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <td>XAMPP</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <td>Visual Studio Code</td>
+      <td>1.88</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+### 🚀 Execution
+This section describes the steps required to run the EasyMatch website locally, including the database setup and the execution of all components.
+
+#### Database and required services
+
+In order to the backend server, you must first start the database server which in this case is MySQL:
+1. Open **XAMPP** (or you favourite local server manager).
+2. Start both **Apache** and **MySQL** servers as shown in the next screenshot
+![Xampp Control Panel](/images/xamppControlPanel.png)
+3. Access phpMyAdmin (or the MySQL CLI) and create a new database named ```dbeasymatch```
+```
+CREATE DATABASE dbeasymatch;
+```
+
+#### Backend server
+First, you must navigate to the folder ```backend``` where ```pom.xml``` is located: 
+```bash
+cd backend
+```
+Then, the backend server can be launched either directly from **VS Code** or via terminal using **Maven**. :
+```bash
+mvn spring-boot:run
+```
+
+This command starts the **Spring Boot application** and **connects** it to the previously created **MySQL database**.
+
+#### Frontend client
+In order to start the **Angular** frontend application, navigate to the ```frontend``` directory 
+```bash
+cd frontend
+```
+and execute the following commands:
+```bash
+npm install
+npm start
+```
+This will launch the Angular development server, which by default runs on port 4200 and communicates with the backend through the REST API.
+
+#### Website access
+Once both the backend and frontend are running, open your browser and access ```http://localhost:4200```. From this url, you can explore and interact with the **EasyMatch web application** running locally.
+
+
+### ⚙️ Tools Usage
+
+#### VS Code
+Visual Studio Code is the primary IDE used for developing the application. It is simple to use; the main requirements are having a **JDK** installed on your system (for this project, JDK 21 is recommended) and installing the **Java Extension Pack** and **Spring Boot Extension Pack** extensions for Visual Studio Code.
+
+#### Postman 
+**Postman** is a tool used to send and test API requests and is also available as a **Visual Studio Code extension**. In this project, it is used to validate the backend endpoints. The API requests are organized into **Postman collections**, which can be imported into Postman (or the VS Code extension) to run the tests. To use it, first install Postman, then import the provided collection files from the project repository here: [EasyMatch Postman Collection](/EasyMatch%20collection.postman_collection.json).
+
+### 🧪 Test execution
+
+#### Backend tests
+
+First, navigate to the ```backend``` folder
+```bash
+cd backend
+```
+and execute the next command
+```bash
+mvn test
+```
+
+#### Frontend unitary and integration tests
+First, navigate to the ```frontend``` folder
+```bash
+cd frontend
+```
+and in order to run both unit and integration tests execute
+```bash
+ng test
+# or
+npm run test
+```
+
+To only run the unit tests:
+```bash
+ng test --include "src/**/*.unit.spec.ts" --watch=false --browsers=ChromeHeadless --no-progress
+```
+To only run the integration tests:
+```bash
+ng test --include "src/**/*.integration.spec.ts" --watch=false --browsers=ChromeHeadless --no-progress
+```
+
+### 🆕 Release creation 
+You can create a release directly on GitHub. Simply go to the repository’s **Releases** section, create a new release, and publish it.
+
+ [↩️ Return to README](../README.md)
