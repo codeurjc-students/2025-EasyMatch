@@ -15,6 +15,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
@@ -27,6 +28,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("unit")
+@ActiveProfiles("test")
 public class MatchServiceUnitaryTest {
 
     private MatchRepository matchRepository;

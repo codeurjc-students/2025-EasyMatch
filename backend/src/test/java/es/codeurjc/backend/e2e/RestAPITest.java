@@ -17,6 +17,7 @@ import io.restassured.RestAssured;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes = es.codeurjc.easymatch.EasyMatchApplication.class)
 @ActiveProfiles("test")
+
 public class RestAPITest {
 
     @LocalServerPort

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseInitializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">EasyMatch</a> &gt; <a href="index.source.html" class="el_package">es.codeurjc.service</a> &gt; <span class="el_source">DatabaseInitializer.java</span></div><h1>DatabaseInitializer.java</h1><pre class="source lang-java linenums">package es.codeurjc.service;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import es.codeurjc.domain.Mode;
+import es.codeurjc.domain.Sport;
+import es.codeurjc.model.Match;
+import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
+
+
+@Component
+<span class="fc" id="L19">public class DatabaseInitializer {</span>
+    @Autowired
+    MatchService matchService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    ClubService clubService;
+
+    @PostConstruct
+    @Transactional
+    public void init() throws IOException {
+        
+<span class="fc" id="L33">        Mode mode1 = new Mode(&quot;Singles&quot;,2);</span>
+<span class="fc" id="L34">        Mode mode2 = new Mode(&quot;Doubles&quot;,4);</span>
+<span class="fc" id="L35">        Mode mode3 = new Mode(&quot;7v7&quot;,14);</span>
+<span class="fc" id="L36">        Mode mode4 = new Mode(&quot;11v11&quot;,22);</span>
+<span class="fc" id="L37">        List&lt;Mode&gt; modesOfTennis = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L38">        modesOfTennis.add(mode1);</span>
+<span class="fc" id="L39">        modesOfTennis.add(mode2);</span>
+
+<span class="fc" id="L41">        List&lt;Mode&gt; modesOfFootball = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L42">        modesOfFootball.add(mode3);</span>
+<span class="fc" id="L43">        modesOfFootball.add(mode4);</span>
+
+<span class="fc" id="L45">        List&lt;Mode&gt; modesOfPaddle = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L46">        modesOfPaddle.add(mode1);</span>
+<span class="fc" id="L47">        modesOfPaddle.add(mode2);</span>
+        
+<span class="fc" id="L49">        LocalDateTime date1 = LocalDateTime.of(2025, 9, 30, 12, 30);</span>
+<span class="fc" id="L50">        LocalDateTime date2 = LocalDateTime.of(2025, 10, 1, 11, 00);</span>
+<span class="fc" id="L51">        LocalDateTime date3 = LocalDateTime.of(2025, 10, 3, 10, 30);</span>
+<span class="fc" id="L52">        LocalDateTime date4 = LocalDateTime.of(2025, 10, 5, 19, 00);</span>
+
+<span class="fc" id="L54">        Sport sport1 = new Sport(&quot;Tenis&quot;, modesOfTennis);</span>
+<span class="fc" id="L55">        Sport sport2 = new Sport(&quot;Padel&quot;, modesOfPaddle);</span>
+<span class="fc" id="L56">        Sport sport3 = new Sport(&quot;Futbol&quot;, modesOfFootball);</span>
+
+<span class="fc" id="L58">        List&lt;Sport&gt; sports = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L59">        sports.add(sport1);</span>
+<span class="fc" id="L60">        List&lt;Integer&gt; numberOfCourts = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L61">        numberOfCourts.add(12);</span>
+
+        /* Club club1 = new Club(&quot;Tennis Club Elite&quot;, &quot;Madrid&quot;, &quot;Plaza de Rafael Nadal, 22&quot;, &quot;684274290&quot;,&quot;tennisclubelite@outlook.com&quot;,&quot;www.tennisclubelite.com&quot;,sports,numberOfCourts);
+        clubService.save(club1); */
+        
+<span class="fc" id="L66">        Match match1 = new Match(date1,true,false,true,&quot;Pedro&quot;,sport1.getName());</span>
+<span class="fc" id="L67">        Match match2 = new Match(date2,false,true,true,&quot;Maria&quot;,sport2.getName());</span>
+<span class="fc" id="L68">        Match match3 = new Match(date3,true,false,true,&quot;Juan&quot;,sport1.getName());</span>
+<span class="fc" id="L69">        Match match4 = new Match(date4,true,false,true,&quot;Luis&quot;,sport3.getName());</span>
+
+<span class="fc" id="L71">        matchService.save(match1);</span>
+<span class="fc" id="L72">        matchService.save(match2);</span>
+<span class="fc" id="L73">        matchService.save(match3);</span>
+<span class="fc" id="L74">        matchService.save(match4);</span>
+<span class="fc" id="L75">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
