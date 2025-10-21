@@ -70,7 +70,7 @@ jobs:
     needs: build-frontend
     defaults: 
       run:
-        working-directory: backend
+        working-directory: frontend
     steps:
        - name: Checkout code
          uses: actions/checkout@v4
