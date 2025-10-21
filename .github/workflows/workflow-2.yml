@@ -145,7 +145,7 @@ jobs:
       - name: Start backend server
         run: |
           cd ../backend
-          mvn spring-boot:run &
+          mvn spring-boot:run "-Dspring-boot.run.profiles=test" &
           sleep 30
 
       - name: Install Dependencies
