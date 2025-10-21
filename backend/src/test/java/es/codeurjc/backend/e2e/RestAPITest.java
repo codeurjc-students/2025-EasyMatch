@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.ActiveProfiles;
 
 import io.restassured.RestAssured;
 
@@ -15,6 +16,7 @@ import io.restassured.RestAssured;
 @Tag("e2e")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes = es.codeurjc.easymatch.EasyMatchApplication.class)
+@ActiveProfiles("test")
 public class RestAPITest {
 
     @LocalServerPort

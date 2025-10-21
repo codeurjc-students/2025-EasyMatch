@@ -21,11 +21,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.ActiveProfiles;
 
 @Tag("e2e")
 @SpringBootTest (webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
 classes = es.codeurjc.easymatch.EasyMatchApplication.class
 )
+@ActiveProfiles("test")
 
 public class AngularUITest {
     @LocalServerPort

@@ -18,7 +18,7 @@ export class MatchService {
   }
 
   getMatch(id: number): Observable<Match> {
-    return this.http.get<Match>(`${this.apiUrl}/${id}`);
+    return this.http.get<Match>(`${this.apiUrl}/matches/${id}`);
   }
 }
 
