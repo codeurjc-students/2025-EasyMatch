@@ -11,21 +11,31 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 
 @Entity
 public class User {
+
     @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-    
+
     private String realName;
-    private String userName;
+    private String username;
     private String email;
     private String password;
     private LocalDateTime birthDate;
     private boolean gender; // 1 male, 0 female
     private String description;
     private float level; // from 1 to 7
+
+    @ManyToMany (mappedBy = "players", cascade = CascadeType.REMOVE)
+    private List<Match> matchRecord;
+
+    @OneToMany (mappedBy = "organizer", cascade = CascadeType.REMOVE)
+    private List<Match> organizedMatches;
 
     @Lob
     private Blob image;
@@ -35,6 +45,19 @@ public class User {
 
     public User() {
         // Used by JPA
+    }
+
+    public User(String realName, String username, String email, String password, LocalDateTime birthDate,
+            boolean gender, String description, float level, String... roles) {
+        this.realName = realName;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.description = description;
+        this.level = level;
+        this.roles = List.of(roles);
     }
 
     public long getId() {
@@ -52,13 +75,11 @@ public class User {
     public void setRealName(String realName) {
         this.realName = realName;
     }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getUsername() {
+        return username;
+    }   
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {

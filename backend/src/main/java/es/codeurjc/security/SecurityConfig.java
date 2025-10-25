@@ -67,10 +67,11 @@ public class SecurityConfig {
 		http
 			.authorizeHttpRequests(authorize -> authorize
                     // PRIVATE ENDPOINTS
-					.requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
-					.requestMatchers(HttpMethod.POST, "/api/matches/**").hasRole("USER")
-					.requestMatchers(HttpMethod.DELETE, "/api/matches/**").hasRole("USER")
-					.requestMatchers(HttpMethod.PUT, "/api/matches/**").hasRole("USER")
+					.requestMatchers(HttpMethod.GET, "/api/v1/matches/**").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/v1/matches/**").hasRole("USER")
+					.requestMatchers(HttpMethod.DELETE, "/api/v1/matches/**").hasRole("USER")
+					.requestMatchers(HttpMethod.PUT, "/api/v1/matches/**").hasRole("USER")
+					.requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                     // DOCUMENTATION
 					.requestMatchers("/v3/api-docs/**").permitAll()
 					.requestMatchers("/swagger-ui.html").permitAll()

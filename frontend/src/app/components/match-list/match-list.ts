@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { MatchService } from '../../service/match.service';
 import { Match } from '../../models/match.model';
+import { MatchComponent } from '../match/match';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-match-list',
   templateUrl:'match-list.html',
-  standalone: false,
+  imports: [MatchComponent,CommonModule],
+  standalone: true,
 })
 export class MatchListComponent implements OnInit {
   matches: Match[] = [];

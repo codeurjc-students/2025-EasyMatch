@@ -13,12 +13,12 @@ export class MatchService {
   constructor(private http: HttpClient) {}
 
   getMatches(): Observable<Match[]> {
-    return this.http.get<any>(`${this.apiUrl}`+'/matches/').pipe(
+    return this.http.get<any>(`${this.apiUrl}`+'/matches/',{withCredentials : true}).pipe(
     map(response => Array.isArray(response) ? response : (response && response.content ? response.content : [])));
   }
 
   getMatch(id: number): Observable<Match> {
-    return this.http.get<Match>(`${this.apiUrl}/matches/${id}`);
+    return this.http.get<Match>(`${this.apiUrl}/matches/${id}`,{withCredentials : true});
   }
 }
 

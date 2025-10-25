@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +20,9 @@ import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.service.MatchService;
+import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.User;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -52,10 +53,21 @@ public class MatchServiceUnitaryTest {
         LocalDateTime date3 = LocalDateTime.of(2025, 11, 6, 9, 45);
         LocalDateTime date4 = LocalDateTime.of(2025, 11, 8, 18, 15);
 
-        Match match1 = new Match(date1, false, true, false, "Ana", "Voleibol");
-        Match match2 = new Match(date2, true, true, false, "Carlos", "Baloncesto");
-        Match match3 = new Match(date3, false, false, true, "Sofia", "Tenis");
-        Match match4 = new Match(date4, true, false, true, "Miguel", "Futbol");
+        Club club1 = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
+        
+        User user1 = new User();
+        user1.setRealName("Ana");
+        User user2 = new User();
+        user2.setRealName("Carlos");
+        User user3 = new User();
+        user3.setRealName("Sofia");
+        User user4 = new User();
+        user4.setRealName("Miguel");
+
+        Match match1 = new Match(date1, false, true, false, user1, "Voleibol",club1);
+        Match match2 = new Match(date2, true, true, false, user2, "Baloncesto",club1);
+        Match match3 = new Match(date3, false, false, true, user3, "Tenis",club1);
+        Match match4 = new Match(date4, true, false, true, user4, "Futbol",club1);
 
         List<Match> matchList = List.of(match1,match2,match3,match4);
 

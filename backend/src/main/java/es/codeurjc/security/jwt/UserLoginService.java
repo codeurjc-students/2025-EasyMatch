@@ -86,6 +86,10 @@ public class UserLoginService {
 		cookie.setMaxAge((int) type.duration.getSeconds());
 		cookie.setHttpOnly(true);
 		cookie.setPath("/");
+		cookie.setSecure(true);
+		cookie.setAttribute("SameSite", "None");
+		cookie.setDomain("localhost");
+
 		return cookie;
 	}
 
@@ -94,6 +98,7 @@ public class UserLoginService {
 		cookie.setMaxAge(0);
 		cookie.setHttpOnly(true);
 		cookie.setPath("/");
+		
 		return cookie;
 	}
 }
