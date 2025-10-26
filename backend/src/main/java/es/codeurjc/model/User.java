@@ -13,16 +13,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.persistence.CascadeType;
 
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-    private String realName;
+    private String realname;
     private String username;
     private String email;
     private String password;
@@ -47,9 +49,9 @@ public class User {
         // Used by JPA
     }
 
-    public User(String realName, String username, String email, String password, LocalDateTime birthDate,
+    public User(String realname, String username, String email, String password, LocalDateTime birthDate,
             boolean gender, String description, float level, String... roles) {
-        this.realName = realName;
+        this.realname = realname;
         this.username = username;
         this.email = email;
         this.password = password;
@@ -68,12 +70,12 @@ public class User {
         this.id = id;
     }
 
-    public String getRealName() {
-        return realName;
+    public String getRealname() {
+        return realname;
     }
 
-    public void setRealName(String realName) {
-        this.realName = realName;
+    public void setRealname(String realname) {
+        this.realname = realname;
     }
     public String getUsername() {
         return username;

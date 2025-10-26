@@ -20,6 +20,6 @@ export class LoginService {
 	}
 
   public logout(): Observable<AuthResponse> {
-		return this.https.post<AuthResponse>(this.apiUrl, {}, { withCredentials: true });
+		return this.https.post<AuthResponse>(`${this.apiUrl}`+'/auth/logout', {}, { withCredentials: true });
 	}
 }

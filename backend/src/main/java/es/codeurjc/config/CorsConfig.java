@@ -16,7 +16,7 @@ public class CorsConfig {
                         .allowedOrigins("http://localhost:9876") // Karma test runner
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(false);
+                        .allowCredentials(true);
             }
         };
     }

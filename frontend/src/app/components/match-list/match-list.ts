@@ -18,7 +18,7 @@ export class MatchListComponent implements OnInit {
 
   ngOnInit() {
     this.matchService.getMatches().subscribe(data => {
-		console.log("Datos recibidos:",data);
+		console.log("Data received:",data);
       this.matches = data;
 
     });

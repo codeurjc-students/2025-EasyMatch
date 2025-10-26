@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -60,20 +61,45 @@ public class AngularUITest {
     }
 
     @Test
-    public void testHomePage() {
-        
+    public void testLoginPage(){
         driver.get("http://localhost:" + port+"/");
+
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("form")));
+
+        WebElement welcomeMessage = driver.findElement(By.id("welcome-message"));
+        assertThat(welcomeMessage.getText(), equalTo("Bienvenido de vuelta"));
+
+    }
+
+    @Test 
+    public void testHomePage2(){
+         driver.get("http://localhost:" + port+"/");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
+
+        WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));
+        WebElement passwordInput = driver.findElement(By.cssSelector("input[formcontrolname='password']"));
+        emailInput.sendKeys("pedro@emeal.com");
+        passwordInput.sendKeys("pedroga4");
+
+        WebElement loginButton = driver.findElement(By.cssSelector("button.btn-login"));
+        loginButton.click();
+
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
-        String match_header1 = driver.findElement(By.id("match-1")).findElement(By.id("organizer-sport")).getText();
-        assertThat(match_header1, equalTo("Pedro - Tenis"));
-        String match_header2 = driver.findElement(By.id("match-2")).findElement(By.id("organizer-sport")).getText();
-        assertThat(match_header2, equalTo("Maria - Padel"));
-        String match_header3 = driver.findElement(By.id("match-3")).findElement(By.id("organizer-sport")).getText();
-        assertThat(match_header3, equalTo("Juan - Tenis"));
-        String match_header4 = driver.findElement(By.id("match-4")).findElement(By.id("organizer-sport")).getText();
-        assertThat(match_header4, equalTo("Luis - Futbol"));
+
+        WebElement match1 = driver.findElement(By.id("match-1")).findElement(By.id("organizer-sport"));
+        assertThat(match1.getText(), equalTo("Pedro Garcia - Tenis"));
+        WebElement match2 = driver.findElement(By.id("match-2")).findElement(By.id("organizer-sport"));
+        assertThat(match2.getText(), equalTo("Maria Lopez - Padel"));
+        WebElement match3 = driver.findElement(By.id("match-3")).findElement(By.id("organizer-sport"));
+        assertThat(match3.getText(), equalTo("Juan Martinez - Tenis"));
+        WebElement match4 = driver.findElement(By.id("match-4")).findElement(By.id("organizer-sport"));
+        assertThat(match4.getText(), equalTo("Luis Sanchez - Futbol"));
     }
 
 

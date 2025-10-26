@@ -56,13 +56,13 @@ public class MatchServiceUnitaryTest {
         Club club1 = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
         
         User user1 = new User();
-        user1.setRealName("Ana");
+        user1.setRealname("Ana");
         User user2 = new User();
-        user2.setRealName("Carlos");
+        user2.setRealname("Carlos");
         User user3 = new User();
-        user3.setRealName("Sofia");
+        user3.setRealname("Sofia");
         User user4 = new User();
-        user4.setRealName("Miguel");
+        user4.setRealname("Miguel");
 
         Match match1 = new Match(date1, false, true, false, user1, "Voleibol",club1);
         Match match2 = new Match(date2, true, true, false, user2, "Baloncesto",club1);

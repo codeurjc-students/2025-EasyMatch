@@ -1,5 +1,5 @@
 <div id="match-{{match.id}}" class="match-card">
-  <h3 id="organizer-sport">  {{ match.organizer}} - {{ match.sport }}</h3>
+  <h3 id="organizer-sport">  {{ match.organizer.realname}} - {{ match.sport }}</h3>
   <p>Fecha: {{ match.date | date:'dd/MM/yyyy, HH:mm'  }}</p>
   <p>Competitivo: {{ match.type ? 'Sí' : 'No' }}</p>
   <p>Privado: {{ match.isPrivate ? 'Sí' : 'No' }}</p>

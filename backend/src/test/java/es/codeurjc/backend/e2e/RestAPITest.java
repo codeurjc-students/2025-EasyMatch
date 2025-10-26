@@ -31,13 +31,13 @@ public class RestAPITest {
 
     @Test
     public void testGetMatches() {
-        given().when().get("/api/matches/")
+        given().when().get("/api/v1/matches/")
                 .then().statusCode(200)
                 .body("content.size()", greaterThan(0))
-                .body("content[0].organizer", equalTo("Pedro"))
-                .body("content[1].organizer", equalTo("Maria"))
-                .body("content[2].organizer", equalTo("Juan")) 
-                .body("content[3].organizer", equalTo("Luis"))
+                .body("content[0].organizer.realname", equalTo("Pedro Garcia"))
+                .body("content[1].organizer.realname", equalTo("Maria Lopez"))
+                .body("content[2].organizer.realname", equalTo("Juan Martinez")) 
+                .body("content[3].organizer.realname", equalTo("Luis Sanchez"))
                 .body("totalElements", equalTo(4));
         
         
