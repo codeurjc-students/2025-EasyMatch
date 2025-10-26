@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchComponent } from './match';
 import { Match } from '../../models/match.model';
 import { By } from '@angular/platform-browser';
+import { User } from '../../models/user.model';
 
 
 describe('MatchComponent', () => {
@@ -10,7 +11,7 @@ describe('MatchComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MatchComponent]
+      imports: [MatchComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MatchComponent);
@@ -23,12 +24,22 @@ describe('MatchComponent', () => {
 
   it('should render the match data correctly', () => {
     // We simulate @Input
+    const mockUser : User = {
+          id: 1,
+          realname: 'Carlos Gómez',
+          username: 'carlosr',
+          email: 'carlos@example.com',
+          birthdate: new Date('1990-05-14'),
+          gender: 'M',
+          description: 'Apasionado del fútbol 7',
+          level: 7
+        };
     const mockMatch: Match = {
       date: new Date('2025-10-10T18:30:00'),
       type: true,
       isPrivate: false,
       state: true,
-      organizer: "Carlos Gómez",
+      organizer: mockUser,
       sport: "Fútbol"
     };
 

@@ -1,11 +1,17 @@
 package es.codeurjc.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 /* import java.util.List;*/
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 /* import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
@@ -27,34 +33,27 @@ public class Match {
     private Boolean isPrivate; // private 1, public 0
     private Boolean state; // open 1, closed 0
 
-	private String organizer;
-	/* private User organizer; */
+	@ManyToOne
+	@JoinColumn(name = "organizer_id")
+	private User organizer;
 
 	private String sport;
 	/* private Sport sport; */
 
-	/* @ManyToOne
+	@ManyToOne
 	@JoinColumn(name = "club_id") 
-	private Club club; */
+	private Club club; 
 
-	/* @ManyToMany
-	@JoinColumn(name = "player_id") 
-	private List<User> players; */
+	@ManyToMany
+	@JoinTable(
+        name = "match_players",
+        joinColumns = @JoinColumn(name = "match_id"),
+        inverseJoinColumns = @JoinColumn(name = "player_id")
+    )
+	private List<User> players; 
 	
 
-	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,String organizer, String sport) {
-		this.date = date;
-		this.type = type;
-		this.isPrivate = isPrivate;
-		this.state = state;
-		this.organizer = organizer;
-		this.sport = sport;
-	}
-
-
-
-	/* public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state, User organizer, Sport sport,
-			Club club) {
+	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, String sport, Club club) {
 		this.date = date;
 		this.type = type;
 		this.isPrivate = isPrivate;
@@ -62,7 +61,7 @@ public class Match {
 		this.organizer = organizer;
 		this.sport = sport;
 		this.club = club;
-	} */
+	}
 
 
 
@@ -133,7 +132,7 @@ public class Match {
 
 
 
-	/* public Club getClub() {
+	 public Club getClub() {
 		return club;
 	}
 
@@ -154,7 +153,7 @@ public class Match {
 	public void setPlayers(List<User> players) {
 		this.players = players;
 	}
- */
+ 
 
 
 	public String getSport() {
@@ -169,20 +168,20 @@ public class Match {
 
 
 
-	public String getOrganizer() {
+	public User getOrganizer() {
 		return organizer;
 	}
 
 
 
-	public void setOrganizer(String organizer) {
+	public void setOrganizer(User organizer) {
 		this.organizer = organizer;
 	}
 
 	@Override
 	public String toString() {
 		return "Match [id=" + id + ", date=" + date + ", type=" + type + ", isPrivate=" + isPrivate + ", state=" + state
-				+ ", organizer=" + organizer + ", sport=" + sport + /* ", club=" + club + ", players=" + players + */ "]";
+				+ ", organizer=" + organizer + ", sport=" + sport + ", club=" + club + ", players=" + players + "]";
 	}
 	
 	

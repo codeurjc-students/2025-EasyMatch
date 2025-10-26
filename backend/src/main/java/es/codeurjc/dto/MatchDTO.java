@@ -8,7 +8,7 @@ public record MatchDTO (
     Boolean type,
     Boolean isPrivate,
     Boolean state,
-    String organizer,
+    BasicUserDTO organizer,
     String sport
 ) {
     

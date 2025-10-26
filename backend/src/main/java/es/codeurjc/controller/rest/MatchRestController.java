@@ -13,7 +13,7 @@ import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.service.MatchService;
 
 @RestController
-@RequestMapping("/api/matches")
+@RequestMapping("/api/v1/matches")
 @CrossOrigin(origins = "http://localhost:9876")
 public class MatchRestController {
 

@@ -1,0 +1,114 @@
+.login-container {
+  display: flex;
+  height: 100vh;
+  background-color: #0b0b0f;
+  color: #fff;
+
+  .login-image {
+    flex: 1;
+    background: url('../../../assets/padel.png') center center / cover no-repeat;
+  }
+  
+  .login-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 4rem;
+    background-color: #11131a;
+
+    .logo {
+        position: fixed;
+        top: 40px;
+        right: 40px;
+        z-index: 1000; 
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .error{
+      text-align: center;
+      color: #E0856B;
+    }
+    .mat-form-field {
+        background-color: #1e1e2f;
+        border-radius: 8px;
+        padding: 0 8px;
+
+        .mat-input-element {
+            color: #ffffff; 
+        }
+
+        .mat-form-field-label {
+            color: #cccccc; 
+        }
+
+        .mat-form-field-ripple {
+            background-color: var(--mat-sys-primary); 
+        }
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+    }
+    .form-content {
+        margin-top: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      .full-width {
+        width: 100%;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 0.9rem;
+
+        .link {
+          color: #90caf9;
+          cursor: pointer;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .btn-login {
+        margin-top: 0.5rem;
+        height: 48px;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #1e88e5, #42a5f5);
+        font-weight: 600;
+      }
+
+      .register {
+        margin-top: 2rem;
+        text-align: center;
+        font-size: 0.9rem;
+
+        .link {
+          font-weight: 600;
+          color: #90caf9;
+          cursor: pointer;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}

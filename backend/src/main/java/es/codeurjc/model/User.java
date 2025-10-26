@@ -11,21 +11,33 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.CascadeType;
 
 @Entity
+@Table(name = "users")
 public class User {
+
     @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-    
-    private String realName;
-    private String userName;
+
+    private String realname;
+    private String username;
     private String email;
     private String password;
     private LocalDateTime birthDate;
     private boolean gender; // 1 male, 0 female
     private String description;
     private float level; // from 1 to 7
+
+    @ManyToMany (mappedBy = "players", cascade = CascadeType.REMOVE)
+    private List<Match> matchRecord;
+
+    @OneToMany (mappedBy = "organizer", cascade = CascadeType.REMOVE)
+    private List<Match> organizedMatches;
 
     @Lob
     private Blob image;
@@ -37,6 +49,19 @@ public class User {
         // Used by JPA
     }
 
+    public User(String realname, String username, String email, String password, LocalDateTime birthDate,
+            boolean gender, String description, float level, String... roles) {
+        this.realname = realname;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.description = description;
+        this.level = level;
+        this.roles = List.of(roles);
+    }
+
     public long getId() {
         return id;
     }
@@ -45,20 +70,18 @@ public class User {
         this.id = id;
     }
 
-    public String getRealName() {
-        return realName;
+    public String getRealname() {
+        return realname;
     }
 
-    public void setRealName(String realName) {
-        this.realName = realName;
+    public void setRealname(String realname) {
+        this.realname = realname;
     }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getUsername() {
+        return username;
+    }   
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {

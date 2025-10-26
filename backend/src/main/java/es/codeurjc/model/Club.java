@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
 
 @Entity
@@ -25,12 +26,16 @@ public class Club {
     private String email;
     private String web;
 
+    @OneToMany(mappedBy = "club")
+    private List<Match> matchRecord;
+
     @Transient
     private List<Sport> sports;
 
     @ElementCollection
     private List<Integer> numberOfCourts;
 
+    
     @Lob
     private Blob image;
 
