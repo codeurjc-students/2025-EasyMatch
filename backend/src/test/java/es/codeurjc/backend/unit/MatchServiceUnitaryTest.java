@@ -64,10 +64,10 @@ public class MatchServiceUnitaryTest {
         User user4 = new User();
         user4.setRealname("Miguel");
 
-        Match match1 = new Match(date1, false, true, false, user1, "Voleibol",club1);
-        Match match2 = new Match(date2, true, true, false, user2, "Baloncesto",club1);
-        Match match3 = new Match(date3, false, false, true, user3, "Tenis",club1);
-        Match match4 = new Match(date4, true, false, true, user4, "Futbol",club1);
+        Match match1 = new Match(date1, false, true, false, user1,3.50, "Voleibol",club1);
+        Match match2 = new Match(date2, true, true, false, user2,2.75, "Baloncesto",club1);
+        Match match3 = new Match(date3, false, false, true, user3,9.95, "Tenis",club1);
+        Match match4 = new Match(date4, true, false, true, user4,2.50, "Futbol",club1);
 
         List<Match> matchList = List.of(match1,match2,match3,match4);
 

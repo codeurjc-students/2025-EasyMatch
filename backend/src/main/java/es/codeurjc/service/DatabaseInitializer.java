@@ -5,14 +5,20 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.domain.Mode;
 import es.codeurjc.domain.Sport;
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.User;
+import es.codeurjc.utils.ImageUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 
@@ -27,6 +33,9 @@ public class DatabaseInitializer {
 
     @Autowired
     ClubService clubService;
+
+    @Autowired
+    ImageUtils imageUtils;
 
     @PostConstruct
     @Transactional
@@ -77,12 +86,17 @@ public class DatabaseInitializer {
 
 
         User user1 = new User("Pedro Garcia","pedro123","pedro@emeal.com","pedroga4",LocalDateTime.of(1990,5,20,0,0),true,"Avid tennis player",5.0f,"USER");
+        setUserImage(user1,"/images/pedro.jpg");
         userService.save(user1);
         User user2 = new User("Maria Lopez","maria456","maria@emeal.com","marialo3",LocalDateTime.of(1992,8,15,0,0),false,"Loves friendly matches",4.5f,"USER");
+        setUserImage(user2,"/images/maria.jpg");
         userService.save(user2);
         User user3 = new User("Juan Martinez","juan789","juan@emeal.com","juanma1",LocalDateTime.of(1988,3,10,0,0),true,"Competitive footballer",6.0f,"USER");
+        setUserImage(user3,"/images/juan.jpg");
         userService.save(user3);
+
         User user4 = new User("Luis Sanchez","luis321","luis@eameal.com","saluis2",LocalDateTime.of(1995,12,5,0,0),true,"Enjoys casual games",3.5f,"USER");
+        setUserImage(user4,"/images/luis.jpg");
         userService.save(user4);
 
         Club club1 = new Club("Tennis Club Elite", "Madrid", "Plaza de Rafael Nadal, 22", "684274290","tennisclubelite@outlook.com","www.tennisclubelite.com",sports1,numberOfCourts);
@@ -95,14 +109,32 @@ public class DatabaseInitializer {
         clubService.save(club4);
 
         
-        Match match1 = new Match(date1,true,false,true,user1,sport1.getName(),club1);
-        Match match2 = new Match(date2,false,true,true,user2,sport2.getName(),club2);
-        Match match3 = new Match(date3,true,false,true,user3,sport1.getName(),club3);
-        Match match4 = new Match(date4,true,false,true,user4,sport3.getName(),club4);
+        Match match1 = new Match(date1,true,false,true,user1,3.49f,sport1.getName(),club1);
+        Match match2 = new Match(date2,false,true,true,user2,8.99f, sport2.getName(),club2);
+        Match match3 = new Match(date3,true,false,true,user3,6.49f,sport1.getName(),club3);
+        Match match4 = new Match(date4,true,false,true,user4,4.5f,sport3.getName(),club4);
+
+        match1.setPlayers(new ArrayList<>());
+        match1.getPlayers().add(match1.getOrganizer());
+        match2.setPlayers(new ArrayList<>());
+        match2.getPlayers().add(match2.getOrganizer());
+        match3.setPlayers(new ArrayList<>());
+        match3.getPlayers().add(match3.getOrganizer());
+        match4.setPlayers(new ArrayList<>());
+        match4.getPlayers().add(match4.getOrganizer());
 
         matchService.save(match1);
         matchService.save(match2);
         matchService.save(match3);
         matchService.save(match4);
     }
+    public void setUserImage(User user, String classpathResource) throws IOException {
+         try {
+            Resource image = new ClassPathResource(classpathResource);
+		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error at processing the image");
+        }
+	
+	}
 }

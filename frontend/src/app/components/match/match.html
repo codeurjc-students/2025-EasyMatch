@@ -1,7 +1,72 @@
-<div id="match-{{match.id}}" class="match-card">
-  <h3 id="organizer-sport">  {{ match.organizer.realname}} - {{ match.sport }}</h3>
-  <p>Fecha: {{ match.date | date:'dd/MM/yyyy, HH:mm'  }}</p>
-  <p>Competitivo: {{ match.type ? 'Sí' : 'No' }}</p>
-  <p>Privado: {{ match.isPrivate ? 'Sí' : 'No' }}</p>
-  <p>Estado: {{ match.state ? 'Abierto' : 'Cerrado' }}</p>
+<div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch" class="match-wrapper">
+  <mat-card class="match-card">
+    <mat-card-header>
+      <div mat-card-avatar class="sport-avatar"> 
+        <mat-icon [ngSwitch]="match.sport.toLowerCase()"> 
+          @switch (match.sport.toLowerCase()) {
+            @case ('futbol') { sports_soccer } 
+            @case ('tenis') { sports_tennis } 
+            @case ('padel') { sports_tennis } 
+            @case ('volley') { sports_volleyball } 
+            @default { emoji_events } 
+          } 
+        </mat-icon> 
+      </div>
+
+      <mat-card-title class="sport-title">{{ match.sport }}</mat-card-title>
+      <mat-card-subtitle class="match-date">{{ match.date | date:'dd/MM/yyyy, HH:mm' }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="match-info">
+        <div class="match-row">
+          <mat-icon color="primary">place</mat-icon>
+          <span>{{ match.club.city || 'Por confirmar' }}</span>
+        </div>
+
+        <div class="match-row">
+          <mat-icon color="primary">group</mat-icon>
+          <span>{{ match.players.length }}/{{ match.players.length }} jugadores</span>
+        </div>
+
+        <div class="match-row">
+          <mat-icon color="primary">lock</mat-icon>
+          <span>{{ match.isPrivate ? 'Privado' : 'Público' }}</span>
+        </div>
+
+        <div class="match-row">
+          <mat-icon color="primary">emoji_events</mat-icon>
+          <span>{{ match.type ? 'Competitivo' : 'Amistoso' }}</span>
+        </div>
+      </div>
+
+      <mat-divider class="divider"></mat-divider>
+        <div class="organizer">
+        <img
+          class="organizer-avatar"
+          [src]="getUserImage(match.organizer.id) || 'assets/default-avatar.jpg'" alt="avatar" 
+          alt="Avatar del organizador"
+          width="56"
+          height="56"
+        />
+          <div> <span> {{match.organizer.imageUrl}}</span></div>
+        <div class="organizer-info">
+          <span class="organizer-name">{{ match.organizer.realname }}</span>
+          <div class="organizer-meta">
+            <span class="organizer-role">Organizador</span>
+            <span class="separator">·</span>
+            <span class="organizer-level">Nivel {{ match.organizer.level }}</span>
+          </div>
+        </div>
+
+        <div class="price">
+          <span>{{ match.price }} €</span>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" class="join-button">Unirse</button>
+    </mat-card-actions>
+  </mat-card>
 </div>

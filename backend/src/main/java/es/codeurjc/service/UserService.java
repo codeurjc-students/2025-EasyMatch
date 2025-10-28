@@ -1,12 +1,23 @@
 package es.codeurjc.service;
 
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import es.codeurjc.dto.UserDTO;
+import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.UserRepository;
 
@@ -17,6 +28,9 @@ public class UserService {
 
     @Autowired
 	private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserMapper mapper;
 
     public Optional<User> findById(long id) {
 		return userRepository.findById(id);
@@ -39,9 +53,11 @@ public class UserService {
 		} else {
 			user.setRoles(List.of("USER"));
 		}
-		
-		return userRepository.save(user);
+		User savedUser = userRepository.save(user);
+        userRepository.flush();
+		return savedUser;
 	}
+
 
     public void deleteById(long id) {
         Optional<User> userOptional = userRepository.findById(id);
@@ -52,5 +68,60 @@ public class UserService {
         }
     }
 
+    public UserDTO getLoggedUserDTO() {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String email;
+
+        if (principal instanceof UserDetails) {
+
+            email = ((UserDetails)principal).getUsername();
+
+        } else {
+
+            email = principal.toString();
+
+        }
+
+        return toDTO(userRepository.findByEmail(email).orElseThrow());
+
+	}
+
+    public void createUserImage(long id, InputStream inputStream, long size) { 
+		User user = userRepository.findById(id).orElseThrow();
+		user.setImage(BlobProxy.generateProxy(inputStream, size)); 
+		userRepository.save(user); 
+	}
+
+    public Resource getUserImage(long id) throws SQLException{
+		User user = userRepository.findById(id).orElseThrow();
+
+		if (user.getImage() != null) {
+			return new InputStreamResource(user.getImage().getBinaryStream());
+		} else {
+			throw new NoSuchElementException();
+		}
+    }
+
+    private UserDTO toDTO (User user) {
+        return mapper.toDTO(user);
+    }
+
+    private User toDomain (UserDTO userDTO) {
+        return mapper.toDomain(userDTO);
+    }
+
+    private List<UserDTO> toDTOs(Collection<User> users){
+        return mapper.toDTOs(users);
+    }
+
+    public Collection<UserDTO> getUsers() {
+		return toDTOs(userRepository.findAll());
+	}
+
+	public UserDTO getUser(long id) {
+		return toDTO(userRepository.findById(id).orElseThrow());
+	}
     
 }

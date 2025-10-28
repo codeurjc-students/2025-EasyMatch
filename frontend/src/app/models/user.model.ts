@@ -1,5 +1,5 @@
 export interface User{
-    id?: number;
+    id: number;
     realname: string;
     username: string;
     email: string;
@@ -7,4 +7,5 @@ export interface User{
     gender: string;
     description: string;
     level: number;
+    imageUrl?: string;
 }
