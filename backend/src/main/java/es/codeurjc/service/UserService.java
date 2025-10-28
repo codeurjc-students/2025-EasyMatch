@@ -23,6 +23,11 @@ import es.codeurjc.repository.UserRepository;
 
 @Service
 public class UserService {
+    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
+    }
     @Autowired
 	private UserRepository userRepository;
 
@@ -31,6 +36,8 @@ public class UserService {
 
     @Autowired
     private UserMapper mapper;
+
+    
 
     public Optional<User> findById(long id) {
 		return userRepository.findById(id);

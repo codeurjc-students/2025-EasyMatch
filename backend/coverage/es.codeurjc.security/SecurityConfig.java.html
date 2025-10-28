@@ -67,34 +67,38 @@ import es.codeurjc.security.jwt.UnauthorizedHandlerJwt;
 <span class="fc" id="L67">		http</span>
 <span class="fc" id="L68">			.authorizeHttpRequests(authorize -&gt; authorize</span>
                     // PRIVATE ENDPOINTS
-<span class="fc" id="L70">					.requestMatchers(HttpMethod.GET, &quot;/api/matches/**&quot;).permitAll()</span>
-<span class="fc" id="L71">					.requestMatchers(HttpMethod.POST, &quot;/api/matches/**&quot;).hasRole(&quot;USER&quot;)</span>
-<span class="fc" id="L72">					.requestMatchers(HttpMethod.DELETE, &quot;/api/matches/**&quot;).hasRole(&quot;USER&quot;)</span>
-<span class="fc" id="L73">					.requestMatchers(HttpMethod.PUT, &quot;/api/matches/**&quot;).hasRole(&quot;USER&quot;)</span>
+<span class="fc" id="L70">					.requestMatchers(HttpMethod.GET, &quot;/api/v1/matches/**&quot;).permitAll()</span>
+<span class="fc" id="L71">					.requestMatchers(HttpMethod.POST, &quot;/api/v1/matches/**&quot;).hasRole(&quot;USER&quot;)</span>
+<span class="fc" id="L72">					.requestMatchers(HttpMethod.DELETE, &quot;/api/v1/matches/**&quot;).hasRole(&quot;USER&quot;)</span>
+<span class="fc" id="L73">					.requestMatchers(HttpMethod.PUT, &quot;/api/v1/matches/**&quot;).hasRole(&quot;USER&quot;)</span>
+<span class="fc" id="L74">					.requestMatchers(HttpMethod.GET, &quot;/api/v1/users/**&quot;).permitAll()</span>
+<span class="fc" id="L75">					.requestMatchers(HttpMethod.PUT, &quot;/api/v1/users/**&quot;).hasAnyRole(&quot;USER&quot;)</span>
+<span class="fc" id="L76">					.requestMatchers(HttpMethod.DELETE, &quot;/api/v1/users/**&quot;).hasAnyRole(&quot;USER&quot;)</span>
+<span class="fc" id="L77">					.requestMatchers(HttpMethod.POST,&quot;/api/v1/auth/**&quot;).permitAll()</span>
                     // DOCUMENTATION
-<span class="fc" id="L75">					.requestMatchers(&quot;/v3/api-docs/**&quot;).permitAll()</span>
-<span class="fc" id="L76">					.requestMatchers(&quot;/swagger-ui.html&quot;).permitAll()</span>
-<span class="fc" id="L77">					.requestMatchers(&quot;/swagger-ui/**&quot;).permitAll()</span>
+<span class="fc" id="L79">					.requestMatchers(&quot;/v3/api-docs/**&quot;).permitAll()</span>
+<span class="fc" id="L80">					.requestMatchers(&quot;/swagger-ui.html&quot;).permitAll()</span>
+<span class="fc" id="L81">					.requestMatchers(&quot;/swagger-ui/**&quot;).permitAll()</span>
 					// PUBLIC ENDPOINTS
-<span class="fc" id="L79">					.anyRequest().permitAll()</span>
+<span class="fc" id="L83">					.anyRequest().permitAll()</span>
 			);
 		
         // Disable Form login Authentication
-<span class="fc" id="L83">        http.formLogin(formLogin -&gt; formLogin.disable());</span>
+<span class="fc" id="L87">        http.formLogin(formLogin -&gt; formLogin.disable());</span>
 
         // Disable CSRF protection (it is difficult to implement in REST APIs)
-<span class="fc" id="L86">        http.csrf(csrf -&gt; csrf.disable());</span>
+<span class="fc" id="L90">        http.csrf(csrf -&gt; csrf.disable());</span>
 
         // Disable Basic Authentication
-<span class="fc" id="L89">        http.httpBasic(httpBasic -&gt; httpBasic.disable());</span>
+<span class="fc" id="L93">        http.httpBasic(httpBasic -&gt; httpBasic.disable());</span>
 
         // Stateless session
-<span class="fc" id="L92">        http.sessionManagement(management -&gt; management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));</span>
+<span class="fc" id="L96">        http.sessionManagement(management -&gt; management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));</span>
 
 		// Add JWT Token filter
-<span class="fc" id="L95">		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);</span>
+<span class="fc" id="L99">		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);</span>
 
-<span class="fc" id="L97">		return http.build();</span>
+<span class="fc" id="L101">		return http.build();</span>
 	}
 
 	

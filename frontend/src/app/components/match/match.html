@@ -1,5 +1,5 @@
 <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch" class="match-wrapper">
-  <mat-card class="match-card">
+  <mat-card id="match-card{{match.id}}" class="match-card">
     <mat-card-header>
       <div mat-card-avatar class="sport-avatar"> 
         <mat-icon [ngSwitch]="match.sport.toLowerCase()"> 
@@ -21,7 +21,7 @@
       <div class="match-info">
         <div class="match-row">
           <mat-icon color="primary">place</mat-icon>
-          <span>{{ match.club.city || 'Por confirmar' }}</span>
+          <span class="match-city">{{match.club.name}}, {{ match.club.city || 'Por confirmar' }}</span>
         </div>
 
         <div class="match-row">
@@ -49,17 +49,16 @@
           width="56"
           height="56"
         />
-          <div> <span> {{match.organizer.imageUrl}}</span></div>
         <div class="organizer-info">
           <span class="organizer-name">{{ match.organizer.realname }}</span>
           <div class="organizer-meta">
             <span class="organizer-role">Organizador</span>
             <span class="separator">·</span>
-            <span class="organizer-level">Nivel {{ match.organizer.level }}</span>
+            <span class="organizer-level">Nivel {{ match.organizer.level | number:'1.0-2' }}</span>
           </div>
         </div>
 
-        <div class="price">
+        <div class="match-price">
           <span>{{ match.price }} €</span>
         </div>
       </div>

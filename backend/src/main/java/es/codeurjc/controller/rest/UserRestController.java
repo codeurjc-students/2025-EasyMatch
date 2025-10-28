@@ -37,9 +37,16 @@ public class UserRestController {
     @Autowired
     private UserMapper mapper;
 
+
     @GetMapping("/")
 	public List<UserDTO> getUsers() {
 		return mapper.toDTOs(userService.findAll());
+	}
+
+    
+	@GetMapping("/me")
+	public UserDTO me() {
+		return userService.getLoggedUserDTO();
 	}
 
     @GetMapping("/{id}")

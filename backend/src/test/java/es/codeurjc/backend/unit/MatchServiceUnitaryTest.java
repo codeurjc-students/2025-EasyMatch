@@ -36,6 +36,7 @@ public class MatchServiceUnitaryTest {
     private MatchService matchService;
     private MatchMapper mapper;
     
+    
     @BeforeEach
     public void setUp() {
         matchRepository = mock(MatchRepository.class);
@@ -56,13 +57,9 @@ public class MatchServiceUnitaryTest {
         Club club1 = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
         
         User user1 = new User();
-        user1.setRealname("Ana");
         User user2 = new User();
-        user2.setRealname("Carlos");
         User user3 = new User();
-        user3.setRealname("Sofia");
         User user4 = new User();
-        user4.setRealname("Miguel");
 
         Match match1 = new Match(date1, false, true, false, user1,3.50, "Voleibol",club1);
         Match match2 = new Match(date2, true, true, false, user2,2.75, "Baloncesto",club1);
@@ -77,12 +74,47 @@ public class MatchServiceUnitaryTest {
         when(matchRepository.findAll(pageable)).thenReturn(page);
 
         Page<MatchDTO> result = matchService.getMatches(pageable);
-        Page<MatchDTO> expected =page.map(m -> mapper.toDTO(m));
+        Page<MatchDTO> expected = page.map(m -> mapper.toDTO(m));
 
         //THEN
         assertThat(result.getNumberOfElements(),equalTo(expected.getNumberOfElements()));
     }
+    @Test
+    public void getMatchByIdUnitaryTest(){
+        //GIVEN
+        long id = 1;
+        LocalDateTime date = LocalDateTime.of(2025, 12, 12, 15, 00);
+        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
+        User organizer = new User();
+        organizer.setRealname("Laura");
+        Match match = new Match(date, true, false, true, organizer,5.00, "Padel",club);
+        match.setId(id);
+        Optional<Match> optionalMatch = Optional.of(match);
+        //WHEN
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+        MatchDTO result = matchService.getMatch(id);
+        MatchDTO expected = mapper.toDTO(match);
+        //THEN
+        assertThat(result, equalTo(expected));
+    }
 
+    @Test
+    public void deleteExistingMatchUnitaryTest(){
+        //GIVEN
+        long id = 1;
+        LocalDateTime date = LocalDateTime.of(2025, 10, 31, 17, 15);
+        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
+        User organizer = new User();
+        organizer.setRealname("Juan");
+        Match match = new Match(date, false, true, false, organizer,2.00, "Volley playa",club);
+        match.setId(id);
+        Optional<Match> optionalMatch = Optional.of(match);
+        //WHEN
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+        matchService.delete(id);
+        //THEN
+        verify(matchRepository,times(1)).deleteById(id);
+    }
     @Test
     public void deleteNonExistingMatchUnitaryTest(){
         Random random = new Random();
@@ -92,6 +124,22 @@ public class MatchServiceUnitaryTest {
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, ()-> matchService.delete(id));
         assertThat(ex.getMessage(),equalTo("Match with id " + id + " does not exist."));
+    }
+
+    @Test
+    public void saveMatchUnitaryTest(){
+        //GIVEN
+        LocalDateTime date = LocalDateTime.of(2025, 9, 20, 11, 30);
+        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
+        User organizer = new User();    
+        organizer.setRealname("Marta");
+        Match match = new Match(date, true, false, true, organizer,4.00, "Rugby",club);
+        //WHEN
+        when(matchRepository.save(match)).thenReturn(match);
+
+        Match savedMatch = matchService.save(match);
+        //THEN
+        assertThat(savedMatch, equalTo(match));
     }
 
 }

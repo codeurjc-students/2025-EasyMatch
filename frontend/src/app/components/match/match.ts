@@ -24,10 +24,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   ]
 })
 export class MatchComponent {
+  @Input() match!: Match;
   getUserImage(id: number): string {
     return `https://localhost:8443/api/v1/users/${id}/image`;
   }
-  @Input() match!: Match;
+  
   
 }
   

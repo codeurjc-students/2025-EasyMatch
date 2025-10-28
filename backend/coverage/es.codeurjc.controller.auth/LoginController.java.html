@@ -3,6 +3,7 @@
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,29 +13,44 @@ import es.codeurjc.security.jwt.AuthResponse;
 import es.codeurjc.security.jwt.AuthResponse.Status;
 import es.codeurjc.security.jwt.LoginRequest;
 import es.codeurjc.security.jwt.UserLoginService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(&quot;/api/auth&quot;)
-<span class="fc" id="L19">public class LoginController {</span>
+@RequestMapping(&quot;/api/v1/auth&quot;)
+<span class="fc" id="L26">public class LoginController {</span>
     
     @Autowired
     private UserLoginService userService;
 
+     @Operation(summary = &quot;User login&quot;, description = &quot;Authenticates the user and returns JWT tokens (access and refresh).&quot;, responses = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Login successful&quot;, content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = AuthResponse.class), examples = @ExampleObject(value = &quot;{\&quot;status\&quot;:\&quot;SUCCESS\&quot;,\&quot;message\&quot;:\&quot;Auth successful. Tokens are created in cookie.\&quot;}&quot;))),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Invalid credentials&quot;)
+    })
     @PostMapping(&quot;/login&quot;)
-    public ResponseEntity&lt;AuthResponse&gt; login (@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-<span class="nc" id="L26">        return userService.login(response, loginRequest);</span>
+    public ResponseEntity&lt;AuthResponse&gt; login(@Valid @RequestBody LoginRequest loginRequest,
+            HttpServletResponse response) {
+<span class="fc" id="L38">        return userService.login(response, loginRequest);</span>
     }
 
     @PostMapping(&quot;/refresh&quot;)
     public ResponseEntity&lt;AuthResponse&gt; refreshToken(@CookieValue(name = &quot;RefreshToken&quot;, required = false) String refreshToken,
         HttpServletResponse response) {
-<span class="nc" id="L32">            return userService.refresh(response, refreshToken);</span>
+<span class="nc" id="L44">            return userService.refresh(response, refreshToken);</span>
     }
 
     @PostMapping(&quot;/logout&quot;)
     public ResponseEntity&lt;AuthResponse&gt; logOut(HttpServletResponse response) {
-<span class="nc" id="L37">        return ResponseEntity.ok(new AuthResponse(Status.SUCCESS, userService.logout(response)));</span>
+<span class="nc" id="L49">        return ResponseEntity.ok(new AuthResponse(Status.SUCCESS, userService.logout(response)));</span>
+    }
+    @GetMapping(&quot;/status&quot;)
+    public ResponseEntity&lt;Void&gt; status() {
+<span class="fc" id="L53">        return ResponseEntity.ok().build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

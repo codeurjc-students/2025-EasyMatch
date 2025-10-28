@@ -4,13 +4,14 @@ import { Match } from '../../models/match.model';
 import { MatchComponent } from '../match/match';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, PageEvent, MatPaginatorModule } from '@angular/material/paginator';
+import { HeaderComponent } from "../header/header.component";
 
 
 @Component({
   selector: 'app-match-list',
   templateUrl:'match-list.html',
   styleUrls: ['./match-list.scss'],
-  imports: [MatchComponent, CommonModule, MatPaginator],
+  imports: [MatchComponent, CommonModule, MatPaginator, HeaderComponent],
   standalone: true,
 })
 export class MatchListComponent implements OnInit {

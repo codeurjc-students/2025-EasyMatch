@@ -6,6 +6,5 @@ export interface User{
     birthdate: Date;
     gender: string;
     description: string;
-    level: number;
-    imageUrl?: string;
+    level: number
 }

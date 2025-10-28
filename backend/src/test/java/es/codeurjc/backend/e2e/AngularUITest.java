@@ -75,7 +75,7 @@ public class AngularUITest {
     }
 
     @Test 
-    public void testHomePage2(){
+    public void testHomePage(){
          driver.get("http://localhost:" + port+"/");
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -92,14 +92,14 @@ public class AngularUITest {
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
 
-        WebElement match1 = driver.findElement(By.id("match-1")).findElement(By.id("organizer-sport"));
-        assertThat(match1.getText(), equalTo("Pedro Garcia - Tenis"));
-        WebElement match2 = driver.findElement(By.id("match-2")).findElement(By.id("organizer-sport"));
-        assertThat(match2.getText(), equalTo("Maria Lopez - Padel"));
-        WebElement match3 = driver.findElement(By.id("match-3")).findElement(By.id("organizer-sport"));
-        assertThat(match3.getText(), equalTo("Juan Martinez - Tenis"));
-        WebElement match4 = driver.findElement(By.id("match-4")).findElement(By.id("organizer-sport"));
-        assertThat(match4.getText(), equalTo("Luis Sanchez - Futbol"));
+        WebElement match1 = driver.findElement(By.id("match-card1")).findElement(By.className("organizer-name"));
+        assertThat(match1.getText(), equalTo("Pedro Garcia"));
+        WebElement match2 = driver.findElement(By.id("match-card2")).findElement(By.className("organizer-name"));
+        assertThat(match2.getText(), equalTo("Maria Lopez"));
+        WebElement match3 = driver.findElement(By.id("match-card3")).findElement(By.className("organizer-name"));
+        assertThat(match3.getText(), equalTo("Juan Martinez"));
+        WebElement match4 = driver.findElement(By.id("match-card4")).findElement(By.className("organizer-name"));
+        assertThat(match4.getText(), equalTo("Luis Sanchez"));
     }
 
 

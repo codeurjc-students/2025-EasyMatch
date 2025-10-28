@@ -4,7 +4,7 @@ import { Observable, map, catchError, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API_URL = '/api/v1/auth';
+  private API_URL = '/api/v1/auth';
   isAuthenticated = signal(false);
 
   constructor(private http: HttpClient) {}
