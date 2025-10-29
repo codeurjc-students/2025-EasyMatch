@@ -3,11 +3,13 @@ package es.codeurjc.controller.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.service.MatchService;
@@ -29,6 +31,7 @@ public class MatchRestController {
 	public MatchDTO getMatch(@PathVariable long id) {
         return matchService.getMatch(id);
 	}
+
 
 
 

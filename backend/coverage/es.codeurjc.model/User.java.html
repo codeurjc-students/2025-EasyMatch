@@ -11,15 +11,21 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.CascadeType;
 
 @Entity
+@Table(name = &quot;users&quot;)
 public class User {
+
     @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-    
-    private String realName;
-    private String userName;
+
+    private String realname;
+    private String username;
     private String email;
     private String password;
     private LocalDateTime birthDate;
@@ -27,103 +33,120 @@ public class User {
     private String description;
     private float level; // from 1 to 7
 
+    @ManyToMany (mappedBy = &quot;players&quot;, cascade = CascadeType.REMOVE)
+    private List&lt;Match&gt; matchRecord;
+
+    @OneToMany (mappedBy = &quot;organizer&quot;, cascade = CascadeType.REMOVE)
+    private List&lt;Match&gt; organizedMatches;
+
     @Lob
     private Blob image;
     
     @ElementCollection(fetch = FetchType.EAGER)
 	private List&lt;String&gt; roles;
 
-<span class="fc" id="L36">    public User() {</span>
+<span class="fc" id="L48">    public User() {</span>
         // Used by JPA
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L50">    }</span>
+
+    public User(String realname, String username, String email, String password, LocalDateTime birthDate,
+<span class="fc" id="L53">            boolean gender, String description, float level, String... roles) {</span>
+<span class="fc" id="L54">        this.realname = realname;</span>
+<span class="fc" id="L55">        this.username = username;</span>
+<span class="fc" id="L56">        this.email = email;</span>
+<span class="fc" id="L57">        this.password = password;</span>
+<span class="fc" id="L58">        this.birthDate = birthDate;</span>
+<span class="fc" id="L59">        this.gender = gender;</span>
+<span class="fc" id="L60">        this.description = description;</span>
+<span class="fc" id="L61">        this.level = level;</span>
+<span class="fc" id="L62">        this.roles = List.of(roles);</span>
+<span class="fc" id="L63">    }</span>
 
     public long getId() {
-<span class="nc" id="L41">        return id;</span>
+<span class="fc" id="L66">        return id;</span>
     }
 
     public void setId(long id) {
-<span class="nc" id="L45">        this.id = id;</span>
-<span class="nc" id="L46">    }</span>
+<span class="fc" id="L70">        this.id = id;</span>
+<span class="fc" id="L71">    }</span>
 
-    public String getRealName() {
-<span class="nc" id="L49">        return realName;</span>
+    public String getRealname() {
+<span class="fc" id="L74">        return realname;</span>
     }
 
-    public void setRealName(String realName) {
-<span class="nc" id="L53">        this.realName = realName;</span>
-<span class="nc" id="L54">    }</span>
-
-    public String getUserName() {
-<span class="nc" id="L57">        return userName;</span>
-    }
-
-    public void setUserName(String userName) {
-<span class="nc" id="L61">        this.userName = userName;</span>
-<span class="nc" id="L62">    }</span>
+    public void setRealname(String realname) {
+<span class="fc" id="L78">        this.realname = realname;</span>
+<span class="fc" id="L79">    }</span>
+    public String getUsername() {
+<span class="fc" id="L81">        return username;</span>
+    }   
+    public void setUsername(String username) {
+<span class="nc" id="L84">        this.username = username;</span>
+<span class="nc" id="L85">    }</span>
 
     public String getEmail() {
-<span class="nc" id="L65">        return email;</span>
+<span class="fc" id="L88">        return email;</span>
     }
 
     public void setEmail(String email) {
-<span class="nc" id="L69">        this.email = email;</span>
-<span class="nc" id="L70">    }</span>
+<span class="nc" id="L92">        this.email = email;</span>
+<span class="nc" id="L93">    }</span>
 
     public String getPassword() {
-<span class="nc" id="L73">        return password;</span>
+<span class="fc" id="L96">        return password;</span>
     }
 
     public void setPassword(String password) {
-<span class="nc" id="L77">        this.password = password;</span>
-<span class="nc" id="L78">    }</span>
+<span class="fc" id="L100">        this.password = password;</span>
+<span class="fc" id="L101">    }</span>
 
     public LocalDateTime getBirthDate() {
-<span class="nc" id="L81">        return birthDate;</span>
+<span class="fc" id="L104">        return birthDate;</span>
     }
 
     public void setBirthDate(LocalDateTime birthDate) {
-<span class="nc" id="L85">        this.birthDate = birthDate;</span>
-<span class="nc" id="L86">    }</span>
+<span class="nc" id="L108">        this.birthDate = birthDate;</span>
+<span class="nc" id="L109">    }</span>
 
     public boolean getGender() {
-<span class="nc" id="L89">        return gender;</span>
+<span class="fc" id="L112">        return gender;</span>
     }
 
     public void setGender(boolean gender) {
-<span class="nc" id="L93">        this.gender = gender;</span>
-<span class="nc" id="L94">    }</span>
+<span class="nc" id="L116">        this.gender = gender;</span>
+<span class="nc" id="L117">    }</span>
 
     public String getDescription() {
-<span class="nc" id="L97">        return description;</span>
+<span class="fc" id="L120">        return description;</span>
     }
 
     public void setDescription(String description) {
-<span class="nc" id="L101">        this.description = description;</span>
-<span class="nc" id="L102">    }</span>
+<span class="nc" id="L124">        this.description = description;</span>
+<span class="nc" id="L125">    }</span>
 
     public float getLevel() {
-<span class="nc" id="L105">        return level;</span>
+<span class="fc" id="L128">        return level;</span>
     }
 
     public void setLevel(float level) {
-<span class="nc" id="L109">        this.level = level;</span>
-<span class="nc" id="L110">    }</span>
+<span class="nc" id="L132">        this.level = level;</span>
+<span class="nc" id="L133">    }</span>
 
     public Blob getImage() {
-<span class="nc" id="L113">        return image;</span>
+<span class="fc" id="L136">        return image;</span>
     }
 
     public void setImage(Blob image) {
-<span class="nc" id="L117">        this.image = image;</span>
-<span class="nc" id="L118">    }</span>
+<span class="fc" id="L140">        this.image = image;</span>
+<span class="fc" id="L141">    }</span>
 
     public List&lt;String&gt; getRoles() {
-<span class="nc" id="L121">        return roles;</span>
+<span class="fc" id="L144">        return roles;</span>
     }
 
     public void setRoles(List&lt;String&gt; roles) {
-<span class="nc" id="L125">        this.roles = roles;</span>
-<span class="nc" id="L126">    }</span>
+<span class="fc" id="L148">        this.roles = roles;</span>
+<span class="fc" id="L149">    }</span>
 
     
     

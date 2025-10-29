@@ -26,13 +26,13 @@ import es.codeurjc.repository.ClubRepository;
     }
 
     public Club save(Club club) {
-<span class="nc" id="L29">        return clubRepository.save(club);</span>
+<span class="fc" id="L29">        return clubRepository.save(club);</span>
     }
     public void deleteById(long id) {
 <span class="nc" id="L32">        Optional&lt;Club&gt; clubOptional = clubRepository.findById(id);</span>
 <span class="nc bnc" id="L33" title="All 2 branches missed.">        if (clubOptional.isPresent()) {</span>
 <span class="nc" id="L34">            clubRepository.deleteById(id);</span>
-<span class="nc" id="L35">        } else {</span>
+        } else {
 <span class="nc" id="L36">            throw new IllegalArgumentException(&quot;Club with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
 <span class="nc" id="L38">    }</span>

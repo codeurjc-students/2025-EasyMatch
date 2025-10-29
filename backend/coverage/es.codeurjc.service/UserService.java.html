@@ -1,44 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">EasyMatch</a> &gt; <a href="index.source.html" class="el_package">es.codeurjc.service</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package es.codeurjc.service;
 
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import es.codeurjc.dto.UserDTO;
+import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.UserRepository;
 
 @Service
-<span class="fc" id="L13">public class UserService {</span>
+public class UserService {
+<span class="fc" id="L26">    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder) {</span>
+<span class="fc" id="L27">        this.userRepository = userRepository;</span>
+<span class="fc" id="L28">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L29">        this.mapper = mapper;</span>
+<span class="fc" id="L30">    }</span>
     @Autowired
 	private UserRepository userRepository;
 
+    @Autowired
+	private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserMapper mapper;
+
+    
+
     public Optional&lt;User&gt; findById(long id) {
-<span class="nc" id="L18">		return userRepository.findById(id);</span>
+<span class="nc" id="L43">		return userRepository.findById(id);</span>
 	}
 
     public List&lt;User&gt; findAll() {
-<span class="nc" id="L22">        return userRepository.findAll();</span>
+<span class="fc" id="L47">        return userRepository.findAll();</span>
     }
 
     public boolean exist(long id) {
-<span class="nc" id="L26">		return userRepository.existsById(id);</span>
+<span class="fc" id="L51">		return userRepository.existsById(id);</span>
 	}
 
-    public User save(User user) {
-<span class="nc" id="L30">        return userRepository.save(user);</span>
-    }
+    public User save(User user){
+<span class="fc" id="L55">		String password = user.getPassword();</span>
+<span class="fc" id="L56">        String encodedPassword = passwordEncoder.encode(password);</span>
+<span class="fc" id="L57">        user.setPassword(encodedPassword);</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">		if (user.getUsername().equals(&quot;admin&quot;)) {</span>
+<span class="nc" id="L59">			user.setRoles(List.of(&quot;USER&quot;, &quot;ADMIN&quot;));</span>
+<span class="nc" id="L60">		} else {</span>
+<span class="fc" id="L61">			user.setRoles(List.of(&quot;USER&quot;));</span>
+		}
+<span class="fc" id="L63">		User savedUser = userRepository.save(user);</span>
+<span class="fc" id="L64">        userRepository.flush();</span>
+<span class="fc" id="L65">		return savedUser;</span>
+	}
+
 
     public void deleteById(long id) {
-<span class="nc" id="L34">        Optional&lt;User&gt; userOptional = userRepository.findById(id);</span>
-<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (userOptional.isPresent()) {</span>
-<span class="nc" id="L36">            userRepository.deleteById(id);</span>
-<span class="nc" id="L37">        } else {</span>
-<span class="nc" id="L38">            throw new IllegalArgumentException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="fc" id="L70">        Optional&lt;User&gt; userOptional = userRepository.findById(id);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (userOptional.isPresent()) {</span>
+<span class="fc" id="L72">            userRepository.deleteById(id);</span>
+<span class="fc" id="L73">        } else {</span>
+<span class="fc" id="L74">            throw new IllegalArgumentException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
-<span class="nc" id="L40">    }</span>
+<span class="fc" id="L76">    }</span>
 
+    public UserDTO getLoggedUserDTO() {
+
+<span class="fc" id="L80">        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();</span>
+
+        String email;
+
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (principal instanceof UserDetails) {</span>
+
+<span class="fc" id="L86">            email = ((UserDetails)principal).getUsername();</span>
+
+<span class="fc" id="L88">        } else {</span>
+
+<span class="nc" id="L90">            email = principal.toString();</span>
+
+        }
+
+<span class="fc" id="L94">        return toDTO(userRepository.findByEmail(email).orElseThrow());</span>
+
+	}
+
+    public void createUserImage(long id, InputStream inputStream, long size) { 
+<span class="nc" id="L99">		User user = userRepository.findById(id).orElseThrow();</span>
+<span class="nc" id="L100">		user.setImage(BlobProxy.generateProxy(inputStream, size)); </span>
+<span class="nc" id="L101">		userRepository.save(user); </span>
+<span class="nc" id="L102">	}</span>
+
+    public Resource getUserImage(long id) throws SQLException{
+<span class="fc" id="L105">		User user = userRepository.findById(id).orElseThrow();</span>
+
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">		if (user.getImage() != null) {</span>
+<span class="fc" id="L108">			return new InputStreamResource(user.getImage().getBinaryStream());</span>
+		} else {
+<span class="nc" id="L110">			throw new NoSuchElementException();</span>
+		}
+    }
+
+    private UserDTO toDTO (User user) {
+<span class="fc" id="L115">        return mapper.toDTO(user);</span>
+    }
+
+    private User toDomain (UserDTO userDTO) {
+<span class="nc" id="L119">        return mapper.toDomain(userDTO);</span>
+    }
+
+    private List&lt;UserDTO&gt; toDTOs(Collection&lt;User&gt; users){
+<span class="fc" id="L123">        return mapper.toDTOs(users);</span>
+    }
+
+    public Collection&lt;UserDTO&gt; getUsers() {
+<span class="fc" id="L127">		return toDTOs(userRepository.findAll());</span>
+	}
+
+	public UserDTO getUser(long id) {
+<span class="fc" id="L131">		return toDTO(userRepository.findById(id).orElseThrow());</span>
+	}
     
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

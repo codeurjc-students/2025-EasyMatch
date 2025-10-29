@@ -37,17 +37,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
 		try {
-<span class="nc" id="L40">			var claims = jwtTokenProvider.validateToken(request, true);</span>
-<span class="nc" id="L41">			var userDetails = userDetailsService.loadUserByUsername(claims.getSubject());</span>
+<span class="fc" id="L40">			var claims = jwtTokenProvider.validateToken(request, true);</span>
+<span class="fc" id="L41">			var userDetails = userDetailsService.loadUserByUsername(claims.getSubject());</span>
 
-<span class="nc" id="L43">			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(</span>
-<span class="nc" id="L44">						userDetails, null, userDetails.getAuthorities());</span>
+<span class="fc" id="L43">			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(</span>
+<span class="fc" id="L44">						userDetails, null, userDetails.getAuthorities());</span>
 				
-<span class="nc" id="L46">			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
-<span class="nc" id="L47">			SecurityContextHolder.getContext().setAuthentication(authentication);</span>
-<span class="pc" id="L48">		} catch (Exception ex) {</span>
+<span class="fc" id="L46">			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
+<span class="fc" id="L47">			SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+<span class="fc" id="L48">		} catch (Exception ex) {</span>
 <span class="fc" id="L49">			log.error(&quot;Exception processing JWT Token: &quot;, ex);</span>
-		}
+<span class="fc" id="L50">		}</span>
 
 <span class="fc" id="L52">		filterChain.doFilter(request, response);</span>
 <span class="fc" id="L53">	}	</span>

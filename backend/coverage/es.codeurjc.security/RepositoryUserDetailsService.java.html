@@ -21,17 +21,17 @@ import es.codeurjc.repository.UserRepository;
 	private UserRepository userRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-<span class="nc" id="L26">		User user = userRepository.findByUserName(username).orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found&quot;));</span>
+<span class="pc" id="L26">		User user = userRepository.findByEmail(email).orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found&quot;));</span>
 
-<span class="nc" id="L28">		List&lt;GrantedAuthority&gt; roles = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">		for (String role : user.getRoles()) {</span>
-<span class="nc" id="L30">			roles.add(new SimpleGrantedAuthority(&quot;ROLE_&quot; + role));</span>
-		}
+<span class="fc" id="L28">		List&lt;GrantedAuthority&gt; roles = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">		for (String role : user.getRoles()) {</span>
+<span class="fc" id="L30">			roles.add(new SimpleGrantedAuthority(&quot;ROLE_&quot; + role));</span>
+<span class="fc" id="L31">		}</span>
 
-<span class="nc" id="L33">		return new org.springframework.security.core.userdetails.User(user.getUserName(), </span>
-<span class="nc" id="L34">				user.getPassword(), roles);</span>
+<span class="fc" id="L33">		return new org.springframework.security.core.userdetails.User(user.getEmail(), </span>
+<span class="fc" id="L34">				user.getPassword(), roles);</span>
 
 	}
 }

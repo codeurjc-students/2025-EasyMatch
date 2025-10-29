@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ViewEncapsulation} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +13,9 @@ import { ErrorService } from '../../service/error.service';
 
 @Component({
   selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss',
+  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -24,8 +27,7 @@ import { ErrorService } from '../../service/error.service';
     NgIf,
     CommonModule,
   ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  
 })
 export class LoginComponent {
   public loginForm: FormGroup;

@@ -3,7 +3,7 @@ package es.codeurjc.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/* import java.util.List;*/
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,11 +13,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-/* import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne; */
-
-
 
 
 @Entity
@@ -36,15 +31,17 @@ public class Match {
 	@ManyToOne
 	@JoinColumn(name = "organizer_id")
 	private User organizer;
-
+	private double price;
 	private String sport;
 	/* private Sport sport; */
+
+	
 
 	@ManyToOne
 	@JoinColumn(name = "club_id") 
 	private Club club; 
 
-	@ManyToMany
+	@ManyToMany 
 	@JoinTable(
         name = "match_players",
         joinColumns = @JoinColumn(name = "match_id"),
@@ -53,12 +50,13 @@ public class Match {
 	private List<User> players; 
 	
 
-	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, String sport, Club club) {
+	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, double price, String sport, Club club) {
 		this.date = date;
 		this.type = type;
 		this.isPrivate = isPrivate;
 		this.state = state;
 		this.organizer = organizer;
+		this.price = price;
 		this.sport = sport;
 		this.club = club;
 	}
@@ -182,6 +180,54 @@ public class Match {
 	public String toString() {
 		return "Match [id=" + id + ", date=" + date + ", type=" + type + ", isPrivate=" + isPrivate + ", state=" + state
 				+ ", organizer=" + organizer + ", sport=" + sport + ", club=" + club + ", players=" + players + "]";
+	}
+
+
+
+	public Boolean getType() {
+		return type;
+	}
+
+
+
+	public void setType(Boolean type) {
+		this.type = type;
+	}
+
+
+
+	public Boolean getIsPrivate() {
+		return isPrivate;
+	}
+
+
+
+	public void setIsPrivate(Boolean isPrivate) {
+		this.isPrivate = isPrivate;
+	}
+
+
+
+	public Boolean getState() {
+		return state;
+	}
+
+
+
+	public void setState(Boolean state) {
+		this.state = state;
+	}
+
+
+
+	public double getPrice() {
+		return price;
+	}
+
+
+
+	public void setPrice(double price) {
+		this.price = price;
 	}
 	
 	

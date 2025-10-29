@@ -13,14 +13,15 @@ import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.model.Match;
 import es.codeurjc.repository.MatchRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MatchService {
 
-<span class="fc" id="L20">    public MatchService(MatchRepository matchRepository, MatchMapper mapper) {</span>
-<span class="fc" id="L21">        this.matchRepository = matchRepository;</span>
-<span class="fc" id="L22">        this.mapper = mapper;</span>
-<span class="fc" id="L23">    }</span>
+<span class="fc" id="L21">    public MatchService(MatchRepository matchRepository, MatchMapper mapper) {</span>
+<span class="fc" id="L22">        this.matchRepository = matchRepository;</span>
+<span class="fc" id="L23">        this.mapper = mapper;</span>
+<span class="fc" id="L24">    }</span>
 
     @Autowired
 	private MatchRepository matchRepository;
@@ -29,52 +30,54 @@ public class MatchService {
     private MatchMapper mapper;
 
     private MatchDTO toDTO (Match Match) {
-<span class="fc" id="L32">        return mapper.toDTO(Match);</span>
+<span class="fc" id="L33">        return mapper.toDTO(Match);</span>
     }
 
     private Match toDomain (MatchDTO MatchDTO) {
-<span class="nc" id="L36">        return mapper.toDomain(MatchDTO);</span>
+<span class="nc" id="L37">        return mapper.toDomain(MatchDTO);</span>
     }
 
     private List&lt;MatchDTO&gt; toDTOs(Collection&lt;Match&gt; Matchs){
-<span class="nc" id="L40">        return mapper.toDTOs(Matchs);</span>
+<span class="nc" id="L41">        return mapper.toDTOs(Matchs);</span>
     }
 
     public Optional&lt;Match&gt; findById(long id) {
-<span class="nc" id="L44">		return matchRepository.findById(id);</span>
+<span class="fc" id="L45">		return matchRepository.findById(id);</span>
 	}
 
     public List&lt;Match&gt; findAll() {
-<span class="nc" id="L48">        return matchRepository.findAll();</span>
+<span class="fc" id="L49">        return matchRepository.findAll();</span>
     }
 
     public Page&lt;Match&gt; findAll(Pageable pageable) {
-<span class="fc" id="L52">		return matchRepository.findAll(pageable);</span>
+<span class="fc" id="L53">		return matchRepository.findAll(pageable);</span>
 	}
 
+    @Transactional(readOnly = true)
     public MatchDTO getMatch(long id) {
-<span class="nc" id="L56">        return toDTO(findById(id).orElseThrow());</span>
+<span class="fc" id="L58">        return toDTO(findById(id).orElseThrow());</span>
     }
     
+    @Transactional(readOnly = true)
     public Page&lt;MatchDTO&gt; getMatches(Pageable pageable) {
-<span class="fc" id="L60">        return findAll(pageable).map(this::toDTO);</span>
+<span class="fc" id="L63">        return findAll(pageable).map(this::toDTO);</span>
     }
 
     public boolean exist(long id) {
-<span class="nc" id="L64">        return matchRepository.existsById(id);  </span>
+<span class="fc" id="L67">        return matchRepository.existsById(id);  </span>
     }
     public Match save(Match match) {
-<span class="fc" id="L67">        return matchRepository.save(match);</span>
+<span class="fc" id="L70">        return matchRepository.save(match);</span>
     }
 
     public void delete(Long id) {
-<span class="fc" id="L71">        Optional&lt;Match&gt; matchOptional = matchRepository.findById(id);</span>
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if (matchOptional.isPresent()) {</span>
-<span class="nc" id="L73">            matchRepository.deleteById(id);</span>
-<span class="nc" id="L74">        } else {</span>
-<span class="fc" id="L75">            throw new IllegalArgumentException(&quot;Match with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="fc" id="L74">        Optional&lt;Match&gt; matchOptional = matchRepository.findById(id);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (matchOptional.isPresent()) {</span>
+<span class="fc" id="L76">            matchRepository.deleteById(id);</span>
+        } else {
+<span class="fc" id="L78">            throw new IllegalArgumentException(&quot;Match with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
-<span class="nc" id="L77">    }</span>
+<span class="fc" id="L80">    }</span>
 
     
 }

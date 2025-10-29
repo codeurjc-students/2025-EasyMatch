@@ -1,0 +1,140 @@
+:host {
+  display: block;
+  margin-bottom: 16px;
+
+  .match-wrapper {
+    width: 100%;
+  }
+
+  .match-card {
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-bottom: 0.5rem;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    mat-card-header {
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .sport-avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #e3f2fd;
+      border-radius: 50% !important;
+      width: 42px;
+      height: 42px;
+
+      mat-icon {
+        color: #1976d2;
+        font-size: 26px;
+      }
+    }
+
+    .sport-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .match-date {
+      font-size: 0.9rem;
+      color: #757575;
+    }
+
+    .match-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-top: 0.25rem;
+
+      .match-row {
+        display: flex;
+        align-items: center;
+        color: #424242;
+        font-size: 0.95rem;
+
+        mat-icon {
+          margin-right: 6px;
+          font-size: 20px;
+        }
+      }
+    }
+
+    .divider {
+      margin-top: 0.75rem;
+    }
+
+    .organizer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.75rem;
+      gap: 1rem;
+
+      .organizer-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #1976d2;
+      }
+
+      .organizer-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .organizer-name {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #222;
+          margin-bottom: 2px;
+        }
+
+        .organizer-meta {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+
+          .organizer-role {
+            font-size: 0.85rem;
+            color: #1976d2;
+            font-weight: 600;
+          }
+
+          .separator {
+            color: #555;
+          }
+
+          .organizer-level {
+            font-size: 0.85rem;
+            color: #555;
+          }
+        }
+      }
+
+      .match-price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #111;
+      }
+    }
+    .join-button {
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 0 1.2rem;
+      text-transform: none;
+    }
+  }
+}

@@ -1,0 +1,30 @@
+<header class="app-header">
+
+  <div class="logo">
+    <a routerLink="/matches"><img src="assets/logo.png" alt="Logo Easy Match" /></a>
+  </div>
+
+
+  <nav class="nav-links">
+    <button mat-button routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
+    <button mat-button routerLink="/clubs" routerLinkActive="active">Clubes</button>
+    <button mat-button routerLink="/profile" routerLinkActive="active">Perfil</button>
+  </nav>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" class="create-btn">
+      <mat-icon>add</mat-icon>
+      Crear Partido
+    </button>
+
+     @if (user(); as u) {
+      <div class="user-info">
+        <img class="avatar" [src]="getUserImage(u.id) || 'assets/default-avatar.jpg'" alt="Usuario" />
+        <div class="user-text">
+          <span class="user-name">{{ u.realname }}</span>
+          <span class="user-level">Nivel {{ u.level | number:'1.0-2' }}</span>
+        </div>
+      </div>
+    }
+  </div>
+</header>

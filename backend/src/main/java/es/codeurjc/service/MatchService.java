@@ -13,6 +13,7 @@ import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.model.Match;
 import es.codeurjc.repository.MatchRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MatchService {
@@ -52,10 +53,12 @@ public class MatchService {
 		return matchRepository.findAll(pageable);
 	}
 
+    @Transactional(readOnly = true)
     public MatchDTO getMatch(long id) {
         return toDTO(findById(id).orElseThrow());
     }
     
+    @Transactional(readOnly = true)
     public Page<MatchDTO> getMatches(Pageable pageable) {
         return findAll(pageable).map(this::toDTO);
     }

@@ -1,0 +1,19 @@
+.matches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  justify-items: center;
+}
+
+mat-paginator {
+  margin: 2rem auto;
+  display: flex;
+  justify-content: center;
+  background-color: #111 !important;
+  border-radius: 12pxs;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  width: fit-content;
+  padding: 0.5rem 1rem;
+}
+
