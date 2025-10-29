@@ -5,6 +5,8 @@ import { MatchService } from '../../service/match.service';
 import { MatchComponent } from '../match/match';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from "@angular/router/testing";
 
 class MockMatchService {
   getMatches() {
@@ -68,6 +70,8 @@ describe('MatchListComponent', () => {
         MatPaginatorModule,
         MatchComponent,
         MatchListComponent,
+        HttpClientTestingModule,
+        RouterTestingModule,
       ],
       providers: [{ provide: MatchService, useClass: MockMatchService }],
     }).compileComponents();
