@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 
@@ -28,7 +29,9 @@ import org.junit.jupiter.api.Order;
 @Tag("integration")
 @SpringBootTest(classes = es.codeurjc.easymatch.EasyMatchApplication.class)
 @TestMethodOrder(OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @ActiveProfiles("test")
+
 public class UserServiceIntegrationTest {
      @Autowired
     private UserRepository userRepository;

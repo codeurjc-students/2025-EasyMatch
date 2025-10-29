@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.codeurjc.dto.MatchDTO;
@@ -27,6 +28,7 @@ import es.codeurjc.service.MatchService;
 @Tag("integration")
 @SpringBootTest(classes = es.codeurjc.easymatch.EasyMatchApplication.class)
 @TestMethodOrder(OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @ActiveProfiles("test")
 
 public class MatchServiceIntegrationTest {

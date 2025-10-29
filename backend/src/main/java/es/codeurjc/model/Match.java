@@ -3,7 +3,7 @@ package es.codeurjc.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/* import java.util.List;*/
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,7 +41,7 @@ public class Match {
 	@JoinColumn(name = "club_id") 
 	private Club club; 
 
-	@ManyToMany
+	@ManyToMany 
 	@JoinTable(
         name = "match_players",
         joinColumns = @JoinColumn(name = "match_id"),
