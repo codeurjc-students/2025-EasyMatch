@@ -28,8 +28,7 @@ export class MatchComponent {
   getUserImage(id: number): string {
     return `https://localhost:8443/api/v1/users/${id}/image`;
   }
-  
-  
+
 }
   
 

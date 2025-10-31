@@ -3,15 +3,17 @@ package es.codeurjc.model;
 import java.sql.Blob;
 import java.util.List;
 
-import es.codeurjc.domain.Sport;
 import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
 
 @Entity
 public class Club {
@@ -26,16 +28,27 @@ public class Club {
     private String email;
     private String web;
 
+    @Embedded
+    private Schedule schedule;
+
+    @Embedded
+    private PriceRange priceRange;
+
+
     @OneToMany(mappedBy = "club")
     private List<Match> matchRecord;
 
-    @Transient
+    @ManyToMany
+    @JoinTable(
+        name = "club_sports",
+        joinColumns = @JoinColumn(name = "club_id"),
+        inverseJoinColumns = @JoinColumn(name = "sport_id")
+    )
     private List<Sport> sports;
 
     @ElementCollection
     private List<Integer> numberOfCourts;
 
-    
     @Lob
     private Blob image;
 
@@ -46,18 +59,6 @@ public class Club {
         this.phone = phone;
         this.email = email;
         this.web = web;
-    }
-
-    public Club(String name, String city, String address, String phone, String email, String web, List<Sport> sports,
-            List<Integer> numberOfCourts) {
-        this.name = name;
-        this.city = city;
-        this.address = address;
-        this.phone = phone;
-        this.email = email;
-        this.web = web;
-        this.sports = sports;
-        this.numberOfCourts = numberOfCourts;
     }
 
     public Club() {
@@ -119,10 +120,10 @@ public class Club {
     public void setWeb(String web) {
         this.web = web;
     }
-    public Blob getImg() {
+    public Blob getImage() {
         return image;   
     }
-    public void setImg(Blob image) {
+    public void setImage(Blob image) {
 		this.image = image;
 	}
 
@@ -142,11 +143,29 @@ public class Club {
         this.numberOfCourts = numberOfCourts;
     }
 
-    public Blob getImage() {
-        return image;
+
+
+    public Schedule getSchedule() {
+        return schedule;
     }
 
-    public void setImage(Blob image) {
-        this.image = image;
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+    }
+
+    public PriceRange getPriceRange() {
+        return priceRange;
+    }
+
+    public void setPriceRange(PriceRange priceRange) {
+        this.priceRange = priceRange;
+    }
+
+    public List<Match> getMatchRecord() {
+        return matchRecord;
+    }
+
+    public void setMatchRecord(List<Match> matchRecord) {
+        this.matchRecord = matchRecord;
     }
 }

@@ -2,8 +2,8 @@
   <mat-card id="match-card{{match.id}}" class="match-card">
     <mat-card-header>
       <div mat-card-avatar class="sport-avatar"> 
-        <mat-icon [ngSwitch]="match.sport.toLowerCase()"> 
-          @switch (match.sport.toLowerCase()) {
+        <mat-icon [ngSwitch]="match.sport.name.toLowerCase()"> 
+          @switch (match.sport.name.toLowerCase()) {
             @case ('futbol') { sports_soccer } 
             @case ('tenis') { sports_tennis } 
             @case ('padel') { sports_tennis } 
@@ -13,7 +13,7 @@
         </mat-icon> 
       </div>
 
-      <mat-card-title class="sport-title">{{ match.sport }}</mat-card-title>
+      <mat-card-title class="sport-title">{{ match.sport.name }}</mat-card-title>
       <mat-card-subtitle class="match-date">{{ match.date | date:'dd/MM/yyyy, HH:mm' }}</mat-card-subtitle>
     </mat-card-header>
 
@@ -26,7 +26,7 @@
 
         <div class="match-row">
           <mat-icon color="primary">group</mat-icon>
-          <span>{{ match.players.length }}/{{ match.players.length }} jugadores</span>
+          <span>{{ match.players.length }}/{{ match.sport.modes[0].playersPerGame }} jugadores</span>
         </div>
 
         <div class="match-row">

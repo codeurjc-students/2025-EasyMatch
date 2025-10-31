@@ -9,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
+//import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -32,25 +32,25 @@ public class Match {
 	@JoinColumn(name = "organizer_id")
 	private User organizer;
 	private double price;
-	private String sport;
-	/* private Sport sport; */
 
-	
+	@ManyToOne
+    @JoinColumn(name = "sport_id")
+    private Sport sport;
 
 	@ManyToOne
 	@JoinColumn(name = "club_id") 
 	private Club club; 
 
 	@ManyToMany 
-	@JoinTable(
+	/*@JoinTable(
         name = "match_players",
         joinColumns = @JoinColumn(name = "match_id"),
         inverseJoinColumns = @JoinColumn(name = "player_id")
-    )
+    )*/
 	private List<User> players; 
 	
 
-	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, double price, String sport, Club club) {
+	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, double price, Sport sport, Club club) {
 		this.date = date;
 		this.type = type;
 		this.isPrivate = isPrivate;
@@ -154,13 +154,13 @@ public class Match {
  
 
 
-	public String getSport() {
+	public Sport getSport() {
 		return sport;
 	}
 
 
 
-	public void setSport(String sport) {
+	public void setSport(Sport sport) {
 		this.sport = sport;
 	}
 

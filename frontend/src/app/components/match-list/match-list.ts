@@ -21,7 +21,6 @@ export class MatchListComponent implements OnInit {
   pageIndex = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
   constructor(private matchService: MatchService) {}
 
   ngOnInit(): void {

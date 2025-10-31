@@ -23,6 +23,7 @@ import es.codeurjc.service.MatchService;
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.User;
+import es.codeurjc.model.Sport;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -61,10 +62,10 @@ public class MatchServiceUnitaryTest {
         User user3 = new User();
         User user4 = new User();
 
-        Match match1 = new Match(date1, false, true, false, user1,3.50, "Voleibol",club1);
-        Match match2 = new Match(date2, true, true, false, user2,2.75, "Baloncesto",club1);
-        Match match3 = new Match(date3, false, false, true, user3,9.95, "Tenis",club1);
-        Match match4 = new Match(date4, true, false, true, user4,2.50, "Futbol",club1);
+        Match match1 = new Match(date1, false, true, false, user1,3.50, new Sport("Volley",List.of()),club1);
+        Match match2 = new Match(date2, true, true, false, user2,2.75, new Sport("Baloncesto",List.of()),club1);
+        Match match3 = new Match(date3, false, false, true, user3,9.95, new Sport("Tenis",List.of()),club1);
+        Match match4 = new Match(date4, true, false, true, user4,2.50, new Sport("Futbol",List.of()),club1);
 
         List<Match> matchList = List.of(match1,match2,match3,match4);
 
@@ -87,7 +88,7 @@ public class MatchServiceUnitaryTest {
         Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
         User organizer = new User();
         organizer.setRealname("Laura");
-        Match match = new Match(date, true, false, true, organizer,5.00, "Padel",club);
+        Match match = new Match(date, true, false, true, organizer,5.00, new Sport("Padel",List.of()),club);
         match.setId(id);
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
@@ -106,7 +107,7 @@ public class MatchServiceUnitaryTest {
         Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
         User organizer = new User();
         organizer.setRealname("Juan");
-        Match match = new Match(date, false, true, false, organizer,2.00, "Volley playa",club);
+        Match match = new Match(date, false, true, false, organizer,2.00, new Sport("Volley playa",List.of()),club);
         match.setId(id);
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
@@ -133,7 +134,7 @@ public class MatchServiceUnitaryTest {
         Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
         User organizer = new User();    
         organizer.setRealname("Marta");
-        Match match = new Match(date, true, false, true, organizer,4.00, "Rugby",club);
+        Match match = new Match(date, true, false, true, organizer,4.00, new Sport("Rugby",List.of()),club);
         //WHEN
         when(matchRepository.save(match)).thenReturn(match);
 

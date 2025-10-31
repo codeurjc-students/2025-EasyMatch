@@ -22,7 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.model.Match;
-import es.codeurjc.repository.MatchRepository;
+import es.codeurjc.model.Mode;
+import es.codeurjc.model.Sport;
 import es.codeurjc.service.MatchService;
 
 @Tag("integration")
@@ -34,12 +35,7 @@ import es.codeurjc.service.MatchService;
 public class MatchServiceIntegrationTest {
 
     @Autowired
-    private MatchRepository matchRepository;
-
-    @Autowired
     private MatchService matchService;
-
-    
 
     @Test
     @Order(1)
@@ -92,7 +88,10 @@ public class MatchServiceIntegrationTest {
         match.setIsPrivate(false);
         match.setState(false);
         match.setPrice(15.0f);
-        match.setSport("Tenis");
+        match.setSport(new Sport("Tenis", List.of(
+            new Mode("Individual", 2),
+            new Mode("Dobles", 4)
+        )));
 
         Match savedMatch = matchService.save(match);
         assertNotNull(savedMatch);

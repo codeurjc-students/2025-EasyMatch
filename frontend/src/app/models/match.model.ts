@@ -1,4 +1,5 @@
 import { Club } from "./club.model";
+import { Sport } from "./sport.model";
 import { User } from "./user.model";
 
 export interface Match {
@@ -9,7 +10,7 @@ export interface Match {
   isPrivate: boolean;
   state: boolean;
   organizer: User;
-  sport: string;
+  sport: Sport;
   price: number;
   club: Club;
   players: User[];

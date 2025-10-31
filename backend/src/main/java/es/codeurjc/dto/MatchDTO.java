@@ -3,6 +3,8 @@ package es.codeurjc.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import es.codeurjc.model.Sport;
+
 public record MatchDTO (
     Long id,
     LocalDateTime date,
@@ -11,7 +13,7 @@ public record MatchDTO (
     Boolean state,
     BasicUserDTO organizer,
     Float price,
-    String sport,
+    Sport sport,
     BasicClubDTO club,
     List<BasicUserDTO> players
 ) {

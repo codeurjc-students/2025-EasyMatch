@@ -12,11 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-
-
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.model.User;
-import es.codeurjc.repository.UserRepository;
 import es.codeurjc.service.UserService;
 
 import java.time.LocalDateTime;
@@ -33,8 +30,6 @@ import org.junit.jupiter.api.Order;
 @ActiveProfiles("test")
 
 public class UserServiceIntegrationTest {
-     @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;

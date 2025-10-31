@@ -1,4 +1,4 @@
-import { Injectable, numberAttribute } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Match } from '../models/match.model';
@@ -35,16 +35,6 @@ export class MatchService {
       );
   }
 
-  getUserImage(id: number): Observable<string> {
-    const url = `${this.apiUrl}/users/${id}/image`;
-
-    return this.http.get(url, {
-      responseType: 'blob', 
-      withCredentials: true, 
-    }).pipe(
-      map(blob => URL.createObjectURL(blob))
-    );
-  }
 
   getMatch(id: number): Observable<Match> {
     return this.http.get<Match>(`${this.apiUrl}/matches/${id}`,{withCredentials : true});
