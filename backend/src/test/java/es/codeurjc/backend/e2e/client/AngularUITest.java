@@ -50,7 +50,7 @@ public class AngularUITest {
             driver = new EdgeDriver(options);
         } else { // default: Chrome
             ChromeOptions options = new ChromeOptions();
-            //options.addArguments("--headless");
+            options.addArguments("--headless");
             driver = new ChromeDriver(options);
         }
     }
