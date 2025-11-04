@@ -11,40 +11,33 @@ export class MatchService {
 
   constructor(private http: HttpClient) {}
 
-  getMatches(page = 0, size = 6, sort = 'date,asc'): Observable<{
+  getMatches(page = 0, 
+    size = 10, 
+    sort = 'date,asc',
+    filters?: { search?: string; sport?: string; timeRange?: string, includeFriendlies?: boolean }
+  ): Observable<{
     content: Match[];
     totalElements: number;
     totalPages: number;
     number: number;
   }> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('page', page)
       .set('size', size)
       .set('sort', sort);
 
+    if (filters?.search) params = params.set('search', filters.search);
+    if (filters?.sport) params = params.set('sport', filters.sport);
+    if (filters?.timeRange) params = params.set('timeRange', filters.timeRange);
+    if (filters?.includeFriendlies) params = params.set('includeFriendlies', filters.includeFriendlies);
+
     return this.http
       .get<{ content: Match[]; totalElements: number; totalPages: number; number: number }>(
-        `${this.apiUrl}/matches/`,
+        `${this.apiUrl}/matches`,
         { params, withCredentials: true }
-      )
-      .pipe(
-        map(response => ({
-          ...response,
-          content: response.content
-        }))
-      );
+      ).pipe(map(response => ({ ...response, content: response.content })));
   }
 
-  getUserImage(id: number): Observable<string> {
-    const url = `${this.apiUrl}/users/${id}/image`;
-
-    return this.http.get(url, {
-      responseType: 'blob', 
-      withCredentials: true, 
-    }).pipe(
-      map(blob => URL.createObjectURL(blob))
-    );
-  }
 
   getMatch(id: number): Observable<Match> {
     return this.http.get<Match>(`${this.apiUrl}/matches/${id}`,{withCredentials : true});

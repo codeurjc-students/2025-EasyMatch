@@ -3,15 +3,18 @@
 import java.sql.Blob;
 import java.util.List;
 
-import es.codeurjc.domain.Sport;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
 
 @Entity
 public class Club {
@@ -26,128 +29,145 @@ public class Club {
     private String email;
     private String web;
 
-    @OneToMany(mappedBy = &quot;club&quot;)
+    @Embedded
+    private Schedule schedule;
+
+    @Embedded
+    private PriceRange priceRange;
+
+    
+    @OneToMany(mappedBy = &quot;club&quot;, cascade = CascadeType.ALL) 
     private List&lt;Match&gt; matchRecord;
 
-    @Transient
+    @ManyToMany
+    @JoinTable(
+        name = &quot;club_sports&quot;,
+        joinColumns = @JoinColumn(name = &quot;club_id&quot;),
+        inverseJoinColumns = @JoinColumn(name = &quot;sport_id&quot;)
+    )
     private List&lt;Sport&gt; sports;
 
     @ElementCollection
     private List&lt;Integer&gt; numberOfCourts;
 
-    
     @Lob
     private Blob image;
 
-<span class="fc" id="L42">    public Club(String name, String city, String address, String phone, String email, String web) {</span>
-<span class="fc" id="L43">        this.name = name;</span>
-<span class="fc" id="L44">        this.city = city;</span>
-<span class="fc" id="L45">        this.address = address;</span>
-<span class="fc" id="L46">        this.phone = phone;</span>
-<span class="fc" id="L47">        this.email = email;</span>
-<span class="fc" id="L48">        this.web = web;</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L56">    public Club(String name, String city, String address, String phone, String email, String web) {</span>
+<span class="fc" id="L57">        this.name = name;</span>
+<span class="fc" id="L58">        this.city = city;</span>
+<span class="fc" id="L59">        this.address = address;</span>
+<span class="fc" id="L60">        this.phone = phone;</span>
+<span class="fc" id="L61">        this.email = email;</span>
+<span class="fc" id="L62">        this.web = web;</span>
+<span class="fc" id="L63">    }</span>
 
-    public Club(String name, String city, String address, String phone, String email, String web, List&lt;Sport&gt; sports,
-<span class="fc" id="L52">            List&lt;Integer&gt; numberOfCourts) {</span>
-<span class="fc" id="L53">        this.name = name;</span>
-<span class="fc" id="L54">        this.city = city;</span>
-<span class="fc" id="L55">        this.address = address;</span>
-<span class="fc" id="L56">        this.phone = phone;</span>
-<span class="fc" id="L57">        this.email = email;</span>
-<span class="fc" id="L58">        this.web = web;</span>
-<span class="fc" id="L59">        this.sports = sports;</span>
-<span class="fc" id="L60">        this.numberOfCourts = numberOfCourts;</span>
-<span class="fc" id="L61">    }</span>
-
-<span class="fc" id="L63">    public Club() {</span>
+<span class="fc" id="L65">    public Club() {</span>
         // Used by JPA
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L67">    }</span>
 
     public long getId() {
-<span class="fc" id="L68">        return id;</span>
+<span class="fc" id="L70">        return id;</span>
     }
 
     public void setId(long id) {
-<span class="nc" id="L72">        this.id = id;</span>
-<span class="nc" id="L73">    }</span>
+<span class="fc" id="L74">        this.id = id;</span>
+<span class="fc" id="L75">    }</span>
 
     public String getName() {
-<span class="fc" id="L76">        return name;</span>
+<span class="fc" id="L78">        return name;</span>
     }
 
     public void setName(String name) {
-<span class="nc" id="L80">        this.name = name;</span>
-<span class="nc" id="L81">    }</span>
+<span class="fc" id="L82">        this.name = name;</span>
+<span class="fc" id="L83">    }</span>
 
     public String getCity() {
-<span class="fc" id="L84">        return city;</span>
+<span class="fc" id="L86">        return city;</span>
     }
 
     public void setCity(String city) {
-<span class="nc" id="L88">        this.city = city;</span>
-<span class="nc" id="L89">    }</span>
+<span class="fc" id="L90">        this.city = city;</span>
+<span class="fc" id="L91">    }</span>
 
     public String getAddress() {
-<span class="nc" id="L92">        return address;</span>
+<span class="fc" id="L94">        return address;</span>
     }
 
     public void setAddress(String address) {
-<span class="nc" id="L96">        this.address = address;</span>
-<span class="nc" id="L97">    }</span>
+<span class="fc" id="L98">        this.address = address;</span>
+<span class="fc" id="L99">    }</span>
 
     public String getPhone() {
-<span class="nc" id="L100">        return phone;</span>
+<span class="fc" id="L102">        return phone;</span>
     }
 
     public void setPhone(String phone) {
-<span class="nc" id="L104">        this.phone = phone;</span>
-<span class="nc" id="L105">    }</span>
+<span class="fc" id="L106">        this.phone = phone;</span>
+<span class="fc" id="L107">    }</span>
 
     public String getEmail() {
-<span class="nc" id="L108">        return email;</span>
+<span class="fc" id="L110">        return email;</span>
     }
 
     public void setEmail(String email) {
-<span class="nc" id="L112">        this.email = email;</span>
-<span class="nc" id="L113">    }</span>
+<span class="fc" id="L114">        this.email = email;</span>
+<span class="fc" id="L115">    }</span>
 
     public String getWeb() {
-<span class="nc" id="L116">        return web;</span>
+<span class="fc" id="L118">        return web;</span>
     }
 
     public void setWeb(String web) {
-<span class="nc" id="L120">        this.web = web;</span>
-<span class="nc" id="L121">    }</span>
-    public Blob getImg() {
-<span class="nc" id="L123">        return image;   </span>
+<span class="fc" id="L122">        this.web = web;</span>
+<span class="fc" id="L123">    }</span>
+    public Blob getImage() {
+<span class="fc" id="L125">        return image;   </span>
     }
-    public void setImg(Blob image) {
-<span class="nc" id="L126">		this.image = image;</span>
-<span class="nc" id="L127">	}</span>
+    public void setImage(Blob image) {
+<span class="fc" id="L128">		this.image = image;</span>
+<span class="fc" id="L129">	}</span>
 
     public List&lt;Sport&gt; getSports() {
-<span class="nc" id="L130">        return sports;</span>
+<span class="fc" id="L132">        return sports;</span>
     }
 
     public void setSports(List&lt;Sport&gt; sports) {
-<span class="nc" id="L134">        this.sports = sports;</span>
-<span class="nc" id="L135">    }</span>
+<span class="fc" id="L136">        this.sports = sports;</span>
+<span class="fc" id="L137">    }</span>
 
     public List&lt;Integer&gt; getNumberOfCourts() {
-<span class="nc" id="L138">        return numberOfCourts;</span>
+<span class="fc" id="L140">        return numberOfCourts;</span>
     }
 
     public void setNumberOfCourts(List&lt;Integer&gt; numberOfCourts) {
-<span class="nc" id="L142">        this.numberOfCourts = numberOfCourts;</span>
-<span class="nc" id="L143">    }</span>
+<span class="fc" id="L144">        this.numberOfCourts = numberOfCourts;</span>
+<span class="fc" id="L145">    }</span>
 
-    public Blob getImage() {
-<span class="nc" id="L146">        return image;</span>
+
+
+    public Schedule getSchedule() {
+<span class="fc" id="L150">        return schedule;</span>
     }
 
-    public void setImage(Blob image) {
-<span class="nc" id="L150">        this.image = image;</span>
-<span class="nc" id="L151">    }</span>
+    public void setSchedule(Schedule schedule) {
+<span class="fc" id="L154">        this.schedule = schedule;</span>
+<span class="fc" id="L155">    }</span>
+
+    public PriceRange getPriceRange() {
+<span class="fc" id="L158">        return priceRange;</span>
+    }
+
+    public void setPriceRange(PriceRange priceRange) {
+<span class="fc" id="L162">        this.priceRange = priceRange;</span>
+<span class="fc" id="L163">    }</span>
+
+    public List&lt;Match&gt; getMatchRecord() {
+<span class="nc" id="L166">        return matchRecord;</span>
+    }
+
+    public void setMatchRecord(List&lt;Match&gt; matchRecord) {
+<span class="nc" id="L170">        this.matchRecord = matchRecord;</span>
+<span class="nc" id="L171">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

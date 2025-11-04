@@ -1,4 +1,4 @@
-package es.codeurjc.backend.e2e;
+package es.codeurjc.backend.e2e.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -100,6 +100,40 @@ public class AngularUITest {
         assertThat(match3.getText(), equalTo("Juan Martinez"));
         WebElement match4 = driver.findElement(By.id("match-card4")).findElement(By.className("organizer-name"));
         assertThat(match4.getText(), equalTo("Luis Sanchez"));
+    }
+
+    @Test 
+    public void testClubsPage(){
+         driver.get("http://localhost:" + port+"/");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
+
+        WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));
+        WebElement passwordInput = driver.findElement(By.cssSelector("input[formcontrolname='password']"));
+        emailInput.sendKeys("pedro@emeal.com");
+        passwordInput.sendKeys("pedroga4");
+
+        WebElement loginButton = driver.findElement(By.cssSelector("button.btn-login"));
+        loginButton.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
+        WebElement clubsButton = driver.findElement(By.id("clubsButton"));
+        clubsButton.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-club")));
+
+        WebElement match1 = driver.findElement(By.id("club-card1")).findElement(By.id("club-name"));
+        assertThat(match1.getText(), equalTo("Tennis Club Elite"));
+        WebElement match2 = driver.findElement(By.id("club-card2")).findElement(By.id("club-name"));
+        assertThat(match2.getText(), equalTo("Padel Pro Center"));
+        WebElement match3 = driver.findElement(By.id("club-card3")).findElement(By.id("club-name"));
+        assertThat(match3.getText(), equalTo("Tennis & Padel Hub"));
+        WebElement match4 = driver.findElement(By.id("club-card4")).findElement(By.id("club-name"));
+        assertThat(match4.getText(), equalTo("Football Arena"));
+
+
     }
 
 

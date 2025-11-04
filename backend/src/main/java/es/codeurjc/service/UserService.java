@@ -115,9 +115,6 @@ public class UserService {
         return mapper.toDTO(user);
     }
 
-    private User toDomain (UserDTO userDTO) {
-        return mapper.toDomain(userDTO);
-    }
 
     private List<UserDTO> toDTOs(Collection<User> users){
         return mapper.toDTOs(users);

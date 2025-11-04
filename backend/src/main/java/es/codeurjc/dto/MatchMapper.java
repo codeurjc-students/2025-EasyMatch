@@ -12,7 +12,7 @@ public interface MatchMapper {
 
     MatchDTO toDTO(Match match);
 
-    List<MatchDTO> toDTOs(Collection<Match> products);
+    List<MatchDTO> toDTOs(Collection<Match> matches);
 
     Match toDomain(MatchDTO matchDTO);
 } 

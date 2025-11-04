@@ -40,7 +40,7 @@ public class UserService {
     
 
     public Optional&lt;User&gt; findById(long id) {
-<span class="nc" id="L43">		return userRepository.findById(id);</span>
+<span class="fc" id="L43">		return userRepository.findById(id);</span>
 	}
 
     public List&lt;User&gt; findAll() {
@@ -115,20 +115,17 @@ public class UserService {
 <span class="fc" id="L115">        return mapper.toDTO(user);</span>
     }
 
-    private User toDomain (UserDTO userDTO) {
-<span class="nc" id="L119">        return mapper.toDomain(userDTO);</span>
-    }
 
     private List&lt;UserDTO&gt; toDTOs(Collection&lt;User&gt; users){
-<span class="fc" id="L123">        return mapper.toDTOs(users);</span>
+<span class="fc" id="L120">        return mapper.toDTOs(users);</span>
     }
 
     public Collection&lt;UserDTO&gt; getUsers() {
-<span class="fc" id="L127">		return toDTOs(userRepository.findAll());</span>
+<span class="fc" id="L124">		return toDTOs(userRepository.findAll());</span>
 	}
 
 	public UserDTO getUser(long id) {
-<span class="fc" id="L131">		return toDTO(userRepository.findById(id).orElseThrow());</span>
+<span class="fc" id="L128">		return toDTO(userRepository.findById(id).orElseThrow());</span>
 	}
     
 }

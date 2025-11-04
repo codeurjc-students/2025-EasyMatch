@@ -1,0 +1,28 @@
+<mat-card id="club-card{{club.id}}" class="club-card">
+  <img [src]="getClubImage(club.id)" [alt]="club.name" />
+
+  <mat-card-content>
+    <h3 id="club-name">{{ club.name }}</h3>
+
+    <div class="club-meta">
+      <p><mat-icon>place</mat-icon>{{ club.city }}</p>
+      <p><mat-icon>schedule</mat-icon>{{ club.schedule.openingTime }} - {{club.schedule.closingTime}}</p>
+    </div>
+
+    <div class="sports">
+      <span class="sport" *ngFor="let s of club.sports">{{ s.name }}</span>
+    </div>
+
+    <p class="price-label">Precio por hora</p>
+    <p class="price">{{ club.priceRange.minPrice }} - {{club.priceRange.maxPrice}} {{club.priceRange.unit}}</p>
+
+    <!--<div class="services">
+      <mat-icon *ngFor="let service of club.services">{{ service }}</mat-icon>
+    </div> -->
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-stroked-button>Disponibilidad</button>
+    <button mat-flat-button color="primary">Ver detalles</button>
+  </mat-card-actions>
+</mat-card>

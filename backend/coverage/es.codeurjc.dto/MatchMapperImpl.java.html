@@ -2,6 +2,7 @@
 
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.Sport;
 import es.codeurjc.model.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,182 +13,182 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2025-10-28T21:09:09+0100&quot;,
-    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)&quot;
+    date = &quot;2025-11-04T11:17:57+0100&quot;,
+    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.44.0.v20251023-0518, environment: Java 21.0.8 (Eclipse Adoptium)&quot;
 )
 @Component
-<span class="fc" id="L19">public class MatchMapperImpl implements MatchMapper {</span>
+<span class="fc" id="L20">public class MatchMapperImpl implements MatchMapper {</span>
 
     @Override
     public MatchDTO toDTO(Match match) {
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        if ( match == null ) {</span>
-<span class="nc" id="L24">            return null;</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if ( match == null ) {</span>
+<span class="nc" id="L25">            return null;</span>
         }
 
-<span class="fc" id="L27">        Long id = null;</span>
-<span class="fc" id="L28">        LocalDateTime date = null;</span>
-<span class="fc" id="L29">        Boolean type = null;</span>
-<span class="fc" id="L30">        Boolean isPrivate = null;</span>
-<span class="fc" id="L31">        Boolean state = null;</span>
-<span class="fc" id="L32">        BasicUserDTO organizer = null;</span>
-<span class="fc" id="L33">        Float price = null;</span>
-<span class="fc" id="L34">        String sport = null;</span>
-<span class="fc" id="L35">        BasicClubDTO club = null;</span>
-<span class="fc" id="L36">        List&lt;BasicUserDTO&gt; players = null;</span>
+<span class="fc" id="L28">        Long id = null;</span>
+<span class="fc" id="L29">        LocalDateTime date = null;</span>
+<span class="fc" id="L30">        Boolean type = null;</span>
+<span class="fc" id="L31">        Boolean isPrivate = null;</span>
+<span class="fc" id="L32">        Boolean state = null;</span>
+<span class="fc" id="L33">        BasicUserDTO organizer = null;</span>
+<span class="fc" id="L34">        Float price = null;</span>
+<span class="fc" id="L35">        Sport sport = null;</span>
+<span class="fc" id="L36">        BasicClubDTO club = null;</span>
+<span class="fc" id="L37">        List&lt;BasicUserDTO&gt; players = null;</span>
 
-<span class="fc" id="L38">        id = match.getId();</span>
-<span class="fc" id="L39">        date = match.getDate();</span>
-<span class="fc" id="L40">        type = match.getType();</span>
-<span class="fc" id="L41">        isPrivate = match.getIsPrivate();</span>
-<span class="fc" id="L42">        state = match.getState();</span>
-<span class="fc" id="L43">        organizer = userToBasicUserDTO( match.getOrganizer() );</span>
-<span class="fc" id="L44">        price = (float) match.getPrice();</span>
-<span class="fc" id="L45">        sport = match.getSport();</span>
-<span class="fc" id="L46">        club = clubToBasicClubDTO( match.getClub() );</span>
-<span class="fc" id="L47">        players = userListToBasicUserDTOList( match.getPlayers() );</span>
+<span class="fc" id="L39">        id = match.getId();</span>
+<span class="fc" id="L40">        date = match.getDate();</span>
+<span class="fc" id="L41">        type = match.getType();</span>
+<span class="fc" id="L42">        isPrivate = match.getIsPrivate();</span>
+<span class="fc" id="L43">        state = match.getState();</span>
+<span class="fc" id="L44">        organizer = userToBasicUserDTO( match.getOrganizer() );</span>
+<span class="fc" id="L45">        price = (float) match.getPrice();</span>
+<span class="fc" id="L46">        sport = match.getSport();</span>
+<span class="fc" id="L47">        club = clubToBasicClubDTO( match.getClub() );</span>
+<span class="fc" id="L48">        players = userListToBasicUserDTOList( match.getPlayers() );</span>
 
-<span class="fc" id="L49">        MatchDTO matchDTO = new MatchDTO( id, date, type, isPrivate, state, organizer, price, sport, club, players );</span>
+<span class="fc" id="L50">        MatchDTO matchDTO = new MatchDTO( id, date, type, isPrivate, state, organizer, price, sport, club, players );</span>
 
-<span class="fc" id="L51">        return matchDTO;</span>
+<span class="fc" id="L52">        return matchDTO;</span>
     }
 
     @Override
-    public List&lt;MatchDTO&gt; toDTOs(Collection&lt;Match&gt; products) {
-<span class="nc bnc" id="L56" title="All 2 branches missed.">        if ( products == null ) {</span>
-<span class="nc" id="L57">            return null;</span>
+    public List&lt;MatchDTO&gt; toDTOs(Collection&lt;Match&gt; matches) {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if ( matches == null ) {</span>
+<span class="nc" id="L58">            return null;</span>
         }
 
-<span class="nc" id="L60">        List&lt;MatchDTO&gt; list = new ArrayList&lt;MatchDTO&gt;( products.size() );</span>
-<span class="nc bnc" id="L61" title="All 2 branches missed.">        for ( Match match : products ) {</span>
-<span class="nc" id="L62">            list.add( toDTO( match ) );</span>
-<span class="nc" id="L63">        }</span>
+<span class="nc" id="L61">        List&lt;MatchDTO&gt; list = new ArrayList&lt;MatchDTO&gt;( matches.size() );</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        for ( Match match : matches ) {</span>
+<span class="nc" id="L63">            list.add( toDTO( match ) );</span>
+        }
 
-<span class="nc" id="L65">        return list;</span>
+<span class="nc" id="L66">        return list;</span>
     }
 
     @Override
     public Match toDomain(MatchDTO matchDTO) {
-<span class="nc bnc" id="L70" title="All 2 branches missed.">        if ( matchDTO == null ) {</span>
-<span class="nc" id="L71">            return null;</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if ( matchDTO == null ) {</span>
+<span class="nc" id="L72">            return null;</span>
         }
 
-<span class="nc" id="L74">        Match match = new Match();</span>
+<span class="nc" id="L75">        Match match = new Match();</span>
 
-<span class="nc bnc" id="L76" title="All 2 branches missed.">        if ( matchDTO.id() != null ) {</span>
-<span class="nc" id="L77">            match.setId( matchDTO.id() );</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if ( matchDTO.id() != null ) {</span>
+<span class="nc" id="L78">            match.setId( matchDTO.id() );</span>
         }
-<span class="nc" id="L79">        match.setDate( matchDTO.date() );</span>
-<span class="nc" id="L80">        match.setType( matchDTO.type() );</span>
-<span class="nc" id="L81">        match.setState( matchDTO.state() );</span>
+<span class="nc" id="L80">        match.setDate( matchDTO.date() );</span>
+<span class="nc" id="L81">        match.setType( matchDTO.type() );</span>
 <span class="nc" id="L82">        match.setClub( basicClubDTOToClub( matchDTO.club() ) );</span>
 <span class="nc" id="L83">        match.setPlayers( basicUserDTOListToUserList( matchDTO.players() ) );</span>
 <span class="nc" id="L84">        match.setSport( matchDTO.sport() );</span>
 <span class="nc" id="L85">        match.setOrganizer( basicUserDTOToUser( matchDTO.organizer() ) );</span>
 <span class="nc" id="L86">        match.setIsPrivate( matchDTO.isPrivate() );</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">        if ( matchDTO.price() != null ) {</span>
-<span class="nc" id="L88">            match.setPrice( matchDTO.price() );</span>
+<span class="nc" id="L87">        match.setState( matchDTO.state() );</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if ( matchDTO.price() != null ) {</span>
+<span class="nc" id="L89">            match.setPrice( matchDTO.price() );</span>
         }
 
-<span class="nc" id="L91">        return match;</span>
+<span class="nc" id="L92">        return match;</span>
     }
 
     protected BasicUserDTO userToBasicUserDTO(User user) {
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if ( user == null ) {</span>
-<span class="nc" id="L96">            return null;</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        if ( user == null ) {</span>
+<span class="nc" id="L97">            return null;</span>
         }
 
-<span class="fc" id="L99">        Long id = null;</span>
-<span class="fc" id="L100">        String realname = null;</span>
-<span class="fc" id="L101">        String username = null;</span>
-<span class="fc" id="L102">        Float level = null;</span>
+<span class="fc" id="L100">        Long id = null;</span>
+<span class="fc" id="L101">        String realname = null;</span>
+<span class="fc" id="L102">        String username = null;</span>
+<span class="fc" id="L103">        Float level = null;</span>
 
-<span class="fc" id="L104">        id = user.getId();</span>
-<span class="fc" id="L105">        realname = user.getRealname();</span>
-<span class="fc" id="L106">        username = user.getUsername();</span>
-<span class="fc" id="L107">        level = user.getLevel();</span>
+<span class="fc" id="L105">        id = user.getId();</span>
+<span class="fc" id="L106">        realname = user.getRealname();</span>
+<span class="fc" id="L107">        username = user.getUsername();</span>
+<span class="fc" id="L108">        level = user.getLevel();</span>
 
-<span class="fc" id="L109">        BasicUserDTO basicUserDTO = new BasicUserDTO( id, realname, username, level );</span>
+<span class="fc" id="L110">        BasicUserDTO basicUserDTO = new BasicUserDTO( id, realname, username, level );</span>
 
-<span class="fc" id="L111">        return basicUserDTO;</span>
+<span class="fc" id="L112">        return basicUserDTO;</span>
     }
 
     protected BasicClubDTO clubToBasicClubDTO(Club club) {
-<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if ( club == null ) {</span>
-<span class="nc" id="L116">            return null;</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if ( club == null ) {</span>
+<span class="nc" id="L117">            return null;</span>
         }
 
-<span class="fc" id="L119">        Long id = null;</span>
-<span class="fc" id="L120">        String name = null;</span>
-<span class="fc" id="L121">        String city = null;</span>
+<span class="fc" id="L120">        Long id = null;</span>
+<span class="fc" id="L121">        String name = null;</span>
+<span class="fc" id="L122">        String city = null;</span>
 
-<span class="fc" id="L123">        id = club.getId();</span>
-<span class="fc" id="L124">        name = club.getName();</span>
-<span class="fc" id="L125">        city = club.getCity();</span>
+<span class="fc" id="L124">        id = club.getId();</span>
+<span class="fc" id="L125">        name = club.getName();</span>
+<span class="fc" id="L126">        city = club.getCity();</span>
 
-<span class="fc" id="L127">        BasicClubDTO basicClubDTO = new BasicClubDTO( id, name, city );</span>
+<span class="fc" id="L128">        BasicClubDTO basicClubDTO = new BasicClubDTO( id, name, city );</span>
 
-<span class="fc" id="L129">        return basicClubDTO;</span>
+<span class="fc" id="L130">        return basicClubDTO;</span>
     }
 
     protected List&lt;BasicUserDTO&gt; userListToBasicUserDTOList(List&lt;User&gt; list) {
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        if ( list == null ) {</span>
-<span class="fc" id="L134">            return null;</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        if ( list == null ) {</span>
+<span class="fc" id="L135">            return null;</span>
         }
 
-<span class="fc" id="L137">        List&lt;BasicUserDTO&gt; list1 = new ArrayList&lt;BasicUserDTO&gt;( list.size() );</span>
-<span class="fc bfc" id="L138" title="All 2 branches covered.">        for ( User user : list ) {</span>
-<span class="fc" id="L139">            list1.add( userToBasicUserDTO( user ) );</span>
-<span class="fc" id="L140">        }</span>
+<span class="fc" id="L138">        List&lt;BasicUserDTO&gt; list1 = new ArrayList&lt;BasicUserDTO&gt;( list.size() );</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        for ( User user : list ) {</span>
+<span class="fc" id="L140">            list1.add( userToBasicUserDTO( user ) );</span>
+        }
 
-<span class="fc" id="L142">        return list1;</span>
+<span class="fc" id="L143">        return list1;</span>
     }
 
     protected Club basicClubDTOToClub(BasicClubDTO basicClubDTO) {
-<span class="nc bnc" id="L146" title="All 2 branches missed.">        if ( basicClubDTO == null ) {</span>
-<span class="nc" id="L147">            return null;</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if ( basicClubDTO == null ) {</span>
+<span class="nc" id="L148">            return null;</span>
         }
 
-<span class="nc" id="L150">        Club club = new Club();</span>
+<span class="nc" id="L151">        Club club = new Club();</span>
 
-<span class="nc bnc" id="L152" title="All 2 branches missed.">        if ( basicClubDTO.id() != null ) {</span>
-<span class="nc" id="L153">            club.setId( basicClubDTO.id() );</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if ( basicClubDTO.id() != null ) {</span>
+<span class="nc" id="L154">            club.setId( basicClubDTO.id() );</span>
         }
-<span class="nc" id="L155">        club.setName( basicClubDTO.name() );</span>
-<span class="nc" id="L156">        club.setCity( basicClubDTO.city() );</span>
+<span class="nc" id="L156">        club.setName( basicClubDTO.name() );</span>
+<span class="nc" id="L157">        club.setCity( basicClubDTO.city() );</span>
 
-<span class="nc" id="L158">        return club;</span>
+<span class="nc" id="L159">        return club;</span>
     }
 
     protected User basicUserDTOToUser(BasicUserDTO basicUserDTO) {
-<span class="nc bnc" id="L162" title="All 2 branches missed.">        if ( basicUserDTO == null ) {</span>
-<span class="nc" id="L163">            return null;</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if ( basicUserDTO == null ) {</span>
+<span class="nc" id="L164">            return null;</span>
         }
 
-<span class="nc" id="L166">        User user = new User();</span>
+<span class="nc" id="L167">        User user = new User();</span>
 
-<span class="nc bnc" id="L168" title="All 2 branches missed.">        if ( basicUserDTO.id() != null ) {</span>
-<span class="nc" id="L169">            user.setId( basicUserDTO.id() );</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if ( basicUserDTO.id() != null ) {</span>
+<span class="nc" id="L170">            user.setId( basicUserDTO.id() );</span>
         }
-<span class="nc" id="L171">        user.setRealname( basicUserDTO.realname() );</span>
-<span class="nc" id="L172">        user.setUsername( basicUserDTO.username() );</span>
-<span class="nc bnc" id="L173" title="All 2 branches missed.">        if ( basicUserDTO.level() != null ) {</span>
-<span class="nc" id="L174">            user.setLevel( basicUserDTO.level() );</span>
+<span class="nc" id="L172">        user.setRealname( basicUserDTO.realname() );</span>
+<span class="nc" id="L173">        user.setUsername( basicUserDTO.username() );</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if ( basicUserDTO.level() != null ) {</span>
+<span class="nc" id="L175">            user.setLevel( basicUserDTO.level() );</span>
         }
 
-<span class="nc" id="L177">        return user;</span>
+<span class="nc" id="L178">        return user;</span>
     }
 
     protected List&lt;User&gt; basicUserDTOListToUserList(List&lt;BasicUserDTO&gt; list) {
-<span class="nc bnc" id="L181" title="All 2 branches missed.">        if ( list == null ) {</span>
-<span class="nc" id="L182">            return null;</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if ( list == null ) {</span>
+<span class="nc" id="L183">            return null;</span>
         }
 
-<span class="nc" id="L185">        List&lt;User&gt; list1 = new ArrayList&lt;User&gt;( list.size() );</span>
-<span class="nc bnc" id="L186" title="All 2 branches missed.">        for ( BasicUserDTO basicUserDTO : list ) {</span>
-<span class="nc" id="L187">            list1.add( basicUserDTOToUser( basicUserDTO ) );</span>
-<span class="nc" id="L188">        }</span>
+<span class="nc" id="L186">        List&lt;User&gt; list1 = new ArrayList&lt;User&gt;( list.size() );</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        for ( BasicUserDTO basicUserDTO : list ) {</span>
+<span class="nc" id="L188">            list1.add( basicUserDTOToUser( basicUserDTO ) );</span>
+        }
 
-<span class="nc" id="L190">        return list1;</span>
+<span class="nc" id="L191">        return list1;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

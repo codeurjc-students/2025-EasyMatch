@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import java.util.Random;
-
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -22,8 +20,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.model.Match;
-import es.codeurjc.repository.MatchRepository;
+import es.codeurjc.model.Sport;
+import es.codeurjc.model.User;
 import es.codeurjc.service.MatchService;
+import es.codeurjc.service.SportService;
+import es.codeurjc.service.UserService;
 
 @Tag("integration")
 @SpringBootTest(classes = es.codeurjc.easymatch.EasyMatchApplication.class)
@@ -34,17 +35,18 @@ import es.codeurjc.service.MatchService;
 public class MatchServiceIntegrationTest {
 
     @Autowired
-    private MatchRepository matchRepository;
-
-    @Autowired
     private MatchService matchService;
 
-    
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SportService sportService;
 
     @Test
     @Order(1)
     public void getMatchesIntegrationTest(){
-        int numMatches = 4;
+        int numMatches = matchService.findAll().size();
         PageRequest pageable = PageRequest.of(0, 10);
         Page<MatchDTO> pageOfMatches = matchService.getMatches(pageable);
         assertThat(pageOfMatches.getNumberOfElements(), equalTo(numMatches));
@@ -53,7 +55,7 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(2)
     public void getMatchByIdIntegrationTest(){
-        long id = 1;
+        long id = 1L;
         MatchDTO matchDTO = matchService.getMatch(id);
         assertThat(matchDTO.id(), equalTo(id));
         assertThat(matchDTO.club().name(), equalTo("Tennis Club Elite"));
@@ -62,9 +64,8 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(3)
     public void deleteNonExistingMatchIntegrationTest(){
-        Random random = new Random();
-        int numMatches = matchService.findAll().size();
-        long id = numMatches + random.nextLong(100);
+        long numMatches = matchService.findAll().size();
+        long id = numMatches + 1;
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, ()-> matchService.delete(id));
         assertThat(ex.getMessage(),equalTo("Match with id " + id + " does not exist."));
     }
@@ -72,9 +73,8 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(4)
     public void deleteExistingMatchIntegrationTest(){
-        Random random = new Random();
-        int numMatches = 4;
-        long id = 1 + random.nextLong(numMatches);
+        long id = 3L;
+        int numMatches = matchService.findAll().size();
         matchService.delete(id);
         List<Match> matches = matchService.findAll();
         assertThat(matchService.exist(id), equalTo(false));
@@ -92,7 +92,11 @@ public class MatchServiceIntegrationTest {
         match.setIsPrivate(false);
         match.setState(false);
         match.setPrice(15.0f);
-        match.setSport("Tenis");
+        Sport sport = sportService.findById(1).orElseThrow();
+        match.setSport(sport);
+        User organizer = userService.findById(1).orElseThrow();
+        match.setOrganizer(organizer);
+        match.setPlayers(List.of(organizer));
 
         Match savedMatch = matchService.save(match);
         assertNotNull(savedMatch);

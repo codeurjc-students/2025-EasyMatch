@@ -1,0 +1,45 @@
+<mat-card class="filter-card" [formGroup]="filterForm">
+  <div class="filter-header">
+    <mat-icon>filter_list</mat-icon> Filtros
+  </div>
+
+  <div class="filter-controls">
+    <form [formGroup]="filterForm" class="filter-form">
+      <mat-form-field appearance="outline" class="filter-field search-field" >
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          placeholder="Buscar por club..."
+          formControlName="search"
+          (input)="onFilter()"
+        />
+      </mat-form-field>
+
+      <mat-form-field class="filter-field" appearance="outline">
+        <mat-select placeholder="Todos los deportes" formControlName="sport" (selectionChange)="onFilter()" >
+          <mat-option value="">Todos los deportes</mat-option>
+          <mat-option *ngFor="let s of sports" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="filter-field" appearance="outline">
+        <mat-select placeholder="Todos los horarios" formControlName="timeRange" (selectionChange)="onFilter()">
+          <mat-option value="">Todos los horarios</mat-option>
+          <mat-option value="morning">Mañana</mat-option>
+          <mat-option value="afternoon">Tarde</mat-option>
+          <mat-option value="evening">Noche</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button
+        mat-stroked-button
+        type="button"
+        class="friendlies-btn"
+        [class.active]="filterForm.get('includeFriendlies')?.value"
+        (click)="toggleFriendlies()"
+        
+      >
+       Incluir amistosos
+      </button>
+    </form>
+  </div>
+</mat-card>

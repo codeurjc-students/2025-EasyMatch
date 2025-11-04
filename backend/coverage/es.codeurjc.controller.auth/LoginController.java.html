@@ -46,7 +46,7 @@ import jakarta.validation.Valid;
 
     @PostMapping(&quot;/logout&quot;)
     public ResponseEntity&lt;AuthResponse&gt; logOut(HttpServletResponse response) {
-<span class="nc" id="L49">        return ResponseEntity.ok(new AuthResponse(Status.SUCCESS, userService.logout(response)));</span>
+<span class="fc" id="L49">        return ResponseEntity.ok(new AuthResponse(Status.SUCCESS, userService.logout(response)));</span>
     }
     @GetMapping(&quot;/status&quot;)
     public ResponseEntity&lt;Void&gt; status() {

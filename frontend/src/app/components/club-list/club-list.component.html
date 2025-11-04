@@ -1,0 +1,22 @@
+<app-header></app-header>
+<app-club-filter (filtersChanged)="onFiltersChanged($event)"></app-club-filter>
+<section class="clubs-section">
+  <div class="header">
+    <span class="found">{{ clubs().length}} encontrados</span>
+  </div>
+
+  
+  <section class="clubs-grid">
+    @for (club of clubs(); track club.id) {
+      <app-club [club]="club"></app-club>
+    }
+  </section>
+
+  <mat-paginator
+    [length]="totalElements()"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    aria-label="Selector de página"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</section>

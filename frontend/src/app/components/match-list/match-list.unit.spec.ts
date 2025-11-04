@@ -18,7 +18,7 @@ class MockMatchService {
           type: true,
           isPrivate: false,
           state: true,
-          sport: 'Fútbol',
+          sport: {name: 'Futbol', modes: [{name: '7v7', playersPerGame: 14}]},
           organizer: {
             id: 1,
             realname: 'Carlos',
@@ -38,7 +38,7 @@ class MockMatchService {
           type: false,
           isPrivate: false,
           state: true,
-          sport: 'Pádel',
+          sport: {name: 'Pádel', modes: [{name: 'Dobles', playersPerGame: 4}]},
           organizer: {
             id: 2,
             realname: 'Ana',

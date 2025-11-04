@@ -1,0 +1,43 @@
+<mat-card class="filter-card">
+  <div class="filter-header">
+    <mat-icon>filter_list</mat-icon>
+    <span>Filtros</span>
+  </div>
+  
+  <div class="filter-controls">
+    <form [formGroup]="filterForm" class="filter-form">
+      <mat-form-field appearance="outline" class="filter-field search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          placeholder="Buscar clubes..."
+          formControlName="search"
+          (input)="onFilter()"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-select
+          placeholder="Todos los deportes"
+          formControlName="sport"
+          (selectionChange)="onFilter()"
+        >
+          <mat-option value="">Todos los deportes</mat-option>
+          <mat-option *ngFor="let s of sports" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-select
+          placeholder="Todas las ciudades"
+          formControlName="city"
+          (selectionChange)="onFilter()"
+        >
+          <mat-option value="">Todas las ciudades</mat-option>
+          <mat-option *ngFor="let c of cities" [value]="c">{{ c }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+  </div>
+</mat-card>

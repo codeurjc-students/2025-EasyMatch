@@ -18,6 +18,16 @@ describe('MatchComponent', () => {
     description: 'Jugador apasionado',
     level: 5.5,
   }
+
+  const mockClub =  { 
+      id: 1,
+      city: 'Madrid', 
+      name: 'Club Deportivo Madrid',  
+      address: 'Calle Falsa 123',
+      sports: [{ name: 'Futbol', modes: [{name: "7v7", playersPerGame: 14}]}],
+      schedule: { openingTime: '09:00', closingTime: '22:00' },
+      priceRange: { minPrice: 8, maxPrice: 15, unit: '€/hora' }
+  }
   const mockMatch = {
     id: 1,
     date: new Date('2025-09-15T19:00:00Z'),
@@ -25,9 +35,12 @@ describe('MatchComponent', () => {
     isPrivate: false,
     state: true,
     organizer: mockUser,
-    sport: 'Fútbol',
+    sport: {
+      name: 'Futbol',
+      modes: [{ name: '7v7', playersPerGame: 14 }]
+    },
     price: Number(10),
-    club: { city: 'Madrid', name: 'Club Deportivo Madrid',  address: 'Calle Falsa 123' },
+    club: mockClub,
     players: [mockUser],
   };
 
@@ -52,7 +65,7 @@ describe('MatchComponent', () => {
     const title = compiled.querySelector('.sport-title');
     const city = compiled.querySelector('.match-city');
 
-    expect(title?.textContent).toContain('Fútbol');
+    expect(title?.textContent).toContain('Futbol');
     expect(city?.textContent).toContain('Madrid');
   });
 
@@ -66,6 +79,6 @@ describe('MatchComponent', () => {
 
   it('should display the price formatted in euros', () => {
     const price = compiled.querySelector('.match-price');
-    expect(price?.textContent).toContain('€');
+    expect(price?.textContent).toContain('10 €');
   });
 });

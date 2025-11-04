@@ -3,14 +3,13 @@ package es.codeurjc.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+//import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -32,25 +31,25 @@ public class Match {
 	@JoinColumn(name = "organizer_id")
 	private User organizer;
 	private double price;
-	private String sport;
-	/* private Sport sport; */
-
-	
 
 	@ManyToOne
-	@JoinColumn(name = "club_id") 
+    @JoinColumn(name = "sport_id")
+    private Sport sport;
+
+	@ManyToOne
+	@JoinColumn(name = "club_id")
 	private Club club; 
 
-	@ManyToMany 
-	@JoinTable(
+	@ManyToMany
+	/*@JoinTable(
         name = "match_players",
         joinColumns = @JoinColumn(name = "match_id"),
         inverseJoinColumns = @JoinColumn(name = "player_id")
-    )
+    )*/
 	private List<User> players; 
 	
 
-	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, double price, String sport, Club club) {
+	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, double price, Sport sport, Club club) {
 		this.date = date;
 		this.type = type;
 		this.isPrivate = isPrivate;
@@ -93,39 +92,14 @@ public class Match {
 	}
 
 
-
-	public boolean isType() {
+	public Boolean getType() {
 		return type;
 	}
 
 
 
-	public void setType(boolean type) {
+	public void setType(Boolean type) {
 		this.type = type;
-	}
-
-
-
-	public boolean isPrivate() {
-		return isPrivate;
-	}
-
-
-
-	public void setPrivate(boolean isPrivate) {
-		this.isPrivate = isPrivate;
-	}
-
-
-
-	public boolean isState() {
-		return state;
-	}
-
-
-
-	public void setState(boolean state) {
-		this.state = state;
 	}
 
 
@@ -154,13 +128,13 @@ public class Match {
  
 
 
-	public String getSport() {
+	public Sport getSport() {
 		return sport;
 	}
 
 
 
-	public void setSport(String sport) {
+	public void setSport(Sport sport) {
 		this.sport = sport;
 	}
 
@@ -176,26 +150,6 @@ public class Match {
 		this.organizer = organizer;
 	}
 
-	@Override
-	public String toString() {
-		return "Match [id=" + id + ", date=" + date + ", type=" + type + ", isPrivate=" + isPrivate + ", state=" + state
-				+ ", organizer=" + organizer + ", sport=" + sport + ", club=" + club + ", players=" + players + "]";
-	}
-
-
-
-	public Boolean getType() {
-		return type;
-	}
-
-
-
-	public void setType(Boolean type) {
-		this.type = type;
-	}
-
-
-
 	public Boolean getIsPrivate() {
 		return isPrivate;
 	}
@@ -205,8 +159,6 @@ public class Match {
 	public void setIsPrivate(Boolean isPrivate) {
 		this.isPrivate = isPrivate;
 	}
-
-
 
 	public Boolean getState() {
 		return state;
@@ -218,17 +170,22 @@ public class Match {
 		this.state = state;
 	}
 
-
-
+	
 	public double getPrice() {
 		return price;
 	}
-
-
 
 	public void setPrice(double price) {
 		this.price = price;
 	}
 	
+
+
+	@Override
+	public String toString() {
+		return "Match [id=" + id + ", date=" + date + ", type=" + type + ", isPrivate=" + isPrivate + ", state=" + state
+				+ ", organizer=" + organizer + ", sport=" + sport + ", club=" + club + ", players=" + players + "]";
+	}
+
 	
 }
