@@ -56,26 +56,21 @@ public class MatchServiceUnitaryTest {
         LocalDateTime date4 = LocalDateTime.of(2025, 11, 8, 18, 15);
 
         Club club1 = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-        
-        User user1 = new User();
-        User user2 = new User();
-        User user3 = new User();
-        User user4 = new User();
 
-        Match match1 = new Match(date1, false, true, false, user1,3.50, new Sport("Volley",List.of()),club1);
-        Match match2 = new Match(date2, true, true, false, user2,2.75, new Sport("Baloncesto",List.of()),club1);
-        Match match3 = new Match(date3, false, false, true, user3,9.95, new Sport("Tenis",List.of()),club1);
-        Match match4 = new Match(date4, true, false, true, user4,2.50, new Sport("Futbol",List.of()),club1);
+        Match match1 = new Match(date1, false, true, false, new User(),3.50, new Sport("Volley",List.of()),club1);
+        Match match2 = new Match(date2, true, true, false, new User(),2.75, new Sport("Baloncesto",List.of()),club1);
+        Match match3 = new Match(date3, false, false, true, new User(),9.95, new Sport("Tenis",List.of()),club1);
+        Match match4 = new Match(date4, true, false, true, new User(),2.50, new Sport("Futbol",List.of()),club1);
 
         List<Match> matchList = List.of(match1,match2,match3,match4);
 
-        Page<Match> page = new PageImpl<>(matchList,pageable,matchList.size());
+        Page<Match> matchPage = new PageImpl<>(matchList,pageable,matchList.size());
 
         //WHEN
-        when(matchRepository.findAll(pageable)).thenReturn(page);
+        when(matchRepository.findAll(pageable)).thenReturn(matchPage);
 
         Page<MatchDTO> result = matchService.getMatches(pageable);
-        Page<MatchDTO> expected = page.map(m -> mapper.toDTO(m));
+        Page<MatchDTO> expected = matchPage.map(m -> mapper.toDTO(m));
 
         //THEN
         assertThat(result.getNumberOfElements(),equalTo(expected.getNumberOfElements()));
@@ -116,13 +111,18 @@ public class MatchServiceUnitaryTest {
         //THEN
         verify(matchRepository,times(1)).deleteById(id);
     }
+
     @Test
     public void deleteNonExistingMatchUnitaryTest(){
+        //GIVEN
         Random random = new Random();
         long id = 1 + random.nextInt(100);
         Optional<Match> match = Optional.empty();
+
+        //WHEN
         when(matchRepository.findById(id)).thenReturn(match);
 
+        //THEN
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, ()-> matchService.delete(id));
         assertThat(ex.getMessage(),equalTo("Match with id " + id + " does not exist."));
     }

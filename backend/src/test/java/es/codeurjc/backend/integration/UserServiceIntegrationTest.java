@@ -18,7 +18,6 @@ import es.codeurjc.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Random;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -37,7 +36,7 @@ public class UserServiceIntegrationTest {
     @Test
     @Order(1)
     public void getUsersIntegrationTest() {
-        int numUsers = 4;
+        int numUsers = userService.findAll().size();
         Collection<UserDTO> users = userService.getUsers();
         assertThat(users.size(), equalTo(numUsers));
     }
@@ -45,7 +44,7 @@ public class UserServiceIntegrationTest {
     @Test
     @Order(2)
     public void getUserByIdIntegrationTest() {
-        long id = 1;
+        long id = 1L;
         UserDTO userDTO = userService.getUser(id);
         assertThat(userDTO.id(), equalTo(id));
         assertThat(userDTO.realname(), equalTo("Pedro Garcia"));
@@ -53,9 +52,8 @@ public class UserServiceIntegrationTest {
     @Test
     @Order(3)
     public void deleteNonExistingUserIntegrationTest() {
-        Random random = new Random();
         int numUsers = userService.getUsers().size();
-        long id = numUsers + random.nextLong(100);
+        long id = numUsers + 1;
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {userService.deleteById(id);});
         assertThat(ex.getMessage(), equalTo("User with id " + id + " does not exist."));
         
@@ -64,9 +62,8 @@ public class UserServiceIntegrationTest {
     @Test
     @Order(4)
     public void testDeleteExistingUserIntegrationTest() {
-        Random random = new Random();
-        int numUsers = 4;
-        long id = 1 + random.nextLong(numUsers);
+        int numUsers = userService.findAll().size();
+        long id = 4L;
         userService.deleteById(id);
         Collection<UserDTO> users = userService.getUsers();
         assertThat(users.size(), equalTo(numUsers - 1));

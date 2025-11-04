@@ -3,6 +3,7 @@ package es.codeurjc.model;
 import java.sql.Blob;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -34,8 +35,8 @@ public class Club {
     @Embedded
     private PriceRange priceRange;
 
-
-    @OneToMany(mappedBy = "club")
+    
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL) 
     private List<Match> matchRecord;
 
     @ManyToMany

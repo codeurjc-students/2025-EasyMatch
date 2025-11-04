@@ -1,8 +1,8 @@
-<mat-card class="club-card">
+<mat-card id="club-card{{club.id}}" class="club-card">
   <img [src]="getClubImage(club.id)" [alt]="club.name" />
 
   <mat-card-content>
-    <h3>{{ club.name }}</h3>
+    <h3 id="club-name">{{ club.name }}</h3>
 
     <div class="club-meta">
       <p><mat-icon>place</mat-icon>{{ club.city }}</p>

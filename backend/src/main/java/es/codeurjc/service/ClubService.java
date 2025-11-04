@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.codeurjc.dto.ClubDTO;
 import es.codeurjc.dto.ClubMapper;
@@ -21,11 +22,19 @@ import es.codeurjc.repository.ClubRepository;
 
 @Service
 public class ClubService {
+
+    public ClubService(ClubRepository clubRepository, ClubMapper mapper) {
+        this.clubRepository = clubRepository;
+        this.mapper = mapper;
+    }
+    
     @Autowired
     private ClubRepository clubRepository;
 
     @Autowired
     private ClubMapper mapper;
+
+    
 
     private ClubDTO toDTO (Club club) {
         return mapper.toDTO(club);
@@ -59,10 +68,12 @@ public class ClubService {
         }
     }
 
+    @Transactional(readOnly = true)
     public ClubDTO getClub(long id) {
 		return mapper.toDTO(clubRepository.findById(id).orElseThrow());
 	}
 
+    @Transactional(readOnly = true)
     public Page<ClubDTO> getClubs(Pageable pageable) {
         return findAll(pageable).map(this::toDTO);
     }

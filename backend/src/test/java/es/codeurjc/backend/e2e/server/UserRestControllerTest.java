@@ -1,9 +1,7 @@
-package es.codeurjc.backend.e2e;
+package es.codeurjc.backend.e2e.server;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
-
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,14 +11,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import io.restassured.RestAssured;
 
-
 @Tag("e2e")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes = es.codeurjc.easymatch.EasyMatchApplication.class)
 @ActiveProfiles("test")
-
-public class RestAPITest {
-
+public class UserRestControllerTest {
+    
     @LocalServerPort
     private int port;
     
@@ -28,27 +24,6 @@ public class RestAPITest {
         public void setUp() {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
-    }
-
-    @Test
-    public void testGetMatches() {
-        given().when().get("/api/v1/matches/")
-                .then().statusCode(200)
-                .body("content.size()", greaterThan(0))
-                .body("content[0].sport", equalTo("Tenis"))
-                .body("content[1].sport", equalTo("Padel"))
-                .body("content[2].sport", equalTo("Tenis")) 
-                .body("content[3].sport", equalTo("Futbol"))
-                .body("totalElements", equalTo(4));  
-    }
-
-    @Test
-    public void testGetMatchById() {
-        long id = 1;
-        given().when().get("/api/v1/matches/{id}", id)
-                .then().statusCode(200)
-                .body("id", equalTo((int) id))
-                .body("organizer.realname", equalTo("Pedro Garcia"));
     }
 
     @Test
@@ -64,7 +39,7 @@ public class RestAPITest {
 
     @Test
     public void testGetUserById(){
-        long id = 2;
+        long id = 2L;
         given().when().get("/api/v1/users/{id}", id)
                 .then().statusCode(200)
                 .body("id", equalTo((int) id))
@@ -73,13 +48,9 @@ public class RestAPITest {
 
     @Test
     public void testGetUserImage(){
-        long id = 1;
+        long id = 1L;
         given().when().get("/api/v1/users/{id}/image", id)
                 .then().statusCode(200)
                 .header("Content-Type", equalTo("image/jpeg"));
     }
-
-    
 }
-    
-

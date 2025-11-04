@@ -19,8 +19,9 @@ describe('MatchService', () => {
     it('getMatches should return API\'s value as an Observable', (done: DoneFn) => {
         service.getMatches(0, 10).subscribe(response => {
             expect(response).toBeTruthy();
+            expect(Array.isArray(response.content)).toBeTrue();
             expect(response.content.length).toBeGreaterThan(0);
-            expect(response.content.length).toBe(4)
+            expect(response.totalElements).toBe(4)
             done();
         });
     });

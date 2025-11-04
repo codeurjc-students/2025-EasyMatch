@@ -1,6 +1,5 @@
 package es.codeurjc.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,14 +32,6 @@ public class MatchService {
         return mapper.toDTO(Match);
     }
 
-    private Match toDomain (MatchDTO MatchDTO) {
-        return mapper.toDomain(MatchDTO);
-    }
-
-    private List<MatchDTO> toDTOs(Collection<Match> Matchs){
-        return mapper.toDTOs(Matchs);
-    }
-
     public Optional<Match> findById(long id) {
 		return matchRepository.findById(id);
 	}
@@ -61,6 +52,19 @@ public class MatchService {
     @Transactional(readOnly = true)
     public Page<MatchDTO> getMatches(Pageable pageable) {
         return findAll(pageable).map(this::toDTO);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MatchDTO> getFilteredMatches( Pageable pageable, String search, String sport, Boolean includeFriendlies, String timeRange) {
+        if (includeFriendlies == null) {
+            includeFriendlies = true;
+        }
+        return matchRepository.findFilteredMatches(pageable,
+            search != null ? "%" + search.toLowerCase() + "%" : null, 
+            sport != null ? sport.toLowerCase() : null, 
+            includeFriendlies, 
+            timeRange != null ? timeRange.toLowerCase() : null)
+            .map(this::toDTO);
     }
 
     public boolean exist(long id) {

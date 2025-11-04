@@ -1,4 +1,5 @@
 <app-header></app-header>
+<app-match-filter (filtersChanged)="onFiltersChanged($event)"> </app-match-filter>
 <section class="matches-grid">
   @for (match of matches(); track match.id) {
     <app-match [match]="match"></app-match>

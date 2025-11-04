@@ -41,7 +41,7 @@ export class ClubListComponent implements OnInit {
 
   loadClubs(page = 0, size = this.pageSize): void {
     this.loading.set(true);
-    this.clubService.getClubs(page, size, 'name,asc', this.filters()).subscribe({
+    this.clubService.getClubs(page, size, 'date,asc', this.filters()).subscribe({
       next: (response) => {
         this.clubs.set(response.content);
         this.totalElements.set(response.totalElements);
