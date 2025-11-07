@@ -18,7 +18,7 @@
       <mat-form-field class="filter-field" appearance="outline">
         <mat-select placeholder="Todos los deportes" formControlName="sport" (selectionChange)="onFilter()" >
           <mat-option value="">Todos los deportes</mat-option>
-          <mat-option *ngFor="let s of sports" [value]="s">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of sports" [value]="s.name">{{ s.name }}</mat-option>
         </mat-select>
       </mat-form-field>
 

@@ -7,12 +7,12 @@
 
   <nav class="nav-links">
     <button mat-button routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
-    <button mat-button id="clubsButton" routerLink="/clubs" routerLinkActive="active">Clubes</button>
+    <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active">Clubes</button>
     <button mat-button routerLink="/profile" routerLinkActive="active">Perfil</button>
   </nav>
 
   <div class="actions">
-    <button mat-raised-button color="primary" class="create-btn">
+    <button mat-raised-button color="primary" id="create-match-btn" class="create-btn" routerLink="/matches/create">
       <mat-icon>add</mat-icon>
       Crear Partido
     </button>

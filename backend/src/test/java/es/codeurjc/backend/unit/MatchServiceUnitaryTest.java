@@ -18,9 +18,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.dto.UserDTO;
+import es.codeurjc.dto.UserMapper;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.service.MatchService;
-import es.codeurjc.model.Club;
+import es.codeurjc.service.UserService;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.User;
 import es.codeurjc.model.Sport;
@@ -34,15 +36,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MatchServiceUnitaryTest {
 
     private MatchRepository matchRepository;
+    private UserService userService;
     private MatchService matchService;
     private MatchMapper mapper;
+    private UserMapper userMapper;
     
     
     @BeforeEach
     public void setUp() {
+        userService = mock(UserService.class);
+        userMapper = Mappers.getMapper(UserMapper.class);
         matchRepository = mock(MatchRepository.class);
         mapper = Mappers.getMapper(MatchMapper.class);
-        matchService = new MatchService(matchRepository, mapper);
+        matchService = new MatchService(matchRepository, mapper, userService,userMapper);
     }
 
     @Test
@@ -50,17 +56,11 @@ public class MatchServiceUnitaryTest {
 
         //GIVEN
         PageRequest pageable = PageRequest.of(0, 10);
-        LocalDateTime date1 = LocalDateTime.of(2025, 11, 2, 14, 00);
-        LocalDateTime date2 = LocalDateTime.of(2025, 11, 4, 16, 30);
-        LocalDateTime date3 = LocalDateTime.of(2025, 11, 6, 9, 45);
-        LocalDateTime date4 = LocalDateTime.of(2025, 11, 8, 18, 15);
 
-        Club club1 = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-
-        Match match1 = new Match(date1, false, true, false, new User(),3.50, new Sport("Volley",List.of()),club1);
-        Match match2 = new Match(date2, true, true, false, new User(),2.75, new Sport("Baloncesto",List.of()),club1);
-        Match match3 = new Match(date3, false, false, true, new User(),9.95, new Sport("Tenis",List.of()),club1);
-        Match match4 = new Match(date4, true, false, true, new User(),2.50, new Sport("Futbol",List.of()),club1);
+        Match match1 = new Match(null, false, true, false, new User(),3.50, new Sport(),null);
+        Match match2 = new Match(null, true, true, false, new User(),2.75, new Sport(),null);
+        Match match3 = new Match(null, false, false, true, new User(),9.95, new Sport(),null);
+        Match match4 = new Match(null, true, false, true, new User(),2.50, new Sport(),null);
 
         List<Match> matchList = List.of(match1,match2,match3,match4);
 
@@ -79,11 +79,7 @@ public class MatchServiceUnitaryTest {
     public void getMatchByIdUnitaryTest(){
         //GIVEN
         long id = 1;
-        LocalDateTime date = LocalDateTime.of(2025, 12, 12, 15, 00);
-        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-        User organizer = new User();
-        organizer.setRealname("Laura");
-        Match match = new Match(date, true, false, true, organizer,5.00, new Sport("Padel",List.of()),club);
+        Match match = new Match(null, true, false, true, null,5.00, null,null);
         match.setId(id);
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
@@ -98,11 +94,7 @@ public class MatchServiceUnitaryTest {
     public void deleteExistingMatchUnitaryTest(){
         //GIVEN
         long id = 1;
-        LocalDateTime date = LocalDateTime.of(2025, 10, 31, 17, 15);
-        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-        User organizer = new User();
-        organizer.setRealname("Juan");
-        Match match = new Match(date, false, true, false, organizer,2.00, new Sport("Volley playa",List.of()),club);
+        Match match = new Match(null, false, true, false, null,2.00, null,null);
         match.setId(id);
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
@@ -128,19 +120,32 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void saveMatchUnitaryTest(){
+    public void createMatchUnitaryTest(){
         //GIVEN
-        LocalDateTime date = LocalDateTime.of(2025, 9, 20, 11, 30);
-        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-        User organizer = new User();    
-        organizer.setRealname("Marta");
-        Match match = new Match(date, true, false, true, organizer,4.00, new Sport("Rugby",List.of()),club);
+        UserDTO userDTO = new UserDTO(
+            1L,
+            "Pedro García",
+            "pedro123",
+            "pedro@emeal.com",
+            "pedroga4",
+            LocalDateTime.of(1995, 5, 10, 0, 0),
+            true,
+            "Jugador de pádel",
+            4.5f,
+            List.of("USER")
+        );
+        
+        Match match = new Match(null, true, false, true, null,4.00, null,null);
+        MatchDTO matchDTO = mapper.toDTO(match);
         //WHEN
+        when(userService.getLoggedUserDTO()).thenReturn(userDTO);
         when(matchRepository.save(match)).thenReturn(match);
-
-        Match savedMatch = matchService.save(match);
+        MatchDTO createdMatch = matchService.createMatch(matchDTO);
         //THEN
-        assertThat(savedMatch, equalTo(match));
+        assertThat(createdMatch.id(), equalTo(matchDTO.id()));
+        assertThat(createdMatch.organizer().id(), equalTo(userDTO.id()));
+        assertThat(createdMatch.players(), contains(userDTO));
+        assertThat(createdMatch.state(), is(true));
     }
 
 }

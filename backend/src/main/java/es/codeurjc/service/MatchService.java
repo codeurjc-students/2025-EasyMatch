@@ -1,5 +1,6 @@
 package es.codeurjc.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,23 +11,33 @@ import org.springframework.stereotype.Service;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.User;
 import es.codeurjc.repository.MatchRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MatchService {
 
-    public MatchService(MatchRepository matchRepository, MatchMapper mapper) {
+    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper) {
         this.matchRepository = matchRepository;
         this.mapper = mapper;
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Autowired
 	private MatchRepository matchRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private MatchMapper mapper;
+
+    @Autowired 
+    private UserMapper userMapper;
 
     private MatchDTO toDTO (Match Match) {
         return mapper.toDTO(Match);
@@ -81,6 +92,17 @@ public class MatchService {
         } else {
             throw new IllegalArgumentException("Match with id " + id + " does not exist.");
         }
+    }
+
+     public MatchDTO createMatch(MatchDTO matchDTO) {
+		User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());
+        Match match = mapper.toDomain(matchDTO);
+		match.setOrganizer(loggedUser);
+        match.setPlayers(new ArrayList<>());
+        match.getPlayers().add(loggedUser);
+        match.setState(true);
+ 		matchRepository.save(match);
+ 		return toDTO(match);
     }
 
     

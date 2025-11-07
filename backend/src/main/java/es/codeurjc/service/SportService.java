@@ -1,11 +1,14 @@
 package es.codeurjc.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.codeurjc.dto.SportDTO;
+import es.codeurjc.dto.SportMapper;
 import es.codeurjc.model.Sport;
 import es.codeurjc.repository.SportRepository;
 
@@ -14,6 +17,9 @@ public class SportService {
 
     @Autowired
     private SportRepository sportRepository;
+
+    @Autowired
+    private SportMapper mapper;
 
     public Optional<Sport> findById(long id) {
 		return sportRepository.findById(id);
@@ -38,5 +44,10 @@ public class SportService {
         } else {
             throw new IllegalArgumentException("Sport with id " + id + " does not exist.");
         }
+    }
+
+
+    public Collection<SportDTO> getSports() {
+        return mapper.toDTOs(sportRepository.findAll());
     }
 }

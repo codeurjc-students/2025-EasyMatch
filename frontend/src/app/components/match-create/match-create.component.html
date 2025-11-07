@@ -1,0 +1,80 @@
+<mat-card class="create-card">
+  <h2><mat-icon>event_available</mat-icon>  Crear partido</h2>
+
+  <form [formGroup]="matchForm" (ngSubmit)="onSubmit()">
+    
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Club</mat-label>
+      <mat-select formControlName="club">
+        <mat-option *ngFor="let c of clubs" [value]="c">{{ c.name }}, {{ c.city}}</mat-option>
+      </mat-select>
+      <mat-hint *ngIf="loadingClubs">Cargando clubes...</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Deporte</mat-label>
+      <mat-select formControlName="sport">
+        <mat-option *ngFor="let s of sports" [value]="s">{{ s.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Modo</mat-label>
+      <mat-select formControlName="mode" [disabled]="!modes.length">
+        <mat-option *ngFor="let m of modes" [value]="m">
+          {{ m.name }} ({{ m.playersPerGame }} jugadores)
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Precio</mat-label>
+      <input matInput formControlName="price" type="number" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Fecha</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Selecciona fecha" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Hora</mat-label>
+      <input matInput type="time" formControlName="time" placeholder="Selecciona hora" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Tipo de partido</mat-label>
+      <mat-select formControlName="type">
+        <mat-option [value]="true">Competitivo</mat-option>
+        <mat-option [value]="false">Amistoso</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="isPrivate">
+      Partido privado
+    </mat-slide-toggle>
+
+    <div class="actions">
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="matchForm.invalid || creating"
+        
+      >
+        {{ creating ? 'Creando...' : 'Crear partido' }}
+      </button>
+
+      <button
+        mat-stroked-button
+        color="accent"
+        type="button"
+        (click)="goBack()"
+      >
+        Volver
+      </button>
+    </div>
+  </form>
+</mat-card>

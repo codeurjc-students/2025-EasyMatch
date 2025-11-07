@@ -14,6 +14,5 @@ export interface Match {
   price: number;
   club: Club;
   players: User[];
-  
 
 }

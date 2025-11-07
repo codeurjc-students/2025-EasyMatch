@@ -79,6 +79,6 @@ describe('MatchComponent', () => {
 
   it('should display the price formatted in euros', () => {
     const price = compiled.querySelector('.match-price');
-    expect(price?.textContent).toContain('10 €');
+    expect(price?.textContent).toContain('10.00 €');
   });
 });
