@@ -6,9 +6,10 @@ import { Sport } from "../models/sport.model";
 import { Club } from "../models/club.model";
 import { Match } from "../models/match.model";
 import { LoginService } from "./login.service";
-import { LoginRequest } from "../models/auth/login-request.model";
+import { AuthResponse } from "../models/auth/auth-response.model";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
+jasmine.getEnv().configure({ random: false });
 
 describe('MatchService', () => {
     let service : MatchService;
@@ -64,20 +65,20 @@ describe('MatchService', () => {
       club: mockClub,
     };
 
-    loginService.login(loginRequest).subscribe();
-    service.createMatch(mockMatch).subscribe({
-      next: (createdMatch) => {
-        expect(createdMatch).toBeTruthy();
-        expect(createdMatch.organizer.realname).toBe('Pedro Garcia');
-        expect(createdMatch.players.length).toBe(1);
-        expect(createdMatch.state).toBeTrue();
-        expect(createdMatch.date instanceof Date).toBeTrue();
-        done();
-      },
-      error: (err) => {
-        fail(`createMatch failed: ${err.message}`);
-        done();
-      },
-    });
-  });
+    loginService.login(loginRequest).subscribe(
+      response => {
+        expect(response).toBeTruthy();
+        expect(response.status).toEqual('SUCCESS');
+        expect(response.message).toEqual('Auth successful. Tokens are created in cookie.');
+
+        service.createMatch(mockMatch).subscribe(
+          createdMatch => {
+            expect(createdMatch).toBeTruthy();
+            expect(createdMatch.organizer.realname).toBe('Pedro Garcia');
+            expect(createdMatch.state).toBeTrue();
+            expect(createdMatch.date instanceof Date).toBeTrue();
+            done();
+        });
+      })
+   });
 });

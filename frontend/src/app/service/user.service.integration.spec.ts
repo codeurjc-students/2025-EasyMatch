@@ -6,7 +6,7 @@ import { LoginService } from './login.service';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 
-describe('UserService (Integration)', () => {
+describe('UserService', () => {
   let service: UserService;
   let loginService : LoginService;
   let loginRequest = {
@@ -28,19 +28,27 @@ describe('UserService (Integration)', () => {
   });
 
   it('getCurrentUser should return the authenticated user', (done: DoneFn) => {
-    loginService.login(loginRequest).subscribe();
-    service.getCurrentUser().subscribe({
-      next: (user: User) => {
-        expect(user).toBeTruthy();
-        expect(user.id).toBe(1);
-        expect(user.username).toBe("pedro123");
-        expect(user.email).toBe('pedro@emeal.com');
-        done();
+    loginService.login(loginRequest).subscribe({
+      next: () => {
+        service.getCurrentUser().subscribe({
+          next: (user: User) => {
+            expect(user).toBeTruthy();
+            expect(user.id).toBe(1);
+            expect(user.username).toBe("pedro123");
+            expect(user.realname).toBe('Pedro Garcia');
+            done();
+          },
+          error: (err) => {
+            fail(`getCurrentUser failed : ${err.message}`);
+            done();
+          }
+        });
       },
       error: (err) => {
-        fail(`getCurrentUser failed : ${err.message}`);
+        fail(`login failed : ${err.message}`);
         done();
-      },
+      }
     });
+    
   });
 });
