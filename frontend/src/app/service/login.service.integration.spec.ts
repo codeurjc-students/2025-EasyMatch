@@ -6,7 +6,7 @@ import { AuthResponse } from '../models/auth/auth-response.model';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 
-describe('LoginService Integration Test', () => {
+describe('LoginService', () => {
   let service: LoginService;
 
   beforeEach(() => {
@@ -26,32 +26,24 @@ describe('LoginService Integration Test', () => {
       password: 'pedroga4'
     };
 
-    service.login(loginRequest).subscribe({
-      next: (response: AuthResponse) => {
+    service.login(loginRequest).subscribe(
+      response => {
         expect(response).toBeTruthy();
         expect(response.status).toEqual('SUCCESS');
         expect(response.message).toEqual('Auth successful. Tokens are created in cookie.');
         done();
-      },
-      error: (err) => {
-        fail(`Login failed: ${JSON.stringify(err)}`);
-        done();
-      }
+      })
     });
-  });
+
 
   it('logout should return an AuthResponse from API', (done: DoneFn) => {
-    service.logout().subscribe({
-      next: (response: AuthResponse) => {
+    service.logout().subscribe(
+      response => {
         expect(response).toBeTruthy();
         expect(response.status).toEqual('SUCCESS');
         expect(response.message).toEqual('logout successfully');
         done();
       },
-      error: (err) => {
-        fail(`Logout failed: ${JSON.stringify(err)}`);
-        done();
-      }
-    });
+    )
   });
 });

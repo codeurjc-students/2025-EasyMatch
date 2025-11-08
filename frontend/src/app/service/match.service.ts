@@ -13,7 +13,7 @@ export class MatchService {
 
   getMatches(page = 0, 
     size = 10, 
-    sort = 'date,asc',
+    sort : string,
     filters?: { search?: string; sport?: string; timeRange?: string, includeFriendlies?: boolean }
   ): Observable<{
     content: Match[];
@@ -29,7 +29,7 @@ export class MatchService {
     if (filters?.search) params = params.set('search', filters.search);
     if (filters?.sport) params = params.set('sport', filters.sport);
     if (filters?.timeRange) params = params.set('timeRange', filters.timeRange);
-    if (filters?.includeFriendlies) params = params.set('includeFriendlies', filters.includeFriendlies);
+    if (filters?.includeFriendlies !== undefined) params = params.set('includeFriendlies', String(filters.includeFriendlies));
 
     return this.http
       .get<{ content: Match[]; totalElements: number; totalPages: number; number: number }>(
@@ -41,6 +41,22 @@ export class MatchService {
 
   getMatch(id: number): Observable<Match> {
     return this.http.get<Match>(`${this.apiUrl}/matches/${id}`,{withCredentials : true});
+  }
+
+  createMatch(matchData: Partial<Match>): Observable<Match> {
+    const payload = {
+      ...matchData,
+      date: matchData.date instanceof Date ? matchData.date.toISOString() : matchData.date
+    };
+
+    return this.http
+      .post<Match>(`${this.apiUrl}/matches`, payload, { withCredentials: true })
+      .pipe(
+        map(response => ({
+          ...response,
+          date: new Date(response.date) 
+        }))
+      );
   }
 
 }

@@ -17,16 +17,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import es.codeurjc.dto.MatchDTO;
+import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.Sport;
-import es.codeurjc.model.User;
+import es.codeurjc.service.ClubService;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.SportService;
-import es.codeurjc.service.UserService;
+import jakarta.transaction.Transactional;
 
 @Tag("integration")
+@Transactional
 @SpringBootTest(classes = es.codeurjc.easymatch.EasyMatchApplication.class)
 @TestMethodOrder(OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -36,9 +40,12 @@ public class MatchServiceIntegrationTest {
 
     @Autowired
     private MatchService matchService;
+    
+    @Autowired  
+    private MatchMapper mapper;
 
     @Autowired
-    private UserService userService;
+    private ClubService clubService;
 
     @Autowired
     private SportService sportService;
@@ -81,30 +88,27 @@ public class MatchServiceIntegrationTest {
         assertThat(matches.size(), equalTo(numMatches - 1));
     } 
 
-    @Test 
+    @Test
     @Order(5)
-    public void testSaveMatchIntegrationTest(){
+    @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
+    public void testCreateMatchIntegrationTest(){
         int numMatchesBefore = matchService.findAll().size();
 
         Match match = new Match();
         match.setDate(java.time.LocalDateTime.now().plusDays(10));
         match.setType(true);
         match.setIsPrivate(false);
-        match.setState(false);
         match.setPrice(15.0f);
         Sport sport = sportService.findById(1).orElseThrow();
         match.setSport(sport);
-        User organizer = userService.findById(1).orElseThrow();
-        match.setOrganizer(organizer);
-        match.setPlayers(List.of(organizer));
+        Club club = clubService.findById(1).orElseThrow();
+        match.setClub(club);
 
-        Match savedMatch = matchService.save(match);
-        assertNotNull(savedMatch);
-        assertNotNull(savedMatch.getId());
+        MatchDTO createdMatch = matchService.createMatch(mapper.toDTO(match));
 
         int numMatchesAfter = matchService.findAll().size();
         assertThat(numMatchesAfter, equalTo(numMatchesBefore + 1));
-        assertThat(matchService.exist(savedMatch.getId()), equalTo(true));
+        assertThat(matchService.exist(createdMatch.id()), equalTo(true));
     }
 
     

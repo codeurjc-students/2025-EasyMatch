@@ -45,8 +45,8 @@ public class UserRestController {
 
     
 	@GetMapping("/me")
-	public UserDTO me() {
-		return userService.getLoggedUserDTO();
+	public ResponseEntity<UserDTO> me() {
+		return ResponseEntity.ok(userService.getLoggedUserDTO());
 	}
 
     @GetMapping("/{id}")

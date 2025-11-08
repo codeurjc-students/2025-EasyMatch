@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
+
 @Tag("e2e")
 @SpringBootTest (webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
 classes = es.codeurjc.easymatch.EasyMatchApplication.class
@@ -35,6 +36,7 @@ public class AngularUITest {
     int port;
 
     private WebDriver driver;
+    private WebDriverWait wait;
 
     @BeforeEach
     public void setUp() {
@@ -53,6 +55,7 @@ public class AngularUITest {
             options.addArguments("--headless");
             driver = new ChromeDriver(options);
         }
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     @AfterEach
@@ -76,21 +79,7 @@ public class AngularUITest {
 
     @Test 
     public void testHomePage(){
-         driver.get("http://localhost:" + port+"/");
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
-
-        WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));
-        WebElement passwordInput = driver.findElement(By.cssSelector("input[formcontrolname='password']"));
-        emailInput.sendKeys("pedro@emeal.com");
-        passwordInput.sendKeys("pedroga4");
-
-        WebElement loginButton = driver.findElement(By.cssSelector("button.btn-login"));
-        loginButton.click();
-
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
+        loginProcedure();
 
         WebElement match1 = driver.findElement(By.id("match-card1")).findElement(By.className("organizer-name"));
         assertThat(match1.getText(), equalTo("Pedro Garcia"));
@@ -104,23 +93,10 @@ public class AngularUITest {
 
     @Test 
     public void testClubsPage(){
-         driver.get("http://localhost:" + port+"/");
+        loginProcedure();
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
-
-        WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));
-        WebElement passwordInput = driver.findElement(By.cssSelector("input[formcontrolname='password']"));
-        emailInput.sendKeys("pedro@emeal.com");
-        passwordInput.sendKeys("pedroga4");
-
-        WebElement loginButton = driver.findElement(By.cssSelector("button.btn-login"));
-        loginButton.click();
-
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
-        WebElement clubsButton = driver.findElement(By.id("clubsButton"));
-        clubsButton.click();
+        WebElement clubsBtn = driver.findElement(By.id("clubs-btn"));
+        clubsBtn.click();
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-club")));
 
@@ -132,9 +108,74 @@ public class AngularUITest {
         assertThat(match3.getText(), equalTo("Tennis & Padel Hub"));
         WebElement match4 = driver.findElement(By.id("club-card4")).findElement(By.id("club-name"));
         assertThat(match4.getText(), equalTo("Football Arena"));
-
-
     }
+
+    @Test 
+    public void testCreateMatchPage(){
+        loginProcedure();
+        WebElement createMatchBtn = driver.findElement(By.id("create-match-btn"));
+        createMatchBtn.click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match-create")));
+
+        WebElement clubSelector = driver.findElement(By.cssSelector("mat-select[formcontrolname='club']"));
+        clubSelector.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElements(By.cssSelector("mat-option")).get(1).click();
+
+        WebElement sportSelector = driver.findElement(By.cssSelector("mat-select[formcontrolname='sport']"));
+        sportSelector.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElements(By.cssSelector("mat-option")).get(0).click();
+
+        WebElement modeSelector = driver.findElement(By.cssSelector("mat-select[formcontrolname='mode']"));
+        modeSelector.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElements(By.cssSelector("mat-option")).get(0).click();
+
+        WebElement priceInput = driver.findElement(By.cssSelector("input[formcontrolname='price']"));
+        priceInput.sendKeys("20");
+
+        WebElement dateInput = driver.findElement(By.cssSelector("input[formcontrolname='date']"));
+        dateInput.sendKeys("11/15/2025");
+
+        WebElement timeInput = driver.findElement(By.cssSelector("input[formcontrolname='time']"));
+        timeInput.sendKeys("18:30");
+
+        WebElement typeSelect = driver.findElement(By.cssSelector("mat-select[formcontrolname='type']"));
+        typeSelect.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElements(By.cssSelector("mat-option")).get(0).click();
+
+        WebElement submitButton = driver.findElement(By.cssSelector("button[type='submit']"));
+        wait.until(ExpectedConditions.elementToBeClickable(submitButton));
+        submitButton.click();
+
+        wait.until(ExpectedConditions.urlContains("/matches"));
+        assertThat(driver.getCurrentUrl(), containsString("/matches"));
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
+        WebElement match1 = driver.findElement(By.id("match-card5")).findElement(By.className("organizer-name"));
+        assertThat(match1.getText(), equalTo("Pedro Garcia"));
+
+        
+    }
+
+    private void loginProcedure() {
+        driver.get("http://localhost:" + port+"/");
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
+
+        WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));
+        WebElement passwordInput = driver.findElement(By.cssSelector("input[formcontrolname='password']"));
+        emailInput.sendKeys("pedro@emeal.com");
+        passwordInput.sendKeys("pedroga4");
+
+        WebElement loginButton = driver.findElement(By.cssSelector("button.btn-login"));
+        loginButton.click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
+    }
+
 
 
 }
