@@ -1,0 +1,55 @@
+<app-header></app-header>
+<mat-card class="user-card" id="user-card" *ngIf="!loading() && user() as u">
+  <div class="user-header">
+    <div class="user-avatar">
+      <img class="avatar" [src]="getUserImage(u.id) || 'assets/default-avatar.jpg'" alt="Usuario" />
+    </div>
+
+    <div class="user-info">
+      <h2>{{ u.realname }}</h2>
+      <p class="username">@{{ u.username }}</p>
+      <p class="birthdate">Nacido en {{ u.birthDate | date: 'MMMM yyyy' }}</p>
+
+      <div class="user-meta">
+        <p><mat-icon>email</mat-icon> {{ u.email }}</p>
+        <p><mat-icon>person</mat-icon> {{ u.gender ? 'Hombre' : 'Mujer' }}</p>
+      </div>
+
+      <p class="description" *ngIf="u.description">{{ u.description }}</p>
+
+      <div class="stats">
+        <div id ="totalMatches" class="stat">
+          <h3>{{ u.stats.totalMatches }}</h3>
+          <p>Partidos</p>
+        </div>
+        <div id ="wins" class="stat">
+          <h3>{{ u.stats.wins }}</h3>
+          <p>Victorias</p>
+        </div>
+        <div id ="winRate" class="stat">
+          <h3>{{ u.stats.winRate | number: '1.2-2' }}%</h3>
+          <p>% Victorias</p>
+        </div>
+        <div id ="maxLevel" class="stat">
+          <h3>{{ u.level | number: '1.2-2' }}</h3>
+          <p>Nivel máx.</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" (click)="onEditProfile()">
+          <mat-icon>edit</mat-icon> Editar perfil
+        </button>
+
+        <button mat-flat-button id="delete_account_btn"color="warn" (click)="onDeleteAccount(u.id)">
+          <mat-icon>delete_forever</mat-icon> Eliminar cuenta
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-card>
+
+<mat-card *ngIf="loading()" class="loading-card">
+  <mat-icon class="spin">autorenew</mat-icon> Cargando perfil...
+</mat-card>
+

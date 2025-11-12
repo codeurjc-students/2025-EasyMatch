@@ -7,11 +7,16 @@ import { User } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = environment.apiUrl + '/users';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
   getCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/me`, { withCredentials: true });
+    return this.http.get<User>(`${this.apiUrl}/users/me`, { withCredentials: true });
   }
+
+  deleteUser(id: number): Observable<User> {
+    return this.http.delete<User>(`${this.apiUrl}/users/${id}`,{withCredentials : true});
+  }
+
 }

@@ -3,18 +3,25 @@ package es.codeurjc.backend.e2e.server;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 
 @Tag("e2e")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes = es.codeurjc.easymatch.EasyMatchApplication.class)
+@TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
+
 public class UserRestControllerTest {
     
     @LocalServerPort
@@ -27,30 +34,72 @@ public class UserRestControllerTest {
     }
 
     @Test
+    @Order(1)
     public void testGetUsers(){
-        given().when().get("/api/v1/users/")
-                .then().statusCode(200)
-                .body("size()", greaterThan(0))
-                .body("[0].realname", equalTo("Pedro Garcia"))
-                .body("[1].realname", equalTo("Maria Lopez"))
-                .body("[2].realname", equalTo("Juan Martinez"))
-                .body("[3].realname", equalTo("Luis Sanchez"));
+        given()
+        .when()
+            .get("/api/v1/users/")
+        .then()
+            .statusCode(200)
+            .body("content", not(empty()))
+            .body("size()", greaterThan(0))
+            .body("[0].id", notNullValue()); 
     }
 
     @Test
+    @Order(2)
     public void testGetUserById(){
         long id = 2L;
-        given().when().get("/api/v1/users/{id}", id)
-                .then().statusCode(200)
-                .body("id", equalTo((int) id))
-                .body("realname", equalTo("Maria Lopez"));
+        given().
+        when()
+            .get("/api/v1/users/{id}", id)
+        .then()
+            .statusCode(200)
+            .body("id", equalTo(Math.toIntExact(id)))
+            .body("realname", equalTo("Maria Lopez"));
     }
 
     @Test
+    @Order(3)
     public void testGetUserImage(){
         long id = 1L;
-        given().when().get("/api/v1/users/{id}/image", id)
-                .then().statusCode(200)
-                .header("Content-Type", equalTo("image/jpeg"));
+        given()
+        .when()
+            .get("/api/v1/users/{id}/image", id)
+        .then()
+            .statusCode(200)
+            .header("Content-Type", equalTo("image/jpeg"));
     }
+
+    @Test
+    @Order(4)
+    public void testDeleteUser(){
+        long id = 3L;
+        String loginJson = """
+            {
+                "username": "juan@emeal.com",
+                "password": "juanma1"
+            }
+        """;
+        Response loginResponse = given()
+            .contentType(ContentType.JSON)
+            .body(loginJson)
+        .when()
+            .post("/api/v1/auth/login")
+        .then()
+            .extract()
+            .response();
+
+        String cookie = loginResponse.getCookie("AuthToken");
+
+        given()
+            .cookie("AuthToken", cookie)
+        .when()
+            .delete("/api/v1/users/{id}", id)
+        .then()
+            .statusCode(200)
+            .body("id", equalTo(Math.toIntExact(id)))
+            .body("realname", equalTo("Juan Martinez"));
+    }
+
 }

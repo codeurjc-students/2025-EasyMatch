@@ -13,6 +13,7 @@ export interface Match {
   sport: Sport;
   price: number;
   club: Club;
-  players: User[];
+  team1Players: User[];
+  team2Players: User[];
 
 }

@@ -54,7 +54,7 @@ public class UserServiceIntegrationTest {
     public void deleteNonExistingUserIntegrationTest() {
         int numUsers = userService.getUsers().size();
         long id = numUsers + 1;
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {userService.deleteById(id);});
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {userService.delete(id);});
         assertThat(ex.getMessage(), equalTo("User with id " + id + " does not exist."));
         
     }
@@ -64,7 +64,7 @@ public class UserServiceIntegrationTest {
     public void testDeleteExistingUserIntegrationTest() {
         int numUsers = userService.findAll().size();
         long id = 4L;
-        userService.deleteById(id);
+        userService.delete(id);
         Collection<UserDTO> users = userService.getUsers();
         assertThat(users.size(), equalTo(numUsers - 1));
         assertFalse(userService.exist(id));
@@ -73,7 +73,7 @@ public class UserServiceIntegrationTest {
     @Test
     @Order(5)
     public void saveUserIntegrationTest() {
-        int numUsers = 3;
+        int numUsers = userService.findAll().size();
         User newUser = new User(
             "New User",
             "new_user",
@@ -88,6 +88,7 @@ public class UserServiceIntegrationTest {
         User savedUser = userService.save(newUser);
         Collection<UserDTO> users = userService.getUsers();
         assertThat(users.size(), equalTo(numUsers + 1));
+        assertThat(savedUser.getId(), notNullValue());
         assertThat(savedUser.getRealname(), equalTo("New User"));
     }
 

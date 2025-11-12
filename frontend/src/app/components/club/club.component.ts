@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Club } from '../../models/club.model';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-club',
@@ -14,7 +15,10 @@ import { Club } from '../../models/club.model';
 })
 export class ClubComponent {
   @Input() club!: Club;
+  private apiUrl = environment.apiUrl;
+
   getClubImage(id: number): string {
-    return `https://localhost:8443/api/v1/clubs/${id}/image`;
+    return `${this.apiUrl}/clubs/${id}/image`;
   }
+
 }

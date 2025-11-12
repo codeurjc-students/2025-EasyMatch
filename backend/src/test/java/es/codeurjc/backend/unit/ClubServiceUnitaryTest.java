@@ -118,9 +118,6 @@ public class ClubServiceUnitaryTest {
 
         //THEN
         assertThat(savedClub, equalTo(club));
-
-
-
     }
 
 }

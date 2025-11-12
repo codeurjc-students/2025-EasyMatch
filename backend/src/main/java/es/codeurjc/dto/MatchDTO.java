@@ -13,7 +13,8 @@ public record MatchDTO (
     Float price,
     SportDTO sport,
     BasicClubDTO club,
-    List<UserDTO> players
+    List<UserDTO> team1Players,
+    List<UserDTO> team2Players
 ) {
     
 }

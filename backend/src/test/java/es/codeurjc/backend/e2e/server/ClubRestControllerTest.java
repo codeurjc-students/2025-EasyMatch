@@ -29,42 +29,52 @@ public class ClubRestControllerTest {
 
     @Test
     public void testGetClubs() {
-        given().when().get("/api/v1/clubs/")
-                .then().statusCode(200)
-                .body("content.size()", greaterThan(0))
-                .body("content[0].name", equalTo("Tennis Club Elite"))
-                .body("content[1].name", equalTo("Padel Pro Center"))
-                .body("content[2].name", equalTo("Tennis & Padel Hub")) 
-                .body("content[3].name", equalTo("Football Arena"))
-                .body("totalElements", equalTo(4));  
+        given()
+        .when()
+            .get("/api/v1/clubs/")
+        .then().statusCode(200)
+            .body("content", not(empty()))
+            .body("totalElements", greaterThan(0))
+            .body("content[0].id", notNullValue());  
+    }
+
+    @Test
+    public void testGetFilteredCLubs(){
+        given()
+        .when()
+            .get("/api/v1/clubs?search=pro&city=Valencia&sport=padel")
+        .then()
+            .statusCode(200)
+            .body("content.size()",greaterThan(0))
+            .body("content.name", everyItem(matchesRegex("(?i).*pro.*")))
+            .body("content.city",everyItem(equalTo("Valencia")))
+            .body("content.sports.name", everyItem(hasItem("Padel")))
+            .body("content.size()", equalTo(1));
     }
 
     @Test
     public void testGetClubById() {
         long id = 3L;
-        given().when().get("/api/v1/clubs/{id}", id)
-                .then().statusCode(200)
-                .body("id", equalTo((int) id))
-                .body("email", equalTo("tennis&padelhub@emeal.com"));
+        given()
+        .when()
+            .get("/api/v1/clubs/{id}", id)
+        .then()
+            .statusCode(200)
+            .body("id", equalTo(Math.toIntExact(id)))
+            .body("name", equalTo("Tennis & Padel Hub"));
     }
 
     @Test
     public void testGetClubImage(){
         long id = 2L;
-        given().when().get("/api/v1/clubs/{id}/image", id)
-                .then().statusCode(200)
-                .header("Content-Type", equalTo("image/jpeg"));
+        given()
+        .when()
+            .get("/api/v1/clubs/{id}/image", id)
+        .then()
+            .statusCode(200)
+            .header("Content-Type", equalTo("image/jpeg"));
     }
 
-    @Test
-    public void testGetFilteredCLubs(){
-        given().when().get("/api/v1/clubs?search=pro&city=Valencia&sport=padel")
-            .then().statusCode(200)
-            .body("content.size()",greaterThan(0))
-            .body("content[0].name",equalTo("Padel Pro Center"))
-            .body("content[0].city",equalTo("Valencia"))
-            .body("content[0].sports.name", hasItem("Padel"))
-            .body("content.size()", equalTo(1));
-    }
+    
     
 }

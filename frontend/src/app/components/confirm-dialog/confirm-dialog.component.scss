@@ -1,0 +1,39 @@
+.confirm-dialog {
+  text-align: center;
+  padding: 2rem 1.5rem 1.5rem; 
+
+  .icon {
+    font-size: 3rem;
+    margin-bottom: 0.25rem;
+    color: #d32f2f;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+  }
+
+  h2 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #d32f2f;
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 1.5rem;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    button {
+      min-width: 120px;
+      text-transform: none;
+    }
+  }
+}

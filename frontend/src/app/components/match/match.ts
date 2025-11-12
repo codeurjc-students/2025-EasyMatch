@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -25,8 +26,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class MatchComponent {
   @Input() match!: Match;
+  private apiUrl = environment.apiUrl;
+  
   getUserImage(id: number): string {
-    return `https://localhost:8443/api/v1/users/${id}/image`;
+    return `${this.apiUrl}/users/${id}/image`;
+  }
+
+  getTotalPlayers(): number{
+    return (this.match.team1Players.length + this.match.team2Players.length);
   }
 
 }

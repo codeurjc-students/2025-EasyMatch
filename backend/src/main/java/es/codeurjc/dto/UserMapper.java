@@ -12,7 +12,7 @@ import es.codeurjc.model.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    UserDTO toDTO(User user);
+    public  UserDTO toDTO(User user);
 
 
     BasicUserDTO map(User user);

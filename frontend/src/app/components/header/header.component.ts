@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { User } from '../../models/user.model';
 import { UserService } from '../../service/user.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -14,8 +15,9 @@ import { UserService } from '../../service/user.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-private userService = inject(UserService);
+  private userService = inject(UserService);
   user = signal<User | null>(null);
+  private apiUrl = environment.apiUrl;
 
   ngOnInit(): void {
     this.loadUser();
@@ -23,12 +25,14 @@ private userService = inject(UserService);
 
   private loadUser(): void {
     this.userService.getCurrentUser().subscribe({
-      next: (data) => this.user = signal({id: data.id, realname: data.realname, username: data.username, email: data.email, birthdate: data.birthdate, gender: data.gender, description: data.description, level: data.level} ),
+      next: (data) => this.user = signal({id: data.id, realname: data.realname, username: data.username, email: data.email, birthDate: data.birthDate, gender: data.gender, description: data.description, level: data.level,
+        stats: data.stats
+      } ),
       error: (err) => console.error('Error al obtener el usuario:', err),
     });
   }
 
   getUserImage(id: number): string {
-    return `https://localhost:8443/api/v1/users/${id}/image`;
+    return `${this.apiUrl}/users/${id}/image`;
   }
 }

@@ -18,18 +18,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
+import es.codeurjc.model.Match;
 import es.codeurjc.model.User;
+import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.repository.UserRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
-    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
+        this.matchRepository = matchRepository;
     }
     @Autowired
 	private UserRepository userRepository;
+
+    @Autowired
+    private MatchRepository matchRepository;
 
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -51,6 +58,9 @@ public class UserService {
 		return userRepository.existsById(id);
 	}
 
+    public User update(User user){
+        return userRepository.save(user);
+    }
     public User save(User user){
 		String password = user.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
@@ -66,14 +76,33 @@ public class UserService {
 	}
 
 
-    public void deleteById(long id) {
+    @Transactional 
+    public void delete(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
-            userRepository.deleteById(id);
-        } else {
+            User user = userOptional.get();
+
+            if (user.getId() > 0) {
+                for (Match match : user.getMatchesAsTeam1Player()) {
+                    match.getTeam1Players().remove(user);
+                }
+                for (Match match : user.getMatchesAsTeam2Player()) {
+                    match.getTeam2Players().remove(user);
+                }
+
+                for (Match match : user.getOrganizedMatches()) {
+                    match.setOrganizer(null);
+                    matchRepository.delete(match);
+                }
+                userRepository.deleteById(id);
+            }
+        }else {
             throw new IllegalArgumentException("User with id " + id + " does not exist.");
         }
+            
     }
+    
+    
 
     public UserDTO getLoggedUserDTO() {
 
