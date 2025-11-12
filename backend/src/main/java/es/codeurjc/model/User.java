@@ -2,9 +2,11 @@ package es.codeurjc.model;
 
 import java.sql.Blob;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +16,6 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.CascadeType;
 
 @Entity
 @Table(name = "users")
@@ -32,11 +33,16 @@ public class User {
     private boolean gender; // 1 male, 0 female
     private String description;
     private float level; // from 1 to 7
+    @Embedded
+    private PlayerStats stats = new PlayerStats();
 
-    @ManyToMany (mappedBy = "players", cascade = CascadeType.REMOVE)
-    private List<Match> matchRecord;
+    @ManyToMany(mappedBy = "team1Players")
+    private List<Match> matchesAsTeam1Player;
 
-    @OneToMany (mappedBy = "organizer", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "team2Players")
+    private List<Match> matchesAsTeam2Player;
+
+    @OneToMany (mappedBy = "organizer")
     private List<Match> organizedMatches;
 
     @Lob
@@ -60,6 +66,17 @@ public class User {
         this.description = description;
         this.level = level;
         this.roles = List.of(roles);
+    }
+    
+    public void updateStats(boolean won, boolean draw) {
+        this.stats.updateStats(won, draw);
+    }
+
+    public List<Match> getMatchHistory() {
+        List<Match> history = new ArrayList<>();
+        if (matchesAsTeam1Player != null) history.addAll(matchesAsTeam1Player);
+        if (matchesAsTeam2Player != null) history.addAll(matchesAsTeam2Player);
+        return history;
     }
 
     public long getId() {
@@ -148,6 +165,36 @@ public class User {
         this.roles = roles;
     }
 
-    
+    public PlayerStats getStats() {
+        return stats;
+    }
+
+    public void setStats(PlayerStats stats) {
+        this.stats = stats;
+    }
+
+    public List<Match> getMatchesAsTeam1Player() {
+        return matchesAsTeam1Player;
+    }
+
+    public void setMatchesAsTeam1Player(List<Match> matchesAsTeam1Player) {
+        this.matchesAsTeam1Player = matchesAsTeam1Player;
+    }
+
+    public List<Match> getMatchesAsTeam2Player() {
+        return matchesAsTeam2Player;
+    }
+
+    public void setMatchesAsTeam2Player(List<Match> matchesAsTeam2Player) {
+        this.matchesAsTeam2Player = matchesAsTeam2Player;
+    }
+
+    public List<Match> getOrganizedMatches() {
+        return organizedMatches;
+    }
+
+    public void setOrganizedMatches(List<Match> organizedMatches) {
+        this.organizedMatches = organizedMatches;
+    }
     
 }

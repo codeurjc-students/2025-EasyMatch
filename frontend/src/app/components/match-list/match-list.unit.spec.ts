@@ -30,7 +30,8 @@ class MockMatchService {
             level: 7,
           },
           club: {city: 'Valencia',name: '',address: ''},
-          players: []
+          team1Players: [],
+          team2Players: []
         },
         {
           id: 2,
@@ -50,7 +51,8 @@ class MockMatchService {
             level: 5,
           },
           club: {city: 'Madrid',name: '',address: ''},
-          players: []
+          team1Players: [],
+          team2Players: []
         },
       ],
       totalElements: 2,

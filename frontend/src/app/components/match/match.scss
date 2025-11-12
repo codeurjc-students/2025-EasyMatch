@@ -51,6 +51,26 @@
       font-size: 0.9rem;
       color: #757575;
     }
+    .match-status {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-left: 20px;
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+      border: 0.5px solid #111; 
+
+      color: #fff;
+
+      &.open {
+        background-color: #81c784; 
+      }
+
+      &.closed {
+        background-color: #e57373; 
+      }
+    }
 
     .match-info {
       display: flex;

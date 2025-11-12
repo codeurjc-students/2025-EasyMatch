@@ -98,8 +98,8 @@ public class MatchService {
 		User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());
         Match match = mapper.toDomain(matchDTO);
 		match.setOrganizer(loggedUser);
-        match.setPlayers(new ArrayList<>());
-        match.getPlayers().add(loggedUser);
+        match.setTeam1Players(new ArrayList<>());
+        match.getTeam1Players().add(loggedUser);
         match.setState(true);
  		matchRepository.save(match);
  		return toDTO(match);

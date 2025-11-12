@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import es.codeurjc.model.Match;
+import es.codeurjc.model.User;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long>{
@@ -18,13 +19,16 @@ public interface MatchRepository extends JpaRepository<Match, Long>{
           AND (:includeFriendlies = TRUE OR m.type = TRUE)
           AND (
                 :timeRange IS NULL OR
-                (:timeRange = 'morning' AND FUNCTION('HOUR', m.date) BETWEEN 6 AND 12) OR
-                (:timeRange = 'evening' AND FUNCTION('HOUR', m.date) BETWEEN 12 AND 18) OR
-                (:timeRange = 'night' AND FUNCTION('HOUR', m.date) BETWEEN 18 AND 24)
+                (:timeRange = 'morning' AND FUNCTION('HOUR', m.date) >= 5 AND FUNCTION('HOUR', m.date) < 11) OR
+                (:timeRange = 'evening' AND FUNCTION('HOUR', m.date) >= 11 AND FUNCTION('HOUR', m.date) < 17) OR
+                (:timeRange = 'night' AND FUNCTION('HOUR', m.date) >= 17 AND FUNCTION('HOUR', m.date) <= 22)
               )
+        ORDER BY m.date ASC
     """)
     Page<Match> findFilteredMatches(Pageable pageable, @Param("search") String search, @Param("sport") String sport,
             @Param("includeFriendlies") Boolean includeFriendlies,
             @Param("timeRange") String timeRange    
     );
+
+     void deleteByOrganizer(User user);
 }

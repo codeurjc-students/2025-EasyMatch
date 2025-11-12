@@ -3,8 +3,15 @@ export interface User{
     realname: string;
     username: string;
     email: string;
-    birthdate: Date;
-    gender: string;
+    birthDate: Date;
+    gender?: boolean;
     description: string;
-    level: number
+    level: number,
+    stats: {
+        totalMatches: number,
+        wins: number,
+        draws: number,
+        losses: number,
+        winRate: number
+    }
 }

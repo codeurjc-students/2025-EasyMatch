@@ -3,13 +3,14 @@ package es.codeurjc.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-//import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -41,12 +42,24 @@ public class Match {
 	private Club club; 
 
 	@ManyToMany
-	/*@JoinTable(
-        name = "match_players",
-        joinColumns = @JoinColumn(name = "match_id"),
-        inverseJoinColumns = @JoinColumn(name = "player_id")
-    )*/
-	private List<User> players; 
+	@JoinTable(
+		name = "match_team1_players",
+		joinColumns = @JoinColumn(name = "match_id"),
+		inverseJoinColumns = @JoinColumn(name = "player_id")
+	)
+    private List<User> team1Players;
+	
+	
+	@ManyToMany
+	@JoinTable(
+		name = "match_team2_players",
+		joinColumns = @JoinColumn(name = "match_id"),
+		inverseJoinColumns = @JoinColumn(name = "player_id")
+	)
+    private List<User> team2Players;
+
+	@Embedded
+    private MatchResult result;
 	
 
 	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, double price, Sport sport, Club club) {
@@ -67,6 +80,36 @@ public class Match {
 	}
 
 
+	public void addPlayerToTeam1(User player) {
+        this.team1Players.add(player);
+    }
+
+    public void addPlayerToTeam2(User player) {
+        this.team2Players.add(player);
+    }
+
+	public boolean containsPlayer(User player) {
+        return (team1Players != null && team1Players.contains(player))
+            || (team2Players != null && team2Players.contains(player));
+    }
+
+	public boolean didPlayerWin(User player) {
+        if (result == null || sport == null || sport.getScoringType() == null) return false;
+        String winner = result.getWinner(sport.getScoringType());
+        if (winner == null || winner.equals("Empate") || winner.equals("Sin resultado")) return false;
+
+        if (team1Players != null && team1Players.contains(player)) {
+            return winner.equals(result.getTeam1Name());
+        } else if (team2Players != null && team2Players.contains(player)) {
+            return winner.equals(result.getTeam2Name());
+        }
+        return false;
+    }
+
+	public boolean didPlayerLose(User player) {
+        if (!containsPlayer(player)) return false;
+        return !didPlayerWin(player);
+    }
 
 	public long getId() {
 		return id;
@@ -77,8 +120,6 @@ public class Match {
 	public void setId(long id) {
 		this.id = id;
 	}
-
-
 
 
 	public LocalDateTime getDate() {
@@ -115,16 +156,6 @@ public class Match {
 	}
 
 
-
-	public List<User> getPlayers() {
-		return players;
-	}
-
-
-
-	public void setPlayers(List<User> players) {
-		this.players = players;
-	}
  
 
 
@@ -179,13 +210,43 @@ public class Match {
 		this.price = price;
 	}
 	
+	
+	
+
+	public MatchResult getResult() {
+		return result;
+	}
+
+
+	public void setResult(MatchResult result) {
+		this.result = result;
+	}
+	
+	public List<User> getTeam1Players() {
+		return team1Players;
+	}
+
+
+	public void setTeam1Players(List<User> team1Players) {
+		this.team1Players = team1Players;
+	}
+
+
+
+	public List<User> getTeam2Players() {
+		return team2Players;
+	}
+
+	public void setTeam2Players(List<User> team2Players) {
+		this.team2Players = team2Players;
+	}
 
 
 	@Override
 	public String toString() {
 		return "Match [id=" + id + ", date=" + date + ", type=" + type + ", isPrivate=" + isPrivate + ", state=" + state
-				+ ", organizer=" + organizer + ", sport=" + sport + ", club=" + club + ", players=" + players + "]";
+				+ ", organizer=" + organizer + ", sport=" + sport + ", club=" + club + ", team1=" + team1Players + "team2="+ 
+				team2Players + "]";
 	}
 
-	
 }

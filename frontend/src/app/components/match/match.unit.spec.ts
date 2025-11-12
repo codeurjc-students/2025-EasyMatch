@@ -13,10 +13,17 @@ describe('MatchComponent', () => {
     realname: 'Carlos López',
     username: 'carlosl',
     email: 'carlos@example.com',
-    birthdate: new Date('1990-05-14'),
-    gender: 'M',
+    birthDate: new Date('1990-05-14'),
+    gender: true,
     description: 'Jugador apasionado',
     level: 5.5,
+    stats: {
+        totalMatches: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        winRate: 0
+    }
   }
 
   const mockClub =  { 
@@ -41,7 +48,8 @@ describe('MatchComponent', () => {
     },
     price: Number(10),
     club: mockClub,
-    players: [mockUser],
+    team1Players: [mockUser],
+    team2Players: []
   };
 
   beforeEach(async () => {

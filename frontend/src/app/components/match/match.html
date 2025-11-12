@@ -7,7 +7,7 @@
             @case ('futbol') { sports_soccer } 
             @case ('tenis') { sports_tennis } 
             @case ('padel') { sports_tennis } 
-            @case ('volley') { sports_volleyball } 
+            @case ('voleibol') { sports_volleyball } 
             @default { emoji_events } 
           } 
         </mat-icon> 
@@ -15,6 +15,7 @@
 
       <mat-card-title class="sport-title">{{ match.sport.name }}</mat-card-title>
       <mat-card-subtitle class="match-date">{{ match.date | date:'dd/MM/yyyy, HH:mm' }}</mat-card-subtitle>
+      <span class="match-status" [ngClass]="match.state ? 'open' : 'closed'"></span>
     </mat-card-header>
 
     <mat-card-content>
@@ -26,7 +27,7 @@
 
         <div class="match-row">
           <mat-icon color="primary">group</mat-icon>
-          <span>{{ match.players.length }}/{{ match.sport.modes[0].playersPerGame }} jugadores</span>
+          <span>{{ getTotalPlayers()}}/{{ match.sport.modes[0].playersPerGame }} jugadores</span>
         </div>
 
         <div class="match-row">

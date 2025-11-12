@@ -144,7 +144,7 @@ public class MatchServiceUnitaryTest {
         //THEN
         assertThat(createdMatch.id(), equalTo(matchDTO.id()));
         assertThat(createdMatch.organizer().id(), equalTo(userDTO.id()));
-        assertThat(createdMatch.players(), contains(userDTO));
+        assertThat(createdMatch.team1Players(), contains(userDTO));
         assertThat(createdMatch.state(), is(true));
     }
 

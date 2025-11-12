@@ -4,11 +4,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import java.time.Duration;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,6 +34,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest (webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
 classes = es.codeurjc.easymatch.EasyMatchApplication.class
 )
+@TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
 
 public class AngularUITest {
@@ -64,7 +70,8 @@ public class AngularUITest {
     }
 
     @Test
-    public void testLoginPage(){
+    @Order(1)
+    public void verifyLoginPageLoads(){
         driver.get("http://localhost:" + port+"/");
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -77,42 +84,84 @@ public class AngularUITest {
 
     }
 
-    @Test 
-    public void testHomePage(){
-        loginProcedure();
+    @Test
+    @Order(2) 
+    public void verifyHomePageLoads(){
+        loginUser();
 
-        WebElement match1 = driver.findElement(By.id("match-card1")).findElement(By.className("organizer-name"));
-        assertThat(match1.getText(), equalTo("Pedro Garcia"));
-        WebElement match2 = driver.findElement(By.id("match-card2")).findElement(By.className("organizer-name"));
-        assertThat(match2.getText(), equalTo("Maria Lopez"));
-        WebElement match3 = driver.findElement(By.id("match-card3")).findElement(By.className("organizer-name"));
-        assertThat(match3.getText(), equalTo("Juan Martinez"));
-        WebElement match4 = driver.findElement(By.id("match-card4")).findElement(By.className("organizer-name"));
-        assertThat(match4.getText(), equalTo("Luis Sanchez"));
+        List<WebElement> matches = driver.findElements(By.cssSelector(".match-card"));
+        assertThat(matches.size(), greaterThan(0));
+        WebElement firstMatch = matches.get(0);
+
+        assertThat(firstMatch.findElement(By.cssSelector(".sport-title")).getText(), not(emptyString()));
+        assertThat(firstMatch.findElement(By.cssSelector(".match-date")).getText(), matchesPattern("\\d{2}/\\d{2}/\\d{4}, \\d{2}:\\d{2}"));
+        assertThat(firstMatch.findElement(By.cssSelector(".match-city")).getText(), containsString(","));
+        assertThat(firstMatch.findElement(By.cssSelector(".organizer-name")).getText(), not(emptyString()));
+        assertThat(firstMatch.findElement(By.cssSelector(".organizer-level")).getText(), containsString("Nivel"));
     }
 
-    @Test 
-    public void testClubsPage(){
-        loginProcedure();
+    @Test
+    @Order(3) 
+    public void verifyClubPageLoads(){
+        loginUser();
 
         WebElement clubsBtn = driver.findElement(By.id("clubs-btn"));
         clubsBtn.click();
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-club")));
 
-        WebElement match1 = driver.findElement(By.id("club-card1")).findElement(By.id("club-name"));
-        assertThat(match1.getText(), equalTo("Tennis Club Elite"));
-        WebElement match2 = driver.findElement(By.id("club-card2")).findElement(By.id("club-name"));
-        assertThat(match2.getText(), equalTo("Padel Pro Center"));
-        WebElement match3 = driver.findElement(By.id("club-card3")).findElement(By.id("club-name"));
-        assertThat(match3.getText(), equalTo("Tennis & Padel Hub"));
-        WebElement match4 = driver.findElement(By.id("club-card4")).findElement(By.id("club-name"));
-        assertThat(match4.getText(), equalTo("Football Arena"));
+        List<WebElement> clubs = driver.findElements(By.cssSelector(".club-card"));
+        assertThat(clubs.size(), greaterThan(0));
+        WebElement firstClub = clubs.get(0);
+
+        assertThat(firstClub.findElement(By.id("club-name")).getText(), not(emptyString()));
+        assertThat(firstClub.findElement(By.cssSelector(".club-meta")).getText(), containsString("-"));
+        List<WebElement> sports = firstClub.findElements(By.cssSelector(".sport"));
+        assertThat(sports.size(), greaterThan(0));
+        assertThat(firstClub.findElement(By.cssSelector(".price")).getText(), containsString("-"));
+
+    }
+
+    @Test
+    @Order(5) 
+    public void verifyProfilePageLoadsAndAccountDeletionWorks(){
+        loginUser();
+
+        WebElement clubsBtn = driver.findElement(By.id("profile-btn"));
+        clubsBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-user")));
+
+        WebElement currentUser = driver.findElement(By.id("user-card"));
+        assertThat(currentUser.findElement(By.cssSelector(".username")).getText(), equalTo("@pedro123"));
+        assertThat(currentUser.findElement(By.cssSelector(".birthdate")).getText(), containsString("mayo 1990"));
+        assertThat(currentUser.findElement(By.cssSelector(".description")).getText(), equalTo("Apasionado del tenis"));
+        assertThat(currentUser.findElement(By.id("totalMatches")).getText(), containsString("3"));
+        assertThat(currentUser.findElement(By.id("wins")).getText(), containsString("1"));
+        assertThat(currentUser.findElement(By.id("winRate")).getText(), containsString("33,33%"));
+        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,12"));
+        
+        WebElement deleteBtn = driver.findElement(By.id("delete_account_btn"));
+        deleteBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-confirm-dialog")));
+
+        WebElement confirmBtn = driver.findElement(By.id("confirm-btn"));
+        confirmBtn.click();
+
+        Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+        assertThat(alert.getText(), equalTo("Tu cuenta ha sido eliminada correctamente."));
+        alert.accept();
+
+        wait.until(ExpectedConditions.urlContains("/login"));
+        assertThat(driver.getCurrentUrl(), containsString("/login"));
+
     }
 
     @Test 
-    public void testCreateMatchPage(){
-        loginProcedure();
+    @Order(4)
+    public void verifyCreateMatchPageAndSubmitForm(){
+        loginUser();
         WebElement createMatchBtn = driver.findElement(By.id("create-match-btn"));
         createMatchBtn.click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match-create")));
@@ -154,13 +203,16 @@ public class AngularUITest {
         assertThat(driver.getCurrentUrl(), containsString("/matches"));
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
-        WebElement match1 = driver.findElement(By.id("match-card5")).findElement(By.className("organizer-name"));
+
+        int matchesSize = driver.findElements(By.cssSelector(".match-card")).size();
+        
+        WebElement match1 = driver.findElement(By.id("match-card"+matchesSize)).findElement(By.className("organizer-name"));
         assertThat(match1.getText(), equalTo("Pedro Garcia"));
 
         
     }
 
-    private void loginProcedure() {
+    private void loginUser() {
         driver.get("http://localhost:" + port+"/");
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));

@@ -1,0 +1,130 @@
+.user-card {
+  width: 100%;
+  max-width: 750px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+
+  .user-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .user-avatar img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+  }
+
+  .user-info {
+    flex: 1;
+
+    h2 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+
+    .username {
+      color: #777;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .birthdate {
+      color: #999;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .user-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: #555;
+
+      mat-icon {
+        font-size: 1rem;
+        margin-right: 0.3rem;
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        font-size: 0.95rem;
+      }
+    }
+
+    .description {
+      margin-top: 1rem;
+      font-style: italic;
+      color: #666;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+      text-align: center;
+
+      .stat {
+        background: #f7f9fc;
+        border-radius: 10px;
+        padding: 1rem 0.5rem;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+          background: #eef3ff;
+        }
+
+        h3 {
+          margin: 0;
+          font-size: 1.6rem;
+          color: #1a237e;
+          font-weight: 600;
+        }
+
+        p {
+          margin: 0;
+          color: #555;
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+
+      button {
+        text-transform: none;
+      }
+    }
+  }
+}
+
+.loading-card {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #555;
+
+  .spin {
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

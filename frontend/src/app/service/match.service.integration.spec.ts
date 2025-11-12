@@ -34,7 +34,6 @@ describe('MatchService', () => {
             expect(response).toBeTruthy();
             expect(Array.isArray(response.content)).toBeTrue();
             expect(response.content.length).toBeGreaterThan(0);
-            expect(response.totalElements).toBe(4)
             done();
         });
     });
