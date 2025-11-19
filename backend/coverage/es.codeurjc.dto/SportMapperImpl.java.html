@@ -10,43 +10,43 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2025-11-04T11:17:57+0100&quot;,
-    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.44.0.v20251023-0518, environment: Java 21.0.8 (Eclipse Adoptium)&quot;
+    date = &quot;2025-11-19T13:47:26+0100&quot;,
+    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.44.0.v20251114-0430, environment: Java 21.0.5 (Oracle Corporation)&quot;
 )
 @Component
 <span class="fc" id="L17">public class SportMapperImpl implements SportMapper {</span>
 
     @Override
     public SportDTO toDTO(Sport sport) {
-<span class="nc bnc" id="L21" title="All 2 branches missed.">        if ( sport == null ) {</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if ( sport == null ) {</span>
 <span class="nc" id="L22">            return null;</span>
         }
 
-<span class="nc" id="L25">        Long id = null;</span>
-<span class="nc" id="L26">        String name = null;</span>
-<span class="nc" id="L27">        List&lt;ModeDTO&gt; modes = null;</span>
+<span class="fc" id="L25">        Long id = null;</span>
+<span class="fc" id="L26">        String name = null;</span>
+<span class="fc" id="L27">        List&lt;ModeDTO&gt; modes = null;</span>
 
-<span class="nc" id="L29">        id = sport.getId();</span>
-<span class="nc" id="L30">        name = sport.getName();</span>
-<span class="nc" id="L31">        modes = modeListToModeDTOList( sport.getModes() );</span>
+<span class="fc" id="L29">        id = sport.getId();</span>
+<span class="fc" id="L30">        name = sport.getName();</span>
+<span class="fc" id="L31">        modes = modeListToModeDTOList( sport.getModes() );</span>
 
-<span class="nc" id="L33">        SportDTO sportDTO = new SportDTO( id, name, modes );</span>
+<span class="fc" id="L33">        SportDTO sportDTO = new SportDTO( id, name, modes );</span>
 
-<span class="nc" id="L35">        return sportDTO;</span>
+<span class="fc" id="L35">        return sportDTO;</span>
     }
 
     @Override
     public List&lt;SportDTO&gt; toDTOs(Collection&lt;Sport&gt; sports) {
-<span class="nc bnc" id="L40" title="All 2 branches missed.">        if ( sports == null ) {</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if ( sports == null ) {</span>
 <span class="nc" id="L41">            return null;</span>
         }
 
-<span class="nc" id="L44">        List&lt;SportDTO&gt; list = new ArrayList&lt;SportDTO&gt;( sports.size() );</span>
-<span class="nc bnc" id="L45" title="All 2 branches missed.">        for ( Sport sport : sports ) {</span>
-<span class="nc" id="L46">            list.add( toDTO( sport ) );</span>
+<span class="fc" id="L44">        List&lt;SportDTO&gt; list = new ArrayList&lt;SportDTO&gt;( sports.size() );</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for ( Sport sport : sports ) {</span>
+<span class="fc" id="L46">            list.add( toDTO( sport ) );</span>
         }
 
-<span class="nc" id="L49">        return list;</span>
+<span class="fc" id="L49">        return list;</span>
     }
 
     @Override
@@ -65,32 +65,32 @@ import org.springframework.stereotype.Component;
     }
 
     protected ModeDTO modeToModeDTO(Mode mode) {
-<span class="nc bnc" id="L68" title="All 2 branches missed.">        if ( mode == null ) {</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if ( mode == null ) {</span>
 <span class="nc" id="L69">            return null;</span>
         }
 
-<span class="nc" id="L72">        String name = null;</span>
-<span class="nc" id="L73">        Integer playersPerGame = null;</span>
+<span class="fc" id="L72">        String name = null;</span>
+<span class="fc" id="L73">        Integer playersPerGame = null;</span>
 
-<span class="nc" id="L75">        name = mode.getName();</span>
-<span class="nc" id="L76">        playersPerGame = mode.getPlayersPerGame();</span>
+<span class="fc" id="L75">        name = mode.getName();</span>
+<span class="fc" id="L76">        playersPerGame = mode.getPlayersPerGame();</span>
 
-<span class="nc" id="L78">        ModeDTO modeDTO = new ModeDTO( name, playersPerGame );</span>
+<span class="fc" id="L78">        ModeDTO modeDTO = new ModeDTO( name, playersPerGame );</span>
 
-<span class="nc" id="L80">        return modeDTO;</span>
+<span class="fc" id="L80">        return modeDTO;</span>
     }
 
     protected List&lt;ModeDTO&gt; modeListToModeDTOList(List&lt;Mode&gt; list) {
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        if ( list == null ) {</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if ( list == null ) {</span>
 <span class="nc" id="L85">            return null;</span>
         }
 
-<span class="nc" id="L88">        List&lt;ModeDTO&gt; list1 = new ArrayList&lt;ModeDTO&gt;( list.size() );</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        for ( Mode mode : list ) {</span>
-<span class="nc" id="L90">            list1.add( modeToModeDTO( mode ) );</span>
+<span class="fc" id="L88">        List&lt;ModeDTO&gt; list1 = new ArrayList&lt;ModeDTO&gt;( list.size() );</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        for ( Mode mode : list ) {</span>
+<span class="fc" id="L90">            list1.add( modeToModeDTO( mode ) );</span>
         }
 
-<span class="nc" id="L93">        return list1;</span>
+<span class="fc" id="L93">        return list1;</span>
     }
 
     protected Mode modeDTOToMode(ModeDTO modeDTO) {

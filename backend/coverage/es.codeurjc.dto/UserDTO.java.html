@@ -13,6 +13,12 @@ public record UserDTO (
     Boolean gender,
     String description,
     Float level,
+    PlayerStatsDTO stats,
     List&lt;String&gt; roles){
+        public UserDTO(Long id, String realname, String username, String email, String password,
+                   LocalDateTime birthDate, Boolean gender, String description,
+                   Float level, List&lt;String&gt; roles) {
+<span class="fc" id="L21">        this(id, realname, username, email, password, birthDate, gender, description, level,null,roles);</span>
+<span class="fc" id="L22">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

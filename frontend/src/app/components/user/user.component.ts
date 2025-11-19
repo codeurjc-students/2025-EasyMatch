@@ -10,6 +10,7 @@ import { User } from '../../models/user.model';
 import { HeaderComponent } from "../header/header.component";
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { environment } from '../../../environments/environment';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user',

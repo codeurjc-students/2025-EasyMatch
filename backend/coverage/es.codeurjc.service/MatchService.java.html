@@ -10,78 +10,100 @@ import org.springframework.stereotype.Service;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.User;
 import es.codeurjc.repository.MatchRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MatchService {
 
-<span class="fc" id="L20">    public MatchService(MatchRepository matchRepository, MatchMapper mapper) {</span>
-<span class="fc" id="L21">        this.matchRepository = matchRepository;</span>
-<span class="fc" id="L22">        this.mapper = mapper;</span>
-<span class="fc" id="L23">    }</span>
+<span class="fc" id="L22">    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper) {</span>
+<span class="fc" id="L23">        this.matchRepository = matchRepository;</span>
+<span class="fc" id="L24">        this.mapper = mapper;</span>
+<span class="fc" id="L25">        this.userService = userService;</span>
+<span class="fc" id="L26">        this.userMapper = userMapper;</span>
+<span class="fc" id="L27">    }</span>
 
     @Autowired
 	private MatchRepository matchRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private MatchMapper mapper;
 
+    @Autowired 
+    private UserMapper userMapper;
+
     private MatchDTO toDTO (Match Match) {
-<span class="fc" id="L32">        return mapper.toDTO(Match);</span>
+<span class="fc" id="L42">        return mapper.toDTO(Match);</span>
     }
 
     public Optional&lt;Match&gt; findById(long id) {
-<span class="fc" id="L36">		return matchRepository.findById(id);</span>
+<span class="fc" id="L46">		return matchRepository.findById(id);</span>
 	}
 
     public List&lt;Match&gt; findAll() {
-<span class="fc" id="L40">        return matchRepository.findAll();</span>
+<span class="fc" id="L50">        return matchRepository.findAll();</span>
     }
 
     public Page&lt;Match&gt; findAll(Pageable pageable) {
-<span class="fc" id="L44">		return matchRepository.findAll(pageable);</span>
+<span class="fc" id="L54">		return matchRepository.findAll(pageable);</span>
 	}
 
     @Transactional(readOnly = true)
     public MatchDTO getMatch(long id) {
-<span class="fc" id="L49">        return toDTO(findById(id).orElseThrow());</span>
+<span class="fc" id="L59">        return toDTO(findById(id).orElseThrow());</span>
     }
     
     @Transactional(readOnly = true)
     public Page&lt;MatchDTO&gt; getMatches(Pageable pageable) {
-<span class="fc" id="L54">        return findAll(pageable).map(this::toDTO);</span>
+<span class="fc" id="L64">        return findAll(pageable).map(this::toDTO);</span>
     }
 
     @Transactional(readOnly = true)
     public Page&lt;MatchDTO&gt; getFilteredMatches( Pageable pageable, String search, String sport, Boolean includeFriendlies, String timeRange) {
-<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (includeFriendlies == null) {</span>
-<span class="fc" id="L60">            includeFriendlies = true;</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (includeFriendlies == null) {</span>
+<span class="fc" id="L70">            includeFriendlies = true;</span>
         }
-<span class="fc" id="L62">        return matchRepository.findFilteredMatches(pageable,</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">            search != null ? &quot;%&quot; + search.toLowerCase() + &quot;%&quot; : null, </span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            sport != null ? sport.toLowerCase() : null, </span>
-<span class="fc" id="L65">            includeFriendlies, </span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">            timeRange != null ? timeRange.toLowerCase() : null)</span>
-<span class="fc" id="L67">            .map(this::toDTO);</span>
+<span class="fc" id="L72">        return matchRepository.findFilteredMatches(pageable,</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            search != null ? &quot;%&quot; + search.toLowerCase() + &quot;%&quot; : null, </span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            sport != null ? sport.toLowerCase() : null, </span>
+<span class="fc" id="L75">            includeFriendlies, </span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            timeRange != null ? timeRange.toLowerCase() : null)</span>
+<span class="fc" id="L77">            .map(this::toDTO);</span>
     }
 
     public boolean exist(long id) {
-<span class="fc" id="L71">        return matchRepository.existsById(id);  </span>
+<span class="fc" id="L81">        return matchRepository.existsById(id);  </span>
     }
     public Match save(Match match) {
-<span class="fc" id="L74">        return matchRepository.save(match);</span>
+<span class="fc" id="L84">        return matchRepository.save(match);</span>
     }
 
     public void delete(Long id) {
-<span class="fc" id="L78">        Optional&lt;Match&gt; matchOptional = matchRepository.findById(id);</span>
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (matchOptional.isPresent()) {</span>
-<span class="fc" id="L80">            matchRepository.deleteById(id);</span>
-<span class="fc" id="L81">        } else {</span>
-<span class="fc" id="L82">            throw new IllegalArgumentException(&quot;Match with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="fc" id="L88">        Optional&lt;Match&gt; matchOptional = matchRepository.findById(id);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (matchOptional.isPresent()) {</span>
+<span class="fc" id="L90">            matchRepository.deleteById(id);</span>
+<span class="fc" id="L91">        } else {</span>
+<span class="fc" id="L92">            throw new IllegalArgumentException(&quot;Match with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
-<span class="fc" id="L84">    }</span>
+<span class="fc" id="L94">    }</span>
+
+     public MatchDTO createMatch(MatchDTO matchDTO) {
+<span class="fc" id="L97">        Match match = mapper.toDomain(matchDTO);</span>
+<span class="fc" id="L98">        match.setState(true);</span>
+
+<span class="fc" id="L100">        User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());</span>
+<span class="fc" id="L101">		match.setOrganizer(loggedUser);</span>
+<span class="fc" id="L102">        match.setTeam1Players(List.of(loggedUser));</span>
+        
+<span class="fc" id="L104"> 		matchRepository.save(match);</span>
+<span class="fc" id="L105"> 		return toDTO(match);</span>
+    }
 
     
 }

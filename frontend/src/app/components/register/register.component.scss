@@ -1,0 +1,143 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+              url('/assets/register_bg.png') no-repeat center center fixed;
+  background-size: cover;
+}
+
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  padding: 1rem;
+
+
+  .register-card {
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    background-color: #11131a;
+    
+    mat-form-field {
+        background-color: #11131a;
+        border-radius: 8px;
+        padding: 0 8px;
+
+        mat-input-element {
+            color: #ffffff; 
+        }
+
+        mat-form-field-label {
+            color: #cccccc; 
+        }
+
+        mat-form-field-ripple {
+            background-color: var(--mat-sys-primary); 
+        }
+    }
+
+    h2 {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #f5f5f5;
+      gap: 0.75rem; 
+      font-weight: 500;
+      .mat-icon{
+          alignment-baseline: center;
+      }
+    }
+
+    .form-content {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    
+    .full-width {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .gender-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #fff;
+      }
+
+      .gender-radio {
+        display: flex;
+        gap: 1.5rem;
+        color: #fff;
+      }
+      .mat-radio-button{
+        color:#fff;
+      }
+
+    }
+
+    
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+    }
+
+
+    .primary-btn {
+      background-color: #1e88e5 !important;
+      color: #fff !important;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      padding: 0.6rem 1.5rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .primary-btn:hover {
+      background-color: #42a5f5 !important;
+    }
+
+    .secondary-btn {
+      background-color: #fff !important;
+      color: #2196f3 !important;
+      font-weight: 500;
+      padding: 0.6rem 1.2rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .secondary-btn:hover {
+      background-color: #ffff !important;
+    }
+
+    mat-icon {
+      vertical-align: middle;
+      margin-right: 0.25rem;
+    }
+  }
+}
+
+
+::ng-deep .mat-mdc-radio-button .mdc-label {
+  color: #cccccc !important;
+} 
+
+::ng-deep .mat-mdc-radio-button .mdc-radio__outer-circle {
+  border-color: #cccccc !important;
+}
+
+::ng-deep .mat-mdc-radio-button .mdc-radio__inner-circle {
+  background-color: #cccccc !important;
+} 
+

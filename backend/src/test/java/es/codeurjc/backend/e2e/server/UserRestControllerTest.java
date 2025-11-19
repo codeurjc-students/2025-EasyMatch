@@ -102,4 +102,31 @@ public class UserRestControllerTest {
             .body("realname", equalTo("Juan Martinez"));
     }
 
+    @Test
+    @Order(5)
+    public void testCreateUser(){
+        String newUserJson = """
+            {
+                "realname": "Daniel Perez",
+                "username": "nelmar",
+                "email": "daniel@emeal.com",
+                "password": "daniel6",
+                "birthDate": "2003-06-05T00:00:00Z",
+                "gender": true,
+                "description": "El tenis es mi pasion"
+            }
+        """;
+        given()
+            .contentType(ContentType.JSON)
+            .body(newUserJson)
+        .when()
+            .post("/api/v1/users/")
+        .then()
+            .statusCode(201)
+            .body("level",equalTo(0.0f))
+            .body("realname",equalTo("Daniel Perez"))
+            .body("stats.totalMatches", equalTo(0));
+
+    }
+
 }

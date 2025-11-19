@@ -44,7 +44,7 @@
         <p class="error" *ngIf="errorMessage()">{{ errorMessage() }}</p>
 
         <p class="register">
-          ¿Todavía no tienes cuenta? <a class="link">Crea una ahora</a>
+          ¿Todavía no tienes cuenta? <a id="register-link" class="link" routerLink="/register" routerLinkActive="active">Crea una ahora</a>
         </p>
       </form>
     </div>

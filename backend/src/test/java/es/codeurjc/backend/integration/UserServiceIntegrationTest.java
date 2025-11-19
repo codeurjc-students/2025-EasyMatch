@@ -13,9 +13,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.codeurjc.dto.UserDTO;
+import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.User;
 import es.codeurjc.service.UserService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -32,6 +34,9 @@ public class UserServiceIntegrationTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserMapper mapper;
 
     @Test
     @Order(1)
@@ -72,24 +77,25 @@ public class UserServiceIntegrationTest {
 
     @Test
     @Order(5)
-    public void saveUserIntegrationTest() {
+    public void createUserIntegrationTest() throws IOException {
         int numUsers = userService.findAll().size();
-        User newUser = new User(
-            "New User",
-            "new_user",
-            "user@emeal.com",               
-            "newpassword",                  
-            LocalDateTime.now(),    
-            true, 
-            "I am a new user",            
-            5.5f            
-        );
+        User newUser = new User();
 
-        User savedUser = userService.save(newUser);
+        newUser.setRealname("New User");
+        newUser.setUsername("new_user");
+        newUser.setEmail("user@emeal.com");
+        newUser.setPassword("user@emeal.com");
+        newUser.setBirthDate(LocalDateTime.of(2002,6,5,0,0));
+        newUser.setGender(true);
+
+        UserDTO newUserDTO = mapper.toDTO(newUser); 
+        UserDTO savedUser = userService.createUser(newUserDTO);
         Collection<UserDTO> users = userService.getUsers();
         assertThat(users.size(), equalTo(numUsers + 1));
-        assertThat(savedUser.getId(), notNullValue());
-        assertThat(savedUser.getRealname(), equalTo("New User"));
+        assertThat(savedUser.id(), notNullValue());
+        int id = users.size() + 1;
+        assertThat(savedUser.id(), equalTo(Long.parseLong(String.valueOf(id))));
+        assertThat(savedUser.realname(), equalTo("New User"));
     }
 
 

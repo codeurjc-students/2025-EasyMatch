@@ -1,5 +1,6 @@
 package es.codeurjc.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -9,9 +10,12 @@ import java.util.Optional;
 
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.PlayerStats;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.repository.UserRepository;
@@ -54,6 +59,14 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public Collection<UserDTO> getUsers() {
+		return toDTOs(userRepository.findAll());
+	}
+
+	public UserDTO getUser(long id) {
+		return toDTO(userRepository.findById(id).orElseThrow());
+	}
+
     public boolean exist(long id) {
 		return userRepository.existsById(id);
 	}
@@ -61,6 +74,7 @@ public class UserService {
     public User update(User user){
         return userRepository.save(user);
     }
+    
     public User save(User user){
 		String password = user.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
@@ -102,7 +116,6 @@ public class UserService {
             
     }
     
-    
 
     public UserDTO getLoggedUserDTO() {
 
@@ -140,6 +153,15 @@ public class UserService {
 		}
     }
 
+    public UserDTO createUser(UserDTO userDTO) throws IOException {
+        User user = mapper.toDomain(userDTO);
+        user.setLevel(0.0f);
+        user.setStats(new PlayerStats(0,0,0,0));
+        setUserImage(user,"/images/default-avatar.jpg");
+        this.save(user);
+        return toDTO(user);
+    }
+
     private UserDTO toDTO (User user) {
         return mapper.toDTO(user);
     }
@@ -149,12 +171,13 @@ public class UserService {
         return mapper.toDTOs(users);
     }
 
-    public Collection<UserDTO> getUsers() {
-		return toDTOs(userRepository.findAll());
+    private void setUserImage(User user, String classpathResource) throws IOException {
+         try {
+            Resource image = new ClassPathResource(classpathResource);
+		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error at processing the image");
+        }
+	
 	}
-
-	public UserDTO getUser(long id) {
-		return toDTO(userRepository.findById(id).orElseThrow());
-	}
-    
 }
