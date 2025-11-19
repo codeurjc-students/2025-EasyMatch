@@ -1,17 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient } from '@angular/common/http';
 import { LoginService } from './login.service';
 import { LoginRequest } from '../models/auth/login-request.model';
-import { AuthResponse } from '../models/auth/auth-response.model';
+import { provideRouter } from '@angular/router';
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 describe('LoginService', () => {
   let service: LoginService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({imports: [HttpClientModule],
-      providers: [LoginService],
+      providers: [LoginService, provideRouter([]), provideHttpClient()],
     });
     service = TestBed.inject(LoginService);
   });

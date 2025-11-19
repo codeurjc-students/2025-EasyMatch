@@ -74,7 +74,6 @@ public class AngularUITest {
     public void verifyLoginPageLoads(){
         driver.get("http://localhost:" + port+"/");
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("form")));
@@ -86,8 +85,61 @@ public class AngularUITest {
 
     @Test
     @Order(2) 
+    public void verifyRegisterPageLoadsAndWorks(){
+        driver.get("http://localhost:" + port+"/");
+        String email = "daniel@emeal.com";
+        String password ="dani13";
+        
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
+
+        WebElement registerLink = driver.findElement(By.id("register-link"));
+        registerLink.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-register")));
+
+        WebElement realnameInput = driver.findElement(By.cssSelector("input[formcontrolname='realname']"));
+        realnameInput.sendKeys("Daniel Perez");
+
+        WebElement usernameInput = driver.findElement(By.cssSelector("input[formcontrolname='username']"));
+        usernameInput.sendKeys("nelmar");
+
+        WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));
+        emailInput.sendKeys(email);
+
+        WebElement passwordInput = driver.findElement(By.cssSelector("input[formcontrolname='password']"));
+        passwordInput.sendKeys(password);
+
+        WebElement dateInput = driver.findElement(By.cssSelector("input[formcontrolname='birthDate']"));
+        dateInput.sendKeys("06/05/2002");
+
+        driver.findElement(By.cssSelector("mat-radio-group[formcontrolname='gender']"));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-radio-button")));
+        driver.findElements(By.cssSelector("mat-radio-button")).get(0).click();
+
+        WebElement submitButton = driver.findElement(By.cssSelector("button[type='submit']"));
+        wait.until(ExpectedConditions.elementToBeClickable(submitButton));
+        submitButton.click();
+
+        wait.until(ExpectedConditions.urlContains("/login"));
+        assertThat(driver.getCurrentUrl(), containsString("/login"));
+
+        loginUser(email,password);
+
+        WebElement profileBtn = driver.findElement(By.id("profile-btn"));
+        profileBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-user")));
+
+        WebElement currentUser = driver.findElement(By.id("user-card"));
+        assertThat(currentUser.findElement(By.cssSelector(".birthdate")).getText(), containsString("junio 2002"));
+
+    }
+
+    @Test
+    @Order(3) 
     public void verifyHomePageLoads(){
-        loginUser();
+        loginUser("pedro@emeal.com","pedroga4");
 
         List<WebElement> matches = driver.findElements(By.cssSelector(".match-card"));
         assertThat(matches.size(), greaterThan(0));
@@ -101,9 +153,28 @@ public class AngularUITest {
     }
 
     @Test
-    @Order(3) 
+    @Order(4) 
+    public void verifyLogoutWorks(){
+        loginUser("pedro@emeal.com","pedroga4");
+
+        WebElement optionsMenu = driver.findElement(By.className("user-info"));
+        optionsMenu.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("logout-btn")));
+
+        WebElement logoutBtn = driver.findElement(By.className("logout-btn"));
+        logoutBtn.click();
+
+        wait.until(ExpectedConditions.urlContains("/login"));
+        assertThat(driver.getCurrentUrl(), containsString("/login"));
+        
+
+    }
+
+    @Test
+    @Order(5) 
     public void verifyClubPageLoads(){
-        loginUser();
+        loginUser("pedro@emeal.com","pedroga4");
 
         WebElement clubsBtn = driver.findElement(By.id("clubs-btn"));
         clubsBtn.click();
@@ -119,16 +190,15 @@ public class AngularUITest {
         List<WebElement> sports = firstClub.findElements(By.cssSelector(".sport"));
         assertThat(sports.size(), greaterThan(0));
         assertThat(firstClub.findElement(By.cssSelector(".price")).getText(), containsString("-"));
-
     }
 
     @Test
-    @Order(5) 
+    @Order(7) 
     public void verifyProfilePageLoadsAndAccountDeletionWorks(){
-        loginUser();
+        loginUser("pedro@emeal.com","pedroga4");
 
-        WebElement clubsBtn = driver.findElement(By.id("profile-btn"));
-        clubsBtn.click();
+        WebElement profileBtn = driver.findElement(By.id("profile-btn"));
+        profileBtn.click();
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-user")));
 
@@ -159,9 +229,9 @@ public class AngularUITest {
     }
 
     @Test 
-    @Order(4)
+    @Order(6)
     public void verifyCreateMatchPageAndSubmitForm(){
-        loginUser();
+        loginUser("pedro@emeal.com","pedroga4");
         WebElement createMatchBtn = driver.findElement(By.id("create-match-btn"));
         createMatchBtn.click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match-create")));
@@ -212,7 +282,7 @@ public class AngularUITest {
         
     }
 
-    private void loginUser() {
+    private void loginUser(String email, String password) {
         driver.get("http://localhost:" + port+"/");
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
@@ -220,8 +290,8 @@ public class AngularUITest {
 
         WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));
         WebElement passwordInput = driver.findElement(By.cssSelector("input[formcontrolname='password']"));
-        emailInput.sendKeys("pedro@emeal.com");
-        passwordInput.sendKeys("pedroga4");
+        emailInput.sendKeys(email);
+        passwordInput.sendKeys(password);
 
         WebElement loginButton = driver.findElement(By.cssSelector("button.btn-login"));
         loginButton.click();

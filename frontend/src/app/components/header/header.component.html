@@ -17,14 +17,34 @@
       Crear Partido
     </button>
 
-     @if (user(); as u) {
-      <div class="user-info">
+    @if (user(); as u) {
+      <div class="user-info" [matMenuTriggerFor]="userMenu">
         <img class="avatar" [src]="getUserImage(u.id) || 'assets/default-avatar.jpg'" alt="Usuario" />
         <div class="user-text">
           <span class="user-name">{{ u.realname }}</span>
           <span class="user-level">Nivel {{ u.level | number:'1.0-2' }}</span>
         </div>
+        <mat-icon class="arrow-icon">expand_more</mat-icon>
       </div>
+
+      <mat-menu #userMenu="matMenu" panelClass="user-menu-panel">
+        <button mat-menu-item routerLink="/profile">
+          <mat-icon>person</mat-icon>
+          Mi perfil
+        </button>
+
+        <button mat-menu-item routerLink="/settings">
+          <mat-icon>settings</mat-icon>
+          Ajustes
+        </button>
+
+        <mat-divider></mat-divider>
+
+        <button mat-menu-item class="logout-btn" (click)="logout()">
+          <mat-icon color="warn">logout</mat-icon>
+          <span class="logout-text">Cerrar sesión</span>
+        </button>
+      </mat-menu>
     }
   </div>
 </header>

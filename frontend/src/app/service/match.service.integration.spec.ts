@@ -1,12 +1,10 @@
 import { TestBed } from "@angular/core/testing";
 import { MatchService } from "./match.service";
 import { HttpClientModule } from "@angular/common/http";
-import { User } from "../models/user.model";
 import { Sport } from "../models/sport.model";
 import { Club } from "../models/club.model";
 import { Match } from "../models/match.model";
 import { LoginService } from "./login.service";
-import { AuthResponse } from "../models/auth/auth-response.model";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 jasmine.getEnv().configure({ random: false });
@@ -15,9 +13,9 @@ describe('MatchService', () => {
     let service : MatchService;
     let loginService : LoginService;
     let loginRequest = {
-            username: 'pedro@emeal.com',    
-            password: 'pedroga4'
-        };
+        username: 'pedro@emeal.com',    
+        password: 'pedroga4'
+    };
 
     beforeEach(() =>{
         TestBed.configureTestingModule({imports:[HttpClientModule], providers: [MatchService]});

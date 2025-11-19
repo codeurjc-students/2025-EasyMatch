@@ -2,3 +2,34 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.cdk-overlay-container .mat-mdc-menu-panel .mat-mdc-menu-item,
+.user-menu-panel .mat-mdc-menu-item .mdc-list-item__primary-text,
+.user-menu-panel .mat-menu-item {
+  color: #111111 !important;
+}
+
+
+
+.cdk-overlay-container .mat-mdc-menu-panel .logout-btn {
+  color: #ef5350 !important;
+  font-weight: 600 !important;
+}
+
+
+.cdk-overlay-container .mat-mdc-menu-panel .logout-btn:hover {
+  background-color: rgba(239, 83, 80, 0.08) !important;
+}
+
+/*works*/
+.cdk-overlay-container .mat-mdc-menu-panel { 
+    background: #ffff !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    padding: 6px 0 !important; 
+}
+
+.cdk-overlay-container .mat-mdc-menu-panel button.mat-menu-item { 
+    color: #f5f5f5 !important; 
+}

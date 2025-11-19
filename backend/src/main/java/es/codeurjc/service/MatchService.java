@@ -1,6 +1,5 @@
 package es.codeurjc.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,12 +94,13 @@ public class MatchService {
     }
 
      public MatchDTO createMatch(MatchDTO matchDTO) {
-		User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());
         Match match = mapper.toDomain(matchDTO);
-		match.setOrganizer(loggedUser);
-        match.setTeam1Players(new ArrayList<>());
-        match.getTeam1Players().add(loggedUser);
         match.setState(true);
+
+        User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());
+		match.setOrganizer(loggedUser);
+        match.setTeam1Players(List.of(loggedUser));
+        
  		matchRepository.save(match);
  		return toDTO(match);
     }

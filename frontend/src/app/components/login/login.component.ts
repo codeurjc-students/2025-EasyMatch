@@ -8,7 +8,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { NgIf } from '@angular/common';
 import { LoginService } from '../../service/login.service';
 import { LoginRequest } from '../../models/auth/login-request.model';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ErrorService } from '../../service/error.service';
 
 @Component({
@@ -26,7 +26,8 @@ import { ErrorService } from '../../service/error.service';
     NgOptimizedImage,
     NgIf,
     CommonModule,
-  ],
+    RouterLink
+],
   
 })
 export class LoginComponent {

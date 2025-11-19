@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -137,18 +138,18 @@ public class UserServiceUnitaryTest {
     }
 
     @Test
-    public void saveUserUnitaryTest(){
+    public void createUserUnitaryTest() throws IOException{
         //GIVEN 
-        User originalUser = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Administradora de la plataforma.", 3.75f, "ADMIN", "USER");
-
+        User originalUser = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Creadora de la plataforma.", 0.0f, "USER");
+        UserDTO originalUserDTO = mapper.toDTO(originalUser);
         //WHEN
         when(userRepository.save(originalUser)).thenReturn(originalUser);
         when(passwordEncoder.encode("adminPass!")).thenReturn("encoded_pass");
-        User savedUser = userService.save(originalUser);
-
+        UserDTO createdUser = userService.createUser(originalUserDTO);
+        
         //GIVEN
-        assertThat(savedUser, equalTo(originalUser));
-        assertThat(savedUser.getPassword(), equalTo("encoded_pass"));
+        assertThat(createdUser.password(), equalTo("encoded_pass"));
+        assertThat(createdUser.realname(), equalTo(originalUser.getRealname()));
     }
 
 }

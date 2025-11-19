@@ -9,9 +9,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { of, Subject } from 'rxjs';
 import { UserService } from '../../service/user.service';
 import { HeaderComponent } from '../header/header.component';
-import { By } from '@angular/platform-browser';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 
 const mockUser = {
@@ -68,7 +69,9 @@ describe('UserComponent', () => {
       ],
       providers: [
         { provide: UserService, useClass: MockUserService },
-        { provide: MatDialog, useClass: MockMatDialog }
+        { provide: MatDialog, useClass: MockMatDialog },
+        provideRouter([]),
+        provideHttpClient()
       ]
     }).compileComponents();
 
