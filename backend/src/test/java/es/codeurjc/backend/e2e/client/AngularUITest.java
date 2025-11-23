@@ -275,6 +275,10 @@ public class AngularUITest {
             ExpectedConditions.presenceOfElementLocated(By.id("match-card4"))
         );
         WebElement numberPlayers = matchLeft.findElement(By.id("number-players"));
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(
+            By.cssSelector("#match-card4 #number-players"),
+            "1/14"
+        ));
         assertThat(numberPlayers.getText(), containsString("1/14"));
     }
 
