@@ -8,7 +8,7 @@
             @case ('tenis') { sports_tennis } 
             @case ('padel') { sports_tennis } 
             @case ('voleibol') { sports_volleyball } 
-            @default { emoji_events } 
+            @default { sports } 
           } 
         </mat-icon> 
       </div>
@@ -27,7 +27,7 @@
 
         <div class="match-row">
           <mat-icon color="primary">group</mat-icon>
-          <span>{{ getTotalPlayers()}}/{{ match.sport.modes[0].playersPerGame }} jugadores</span>
+          <span id="number-players">{{ getTotalPlayers()}}/{{ match.sport.modes[0].playersPerGame }} jugadores</span>
         </div>
 
         <div class="match-row">
@@ -64,9 +64,83 @@
         </div>
       </div>
     </mat-card-content>
+    @if (match.state == true){
+        @if(!isUserJoined(match, currentUserId)){
+          <mat-card-actions align="end">
+            <button mat-raised-button color="primary" class="join-button" (click)="openJoinDialog(match)">
+              Unirse
+            </button>
+          </mat-card-actions>
+        }@else {
+          <mat-card-actions align="end">
+            <button 
+              mat-raised-button 
+              color = "warn"
+              class="leave-button" 
+              *ngIf="isUserJoined(match, currentUserId)"
+              (click)="openLeaveDialog(match)"
+            >
+              <mat-icon>logout</mat-icon>
+              Abandonar
+            </button>
+          </mat-card-actions>
+          
+        }
+    }@else{
+      <mat-divider class="divider"></mat-divider>
+      <mat-card-content class="result-section">
 
-    <mat-card-actions align="end">
-      <button mat-raised-button color="primary" class="join-button">Unirse</button>
-    </mat-card-actions>
+        <h3 class="result-title">
+          Resultado
+        </h3>
+
+        <div class="result-table-container">
+          <table class="result-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th *ngFor="let s of match.result.team1GamesPerSet; let i = index">Set {{ i + 1 }}</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="team-label">Equipo A</td>
+                <td *ngFor="let s of match.result.team1GamesPerSet; let i = index">
+                  {{ s || 0 }}
+                </td>
+              </tr>
+
+              <tr>
+                <td class="team-label">Equipo B</td>
+                <td *ngFor="let s of match.result.team2GamesPerSet; let i = index">
+                  {{ s || 0 }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="add-result-container">
+          <button mat-raised-button color="primary" class="edit-result-btn" (click)="editResult(match)" *ngIf="hasResult(match)">
+            <mat-icon>edit</mat-icon>
+            Editar resultado
+          </button>
+          <button 
+            mat-raised-button 
+            color="primary" 
+            class="add-result-btn"
+            (click)="addResult(match)"
+             *ngIf="!hasResult(match)"
+          >
+            <mat-icon>add</mat-icon>
+            Añadir resultado
+          </button>
+        </div>
+
+      </mat-card-content>
+
+    }
+    
   </mat-card>
 </div>

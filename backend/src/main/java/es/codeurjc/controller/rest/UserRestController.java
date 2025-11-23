@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.service.UserService;
@@ -94,5 +95,10 @@ public class UserRestController {
         return ResponseEntity.created(location).body(userDTO);
     }
 
+    @GetMapping("/{id}/matches/")
+    public List<MatchDTO> getUserMatches(@PathVariable Long id) {
+        List<MatchDTO> matches = userService.getMatchesByUser(id);
+        return matches;
+    }
     
 }

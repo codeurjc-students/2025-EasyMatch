@@ -20,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import es.codeurjc.dto.MatchDTO;
+import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
@@ -31,12 +33,12 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
-<span class="fc" id="L34">    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository) {</span>
-<span class="fc" id="L35">        this.userRepository = userRepository;</span>
-<span class="fc" id="L36">        this.passwordEncoder = passwordEncoder;</span>
-<span class="fc" id="L37">        this.mapper = mapper;</span>
-<span class="fc" id="L38">        this.matchRepository = matchRepository;</span>
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L36">    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository) {</span>
+<span class="fc" id="L37">        this.userRepository = userRepository;</span>
+<span class="fc" id="L38">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L39">        this.mapper = mapper;</span>
+<span class="fc" id="L40">        this.matchRepository = matchRepository;</span>
+<span class="fc" id="L41">    }</span>
     @Autowired
 	private UserRepository userRepository;
 
@@ -49,136 +51,153 @@ public class UserService {
     @Autowired
     private UserMapper mapper;
 
+    @Autowired
+    private MatchMapper matchMapper;
+
     
 
     public Optional&lt;User&gt; findById(long id) {
-<span class="nc" id="L55">		return userRepository.findById(id);</span>
+<span class="nc" id="L60">		return userRepository.findById(id);</span>
 	}
 
     public List&lt;User&gt; findAll() {
-<span class="fc" id="L59">        return userRepository.findAll();</span>
+<span class="fc" id="L64">        return userRepository.findAll();</span>
     }
 
     public Collection&lt;UserDTO&gt; getUsers() {
-<span class="fc" id="L63">		return toDTOs(userRepository.findAll());</span>
+<span class="fc" id="L68">		return toDTOs(userRepository.findAll());</span>
 	}
 
 	public UserDTO getUser(long id) {
-<span class="fc" id="L67">		return toDTO(userRepository.findById(id).orElseThrow());</span>
+<span class="fc" id="L72">		return toDTO(userRepository.findById(id).orElseThrow());</span>
 	}
 
     public boolean exist(long id) {
-<span class="fc" id="L71">		return userRepository.existsById(id);</span>
+<span class="fc" id="L76">		return userRepository.existsById(id);</span>
 	}
 
     public User update(User user){
-<span class="fc" id="L75">        return userRepository.save(user);</span>
+<span class="fc" id="L80">        return userRepository.save(user);</span>
     }
     
     public User save(User user){
-<span class="fc" id="L79">		String password = user.getPassword();</span>
-<span class="fc" id="L80">        String encodedPassword = passwordEncoder.encode(password);</span>
-<span class="fc" id="L81">        user.setPassword(encodedPassword);</span>
-<span class="pc bpc" id="L82" title="1 of 2 branches missed.">		if (user.getUsername().equals(&quot;admin&quot;)) {</span>
-<span class="nc" id="L83">			user.setRoles(List.of(&quot;USER&quot;, &quot;ADMIN&quot;));</span>
-<span class="nc" id="L84">		} else {</span>
-<span class="fc" id="L85">			user.setRoles(List.of(&quot;USER&quot;));</span>
+<span class="fc" id="L84">		String password = user.getPassword();</span>
+<span class="fc" id="L85">        String encodedPassword = passwordEncoder.encode(password);</span>
+<span class="fc" id="L86">        user.setPassword(encodedPassword);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">		if (user.getUsername().equals(&quot;admin&quot;)) {</span>
+<span class="nc" id="L88">			user.setRoles(List.of(&quot;USER&quot;, &quot;ADMIN&quot;));</span>
+<span class="nc" id="L89">		} else {</span>
+<span class="fc" id="L90">			user.setRoles(List.of(&quot;USER&quot;));</span>
 		}
-<span class="fc" id="L87">		User savedUser = userRepository.save(user);</span>
-<span class="fc" id="L88">        userRepository.flush();</span>
-<span class="fc" id="L89">		return savedUser;</span>
+<span class="fc" id="L92">		User savedUser = userRepository.save(user);</span>
+<span class="fc" id="L93">        userRepository.flush();</span>
+<span class="fc" id="L94">		return savedUser;</span>
 	}
 
 
     @Transactional 
     public void delete(Long id) {
-<span class="fc" id="L95">        Optional&lt;User&gt; userOptional = userRepository.findById(id);</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (userOptional.isPresent()) {</span>
-<span class="fc" id="L97">            User user = userOptional.get();</span>
+<span class="fc" id="L100">        Optional&lt;User&gt; userOptional = userRepository.findById(id);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (userOptional.isPresent()) {</span>
+<span class="fc" id="L102">            User user = userOptional.get();</span>
 
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if (user.getId() &gt; 0) {</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">                for (Match match : user.getMatchesAsTeam1Player()) {</span>
-<span class="fc" id="L101">                    match.getTeam1Players().remove(user);</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            if (user.getId() &gt; 0) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                for (Match match : user.getMatchesAsTeam1Player()) {</span>
+<span class="fc" id="L106">                    match.getTeam1Players().remove(user);</span>
                 }
-<span class="fc bfc" id="L103" title="All 2 branches covered.">                for (Match match : user.getMatchesAsTeam2Player()) {</span>
-<span class="fc" id="L104">                    match.getTeam2Players().remove(user);</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">                for (Match match : user.getMatchesAsTeam2Player()) {</span>
+<span class="fc" id="L109">                    match.getTeam2Players().remove(user);</span>
                 }
 
-<span class="fc bfc" id="L107" title="All 2 branches covered.">                for (Match match : user.getOrganizedMatches()) {</span>
-<span class="fc" id="L108">                    match.setOrganizer(null);</span>
-<span class="fc" id="L109">                    matchRepository.delete(match);</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">                for (Match match : user.getOrganizedMatches()) {</span>
+<span class="fc" id="L113">                    match.setOrganizer(null);</span>
+<span class="fc" id="L114">                    matchRepository.delete(match);</span>
                 }
-<span class="fc" id="L111">                userRepository.deleteById(id);</span>
+<span class="fc" id="L116">                userRepository.deleteById(id);</span>
             }
-<span class="fc" id="L113">        }else {</span>
-<span class="fc" id="L114">            throw new IllegalArgumentException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="fc" id="L118">        }else {</span>
+<span class="fc" id="L119">            throw new IllegalArgumentException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
             
-<span class="fc" id="L117">    }</span>
+<span class="fc" id="L122">    }</span>
     
 
     public UserDTO getLoggedUserDTO() {
 
-<span class="fc" id="L122">        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();</span>
-
-        String email;
-
-<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if (principal instanceof UserDetails) {</span>
-
-<span class="fc" id="L128">            email = ((UserDetails)principal).getUsername();</span>
-
-<span class="fc" id="L130">        } else {</span>
-
-<span class="nc" id="L132">            email = principal.toString();</span>
-
-        }
-
-<span class="fc" id="L136">        return toDTO(userRepository.findByEmail(email).orElseThrow());</span>
+<span class="fc" id="L127">        return toDTO(this.getLoggedUser());</span>
 
 	}
 
+    public User getLoggedUser(){
+<span class="fc" id="L132">        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();</span>
+
+        String email;
+
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        if (principal instanceof UserDetails) {</span>
+
+<span class="fc" id="L138">            email = ((UserDetails)principal).getUsername();</span>
+
+<span class="fc" id="L140">        } else {</span>
+
+<span class="nc" id="L142">            email = principal.toString();</span>
+
+        }
+<span class="fc" id="L145">        return userRepository.findByEmail(email).orElseThrow();</span>
+    }
+
     public void createUserImage(long id, InputStream inputStream, long size) { 
-<span class="nc" id="L141">		User user = userRepository.findById(id).orElseThrow();</span>
-<span class="nc" id="L142">		user.setImage(BlobProxy.generateProxy(inputStream, size)); </span>
-<span class="nc" id="L143">		userRepository.save(user); </span>
-<span class="nc" id="L144">	}</span>
+<span class="nc" id="L149">		User user = userRepository.findById(id).orElseThrow();</span>
+<span class="nc" id="L150">		user.setImage(BlobProxy.generateProxy(inputStream, size)); </span>
+<span class="nc" id="L151">		userRepository.save(user); </span>
+<span class="nc" id="L152">	}</span>
 
     public Resource getUserImage(long id) throws SQLException{
-<span class="fc" id="L147">		User user = userRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L155">		User user = userRepository.findById(id).orElseThrow();</span>
 
-<span class="pc bpc" id="L149" title="1 of 2 branches missed.">		if (user.getImage() != null) {</span>
-<span class="fc" id="L150">			return new InputStreamResource(user.getImage().getBinaryStream());</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">		if (user.getImage() != null) {</span>
+<span class="fc" id="L158">			return new InputStreamResource(user.getImage().getBinaryStream());</span>
 		} else {
-<span class="nc" id="L152">			throw new NoSuchElementException();</span>
+<span class="nc" id="L160">			throw new NoSuchElementException();</span>
 		}
     }
 
     public UserDTO createUser(UserDTO userDTO) throws IOException {
-<span class="fc" id="L157">        User user = mapper.toDomain(userDTO);</span>
-<span class="fc" id="L158">        user.setLevel(0.0f);</span>
-<span class="fc" id="L159">        user.setStats(new PlayerStats(0,0,0,0));</span>
-<span class="fc" id="L160">        setUserImage(user,&quot;/images/default-avatar.jpg&quot;);</span>
-<span class="fc" id="L161">        this.save(user);</span>
-<span class="fc" id="L162">        return toDTO(user);</span>
+<span class="fc" id="L165">        User user = mapper.toDomain(userDTO);</span>
+<span class="fc" id="L166">        user.setLevel(0.0f);</span>
+<span class="fc" id="L167">        user.setStats(new PlayerStats(0,0,0,0));</span>
+<span class="fc" id="L168">        setUserImage(user,&quot;/images/default-avatar.jpg&quot;);</span>
+<span class="fc" id="L169">        this.save(user);</span>
+<span class="fc" id="L170">        return toDTO(user);</span>
     }
 
     private UserDTO toDTO (User user) {
-<span class="fc" id="L166">        return mapper.toDTO(user);</span>
+<span class="fc" id="L174">        return mapper.toDTO(user);</span>
     }
 
 
     private List&lt;UserDTO&gt; toDTOs(Collection&lt;User&gt; users){
-<span class="fc" id="L171">        return mapper.toDTOs(users);</span>
+<span class="fc" id="L179">        return mapper.toDTOs(users);</span>
     }
 
     private void setUserImage(User user, String classpathResource) throws IOException {
          try {
-<span class="fc" id="L176">            Resource image = new ClassPathResource(classpathResource);</span>
-<span class="fc" id="L177">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="pc" id="L178">        } catch (IOException e) {</span>
-<span class="nc" id="L179">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
+<span class="fc" id="L184">            Resource image = new ClassPathResource(classpathResource);</span>
+<span class="fc" id="L185">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
+<span class="pc" id="L186">        } catch (IOException e) {</span>
+<span class="nc" id="L187">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
         }
 	
-<span class="fc" id="L182">	}</span>
+<span class="fc" id="L190">	}</span>
+
+    public List&lt;MatchDTO&gt; getMatchesByUser(Long id) {
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        if (userRepository.existsById(id)){</span>
+<span class="fc" id="L194">            List&lt;Match&gt; myMatches = matchRepository.findByTeam1PlayersIdOrTeam2PlayersId(id, id);</span>
+<span class="fc" id="L195">            return myMatches.stream()</span>
+<span class="fc" id="L196">                .map(matchMapper::toDTO)</span>
+<span class="fc" id="L197">                .toList();</span>
+        }
+<span class="nc" id="L199">        return List.of();</span>
+        
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

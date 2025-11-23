@@ -1,11 +1,14 @@
 package es.codeurjc.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import es.codeurjc.dto.MatchDTO;
@@ -15,6 +18,7 @@ import es.codeurjc.model.Match;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.MatchRepository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class MatchService {
@@ -73,7 +77,7 @@ public class MatchService {
             search != null ? "%" + search.toLowerCase() + "%" : null, 
             sport != null ? sport.toLowerCase() : null, 
             includeFriendlies, 
-            timeRange != null ? timeRange.toLowerCase() : null)
+            timeRange != null ? timeRange.toLowerCase() : null, true)
             .map(this::toDTO);
     }
 
@@ -99,11 +103,64 @@ public class MatchService {
 
         User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());
 		match.setOrganizer(loggedUser);
-        match.setTeam1Players(List.of(loggedUser));
+        match.setTeam1Players(Set.of(loggedUser));
         
  		matchRepository.save(match);
  		return toDTO(match);
     }
+
+     public MatchDTO joinMatch(long id, String team) {
+        if (matchRepository.existsById(id)) {
+			Match match = matchRepository.findById(id).orElseThrow();
+			User loggedUser = userService.getLoggedUser();
+            int playersPerGame = match.getSport().getModes().get(0).getPlayersPerGame();
+            int totalPlayers = match.getTeam1Players().size() + match.getTeam2Players().size();
+            
+            if (!team.equalsIgnoreCase("A") && !team.equalsIgnoreCase("B")) { 
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El equipo debe ser A o B");
+            }
+                
+            if (totalPlayers < playersPerGame){
+                
+                if (team.equalsIgnoreCase("A")) {
+                    if (match.getTeam1Players().size() >= playersPerGame / 2 )
+                        throw new ResponseStatusException(HttpStatus.CONFLICT,"Equipo A lleno");
+
+                    if (match.containsPlayer(loggedUser))
+                        throw new ResponseStatusException(HttpStatus.CONFLICT,"Ya se ha unido a este partido");
+                    else
+                        match.addPlayerToTeam1(loggedUser);
+                }else{
+                    if (match.getTeam2Players().size() >= playersPerGame / 2)
+                        throw new ResponseStatusException(HttpStatus.CONFLICT,"Equipo B lleno");
+                    if (match.containsPlayer(loggedUser))
+                        throw new ResponseStatusException(HttpStatus.CONFLICT,"Ya se ha unido a este partido");
+                    else
+                        match.addPlayerToTeam2(loggedUser);
+                }
+                totalPlayers++;
+                if (totalPlayers == playersPerGame) match.setState(false);
+                matchRepository.save(match);
+            }else{
+                throw new ResponseStatusException(HttpStatus.CONFLICT,"El partido esta lleno");
+            }
+			return toDTO(match);
+ 		} else {
+ 			throw new NoSuchElementException("No existe ningun partido con el id: " + id);
+ 		}
+     }
+
+     public void leaveMatch(long id, User user) {
+        Match match = matchRepository.findById(id).orElseThrow();
+
+        match.getTeam1Players().removeIf(p -> p.getId() == user.getId());
+        match.getTeam2Players().removeIf(p -> p.getId() == user.getId());
+        if (match.getTeam1Players().isEmpty() && match.getTeam2Players().isEmpty()){
+            matchRepository.deleteById(id);
+        }else{
+            matchRepository.save(match);
+        }
+     }
 
     
 }

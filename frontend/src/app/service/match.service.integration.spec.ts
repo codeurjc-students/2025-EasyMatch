@@ -78,4 +78,38 @@ describe('MatchService', () => {
         });
       })
    });
+   it('joinMatch should add the logged user to the match\'s players', (done: DoneFn) => {
+    const matchId = 5; 
+    loginService.login(loginRequest).subscribe(
+      response => {
+        expect(response).toBeTruthy();
+        expect(response.status).toEqual('SUCCESS');
+        expect(response.message).toEqual('Auth successful. Tokens are created in cookie.');
+        service.joinMatch(matchId, 'A').subscribe(
+          response => {
+            expect(response).toBeTruthy();
+            expect(response.status).toContain('SUCCESS');
+            expect(response.message).toContain('Player added to team A');
+            done();
+          });
+      })
+   });
+
+   it('leaveMatch should remove the logged user from the match\'s players', (done: DoneFn) => {
+    const matchId = 5;
+    loginService.login(loginRequest).subscribe(
+      response => {
+        expect(response).toBeTruthy();
+        expect(response.status).toEqual('SUCCESS');
+        expect(response.message).toEqual('Auth successful. Tokens are created in cookie.');
+        service.leaveMatch(matchId).subscribe(
+          response => {
+            expect(response).toBeTruthy();
+            expect(response.status).toContain('SUCCESS');
+            expect(response.message).toContain('Player removed from match');
+            done();
+          });
+      })
+   });
+
 });

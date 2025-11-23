@@ -3,7 +3,9 @@ package es.codeurjc.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,20 +159,16 @@ public class DatabaseInitializer {
         Match match4 = new Match(date4,true,false,true,juan,4.49f,football,club4);
         Match match5 = new Match(date5,true,false,true,silvia,3.25f,volley,club5);
 
-        match1.setTeam1Players(new ArrayList<>());
-        match1.setTeam2Players(new ArrayList<>());
-        match1.getTeam1Players().add(match1.getOrganizer());
-        match2.setTeam1Players(new ArrayList<>());
-        match2.setTeam2Players(new ArrayList<>());
-        match2.getTeam1Players().add(match2.getOrganizer());
-        match3.setTeam1Players(new ArrayList<>());
-        match3.setTeam2Players(new ArrayList<>());
-        match3.getTeam1Players().add(match3.getOrganizer());
-        match4.setTeam1Players(new ArrayList<>());
-        match4.setTeam2Players(new ArrayList<>());
-        match4.getTeam1Players().add(match4.getOrganizer());
-        match5.setTeam1Players(List.of(silvia));
-        match5.setTeam2Players(new ArrayList<>());
+        match1.setTeam1Players(Set.of(match1.getOrganizer()));
+        match1.setTeam2Players(new HashSet<>());
+        match2.setTeam1Players(Set.of(match2.getOrganizer()));
+        match2.setTeam2Players(new HashSet<>());
+        match3.setTeam1Players(Set.of(match3.getOrganizer()));
+        match3.setTeam2Players(new HashSet<>());
+        match4.setTeam1Players(Set.of(match4.getOrganizer()));
+        match4.setTeam2Players(new HashSet<>());
+        match5.setTeam1Players(Set.of(silvia));
+        match5.setTeam2Players(new HashSet<>());
         
 
         matchService.save(match1);
@@ -212,14 +210,14 @@ public class DatabaseInitializer {
             club3
         );
 
-        tennisMatch1.setTeam1Players(List.of(pedro));
-        tennisMatch1.setTeam2Players(List.of(maria));
+        tennisMatch1.setTeam1Players(Set.of(pedro));
+        tennisMatch1.setTeam2Players(Set.of(maria));
 
-        tennisMatch2.setTeam1Players(List.of(pedro));
-        tennisMatch2.setTeam2Players(List.of(luis));
+        tennisMatch2.setTeam1Players(Set.of(pedro));
+        tennisMatch2.setTeam2Players(Set.of(luis));
 
-        tennisMatch3.setTeam1Players(List.of(maria));
-        tennisMatch3.setTeam2Players(List.of(pedro));
+        tennisMatch3.setTeam1Players(Set.of(maria));
+        tennisMatch3.setTeam2Players(Set.of(pedro));
 
         tennisMatch1.setResult(new MatchResult("Pedro Garcia", "Maria Lopez", 2, 1,List.of(6,4,6),List.of(3,6,2))); // Pedro wins
         tennisMatch2.setResult(new MatchResult("Pedro Garcia", "Luis Sanchez", 0, 2,List.of(3,4), List.of(6,6))); // Pedro loses

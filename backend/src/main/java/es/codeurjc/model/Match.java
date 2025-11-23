@@ -1,7 +1,7 @@
 package es.codeurjc.model;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -47,7 +47,7 @@ public class Match {
 		joinColumns = @JoinColumn(name = "match_id"),
 		inverseJoinColumns = @JoinColumn(name = "player_id")
 	)
-    private List<User> team1Players;
+    private Set<User> team1Players;
 	
 	
 	@ManyToMany
@@ -56,7 +56,7 @@ public class Match {
 		joinColumns = @JoinColumn(name = "match_id"),
 		inverseJoinColumns = @JoinColumn(name = "player_id")
 	)
-    private List<User> team2Players;
+    private Set<User> team2Players;
 
 	@Embedded
     private MatchResult result;
@@ -222,22 +222,22 @@ public class Match {
 		this.result = result;
 	}
 	
-	public List<User> getTeam1Players() {
+	public Set<User> getTeam1Players() {
 		return team1Players;
 	}
 
 
-	public void setTeam1Players(List<User> team1Players) {
+	public void setTeam1Players(Set<User> team1Players) {
 		this.team1Players = team1Players;
 	}
 
 
 
-	public List<User> getTeam2Players() {
+	public Set<User> getTeam2Players() {
 		return team2Players;
 	}
 
-	public void setTeam2Players(List<User> team2Players) {
+	public void setTeam2Players(Set<User> team2Players) {
 		this.team2Players = team2Players;
 	}
 

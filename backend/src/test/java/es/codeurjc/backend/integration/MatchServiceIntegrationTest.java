@@ -24,9 +24,11 @@ import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.Sport;
+import es.codeurjc.model.User;
 import es.codeurjc.service.ClubService;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.SportService;
+import es.codeurjc.service.UserService;
 import jakarta.transaction.Transactional;
 
 @Tag("integration")
@@ -49,6 +51,9 @@ public class MatchServiceIntegrationTest {
 
     @Autowired
     private SportService sportService;
+
+    @Autowired
+    private UserService userService;
 
     @Test
     @Order(1)
@@ -91,7 +96,7 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(5)
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
-    public void testCreateMatchIntegrationTest(){
+    public void createMatchIntegrationTest(){
         int numMatchesBefore = matchService.findAll().size();
 
         Match match = new Match();
@@ -110,6 +115,33 @@ public class MatchServiceIntegrationTest {
         assertThat(numMatchesAfter, equalTo(numMatchesBefore + 1));
         assertThat(matchService.exist(createdMatch.id()), equalTo(true));
     }
+
+    @Test
+    @Order(6)
+    @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
+    public void joinAndLeaveMatchIntegrationTest(){
+        long id = 4L;
+        String selectedTeam = "B";
+        MatchDTO match = matchService.getMatch(id);
+        User loggedUser = userService.getLoggedUser();
+        int teamSizeBefore = match.team2Players().size();
+        MatchDTO joinedMatchDTO = matchService.joinMatch(id, selectedTeam);
+
+        int teamSizeAfter = joinedMatchDTO.team2Players().size();
+        
+        assertThat(teamSizeAfter,equalTo(teamSizeBefore + 1));
+
+        
+        teamSizeBefore = teamSizeAfter;
+        matchService.leaveMatch(id, loggedUser);
+        MatchDTO matchLeftDTO = matchService.getMatch(id);
+
+        assertThat(matchLeftDTO.team2Players().size(),equalTo(teamSizeBefore - 1));
+
+    }
+
+    
+
 
     
 }
