@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
+import { Match } from '../models/match.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -30,6 +31,12 @@ export class UserService {
         birthDate: new Date(response.birthDate) 
       }))
     );;
+  }
+
+  getUserMatches(userId: number): Observable<Match[]> {
+    return this.http.get<Match[]>(`${this.apiUrl}/users/${userId}/matches/`, {
+      withCredentials: true
+    });
   }
 
 }

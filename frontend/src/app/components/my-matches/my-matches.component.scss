@@ -1,0 +1,70 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.matches-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+  
+
+  h2 {
+    font-weight: 400;
+    color: #323232;
+    font-size: 1.5rem;
+  }
+
+  .found {
+    background-color: #f5f5f5;
+    border-radius: 12px;
+    padding: 0.2rem 0.8rem;
+    font-size: 0.85rem;
+    color: #555;
+  }
+}
+
+.matches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  justify-items: center;
+}
+
+.empty {
+  margin-top: 3rem;
+  text-align: center;
+  color: #ccc;
+  font-size: 1.1rem;
+
+  mat-icon {
+    font-size: 40px;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* --- Loading --- */
+.loading {
+  margin-top: 3rem;
+  text-align: center;
+  color: #ccc;
+
+  .spin {
+    animation: spin 1.5s linear infinite;
+    font-size: 36px;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

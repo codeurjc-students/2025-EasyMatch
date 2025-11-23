@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchComponent } from './match';
 import { CommonModule } from '@angular/common';
+import { provideHttpClient } from '@angular/common/http';
 
 
 describe('MatchComponent', () => {
@@ -24,6 +25,7 @@ describe('MatchComponent', () => {
         losses: 0,
         winRate: 0
     }
+    
   }
 
   const mockClub =  { 
@@ -48,6 +50,16 @@ describe('MatchComponent', () => {
     },
     price: Number(10),
     club: mockClub,
+    result : {
+      team1Name: '',
+      team2Name: '',
+      team1Score: 0,
+      team2Score: 0,
+      team1Sets: 0,
+      team2Sets: 0,
+      team1GamesPerSet: [],
+      team2GamesPerSet: []
+    },
     team1Players: [mockUser],
     team2Players: []
   };
@@ -55,6 +67,7 @@ describe('MatchComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CommonModule, MatchComponent],
+      providers:  [provideHttpClient()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MatchComponent);

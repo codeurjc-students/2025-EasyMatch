@@ -192,8 +192,92 @@ public class AngularUITest {
         assertThat(firstClub.findElement(By.cssSelector(".price")).getText(), containsString("-"));
     }
 
+    @Test 
+    @Order(6)
+    public void verifyJoinMatchAndMyMatchesPage(){
+        loginUser("pedro@emeal.com","pedroga4");
+        WebElement matchToJoin = driver.findElement(By.id("match-card4"));
+        WebElement joinBtn = matchToJoin.findElement(By.className("join-button"));
+        joinBtn.click();
+
+        WebElement dialog = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-join-match-dialog")));
+        
+        WebElement title = dialog.findElement(By.cssSelector("h2.dialog-title"));
+        assertThat(title.getText(), containsString("Unirse al partido"));
+
+        WebElement teamA = dialog.findElement(By.xpath("//h3[text()='Equipo A']/parent::div"));
+        List<WebElement> playersA = teamA.findElements(By.tagName("li"));
+        assertThat(playersA.size(), greaterThanOrEqualTo(0));
+
+        WebElement teamSelector = dialog.findElement(By.cssSelector("mat-select"));
+        teamSelector.click();
+        
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElements(By.cssSelector("mat-option")).get(1).click();
+
+        WebElement confirmBtn = dialog.findElement(By.className("confirm-btn"));
+        assertThat(confirmBtn.isEnabled(), equalTo(true));
+        confirmBtn.click();
+
+        WebElement optionsMenu = wait.until(
+            ExpectedConditions.elementToBeClickable(By.className("user-info"))
+        );
+        optionsMenu.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("my-matches-btn")));
+
+        WebElement myMatchesBtn = driver.findElement(By.className("my-matches-btn"));
+        myMatchesBtn.click();
+        
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-my-matches")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
+
+        WebElement joinedMatch = driver.findElement(By.id("match-card4"));
+        assertThat(joinedMatch.findElement(By.id("number-players")).getText(), containsString("2/14"));
+
+        
+    }
+
+    @Test 
+    @Order(7)
+    public void verifyLeaveMatchAndMyMatchesPage(){
+        loginUser("pedro@emeal.com","pedroga4");
+        
+        WebElement optionsMenu = wait.until(
+            ExpectedConditions.elementToBeClickable(By.className("user-info"))
+        );
+        optionsMenu.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("my-matches-btn")));
+
+        WebElement myMatchesBtn = driver.findElement(By.className("my-matches-btn"));
+        myMatchesBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-my-matches")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
+        WebElement joinedMatch = driver.findElement(By.id("match-card4"));
+
+        WebElement leaveBtn = joinedMatch.findElement(By.className("leave-button"));
+        leaveBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-confirm-dialog")));
+
+        WebElement confirmBtn = driver.findElement(By.id("confirm-btn"));
+        confirmBtn.click();
+
+        WebElement matchesBtn = driver.findElement(By.id("matches-btn"));
+        matchesBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
+        WebElement matchLeft = wait.until(
+            ExpectedConditions.presenceOfElementLocated(By.id("match-card4"))
+        );
+        WebElement numberPlayers = matchLeft.findElement(By.id("number-players"));
+        assertThat(numberPlayers.getText(), containsString("1/14"));
+    }
+
     @Test
-    @Order(7) 
+    @Order(9) 
     public void verifyProfilePageLoadsAndAccountDeletionWorks(){
         loginUser("pedro@emeal.com","pedroga4");
 
@@ -229,7 +313,7 @@ public class AngularUITest {
     }
 
     @Test 
-    @Order(6)
+    @Order(8)
     public void verifyCreateMatchPageAndSubmitForm(){
         loginUser("pedro@emeal.com","pedroga4");
         WebElement createMatchBtn = driver.findElement(By.id("create-match-btn"));
@@ -274,12 +358,11 @@ public class AngularUITest {
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
 
-        int matchesSize = driver.findElements(By.cssSelector(".match-card")).size();
         
-        WebElement match1 = driver.findElement(By.id("match-card"+matchesSize)).findElement(By.className("organizer-name"));
+        
+        WebElement match1 = driver.findElement(By.id("match-card9")).findElement(By.className("organizer-name"));
         assertThat(match1.getText(), equalTo("Pedro Garcia"));
 
-        
     }
 
     private void loginUser(String email, String password) {

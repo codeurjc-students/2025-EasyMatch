@@ -20,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import es.codeurjc.dto.MatchDTO;
+import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
@@ -48,6 +50,9 @@ public class UserService {
 
     @Autowired
     private UserMapper mapper;
+
+    @Autowired
+    private MatchMapper matchMapper;
 
     
 
@@ -119,6 +124,11 @@ public class UserService {
 
     public UserDTO getLoggedUserDTO() {
 
+        return toDTO(this.getLoggedUser());
+
+	}
+
+    public User getLoggedUser(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         String email;
@@ -132,10 +142,8 @@ public class UserService {
             email = principal.toString();
 
         }
-
-        return toDTO(userRepository.findByEmail(email).orElseThrow());
-
-	}
+        return userRepository.findByEmail(email).orElseThrow();
+    }
 
     public void createUserImage(long id, InputStream inputStream, long size) { 
 		User user = userRepository.findById(id).orElseThrow();
@@ -180,4 +188,15 @@ public class UserService {
         }
 	
 	}
+
+    public List<MatchDTO> getMatchesByUser(Long id) {
+        if (userRepository.existsById(id)){
+            List<Match> myMatches = matchRepository.findByTeam1PlayersIdOrTeam2PlayersId(id, id);
+            return myMatches.stream()
+                .map(matchMapper::toDTO)
+                .toList();
+        }
+        return List.of();
+        
+    }
 }

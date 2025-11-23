@@ -6,7 +6,7 @@
 
 
   <nav class="nav-links">
-    <button mat-button routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
+    <button mat-button id="matches-btn" routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
     <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active">Clubes</button>
     <button mat-button id="profile-btn" routerLink="/profile" routerLinkActive="active">Perfil</button>
   </nav>
@@ -31,6 +31,11 @@
         <button mat-menu-item routerLink="/profile">
           <mat-icon>person</mat-icon>
           Mi perfil
+        </button>
+
+        <button mat-menu-item class="my-matches-btn" routerLink="/my-matches" routerLinkActive="active">
+          <mat-icon>emoji_events</mat-icon>
+          Mis partidos
         </button>
 
         <button mat-menu-item routerLink="/settings">

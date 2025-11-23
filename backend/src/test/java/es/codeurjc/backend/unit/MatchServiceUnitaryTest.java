@@ -3,9 +3,12 @@ package es.codeurjc.backend.unit;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
@@ -24,6 +28,8 @@ import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.Mode;
+import es.codeurjc.model.ScoringType;
 import es.codeurjc.model.User;
 import es.codeurjc.model.Sport;
 
@@ -147,5 +153,129 @@ public class MatchServiceUnitaryTest {
         assertThat(createdMatch.team1Players(), contains(userDTO));
         assertThat(createdMatch.state(), is(true));
     }
+
+    @Test
+    public void joinExistingMatchUnitaryTest(){
+        //GIVEN
+        long id = 4L;
+        User user = new User();
+        User organizer =  new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true, organizer,5.00, sport,null);
+        match.setId(id);
+        match.setTeam1Players(new HashSet<>(Set.of(organizer)));
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+        //WHEN
+        when(matchRepository.existsById(id)).thenReturn(true);
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+        when(userService.getLoggedUser()).thenReturn(user);
+        //THEN
+        matchService.joinMatch(id,"A");
+    }
+
+    @Test
+    public void joinNonExistingMatchUnitaryTest(){
+        long id = 1L;
+        when(matchRepository.existsById(id)).thenReturn(false);
+        NoSuchElementException ex = assertThrows(NoSuchElementException.class, () ->{
+            matchService.joinMatch(id, "D");
+        });
+        assertThat(ex.getMessage(), equalTo("No existe ningun partido con el id: " + id));
+    }
+
+    @Test
+    public void joinMatchWithInvalidTeamUnitaryTest(){
+        long id = 1L;
+        User organizer =  new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true, organizer,5.00, sport,null);
+        match.setId(id);
+        match.setTeam1Players(new HashSet<>(Set.of(organizer)));
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+
+        when(matchRepository.existsById(id)).thenReturn(true);
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+        when(userService.getLoggedUser()).thenReturn(organizer);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () ->{
+            matchService.joinMatch(id, "C");
+        });
+        assertThat(ex.getReason(), equalTo("El equipo debe ser A o B"));
+        assertThat(ex.getStatusCode().toString(),equalTo("400 BAD_REQUEST"));
+    }
+
+    @Test 
+    public void joinMatchUserAlreadyJoinedUnitaryTest(){
+        //GIVEN
+        long id = 4L;
+        User organizer =  new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true, organizer,5.00, sport,null);
+        match.setId(id);
+        match.setTeam1Players(new HashSet<>(Set.of(organizer)));
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+        //WHEN
+        when(matchRepository.existsById(id)).thenReturn(true);
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+        when(userService.getLoggedUser()).thenReturn(organizer);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
+            matchService.joinMatch(id,"B");
+        });
+        //THEN
+        assertThat(ex.getReason(),equalTo("Ya se ha unido a este partido"));
+        assertThat(ex.getStatusCode().toString(),equalTo("409 CONFLICT"));
+    }
+
+    @Test 
+    public void joinFullMatchUnitaryTest(){
+        //GIVEN
+        long id = 4L;
+        User user1 =  new User();
+        User user2 =  new User();
+        User user3 = new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Singles",2)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true, user1,5.00, sport,null);
+        match.setId(id);
+        match.setTeam1Players(new HashSet<>(Set.of(user1)));
+        match.setTeam2Players(new HashSet<>(Set.of(user2)));
+        Optional<Match> optionalMatch = Optional.of(match);
+        //WHEN
+        when(matchRepository.existsById(id)).thenReturn(true);
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+        when(userService.getLoggedUser()).thenReturn(user3);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
+            matchService.joinMatch(id,"B");
+        });
+        assertThat(ex.getReason(),equalTo("El partido esta lleno"));
+        assertThat(ex.getStatusCode().toString(),equalTo("409 CONFLICT"));
+    }
+
+    @Test 
+    public void leaveMatchUnitaryTest(){
+        long id = 4L;
+        User user1 =  new User();
+        user1.setId(1L);
+        User user2 =  new User();
+        user2.setId(2L);
+        User user3 =  new User();
+        user3.setId(3L);
+        Match match = new Match(null, true, false, true, user1,5.00,null,null);
+        match.setId(id);
+        match.setTeam1Players(new HashSet<>(Set.of(user1,user2)));
+        match.setTeam2Players(new HashSet<>(Set.of(user3)));
+        Optional<Match> optionalMatch = Optional.of(match);
+        
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+        
+        matchService.leaveMatch(id, user2);
+        verify(matchRepository,times(1)).save(match);
+        assertThat(match.getTeam1Players(),not(hasItem(user2)));    
+    }
+
 
 }

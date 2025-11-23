@@ -1,0 +1,44 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon color="primary">add</mat-icon> Unirse al partido
+</h2>
+
+<mat-dialog-content>
+  <mat-card class="teams-card">
+    <div class="teams-container">
+      <div class="team">
+        <h3>Equipo A</h3>
+        <mat-icon>sports_handball</mat-icon>
+        <ul>
+          <li *ngFor="let p of teamAPlayers">{{ p.realname }}</li>
+        </ul>
+        <p *ngIf="team1Players.length === 0" class="empty">Sin jugadores</p>
+      </div>
+
+      <mat-divider vertical></mat-divider>
+
+      <div class="team">
+        <h3>Equipo B</h3>
+        <mat-icon>sports_handball</mat-icon>
+        <ul>
+          <li *ngFor="let p of teamBPlayers">{{ p.realname }}</li>
+        </ul>
+        <p *ngIf="team2Players.length === 0" class="empty">Sin jugadores</p>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-form-field appearance="outline" class="team-select">
+    <mat-label>Selecciona un equipo</mat-label>
+    <mat-select [(value)]="selectedTeam">
+      <mat-option value="A" [disabled]="teamAPlayers.length >= maxPlayers">Equipo A</mat-option>
+      <mat-option value="B" [disabled]="teamBPlayers.length >= maxPlayers">Equipo B</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onCancel()">Cancelar</button>
+  <button mat-flat-button color="primary" class="confirm-btn" [disabled]="selectedTeam == null" (click)="onConfirm()">
+    Confirmar
+  </button>
+</mat-dialog-actions>

@@ -14,8 +14,20 @@ public record MatchDTO (
     SportDTO sport,
     BasicClubDTO club,
     List&lt;UserDTO&gt; team1Players,
-    List&lt;UserDTO&gt; team2Players
+    List&lt;UserDTO&gt; team2Players,
+    MatchResultDTO result
 ) {
-    
+    public MatchDTO(Long id, LocalDateTime date,
+        Boolean type,
+        Boolean isPrivate,
+        Boolean state,
+        BasicUserDTO organizer,
+        Float price,
+        SportDTO sport,
+        BasicClubDTO club,
+        List&lt;UserDTO&gt; team1Players,
+        List&lt;UserDTO&gt; team2Players) {
+<span class="nc" id="L30">            this(id, date, type, isPrivate, state, organizer, price, sport, club, team1Players,team2Players, null);</span>
+<span class="nc" id="L31">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

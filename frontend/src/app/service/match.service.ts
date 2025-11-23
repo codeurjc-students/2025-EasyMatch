@@ -4,9 +4,11 @@ import { Observable } from 'rxjs';
 import { Match } from '../models/match.model';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { JoinMatchResponse } from '../models/join-match-response';
 
 @Injectable({ providedIn: 'root' })
 export class MatchService {
+  
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
@@ -58,6 +60,15 @@ export class MatchService {
         }))
       );
   }
+
+  joinMatch(id: number, team: string): Observable<JoinMatchResponse> {
+    return this.http.put<JoinMatchResponse>(`${this.apiUrl}/matches/${id}`, { team }, { withCredentials: true });
+  }
+  
+  leaveMatch(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/matches/${id}`, { withCredentials: true });
+  }
+  
 
 }
 

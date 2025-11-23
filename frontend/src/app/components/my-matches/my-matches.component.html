@@ -1,0 +1,28 @@
+<app-header></app-header>
+
+<div class="matches-section">
+
+  <div class="header">
+    <span class="found" *ngIf="matches().length > 0">
+      {{ matches().length }} encontrados
+    </span>
+  </div>
+
+  <div *ngIf="loading()" class="loading">
+    <mat-icon class="spin">autorenew</mat-icon>
+    Cargando partidos...
+  </div>
+
+  <div *ngIf="!loading() && matches().length === 0" class="empty">
+    <mat-icon>event_busy</mat-icon>
+    <p>No tienes partidos todavía.</p>
+  </div>
+
+  <div class="matches-grid" *ngIf="matches().length > 0">
+    <app-match
+      *ngFor="let m of matches()"
+      [match]="m">
+    </app-match>
+  </div>
+
+</div>

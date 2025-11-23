@@ -1,6 +1,9 @@
 package es.codeurjc.controller.rest;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +12,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.codeurjc.dto.MatchDTO;
+import es.codeurjc.model.User;
 import es.codeurjc.service.MatchService;
+import es.codeurjc.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1/matches")
@@ -27,6 +34,9 @@ public class MatchRestController {
 
     @Autowired
     private MatchService matchService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/")
 	public Page<MatchDTO> getMatches(Pageable pageable) {
@@ -59,6 +69,27 @@ public class MatchRestController {
         matchDTO = matchService.createMatch(matchDTO);
         URI location = fromCurrentRequest().path("/{id}").buildAndExpand(matchDTO.id()).toUri();
         return ResponseEntity.created(location).body(matchDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, String>> joinMatch(@PathVariable long id, @RequestBody JoinMatchRequest request) {
+        matchService.joinMatch(id, request.getTeam());
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "SUCCESS");
+        response.put("message", "Player added to team " + request.getTeam());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> leaveMatch(@PathVariable long id) {
+        User user = userService.getLoggedUser();
+        matchService.leaveMatch(id, user);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "SUCCESS");
+        response.put("message","Player removed from match");
+        return ResponseEntity.ok(response);
     }
 
 

@@ -3,7 +3,9 @@
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,7 @@ import jakarta.transaction.Transactional;
 
 
 @Component
-<span class="fc" id="L30">public class DatabaseInitializer {</span>
+<span class="fc" id="L32">public class DatabaseInitializer {</span>
     @Autowired
     MatchService matchService;
 
@@ -44,215 +46,211 @@ import jakarta.transaction.Transactional;
     @Transactional
     public void init() throws IOException {
         
-<span class="fc" id="L47">        Mode singles = new Mode(&quot;Singles&quot;,2);</span>
-<span class="fc" id="L48">        Mode doubles = new Mode(&quot;Doubles&quot;,4);</span>
-<span class="fc" id="L49">        Mode m7v7 = new Mode(&quot;7v7&quot;,14);</span>
-<span class="fc" id="L50">        Mode m11v11 = new Mode(&quot;11v11&quot;,22);</span>
-<span class="fc" id="L51">        Mode indoor = new Mode(&quot;Indoor&quot;,12);</span>
-<span class="fc" id="L52">        Mode beach = new Mode(&quot;Beach&quot;,4);</span>
+<span class="fc" id="L49">        Mode singles = new Mode(&quot;Singles&quot;,2);</span>
+<span class="fc" id="L50">        Mode doubles = new Mode(&quot;Doubles&quot;,4);</span>
+<span class="fc" id="L51">        Mode m7v7 = new Mode(&quot;7v7&quot;,14);</span>
+<span class="fc" id="L52">        Mode m11v11 = new Mode(&quot;11v11&quot;,22);</span>
+<span class="fc" id="L53">        Mode indoor = new Mode(&quot;Indoor&quot;,12);</span>
+<span class="fc" id="L54">        Mode beach = new Mode(&quot;Beach&quot;,4);</span>
         
-<span class="fc" id="L54">        List&lt;Mode&gt; modesOfTennis = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L55">        modesOfTennis.add(singles);</span>
-<span class="fc" id="L56">        modesOfTennis.add(doubles);</span>
+<span class="fc" id="L56">        List&lt;Mode&gt; modesOfTennis = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L57">        modesOfTennis.add(singles);</span>
+<span class="fc" id="L58">        modesOfTennis.add(doubles);</span>
 
-<span class="fc" id="L58">        List&lt;Mode&gt; modesOfFootball = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L59">        modesOfFootball.add(m7v7);</span>
-<span class="fc" id="L60">        modesOfFootball.add(m11v11);</span>
+<span class="fc" id="L60">        List&lt;Mode&gt; modesOfFootball = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L61">        modesOfFootball.add(m7v7);</span>
+<span class="fc" id="L62">        modesOfFootball.add(m11v11);</span>
 
-<span class="fc" id="L62">        List&lt;Mode&gt; modesOfPaddle = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L63">        modesOfPaddle.add(singles);</span>
-<span class="fc" id="L64">        modesOfPaddle.add(doubles);</span>
+<span class="fc" id="L64">        List&lt;Mode&gt; modesOfPaddle = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L65">        modesOfPaddle.add(singles);</span>
+<span class="fc" id="L66">        modesOfPaddle.add(doubles);</span>
 
-<span class="fc" id="L66">        List&lt;Mode&gt; modesOfVolley = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L67">        modesOfVolley.add(beach);</span>
-<span class="fc" id="L68">        modesOfVolley.add(indoor);</span>
+<span class="fc" id="L68">        List&lt;Mode&gt; modesOfVolley = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L69">        modesOfVolley.add(beach);</span>
+<span class="fc" id="L70">        modesOfVolley.add(indoor);</span>
         
-<span class="fc" id="L70">        LocalDateTime date1 = LocalDateTime.of(2025, 12, 5, 12, 30);</span>
-<span class="fc" id="L71">        LocalDateTime date2 = LocalDateTime.of(2025, 11, 25, 11, 00);</span>
-<span class="fc" id="L72">        LocalDateTime date3 = LocalDateTime.of(2025, 12, 3, 10, 30);</span>
-<span class="fc" id="L73">        LocalDateTime date4 = LocalDateTime.of(2025, 11, 28, 19, 00);</span>
-<span class="fc" id="L74">        LocalDateTime date5 = LocalDateTime.of(2025, 11, 15, 10, 30);</span>
+<span class="fc" id="L72">        LocalDateTime date1 = LocalDateTime.of(2025, 12, 5, 12, 30);</span>
+<span class="fc" id="L73">        LocalDateTime date2 = LocalDateTime.of(2025, 11, 25, 11, 00);</span>
+<span class="fc" id="L74">        LocalDateTime date3 = LocalDateTime.of(2025, 12, 3, 10, 30);</span>
+<span class="fc" id="L75">        LocalDateTime date4 = LocalDateTime.of(2025, 11, 28, 19, 00);</span>
+<span class="fc" id="L76">        LocalDateTime date5 = LocalDateTime.of(2025, 11, 15, 10, 30);</span>
 
-<span class="fc" id="L76">        Sport sport1 = new Sport(&quot;Tenis&quot;, modesOfTennis,ScoringType.SETS);</span>
-<span class="fc" id="L77">        Sport tennis = sportService.save(sport1);</span>
-<span class="fc" id="L78">        Sport sport2 = new Sport(&quot;Padel&quot;, modesOfPaddle,ScoringType.SETS);</span>
-<span class="fc" id="L79">        Sport paddle = sportService.save(sport2);</span>
-<span class="fc" id="L80">        Sport sport3 = new Sport(&quot;Futbol&quot;, modesOfFootball,ScoringType.SCORE);</span>
-<span class="fc" id="L81">        Sport football = sportService.save(sport3);</span>
-<span class="fc" id="L82">        Sport sport4 = new Sport(&quot;Voleibol&quot;, modesOfVolley,ScoringType.SETS);</span>
-<span class="fc" id="L83">        Sport volley = sportService.save(sport4);</span>
+<span class="fc" id="L78">        Sport sport1 = new Sport(&quot;Tenis&quot;, modesOfTennis,ScoringType.SETS);</span>
+<span class="fc" id="L79">        Sport tennis = sportService.save(sport1);</span>
+<span class="fc" id="L80">        Sport sport2 = new Sport(&quot;Padel&quot;, modesOfPaddle,ScoringType.SETS);</span>
+<span class="fc" id="L81">        Sport paddle = sportService.save(sport2);</span>
+<span class="fc" id="L82">        Sport sport3 = new Sport(&quot;Futbol&quot;, modesOfFootball,ScoringType.SCORE);</span>
+<span class="fc" id="L83">        Sport football = sportService.save(sport3);</span>
+<span class="fc" id="L84">        Sport sport4 = new Sport(&quot;Voleibol&quot;, modesOfVolley,ScoringType.SETS);</span>
+<span class="fc" id="L85">        Sport volley = sportService.save(sport4);</span>
 
-<span class="fc" id="L85">        User pedro = new User(&quot;Pedro Garcia&quot;,&quot;pedro123&quot;,&quot;pedro@emeal.com&quot;,&quot;pedroga4&quot;,LocalDateTime.of(1990,5,20,0,0),true,&quot;Apasionado del tenis&quot;,5.12f,&quot;USER&quot;);</span>
-<span class="fc" id="L86">        setUserImage(pedro,&quot;/images/pedro.jpg&quot;);</span>
-<span class="fc" id="L87">        userService.save(pedro);</span>
+<span class="fc" id="L87">        User pedro = new User(&quot;Pedro Garcia&quot;,&quot;pedro123&quot;,&quot;pedro@emeal.com&quot;,&quot;pedroga4&quot;,LocalDateTime.of(1990,5,20,0,0),true,&quot;Apasionado del tenis&quot;,5.12f,&quot;USER&quot;);</span>
+<span class="fc" id="L88">        setUserImage(pedro,&quot;/images/pedro.jpg&quot;);</span>
+<span class="fc" id="L89">        userService.save(pedro);</span>
 
-<span class="fc" id="L89">        User maria = new User(&quot;Maria Lopez&quot;,&quot;maria456&quot;,&quot;maria@emeal.com&quot;,&quot;marialo3&quot;,LocalDateTime.of(1992,8,15,0,0),false,&quot;Me encantan los partidos amistosos&quot;,4.57f,&quot;USER&quot;);</span>
-<span class="fc" id="L90">        setUserImage(maria,&quot;/images/maria.jpg&quot;);</span>
-<span class="fc" id="L91">        userService.save(maria);</span>
+<span class="fc" id="L91">        User maria = new User(&quot;Maria Lopez&quot;,&quot;maria456&quot;,&quot;maria@emeal.com&quot;,&quot;marialo3&quot;,LocalDateTime.of(1992,8,15,0,0),false,&quot;Me encantan los partidos amistosos&quot;,4.57f,&quot;USER&quot;);</span>
+<span class="fc" id="L92">        setUserImage(maria,&quot;/images/maria.jpg&quot;);</span>
+<span class="fc" id="L93">        userService.save(maria);</span>
 
-<span class="fc" id="L93">        User juan = new User(&quot;Juan Martinez&quot;,&quot;juan789&quot;,&quot;juan@emeal.com&quot;,&quot;juanma1&quot;,LocalDateTime.of(1988,3,10,0,0),true,&quot;Apasionado del deporte rey y competitivo&quot;,6.03f,&quot;USER&quot;);</span>
-<span class="fc" id="L94">        setUserImage(juan,&quot;/images/juan.jpg&quot;);</span>
-<span class="fc" id="L95">        userService.save(juan);</span>
+<span class="fc" id="L95">        User juan = new User(&quot;Juan Martinez&quot;,&quot;juan789&quot;,&quot;juan@emeal.com&quot;,&quot;juanma1&quot;,LocalDateTime.of(1988,3,10,0,0),true,&quot;Apasionado del deporte rey y competitivo&quot;,6.03f,&quot;USER&quot;);</span>
+<span class="fc" id="L96">        setUserImage(juan,&quot;/images/juan.jpg&quot;);</span>
+<span class="fc" id="L97">        userService.save(juan);</span>
 
-<span class="fc" id="L97">        User luis = new User(&quot;Luis Sanchez&quot;,&quot;luis321&quot;,&quot;luis@emeal.com&quot;,&quot;saluis2&quot;,LocalDateTime.of(1995,12,5,0,0),true,&quot;Disfruto de partidos casuales&quot;,3.51f,&quot;USER&quot;);</span>
-<span class="fc" id="L98">        setUserImage(luis,&quot;/images/luis.jpg&quot;);</span>
-<span class="fc" id="L99">        userService.save(luis);</span>
+<span class="fc" id="L99">        User luis = new User(&quot;Luis Sanchez&quot;,&quot;luis321&quot;,&quot;luis@emeal.com&quot;,&quot;saluis2&quot;,LocalDateTime.of(1995,12,5,0,0),true,&quot;Disfruto de partidos casuales&quot;,3.51f,&quot;USER&quot;);</span>
+<span class="fc" id="L100">        setUserImage(luis,&quot;/images/luis.jpg&quot;);</span>
+<span class="fc" id="L101">        userService.save(luis);</span>
 
-<span class="fc" id="L101">        User silvia = new User(&quot;Silvia Gonzalez&quot;,&quot;silvia66&quot;,&quot;silvia@emeal.com&quot;,&quot;silvia5&quot;,LocalDateTime.of(2003,8,7,0,0),false,&quot;Me encanta jugar mientras haya un ambiente sano&quot;,5.37f,&quot;USER&quot;);</span>
-<span class="fc" id="L102">        setUserImage(silvia,&quot;/images/silvia.jpg&quot;);</span>
-<span class="fc" id="L103">        userService.save(silvia);</span>
+<span class="fc" id="L103">        User silvia = new User(&quot;Silvia Gonzalez&quot;,&quot;silvia66&quot;,&quot;silvia@emeal.com&quot;,&quot;silvia5&quot;,LocalDateTime.of(2003,8,7,0,0),false,&quot;Me encanta jugar mientras haya un ambiente sano&quot;,5.37f,&quot;USER&quot;);</span>
+<span class="fc" id="L104">        setUserImage(silvia,&quot;/images/silvia.jpg&quot;);</span>
+<span class="fc" id="L105">        userService.save(silvia);</span>
 
 
-<span class="fc" id="L106">        Club club1 = new Club(&quot;Tennis Club Elite&quot;, &quot;Madrid&quot;, &quot;Plaza de Rafael Nadal, 22&quot;, &quot;684274290&quot;,&quot;tennisclubelite@outlook.com&quot;,&quot;www.tennisclubelite.com&quot;);</span>
-<span class="fc" id="L107">        club1.setSports(List.of(paddle, tennis));</span>
-<span class="fc" id="L108">        club1.setNumberOfCourts(List.of(12,10));</span>
-<span class="fc" id="L109">        club1.setSchedule(new Schedule(&quot;08:00&quot;, &quot;22:00&quot;));</span>
-<span class="fc" id="L110">        club1.setPriceRange(new PriceRange(30, 35, &quot;€/hora&quot;));</span>
-<span class="fc" id="L111">        setClubImage(club1,&quot;/images/tennis_club_elite.jpg&quot;);</span>
-<span class="fc" id="L112">        clubService.save(club1); </span>
+<span class="fc" id="L108">        Club club1 = new Club(&quot;Tennis Club Elite&quot;, &quot;Madrid&quot;, &quot;Plaza de Rafael Nadal, 22&quot;, &quot;684274290&quot;,&quot;tennisclubelite@outlook.com&quot;,&quot;www.tennisclubelite.com&quot;);</span>
+<span class="fc" id="L109">        club1.setSports(List.of(paddle, tennis));</span>
+<span class="fc" id="L110">        club1.setNumberOfCourts(List.of(12,10));</span>
+<span class="fc" id="L111">        club1.setSchedule(new Schedule(&quot;08:00&quot;, &quot;22:00&quot;));</span>
+<span class="fc" id="L112">        club1.setPriceRange(new PriceRange(30, 35, &quot;€/hora&quot;));</span>
+<span class="fc" id="L113">        setClubImage(club1,&quot;/images/tennis_club_elite.jpg&quot;);</span>
+<span class="fc" id="L114">        clubService.save(club1); </span>
 
-<span class="fc" id="L114">        Club club2 = new Club(&quot;Padel Pro Center&quot;, &quot;Valencia&quot;, &quot;Avenida de las Estrellas, 5&quot;, &quot;684274292&quot;,&quot;padelprocenter@emeal.com&quot;,&quot;www.padelprocenter.com&quot;);</span>
-<span class="fc" id="L115">        club2.setSports(List.of(paddle));</span>
-<span class="fc" id="L116">        club2.setNumberOfCourts(List.of(18));</span>
-<span class="fc" id="L117">        club2.setSchedule(new Schedule(&quot;07:00&quot;, &quot;23:00&quot;));</span>
-<span class="fc" id="L118">        club2.setPriceRange(new PriceRange(25, 30, &quot;€/hora&quot;));</span>
-<span class="fc" id="L119">        setClubImage(club2,&quot;/images/padel_pro_center.jpeg&quot;);</span>
-<span class="fc" id="L120">        clubService.save(club2);</span>
+<span class="fc" id="L116">        Club club2 = new Club(&quot;Padel Pro Center&quot;, &quot;Valencia&quot;, &quot;Avenida de las Estrellas, 5&quot;, &quot;684274292&quot;,&quot;padelprocenter@emeal.com&quot;,&quot;www.padelprocenter.com&quot;);</span>
+<span class="fc" id="L117">        club2.setSports(List.of(paddle));</span>
+<span class="fc" id="L118">        club2.setNumberOfCourts(List.of(18));</span>
+<span class="fc" id="L119">        club2.setSchedule(new Schedule(&quot;07:00&quot;, &quot;23:00&quot;));</span>
+<span class="fc" id="L120">        club2.setPriceRange(new PriceRange(25, 30, &quot;€/hora&quot;));</span>
+<span class="fc" id="L121">        setClubImage(club2,&quot;/images/padel_pro_center.jpeg&quot;);</span>
+<span class="fc" id="L122">        clubService.save(club2);</span>
 
-<span class="fc" id="L122">        Club club3 = new Club(&quot;Tennis &amp; Padel Hub&quot;, &quot;Sevilla&quot;, &quot;Calle de los Campeones, 8&quot;, &quot;684274293&quot;,&quot;tennis&amp;padelhub@emeal.com&quot;,&quot;www.tennisandpadelhub.com&quot;);</span>
-<span class="fc" id="L123">        club3.setSports(List.of(paddle,tennis));</span>
-<span class="fc" id="L124">        club3.setNumberOfCourts(List.of(8,15));</span>
-<span class="fc" id="L125">        club3.setSchedule(new Schedule(&quot;08:00&quot;, &quot;22:30&quot;));</span>
-<span class="fc" id="L126">        club3.setPriceRange(new PriceRange(35, 45, &quot;€/hora&quot;));</span>
-<span class="fc" id="L127">        setClubImage(club3,&quot;/images/tennis_padel_hub.jpg&quot;);</span>
-<span class="fc" id="L128">        clubService.save(club3);</span>
+<span class="fc" id="L124">        Club club3 = new Club(&quot;Tennis &amp; Padel Hub&quot;, &quot;Sevilla&quot;, &quot;Calle de los Campeones, 8&quot;, &quot;684274293&quot;,&quot;tennis&amp;padelhub@emeal.com&quot;,&quot;www.tennisandpadelhub.com&quot;);</span>
+<span class="fc" id="L125">        club3.setSports(List.of(paddle,tennis));</span>
+<span class="fc" id="L126">        club3.setNumberOfCourts(List.of(8,15));</span>
+<span class="fc" id="L127">        club3.setSchedule(new Schedule(&quot;08:00&quot;, &quot;22:30&quot;));</span>
+<span class="fc" id="L128">        club3.setPriceRange(new PriceRange(35, 45, &quot;€/hora&quot;));</span>
+<span class="fc" id="L129">        setClubImage(club3,&quot;/images/tennis_padel_hub.jpg&quot;);</span>
+<span class="fc" id="L130">        clubService.save(club3);</span>
 
-<span class="fc" id="L130">        Club club4 = new Club(&quot;Football Arena&quot;, &quot;Barcelona&quot;, &quot;Carrer de Messi, 10&quot;, &quot;684274291&quot;,&quot;footballarean@outlook.com&quot;,&quot;www.footballarena.com&quot;);</span>
-<span class="fc" id="L131">        club4.setSports(List.of(football));</span>
-<span class="fc" id="L132">        club4.setNumberOfCourts(List.of(5));</span>
-<span class="fc" id="L133">        club4.setSchedule(new Schedule(&quot;09:30&quot;, &quot;21:30&quot;));</span>
-<span class="fc" id="L134">        club4.setPriceRange(new PriceRange(10, 20, &quot;€/hora&quot;));</span>
-<span class="fc" id="L135">        setClubImage(club4,&quot;/images/football_arena.jpg&quot;);</span>
-<span class="fc" id="L136">        clubService.save(club4);</span>
+<span class="fc" id="L132">        Club club4 = new Club(&quot;Football Arena&quot;, &quot;Barcelona&quot;, &quot;Carrer de Messi, 10&quot;, &quot;684274291&quot;,&quot;footballarean@outlook.com&quot;,&quot;www.footballarena.com&quot;);</span>
+<span class="fc" id="L133">        club4.setSports(List.of(football));</span>
+<span class="fc" id="L134">        club4.setNumberOfCourts(List.of(5));</span>
+<span class="fc" id="L135">        club4.setSchedule(new Schedule(&quot;09:30&quot;, &quot;21:30&quot;));</span>
+<span class="fc" id="L136">        club4.setPriceRange(new PriceRange(10, 20, &quot;€/hora&quot;));</span>
+<span class="fc" id="L137">        setClubImage(club4,&quot;/images/football_arena.jpg&quot;);</span>
+<span class="fc" id="L138">        clubService.save(club4);</span>
 
-<span class="fc" id="L138">        Club club5 = new Club(</span>
-<span class="fc" id="L139">            &quot;Volleyball Pro Center&quot;, </span>
-<span class="fc" id="L140">            &quot;Murcia&quot;, </span>
-<span class="fc" id="L141">            &quot;Calle de Carlos Alcaraz, 6&quot;, </span>
-<span class="fc" id="L142">            &quot;684274292&quot;,</span>
-<span class="fc" id="L143">            &quot;volleyballcenter@outlook.com&quot;,</span>
-<span class="fc" id="L144">            &quot;www.volleyballcenter.com&quot;</span>
+<span class="fc" id="L140">        Club club5 = new Club(</span>
+<span class="fc" id="L141">            &quot;Volleyball Pro Center&quot;, </span>
+<span class="fc" id="L142">            &quot;Murcia&quot;, </span>
+<span class="fc" id="L143">            &quot;Calle de Carlos Alcaraz, 6&quot;, </span>
+<span class="fc" id="L144">            &quot;684274292&quot;,</span>
+<span class="fc" id="L145">            &quot;volleyballcenter@outlook.com&quot;,</span>
+<span class="fc" id="L146">            &quot;www.volleyballcenter.com&quot;</span>
         );
-<span class="fc" id="L146">        club5.setSports(List.of(volley));</span>
-<span class="fc" id="L147">        club5.setNumberOfCourts(List.of(3));</span>
-<span class="fc" id="L148">        club5.setSchedule(new Schedule(&quot;10:00&quot;, &quot;22:00&quot;));</span>
-<span class="fc" id="L149">        club5.setPriceRange(new PriceRange(15, 30, &quot;€/hora&quot;));</span>
-<span class="fc" id="L150">        setClubImage(club5, &quot;/images/volleyball_center.jpg&quot;);</span>
-<span class="fc" id="L151">        clubService.save(club5);</span>
+<span class="fc" id="L148">        club5.setSports(List.of(volley));</span>
+<span class="fc" id="L149">        club5.setNumberOfCourts(List.of(3));</span>
+<span class="fc" id="L150">        club5.setSchedule(new Schedule(&quot;10:00&quot;, &quot;22:00&quot;));</span>
+<span class="fc" id="L151">        club5.setPriceRange(new PriceRange(15, 30, &quot;€/hora&quot;));</span>
+<span class="fc" id="L152">        setClubImage(club5, &quot;/images/volleyball_center.jpg&quot;);</span>
+<span class="fc" id="L153">        clubService.save(club5);</span>
 
         
-<span class="fc" id="L154">        Match match1 = new Match(date1,true,false,true,pedro,3.49f,tennis,club1);</span>
-<span class="fc" id="L155">        Match match2 = new Match(date2,false,true,true,maria,8.99f, paddle,club2);</span>
-<span class="fc" id="L156">        Match match3 = new Match(date3,true,false,true,luis,6.49f,tennis,club3);</span>
-<span class="fc" id="L157">        Match match4 = new Match(date4,true,false,true,juan,4.49f,football,club4);</span>
-<span class="fc" id="L158">        Match match5 = new Match(date5,true,false,true,silvia,3.25f,volley,club5);</span>
+<span class="fc" id="L156">        Match match1 = new Match(date1,true,false,true,pedro,3.49f,tennis,club1);</span>
+<span class="fc" id="L157">        Match match2 = new Match(date2,false,true,true,maria,8.99f, paddle,club2);</span>
+<span class="fc" id="L158">        Match match3 = new Match(date3,true,false,true,luis,6.49f,tennis,club3);</span>
+<span class="fc" id="L159">        Match match4 = new Match(date4,true,false,true,juan,4.49f,football,club4);</span>
+<span class="fc" id="L160">        Match match5 = new Match(date5,true,false,true,silvia,3.25f,volley,club5);</span>
 
-<span class="fc" id="L160">        match1.setTeam1Players(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L161">        match1.setTeam2Players(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L162">        match1.getTeam1Players().add(match1.getOrganizer());</span>
-<span class="fc" id="L163">        match2.setTeam1Players(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L164">        match2.setTeam2Players(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L165">        match2.getTeam1Players().add(match2.getOrganizer());</span>
-<span class="fc" id="L166">        match3.setTeam1Players(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L167">        match3.setTeam2Players(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L168">        match3.getTeam1Players().add(match3.getOrganizer());</span>
-<span class="fc" id="L169">        match4.setTeam1Players(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L170">        match4.setTeam2Players(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L171">        match4.getTeam1Players().add(match4.getOrganizer());</span>
-<span class="fc" id="L172">        match5.setTeam1Players(List.of(silvia));</span>
-<span class="fc" id="L173">        match5.setTeam2Players(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L162">        match1.setTeam1Players(Set.of(match1.getOrganizer()));</span>
+<span class="fc" id="L163">        match1.setTeam2Players(new HashSet&lt;&gt;());</span>
+<span class="fc" id="L164">        match2.setTeam1Players(Set.of(match2.getOrganizer()));</span>
+<span class="fc" id="L165">        match2.setTeam2Players(new HashSet&lt;&gt;());</span>
+<span class="fc" id="L166">        match3.setTeam1Players(Set.of(match3.getOrganizer()));</span>
+<span class="fc" id="L167">        match3.setTeam2Players(new HashSet&lt;&gt;());</span>
+<span class="fc" id="L168">        match4.setTeam1Players(Set.of(match4.getOrganizer()));</span>
+<span class="fc" id="L169">        match4.setTeam2Players(new HashSet&lt;&gt;());</span>
+<span class="fc" id="L170">        match5.setTeam1Players(Set.of(silvia));</span>
+<span class="fc" id="L171">        match5.setTeam2Players(new HashSet&lt;&gt;());</span>
         
 
-<span class="fc" id="L176">        matchService.save(match1);</span>
-<span class="fc" id="L177">        matchService.save(match2);</span>
-<span class="fc" id="L178">        matchService.save(match3);</span>
-<span class="fc" id="L179">        matchService.save(match4);</span>
-<span class="fc" id="L180">        matchService.save(match5);</span>
+<span class="fc" id="L174">        matchService.save(match1);</span>
+<span class="fc" id="L175">        matchService.save(match2);</span>
+<span class="fc" id="L176">        matchService.save(match3);</span>
+<span class="fc" id="L177">        matchService.save(match4);</span>
+<span class="fc" id="L178">        matchService.save(match5);</span>
 
-<span class="fc" id="L182">        Match tennisMatch1 = new Match(</span>
-<span class="fc" id="L183">            LocalDateTime.of(2025, 9, 10, 10, 30),</span>
-<span class="fc" id="L184">            true, </span>
-<span class="fc" id="L185">            false,</span>
-<span class="fc" id="L186">            false, </span>
-<span class="fc" id="L187">            pedro, </span>
-<span class="fc" id="L188">            4.50,</span>
-<span class="fc" id="L189">            tennis,</span>
-<span class="fc" id="L190">            club1</span>
+<span class="fc" id="L180">        Match tennisMatch1 = new Match(</span>
+<span class="fc" id="L181">            LocalDateTime.of(2025, 9, 10, 10, 30),</span>
+<span class="fc" id="L182">            true, </span>
+<span class="fc" id="L183">            false,</span>
+<span class="fc" id="L184">            false, </span>
+<span class="fc" id="L185">            pedro, </span>
+<span class="fc" id="L186">            4.50,</span>
+<span class="fc" id="L187">            tennis,</span>
+<span class="fc" id="L188">            club1</span>
         );
 
-<span class="fc" id="L193">        Match tennisMatch2 = new Match(</span>
-<span class="fc" id="L194">            LocalDateTime.of(2025, 9, 18, 12, 0),</span>
-<span class="fc" id="L195">            true,</span>
-<span class="fc" id="L196">            false,</span>
-<span class="fc" id="L197">            false,</span>
-<span class="fc" id="L198">            pedro,</span>
-<span class="fc" id="L199">            4.50,</span>
-<span class="fc" id="L200">            tennis,</span>
-<span class="fc" id="L201">            club3</span>
+<span class="fc" id="L191">        Match tennisMatch2 = new Match(</span>
+<span class="fc" id="L192">            LocalDateTime.of(2025, 9, 18, 12, 0),</span>
+<span class="fc" id="L193">            true,</span>
+<span class="fc" id="L194">            false,</span>
+<span class="fc" id="L195">            false,</span>
+<span class="fc" id="L196">            pedro,</span>
+<span class="fc" id="L197">            4.50,</span>
+<span class="fc" id="L198">            tennis,</span>
+<span class="fc" id="L199">            club3</span>
         );
 
-<span class="fc" id="L204">        Match tennisMatch3 = new Match(</span>
-<span class="fc" id="L205">            LocalDateTime.of(2025, 10, 1, 9, 30),</span>
-<span class="fc" id="L206">            true,</span>
-<span class="fc" id="L207">            false,</span>
-<span class="fc" id="L208">            false,</span>
-<span class="fc" id="L209">            maria,</span>
-<span class="fc" id="L210">            4.50,</span>
-<span class="fc" id="L211">            tennis,</span>
-<span class="fc" id="L212">            club3</span>
+<span class="fc" id="L202">        Match tennisMatch3 = new Match(</span>
+<span class="fc" id="L203">            LocalDateTime.of(2025, 10, 1, 9, 30),</span>
+<span class="fc" id="L204">            true,</span>
+<span class="fc" id="L205">            false,</span>
+<span class="fc" id="L206">            false,</span>
+<span class="fc" id="L207">            maria,</span>
+<span class="fc" id="L208">            4.50,</span>
+<span class="fc" id="L209">            tennis,</span>
+<span class="fc" id="L210">            club3</span>
         );
 
-<span class="fc" id="L215">        tennisMatch1.setTeam1Players(List.of(pedro));</span>
-<span class="fc" id="L216">        tennisMatch1.setTeam2Players(List.of(maria));</span>
+<span class="fc" id="L213">        tennisMatch1.setTeam1Players(Set.of(pedro));</span>
+<span class="fc" id="L214">        tennisMatch1.setTeam2Players(Set.of(maria));</span>
 
-<span class="fc" id="L218">        tennisMatch2.setTeam1Players(List.of(pedro));</span>
-<span class="fc" id="L219">        tennisMatch2.setTeam2Players(List.of(luis));</span>
+<span class="fc" id="L216">        tennisMatch2.setTeam1Players(Set.of(pedro));</span>
+<span class="fc" id="L217">        tennisMatch2.setTeam2Players(Set.of(luis));</span>
 
-<span class="fc" id="L221">        tennisMatch3.setTeam1Players(List.of(maria));</span>
-<span class="fc" id="L222">        tennisMatch3.setTeam2Players(List.of(pedro));</span>
+<span class="fc" id="L219">        tennisMatch3.setTeam1Players(Set.of(maria));</span>
+<span class="fc" id="L220">        tennisMatch3.setTeam2Players(Set.of(pedro));</span>
 
-<span class="fc" id="L224">        tennisMatch1.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Maria Lopez&quot;, 2, 1,List.of(6,4,6),List.of(3,6,2))); // Pedro wins</span>
-<span class="fc" id="L225">        tennisMatch2.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Luis Sanchez&quot;, 0, 2,List.of(3,4), List.of(6,6))); // Pedro loses</span>
-<span class="fc" id="L226">        tennisMatch3.setResult(new MatchResult(&quot;Maria Lopez&quot;, &quot;Pedro Garcia&quot;, 2, 0,List.of(6,6), List.of(2,1))); // Pedro loses</span>
+<span class="fc" id="L222">        tennisMatch1.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Maria Lopez&quot;, 2, 1,List.of(6,4,6),List.of(3,6,2))); // Pedro wins</span>
+<span class="fc" id="L223">        tennisMatch2.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Luis Sanchez&quot;, 0, 2,List.of(3,4), List.of(6,6))); // Pedro loses</span>
+<span class="fc" id="L224">        tennisMatch3.setResult(new MatchResult(&quot;Maria Lopez&quot;, &quot;Pedro Garcia&quot;, 2, 0,List.of(6,6), List.of(2,1))); // Pedro loses</span>
 
 
-<span class="fc" id="L229">        matchService.save(tennisMatch1);</span>
-<span class="fc" id="L230">        matchService.save(tennisMatch2);</span>
-<span class="fc" id="L231">        matchService.save(tennisMatch3);</span>
+<span class="fc" id="L227">        matchService.save(tennisMatch1);</span>
+<span class="fc" id="L228">        matchService.save(tennisMatch2);</span>
+<span class="fc" id="L229">        matchService.save(tennisMatch3);</span>
 
-<span class="fc" id="L233">        pedro.updateStats(tennisMatch1.didPlayerWin(pedro), false); // wins</span>
-<span class="fc" id="L234">        pedro.updateStats(tennisMatch2.didPlayerWin(pedro), false); // loses</span>
-<span class="fc" id="L235">        pedro.updateStats(tennisMatch3.didPlayerWin(pedro), false); // loses</span>
-<span class="fc" id="L236">        userService.update(pedro);</span>
-<span class="fc" id="L237">    }</span>
+<span class="fc" id="L231">        pedro.updateStats(tennisMatch1.didPlayerWin(pedro), false); // wins</span>
+<span class="fc" id="L232">        pedro.updateStats(tennisMatch2.didPlayerWin(pedro), false); // loses</span>
+<span class="fc" id="L233">        pedro.updateStats(tennisMatch3.didPlayerWin(pedro), false); // loses</span>
+<span class="fc" id="L234">        userService.update(pedro);</span>
+<span class="fc" id="L235">    }</span>
     private void setUserImage(User user, String classpathResource) throws IOException {
          try {
-<span class="fc" id="L240">            Resource image = new ClassPathResource(classpathResource);</span>
-<span class="fc" id="L241">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="pc" id="L242">        } catch (IOException e) {</span>
-<span class="nc" id="L243">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
+<span class="fc" id="L238">            Resource image = new ClassPathResource(classpathResource);</span>
+<span class="fc" id="L239">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
+<span class="pc" id="L240">        } catch (IOException e) {</span>
+<span class="nc" id="L241">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
         }
 	
-<span class="fc" id="L246">	}</span>
+<span class="fc" id="L244">	}</span>
 
     private void setClubImage(Club club, String classpathResource) throws IOException {
          try {
-<span class="fc" id="L250">            Resource image = new ClassPathResource(classpathResource);</span>
-<span class="fc" id="L251">		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="pc" id="L252">        } catch (IOException e) {</span>
-<span class="nc" id="L253">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
+<span class="fc" id="L248">            Resource image = new ClassPathResource(classpathResource);</span>
+<span class="fc" id="L249">		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
+<span class="pc" id="L250">        } catch (IOException e) {</span>
+<span class="nc" id="L251">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
         }
 	
-<span class="fc" id="L256">	}</span>
+<span class="fc" id="L254">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
