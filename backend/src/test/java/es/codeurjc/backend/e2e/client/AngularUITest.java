@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -221,6 +222,8 @@ public class AngularUITest {
         assertThat(confirmBtn.isEnabled(), equalTo(true));
         confirmBtn.click();
 
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("app-confirm-dialog")));
+
         WebElement optionsMenu = wait.until(
             ExpectedConditions.elementToBeClickable(By.className("user-info"))
         );
@@ -240,46 +243,49 @@ public class AngularUITest {
         
     }
 
-    @Test 
+    @Test
     @Order(7)
     public void verifyLeaveMatchAndMyMatchesPage(){
         loginUser("pedro@emeal.com","pedroga4");
-        
+
         WebElement optionsMenu = wait.until(
             ExpectedConditions.elementToBeClickable(By.className("user-info"))
         );
         optionsMenu.click();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("my-matches-btn")));
-
-        WebElement myMatchesBtn = driver.findElement(By.className("my-matches-btn"));
-        myMatchesBtn.click();
+        driver.findElement(By.className("my-matches-btn")).click();
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-my-matches")));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
-        WebElement joinedMatch = driver.findElement(By.id("match-card4"));
+
+        WebElement joinedMatch = wait.until(
+            ExpectedConditions.presenceOfElementLocated(By.id("match-card4"))
+        );
 
         WebElement leaveBtn = joinedMatch.findElement(By.className("leave-button"));
-        leaveBtn.click();
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", leaveBtn);
+        wait.until(ExpectedConditions.elementToBeClickable(leaveBtn));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", leaveBtn);
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-confirm-dialog")));
 
         WebElement confirmBtn = driver.findElement(By.id("confirm-btn"));
-        confirmBtn.click();
+        wait.until(ExpectedConditions.elementToBeClickable(confirmBtn));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", confirmBtn);
 
-        WebElement matchesBtn = driver.findElement(By.id("matches-btn"));
-        matchesBtn.click();
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("app-confirm-dialog")));
+
+        driver.findElement(By.id("matches-btn")).click();
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
-        WebElement matchLeft = wait.until(
-            ExpectedConditions.presenceOfElementLocated(By.id("match-card4"))
-        );
-        WebElement numberPlayers = matchLeft.findElement(By.id("number-players"));
+
         wait.until(ExpectedConditions.textToBePresentInElementLocated(
             By.cssSelector("#match-card4 #number-players"),
             "1/14"
         ));
-        assertThat(numberPlayers.getText(), containsString("1/14"));
+
+        String text = driver.findElement(By.cssSelector("#match-card4 #number-players")).getText();
+        assertThat(text, containsString("1/14"));
     }
 
     @Test
