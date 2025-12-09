@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -42,14 +45,14 @@ public class UserServiceIntegrationTest {
     @Order(1)
     public void getUsersIntegrationTest() {
         int numUsers = userService.findAll().size();
-        Collection<UserDTO> users = userService.getUsers();
-        assertThat(users.size(), equalTo(numUsers));
+        Page<UserDTO> pageUsers = userService.getUsers(Pageable.ofSize(numUsers));
+        assertThat(pageUsers.getTotalElements(), equalTo(Integer.toUnsignedLong(numUsers)));
     }
 
     @Test
     @Order(2)
     public void getUserByIdIntegrationTest() {
-        long id = 1L;
+        long id = 2L;
         UserDTO userDTO = userService.getUser(id);
         assertThat(userDTO.id(), equalTo(id));
         assertThat(userDTO.realname(), equalTo("Pedro Garcia"));
@@ -57,20 +60,21 @@ public class UserServiceIntegrationTest {
     @Test
     @Order(3)
     public void deleteNonExistingUserIntegrationTest() {
-        int numUsers = userService.getUsers().size();
+        int numUsers = userService.findAll().size();
         long id = numUsers + 1;
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {userService.delete(id);});
         assertThat(ex.getMessage(), equalTo("User with id " + id + " does not exist."));
         
     }
 
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     @Order(4)
     public void testDeleteExistingUserIntegrationTest() {
         int numUsers = userService.findAll().size();
         long id = 4L;
         userService.delete(id);
-        Collection<UserDTO> users = userService.getUsers();
+        Collection<User> users = userService.findAll();
         assertThat(users.size(), equalTo(numUsers - 1));
         assertFalse(userService.exist(id));
     }
@@ -89,8 +93,8 @@ public class UserServiceIntegrationTest {
         newUser.setGender(true);
 
         UserDTO newUserDTO = mapper.toDTO(newUser); 
-        UserDTO savedUser = userService.createUser(newUserDTO);
-        Collection<UserDTO> users = userService.getUsers();
+        UserDTO savedUser = userService.createUser(newUserDTO,false);
+        Collection<User> users = userService.findAll();
         assertThat(users.size(), equalTo(numUsers + 1));
         assertThat(savedUser.id(), notNullValue());
         int id = users.size() + 1;

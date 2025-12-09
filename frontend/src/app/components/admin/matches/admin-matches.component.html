@@ -1,0 +1,76 @@
+<div class="admin-header">
+  <h2>Admin > Partidos</h2>
+  <button mat-raised-button color="primary" class="new-user-btn" (click)="createMatch()">
+    <mat-icon>add</mat-icon> Crear partido
+  </button>
+</div>
+
+<table mat-table [dataSource]="matches" class="admin-table">
+
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <td mat-cell *matCellDef="let m">{{ m.id }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef>Fecha</th>
+    <td mat-cell *matCellDef="let m">{{ m.date}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef>Tipo</th>
+    <td mat-cell *matCellDef="let m">{{ m.type ? 'Competitivo': 'Amistoso' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="privacy">
+    <th mat-header-cell *matHeaderCellDef>Privacidad</th>
+    <td mat-cell *matCellDef="let m">{{ m.isPrivate ? 'Privado': 'Público'}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="state">
+    <th mat-header-cell *matHeaderCellDef>Estado</th>
+    <td mat-cell *matCellDef="let m">{{ m.state  ? 'Abierto': 'Cerrado'}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="price">
+    <th mat-header-cell *matHeaderCellDef>Precio</th>
+    <td mat-cell *matCellDef="let m">{{ m.price | number:'1.2-2' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="club">
+    <th mat-header-cell *matHeaderCellDef>Club</th>
+    <td mat-cell *matCellDef="let m">{{ m.club.id }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="sport">
+    <th mat-header-cell *matHeaderCellDef>Deporte</th>
+    <td mat-cell *matCellDef="let m">{{ m.sport.name }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="organizer">
+    <th mat-header-cell *matHeaderCellDef>Organizador</th>
+    <td mat-cell *matCellDef="let m">{{ m.organizer.id }}</td>
+  </ng-container>
+
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+    <td mat-cell *matCellDef="let c">
+      <button mat-icon-button color="primary" (click)="editMatch(c.id)">
+        <mat-icon class="edit-icon">edit</mat-icon>
+      </button>
+
+      <button mat-icon-button color="warn" (click)="deleteMatch(c.id)">
+        <mat-icon class="delete-icon">delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+</table>
+
+
+<mat-paginator [length]="totalElements()" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)" showFirstLastButtons>
+</mat-paginator>

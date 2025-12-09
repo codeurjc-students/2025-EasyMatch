@@ -15,4 +15,5 @@ export interface User{
         losses: number,
         winRate: number
     }
+    roles: string[];
 }

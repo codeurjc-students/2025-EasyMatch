@@ -12,8 +12,10 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.ClubDTO;
 import es.codeurjc.dto.ClubMapper;
@@ -23,10 +25,10 @@ import es.codeurjc.repository.ClubRepository;
 @Service
 public class ClubService {
 
-<span class="fc" id="L26">    public ClubService(ClubRepository clubRepository, ClubMapper mapper) {</span>
-<span class="fc" id="L27">        this.clubRepository = clubRepository;</span>
-<span class="fc" id="L28">        this.mapper = mapper;</span>
-<span class="fc" id="L29">    }</span>
+<span class="fc" id="L28">    public ClubService(ClubRepository clubRepository, ClubMapper mapper) {</span>
+<span class="fc" id="L29">        this.clubRepository = clubRepository;</span>
+<span class="fc" id="L30">        this.mapper = mapper;</span>
+<span class="fc" id="L31">    }</span>
     
     @Autowired
     private ClubRepository clubRepository;
@@ -37,69 +39,102 @@ public class ClubService {
     
 
     private ClubDTO toDTO (Club club) {
-<span class="fc" id="L40">        return mapper.toDTO(club);</span>
+<span class="fc" id="L42">        return mapper.toDTO(club);</span>
     }
 
     public Optional&lt;Club&gt; findById(long id) {
-<span class="fc" id="L44">        return clubRepository.findById(id);</span>
+<span class="fc" id="L46">        return clubRepository.findById(id);</span>
     }
 
     public List&lt;Club&gt; findAll() {
-<span class="fc" id="L48">        return clubRepository.findAll();</span>
+<span class="fc" id="L50">        return clubRepository.findAll();</span>
     }
 
     public Page&lt;Club&gt; findAll(Pageable pageable) {
-<span class="fc" id="L52">        return clubRepository.findAll(pageable);</span>
+<span class="fc" id="L54">        return clubRepository.findAll(pageable);</span>
     }
 
     public boolean exist(long id) {
-<span class="fc" id="L56">        return clubRepository.existsById(id);</span>
+<span class="fc" id="L58">        return clubRepository.existsById(id);</span>
     }
 
     public Club save(Club club) {
-<span class="fc" id="L60">        return clubRepository.save(club);</span>
+<span class="fc" id="L62">        return clubRepository.save(club);</span>
     }
     public void delete(long id) {
-<span class="fc" id="L63">        Optional&lt;Club&gt; clubOptional = clubRepository.findById(id);</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (clubOptional.isPresent()) {</span>
-<span class="fc" id="L65">            clubRepository.deleteById(id);</span>
-<span class="fc" id="L66">        } else {</span>
-<span class="fc" id="L67">            throw new IllegalArgumentException(&quot;Club with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="fc" id="L65">        Optional&lt;Club&gt; clubOptional = clubRepository.findById(id);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (clubOptional.isPresent()) {</span>
+<span class="fc" id="L67">            clubRepository.deleteById(id);</span>
+<span class="fc" id="L68">        } else {</span>
+<span class="fc" id="L69">            throw new IllegalArgumentException(&quot;Club with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L71">    }</span>
 
     @Transactional(readOnly = true)
     public ClubDTO getClub(long id) {
-<span class="fc" id="L73">		return mapper.toDTO(clubRepository.findById(id).orElseThrow());</span>
+<span class="pc" id="L75">		return mapper.toDTO(clubRepository.findById(id).orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND)));</span>
 	}
 
     @Transactional(readOnly = true)
     public Page&lt;ClubDTO&gt; getClubs(Pageable pageable) {
-<span class="fc" id="L78">        return findAll(pageable).map(this::toDTO);</span>
+<span class="fc" id="L80">        return findAll(pageable).map(this::toDTO);</span>
     }
 
     public Page&lt;Club&gt; getFilteredClubs(Pageable pageable, String search, String sport, String city) {
-<span class="fc" id="L82">        return clubRepository.findFilteredClubs(pageable,</span>
-<span class="fc bfc" id="L83" title="All 2 branches covered.">                search != null ? &quot;%&quot; + search.toLowerCase() + &quot;%&quot; : null,</span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">                sport != null ? sport.toLowerCase() : null,</span>
-<span class="fc bfc" id="L85" title="All 2 branches covered.">                city != null ? city.toLowerCase() : null);</span>
+<span class="fc" id="L84">        return clubRepository.findFilteredClubs(pageable,</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                search != null ? &quot;%&quot; + search.toLowerCase() + &quot;%&quot; : null,</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                sport != null ? sport.toLowerCase() : null,</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                city != null ? city.toLowerCase() : null);</span>
     }
 
     public Resource getClubImage(long id) throws SQLException{
-<span class="fc" id="L89">		Club club = clubRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L91">		Club club = clubRepository.findById(id).orElseThrow();</span>
 
-<span class="pc bpc" id="L91" title="1 of 2 branches missed.">		if (club.getImage() != null) {</span>
-<span class="fc" id="L92">			return new InputStreamResource(club.getImage().getBinaryStream());</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">		if (club.getImage() != null) {</span>
+<span class="fc" id="L94">			return new InputStreamResource(club.getImage().getBinaryStream());</span>
 		} else {
-<span class="nc" id="L94">			throw new NoSuchElementException();</span>
+<span class="nc" id="L96">			throw new NoSuchElementException();</span>
 		}
     }
 
-    public void createUserImage(long id, InputStream inputStream, long size) { 
-<span class="nc" id="L99">		Club club = clubRepository.findById(id).orElseThrow();</span>
-<span class="nc" id="L100">		club.setImage(BlobProxy.generateProxy(inputStream, size)); </span>
-<span class="nc" id="L101">		clubRepository.save(club); </span>
-<span class="nc" id="L102">	}</span>
+    public void createClubImage(long id, InputStream inputStream, long size) { 
+<span class="nc" id="L101">		Club club = clubRepository.findById(id).orElseThrow();</span>
+<span class="nc" id="L102">		club.setImage(BlobProxy.generateProxy(inputStream, size)); </span>
+<span class="nc" id="L103">		clubRepository.save(club); </span>
+<span class="nc" id="L104">	}</span>
+
+    public ClubDTO createClub(ClubDTO clubDTO) {
+<span class="nc" id="L107">        Club club = mapper.toDomain(clubDTO);</span>
+<span class="nc" id="L108">        this.save(club);</span>
+<span class="nc" id="L109">        return toDTO(club);</span>
+    }
+
+    public ClubDTO replaceClub(long id, ClubDTO updatedClubDTO) {
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (clubRepository.existsById(id)) {</span>
+<span class="nc" id="L114">			Club club = clubRepository.findById(id).orElseThrow();</span>
+<span class="nc" id="L115">            Club updatedClub = mapper.toDomain(updatedClubDTO);</span>
+<span class="nc" id="L116">            updatedClub.setId(id);</span>
+<span class="nc" id="L117">            updatedClub.setImage(club.getImage());</span>
+<span class="nc" id="L118">            updatedClub.setSports(club.getSports());</span>
+<span class="nc" id="L119">            updatedClub.setNumberOfCourts(club.getNumberOfCourts());</span>
+<span class="nc" id="L120">            clubRepository.save(updatedClub);</span>
+<span class="nc" id="L121">            return toDTO(updatedClub);</span>
+ 		} else {
+<span class="nc" id="L123"> 			throw new NoSuchElementException();</span>
+ 		}
+    }
+
+     public void replaceClubImage(long id, InputStream inputStream, long size) {
+<span class="nc" id="L128">		Club club = clubRepository.findById(id).orElseThrow();</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">		if(club.getImage() == null){</span>
+<span class="nc" id="L131">			throw new NoSuchElementException();</span>
+		}
+
+<span class="nc" id="L134">		club.setImage(BlobProxy.generateProxy(inputStream, size));</span>
+
+<span class="nc" id="L136">		clubRepository.save(club);</span>
+<span class="nc" id="L137">	}</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

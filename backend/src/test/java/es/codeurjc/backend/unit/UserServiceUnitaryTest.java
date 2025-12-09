@@ -7,9 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 
@@ -17,8 +15,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
@@ -51,18 +53,24 @@ public class UserServiceUnitaryTest {
     @Test
     public void getUsersUnitarytest(){
         //GIVEN
+        PageRequest pageable = PageRequest.of(0, 10);
         User user1 = new User("Carlos López", "carlos_10", "carlos@example.com", "password123", LocalDateTime.of(1995, 3, 12, 0, 0), true, "Amante del fútbol y los torneos locales.", 4.5f, "USER");
         User user2 = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Administradora de la plataforma.", 3.75f, "ADMIN", "USER");
         User user3 = new User("Pedro Martín", "pedro_m", "pedro@example.com", "newuserpass", LocalDateTime.of(2000, 1, 15, 0, 0), true, "Nuevo en la aplicación, aprendiendo.", 1.0f, "USER");
-        List<User> allUsers = List.of(user1,user2,user3);
+        List<User> userList = List.of(user1,user2,user3);
+
+
+        Page<User> userPage = new PageImpl<>(userList,pageable,userList.size());
 
         //WHEN
-        when(userRepository.findAll()).thenReturn(allUsers);
-        Collection<UserDTO> result = userService.getUsers();
-        Collection<UserDTO> expected = mapper.toDTOs(allUsers);
+        when(userRepository.findAll(pageable)).thenReturn(userPage);
+        
+        Page<UserDTO> result = userService.getUsers(pageable);
+        Page<UserDTO> expected = userPage.map(u -> mapper.toDTO(u));
+        
 
         //THEN
-        assertThat(result.size(), equalTo(expected.size()));
+        assertThat(result.getNumberOfElements(),equalTo(expected.getNumberOfElements()));
 
     }
 
@@ -93,11 +101,11 @@ public class UserServiceUnitaryTest {
 
         //WHEN
         when(userRepository.findById(id)).thenReturn(emptyUser);
-        NoSuchElementException ex = assertThrows(NoSuchElementException.class, () -> {
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
             userService.getUser(id);
         });
         //THEN
-        assertThat(ex.getMessage(), equalTo("No value present"));
+        assertThat(ex.getReason(), equalTo("Usuario no encontrado"));
     }
 
     @Test
@@ -145,7 +153,7 @@ public class UserServiceUnitaryTest {
         //WHEN
         when(userRepository.save(originalUser)).thenReturn(originalUser);
         when(passwordEncoder.encode("adminPass!")).thenReturn("encoded_pass");
-        UserDTO createdUser = userService.createUser(originalUserDTO);
+        UserDTO createdUser = userService.createUser(originalUserDTO,false);
         
         //GIVEN
         assertThat(createdUser.password(), equalTo("encoded_pass"));

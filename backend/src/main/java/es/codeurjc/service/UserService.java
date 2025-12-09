@@ -3,7 +3,6 @@ package es.codeurjc.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,7 +30,7 @@ import es.codeurjc.model.PlayerStats;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -64,12 +65,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Collection<UserDTO> getUsers() {
-		return toDTOs(userRepository.findAll());
-	}
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserDTO> getUsers(Pageable pageable) {
+        return findAll(pageable).map(this::toDTO);
+    }
+
 
 	public UserDTO getUser(long id) {
-		return toDTO(userRepository.findById(id).orElseThrow());
+		return toDTO(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuario no encontrado")));
 	}
 
     public boolean exist(long id) {
@@ -100,21 +107,18 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-
-            if (user.getId() > 0) {
-                for (Match match : user.getMatchesAsTeam1Player()) {
-                    match.getTeam1Players().remove(user);
-                }
-                for (Match match : user.getMatchesAsTeam2Player()) {
-                    match.getTeam2Players().remove(user);
-                }
-
-                for (Match match : user.getOrganizedMatches()) {
-                    match.setOrganizer(null);
-                    matchRepository.delete(match);
-                }
-                userRepository.deleteById(id);
+            for (Match match : user.getMatchesAsTeam1Player()) {
+                match.getTeam1Players().remove(user);
             }
+            for (Match match : user.getMatchesAsTeam2Player()) {
+                match.getTeam2Players().remove(user);
+            }
+
+            for (Match match : user.getOrganizedMatches()) {
+                match.setOrganizer(null);
+                matchRepository.delete(match);
+            }
+            userRepository.deleteById(id); 
         }else {
             throw new IllegalArgumentException("User with id " + id + " does not exist.");
         }
@@ -161,10 +165,13 @@ public class UserService {
 		}
     }
 
-    public UserDTO createUser(UserDTO userDTO) throws IOException {
+    public UserDTO createUser(UserDTO userDTO, boolean isAdmin) throws IOException {
         User user = mapper.toDomain(userDTO);
-        user.setLevel(0.0f);
+        if (!isAdmin) {
+            user.setLevel(0.0f);
+        }
         user.setStats(new PlayerStats(0,0,0,0));
+        user.setRoles(List.of("USER"));
         setUserImage(user,"/images/default-avatar.jpg");
         this.save(user);
         return toDTO(user);
@@ -174,10 +181,6 @@ public class UserService {
         return mapper.toDTO(user);
     }
 
-
-    private List<UserDTO> toDTOs(Collection<User> users){
-        return mapper.toDTOs(users);
-    }
 
     private void setUserImage(User user, String classpathResource) throws IOException {
          try {
@@ -199,4 +202,37 @@ public class UserService {
         return List.of();
         
     }
+
+    public UserDTO replaceUser(long id, UserDTO updatedUserDTO) {
+        if (userRepository.existsById(id)) {
+			User user = userRepository.findById(id).orElseThrow();
+            User updatedUser = mapper.toDomain(updatedUserDTO);
+            updatedUser.setId(id);
+            updatedUser.setImage(user.getImage());
+            if(!updatedUser.getPassword().isEmpty() && !updatedUser.getPassword().equals(user.getPassword())){
+                String encodedPassword = passwordEncoder.encode(updatedUser.getPassword());
+                updatedUser.setPassword(encodedPassword);
+            }else if(updatedUser.getPassword() == null || updatedUser.getPassword().isEmpty()){
+                updatedUser.setPassword(user.getPassword());
+            }
+            updatedUser.setRoles(user.getRoles());
+            updatedUser.setStats(user.getStats());
+            userRepository.save(updatedUser);
+            return toDTO(updatedUser);
+ 		} else {
+ 			throw new NoSuchElementException();
+ 		}
+    }
+
+    public void replaceUserImage(long id, InputStream inputStream, long size) {
+		User user = userRepository.findById(id).orElseThrow();
+
+		if(user.getImage() == null){
+			throw new NoSuchElementException();
+		}
+
+		user.setImage(BlobProxy.generateProxy(inputStream, size));
+
+		userRepository.save(user);
+	}
 }

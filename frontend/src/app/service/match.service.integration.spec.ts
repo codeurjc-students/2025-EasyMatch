@@ -5,6 +5,7 @@ import { Sport } from "../models/sport.model";
 import { Club } from "../models/club.model";
 import { Match } from "../models/match.model";
 import { LoginService } from "./login.service";
+import { ScoringType } from "../models/scoring-type";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 jasmine.getEnv().configure({ random: false });
@@ -41,6 +42,7 @@ describe('MatchService', () => {
       id: 1,
       name: 'Fútbol',
       modes: [{ name: '7v7', playersPerGame: 14 }],
+      scoringType: ScoringType.SCORE
     };
 
     const mockClub: Club = {

@@ -20,4 +20,6 @@ public interface ClubRepository extends JpaRepository<Club, Long>{
           AND (:sport IS NULL OR LOWER(s.name) = :sport)
     """)
     Page<Club> findFilteredClubs(Pageable pageable, @Param("search") String search, @Param("sport") String sport,@Param("city") String city);
+
+    boolean existsBySportsId(long id);
 }

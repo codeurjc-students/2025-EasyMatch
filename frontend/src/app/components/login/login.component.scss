@@ -20,8 +20,10 @@
     .logo {
         position: fixed;
         top: 40px;
-        right: 40px;
+        right: 60px;
         z-index: 1000; 
+        border: 2px solid; 
+        border-color: #cccccc;
         display: flex;
         align-items: center;
         gap: 10px;

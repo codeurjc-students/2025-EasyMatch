@@ -1,54 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SportService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">EasyMatch</a> &gt; <a href="index.source.html" class="el_package">es.codeurjc.service</a> &gt; <span class="el_source">SportService.java</span></div><h1>SportService.java</h1><pre class="source lang-java linenums">package es.codeurjc.service;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.SportDTO;
 import es.codeurjc.dto.SportMapper;
 import es.codeurjc.model.Sport;
+import es.codeurjc.repository.ClubRepository;
+import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.repository.SportRepository;
 
 @Service
-<span class="fc" id="L16">public class SportService {</span>
+<span class="fc" id="L22">public class SportService {</span>
 
     @Autowired
     private SportRepository sportRepository;
 
     @Autowired
+    private MatchRepository matchRepository;
+    
+    @Autowired
+    private ClubRepository clubRepository;
+
+    @Autowired
     private SportMapper mapper;
 
     public Optional&lt;Sport&gt; findById(long id) {
-<span class="fc" id="L25">		return sportRepository.findById(id);</span>
+<span class="fc" id="L37">		return sportRepository.findById(id);</span>
 	}
 
     public List&lt;Sport&gt; findAll() {
-<span class="nc" id="L29">        return sportRepository.findAll();</span>
+<span class="nc" id="L41">        return sportRepository.findAll();</span>
     }
 
     public boolean exist(long id) {
-<span class="nc" id="L33">        return sportRepository.existsById(id);  </span>
+<span class="nc" id="L45">        return sportRepository.existsById(id);  </span>
     }
 
     public Sport save(Sport sport) {
-<span class="fc" id="L37">        return sportRepository.save(sport);</span>
+<span class="fc" id="L49">        return sportRepository.save(sport);</span>
     }
 
     public void delete(Long id) {
-<span class="nc" id="L41">        Optional&lt;Sport&gt; sportOptional = sportRepository.findById(id);</span>
-<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (sportOptional.isPresent()) {</span>
-<span class="nc" id="L43">            sportRepository.deleteById(id);</span>
-<span class="nc" id="L44">        } else {</span>
-<span class="nc" id="L45">            throw new IllegalArgumentException(&quot;Sport with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="nc" id="L53">        Optional&lt;Sport&gt; sportOptional = sportRepository.findById(id);</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (sportOptional.isPresent()) {</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            if (matchRepository.existsBySportId(id)) {</span>
+<span class="nc" id="L56">                throw new ResponseStatusException(HttpStatus.CONFLICT,</span>
+<span class="nc" id="L57">                        &quot;Cannot delete sport because there are matches using it.&quot;);</span>
+            }
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            if(clubRepository.existsBySportsId(id)){</span>
+<span class="nc" id="L60">                throw new ResponseStatusException(HttpStatus.CONFLICT,</span>
+<span class="nc" id="L61">                        &quot;Cannot delete sport because there are clubs using it.&quot;);</span>
+            }
+<span class="nc" id="L63">            sportRepository.deleteById(id);</span>
+<span class="nc" id="L64">        } else {</span>
+<span class="nc" id="L65">            throw new IllegalArgumentException(&quot;Sport with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
-<span class="nc" id="L47">    }</span>
+<span class="nc" id="L67">    }</span>
 
 
     public Collection&lt;SportDTO&gt; getSports() {
-<span class="fc" id="L51">        return mapper.toDTOs(sportRepository.findAll());</span>
+<span class="fc" id="L71">        return mapper.toDTOs(sportRepository.findAll());</span>
+    }
+
+    public SportDTO getSport(long id) {
+<span class="nc" id="L75">        Sport sport = sportRepository.findById(id)</span>
+<span class="nc" id="L76">                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Deporte no encontrado&quot;));</span>
+<span class="nc" id="L77">        return mapper.toDTO(sport);</span>
+    }
+
+    public SportDTO createSport(SportDTO sportDTO) throws IOException {
+<span class="nc" id="L81">        Sport sport = mapper.toDomain(sportDTO);</span>
+<span class="nc" id="L82">        this.save(sport);</span>
+<span class="nc" id="L83">        return mapper.toDTO(sport);</span>
+    }
+
+    public SportDTO replaceSport(long id, SportDTO updatedSportDTO) {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (sportRepository.existsById(id)) {</span>
+<span class="nc" id="L88">            Sport updatedSport = mapper.toDomain(updatedSportDTO);</span>
+<span class="nc" id="L89">            updatedSport.setId(id);</span>
+<span class="nc" id="L90">            sportRepository.save(updatedSport);</span>
+<span class="nc" id="L91">            return mapper.toDTO(updatedSport);</span>
+ 		} else {
+<span class="nc" id="L93"> 			throw new NoSuchElementException();</span>
+ 		}
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

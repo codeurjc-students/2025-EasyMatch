@@ -67,7 +67,7 @@ describe('UserService', () => {
         service.getCurrentUser().subscribe({
           next: (user: User) => {
             expect(user).toBeTruthy();
-            expect(user.id).toBe(1);
+            expect(user.id).toBe(2);
             expect(user.username).toBe('pedro123');
             expect(user.realname).toBe('Pedro Garcia');
             done();
@@ -86,13 +86,13 @@ describe('UserService', () => {
   });
 
   it('deleteUser should delete the authenticated user', (done) => {
-    const testUserId = 1;
+    const testUserId = 2;
 
     loginService.login(loginRequest).subscribe({
       next: () => {
         service.deleteUser(testUserId).subscribe({
           next: (user: User) => {
-            expect(user.id).toBe(1);
+            expect(user.id).toBe(2);
             done();
           },
           error: err => {

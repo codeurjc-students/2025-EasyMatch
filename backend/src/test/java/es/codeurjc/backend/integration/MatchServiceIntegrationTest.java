@@ -82,6 +82,7 @@ public class MatchServiceIntegrationTest {
         assertThat(ex.getMessage(),equalTo("Match with id " + id + " does not exist."));
     }
 
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     @Order(4)
     public void deleteExistingMatchIntegrationTest(){

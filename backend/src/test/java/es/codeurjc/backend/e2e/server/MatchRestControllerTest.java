@@ -136,7 +136,7 @@ public class MatchRestControllerTest {
             .cookie("AuthToken", cookie)
             .body(teamSelectedJson)
         .when()
-            .put("/api/v1/matches/{id}", id)
+            .put("/api/v1/matches/{id}/users/me", id)
         .then()
             .statusCode(200)
             .body("status",equalTo("SUCCESS"))
@@ -153,7 +153,7 @@ public class MatchRestControllerTest {
             .contentType(ContentType.JSON)
             .cookie("AuthToken", cookie)
         .when()
-            .delete("/api/v1/matches/{id}", id)
+            .delete("/api/v1/matches/{id}/users/me", id)
         .then()
             .statusCode(200);
     }

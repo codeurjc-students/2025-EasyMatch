@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -63,6 +64,7 @@ public class ClubServiceIntegrationTest {
         assertThat(ex.getMessage(),equalTo("Club with id " + id + " does not exist."));
     }
 
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     @Order(4)
     public void deleteExistingClubIntegrationTest(){

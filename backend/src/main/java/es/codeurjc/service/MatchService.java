@@ -60,7 +60,7 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public MatchDTO getMatch(long id) {
-        return toDTO(findById(id).orElseThrow());
+        return toDTO(findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
     
     @Transactional(readOnly = true)
@@ -161,6 +161,20 @@ public class MatchService {
             matchRepository.save(match);
         }
      }
-
+    public MatchDTO replaceMatch(long id, MatchDTO updatedMatchDTO) {
+        if (matchRepository.existsById(id)) {
+            Match match = matchRepository.findById(id).orElseThrow();
+            Match updatedMatch = mapper.toDomain(updatedMatchDTO);
+            updatedMatch.setId(id);
+            updatedMatch.setOrganizer(match.getOrganizer());
+            updatedMatch.setTeam1Players(match.getTeam1Players());
+            updatedMatch.setTeam2Players(match.getTeam2Players());
+            updatedMatch.setState(match.getState());
+            matchRepository.save(updatedMatch);
+            return toDTO(updatedMatch);
+ 		} else {
+ 			throw new NoSuchElementException();
+ 		}
+    }
     
 }

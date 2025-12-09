@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">EasyMatch</a> &gt; <a href="index.source.html" class="el_package">es.codeurjc.controller.auth</a> &gt; <span class="el_source">LoginController.java</span></div><h1>LoginController.java</h1><pre class="source lang-java linenums">package es.codeurjc.controller.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +27,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(&quot;/api/v1/auth&quot;)
-<span class="fc" id="L26">public class LoginController {</span>
+<span class="fc" id="L30">public class LoginController {</span>
     
     @Autowired
     private UserLoginService userService;
@@ -35,22 +39,29 @@ import jakarta.validation.Valid;
     @PostMapping(&quot;/login&quot;)
     public ResponseEntity&lt;AuthResponse&gt; login(@Valid @RequestBody LoginRequest loginRequest,
             HttpServletResponse response) {
-<span class="fc" id="L38">        return userService.login(response, loginRequest);</span>
+<span class="fc" id="L42">        return userService.login(response, loginRequest);</span>
     }
 
     @PostMapping(&quot;/refresh&quot;)
     public ResponseEntity&lt;AuthResponse&gt; refreshToken(@CookieValue(name = &quot;RefreshToken&quot;, required = false) String refreshToken,
         HttpServletResponse response) {
-<span class="nc" id="L44">            return userService.refresh(response, refreshToken);</span>
+<span class="nc" id="L48">            return userService.refresh(response, refreshToken);</span>
     }
 
     @PostMapping(&quot;/logout&quot;)
     public ResponseEntity&lt;AuthResponse&gt; logOut(HttpServletResponse response) {
-<span class="fc" id="L49">        return ResponseEntity.ok(new AuthResponse(Status.SUCCESS, userService.logout(response)));</span>
+<span class="fc" id="L53">        return ResponseEntity.ok(new AuthResponse(Status.SUCCESS, userService.logout(response)));</span>
     }
+    
     @GetMapping(&quot;/status&quot;)
     public ResponseEntity&lt;Void&gt; status() {
-<span class="fc" id="L53">        return ResponseEntity.ok().build();</span>
+<span class="fc" id="L58">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="pc bpc" id="L59" title="2 of 6 branches missed.">        if (authentication == null || !authentication.isAuthenticated()</span>
+                || authentication instanceof AnonymousAuthenticationToken) {
+<span class="fc" id="L61">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();</span>
+        }
+<span class="fc" id="L63">        return ResponseEntity.ok().build();</span>
     }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

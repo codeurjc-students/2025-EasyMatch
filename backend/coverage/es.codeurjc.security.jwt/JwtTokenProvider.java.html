@@ -38,8 +38,8 @@ import jakarta.servlet.http.HttpServletRequest;
 <span class="fc" id="L38">			throw new IllegalArgumentException(&quot;No cookies found in request&quot;);</span>
 		}
 
-<span class="pc bpc" id="L41" title="1 of 2 branches missed.">		for (Cookie cookie : cookies) {</span>
-<span class="pc bpc" id="L42" title="1 of 2 branches missed.">			if (TokenType.ACCESS.cookieName.equals(cookie.getName())) {</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">		for (Cookie cookie : cookies) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">			if (TokenType.ACCESS.cookieName.equals(cookie.getName())) {</span>
 <span class="fc" id="L43">				String accessToken = cookie.getValue();</span>
 <span class="pc bpc" id="L44" title="1 of 2 branches missed.">				if (accessToken == null) {</span>
 <span class="nc" id="L45">					throw new IllegalArgumentException(&quot;Cookie %s has null value&quot;.formatted(TokenType.ACCESS.cookieName));</span>
@@ -48,13 +48,13 @@ import jakarta.servlet.http.HttpServletRequest;
 <span class="fc" id="L48">				return accessToken;</span>
 			}
 		}
-<span class="nc" id="L51">		throw new IllegalArgumentException(&quot;No access token cookie found in request&quot;);</span>
+<span class="fc" id="L51">		throw new IllegalArgumentException(&quot;No access token cookie found in request&quot;);</span>
 	}
 
 	public Claims validateToken(HttpServletRequest req, boolean fromCookie){
 <span class="pc bpc" id="L55" title="1 of 2 branches missed.">		var token = fromCookie?</span>
 <span class="fc" id="L56">				tokenStringFromCookies(req):</span>
-<span class="nc" id="L57">				tokenStringFromHeaders(req);</span>
+<span class="pc" id="L57">				tokenStringFromHeaders(req);</span>
 <span class="fc" id="L58">		return validateToken(token);</span>
 	}
 

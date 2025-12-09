@@ -43,13 +43,13 @@ public class UserRestControllerTest {
             .statusCode(200)
             .body("content", not(empty()))
             .body("size()", greaterThan(0))
-            .body("[0].id", notNullValue()); 
+            .body("content[0].id", notNullValue()); 
     }
 
     @Test
     @Order(2)
     public void testGetUserById(){
-        long id = 2L;
+        long id = 3L;
         given().
         when()
             .get("/api/v1/users/{id}", id)
@@ -74,7 +74,7 @@ public class UserRestControllerTest {
     @Test
     @Order(4)
     public void testDeleteUser(){
-        long id = 3L;
+        long id = 4L;
         String loginJson = """
             {
                 "username": "juan@emeal.com",

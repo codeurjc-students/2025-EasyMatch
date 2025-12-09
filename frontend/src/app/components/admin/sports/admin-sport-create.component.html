@@ -1,0 +1,70 @@
+<div class="admin-form-container">
+  <mat-card class="admin-form-card">
+
+    <h2>
+      <mat-icon>emoji_events</mat-icon>
+      {{ editingId ? 'Editar Deporte' : 'Crear Deporte' }}
+    </h2>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Nombre del deporte</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Tipo de puntuación</mat-label>
+          <mat-select formControlName="scoringType">
+            <mat-option *ngFor="let st of scoringTypes" [value]="st.value">
+              {{ st.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div formArrayName="modes" class="modes-container full-width">
+
+          <h3><mat-icon>videogame_asset</mat-icon>Modos de juego</h3>
+
+          <div *ngFor="let m of modesArray.controls; let i = index" [formGroupName]="i" class="mode-row">
+
+            <mat-form-field appearance="fill" class="mode-name">
+              <mat-label>Modo</mat-label>
+              <input matInput formControlName="name">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="mode-players">
+              <mat-label>Jugadores</mat-label>
+              <input matInput type="number" formControlName="playersPerGame">
+            </mat-form-field>
+
+            <button mat-icon-button color="warn" type="button" (click)="removeMode(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+
+          </div>
+
+          <button mat-button color="primary" class="create-btn" type="button" (click)="addMode()">
+            <mat-icon>add</mat-icon> Añadir modo
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" class="go-back-btn" type="button" (click)="cancel()">
+          <mat-icon>arrow_back</mat-icon> Volver
+        </button>
+
+        <button mat-flat-button color="primary" class="create-btn" type="submit">
+          <mat-icon>check</mat-icon> Guardar
+        </button>
+      </div>
+
+    </form>
+
+  </mat-card>
+</div>

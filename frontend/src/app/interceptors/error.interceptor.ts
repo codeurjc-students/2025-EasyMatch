@@ -1,46 +1,71 @@
-import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
-import { HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { ErrorService } from '../service/error.service';
+import { catchError, throwError } from 'rxjs';
 
-export const ErrorInterceptor: HttpInterceptorFn = (req, next) => {
-	const router = inject(Router);
-	const errorService = inject(ErrorService);
+export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
-	return next(req).pipe(
-		catchError((error: HttpErrorResponse) => {
-			let message = 'An unexpected error occurred';
-			let code = error.status;
-			const url = req.url;
+  const router = inject(Router);
 
-			if (code === 401 && url.endsWith('/me')) {
-                return throwError(() => error);
-            }
+  return next(req).pipe(
+    catchError((err) => {
 
-			if (code === 400) {
-				message = 'Invalid request. Please check the submitted data.';
-			} else if (code === 401) {
-				message = 'Invalid credentials';
-			} else if (code === 403) {
-				message = 'Forbidden. You do not have access to this page';
-			} else if (code === 404) {
-				message = 'Resource Not Found';
-			} else if (code === 409) {
-				message = 'User already exists.';
-			} else if (code === 500) {
-				message = 'Something went wrong in the server, try again later';
-			} else if (error.error?.message) {
-				message = error.error.message;
-			}
+	  const backendMessage =
+        err?.error?.message ||
+        err?.error?.error ||
+        err?.error ||
+        'Se produjo un conflicto.'; 
+      if (err.status === 401) {
+        router.navigate(['/error'], {
+          queryParams: {
+            code: 401,
+            title: 'No autenticado',
+            message: 'Debes iniciar sesión para acceder a esta sección.'
+          }
+        });
+      }
 
-			errorService.setError(code, message);
-			if (code !== 401) {
-				router.navigate(['/error']);
-			}
-			return throwError(() => new Error(message));
-		})
-	);
+      else if (err.status === 403) {
+        router.navigate(['/error'], {
+          queryParams: {
+            code: 403,
+            title: 'Acceso denegado',
+            message: 'No tienes permisos para acceder a este recurso.'
+          }
+        });
+      }
+
+      else if (err.status === 404) {
+        router.navigate(['/error'], {
+          queryParams: {
+            code: 404,
+            title: 'No encontrado',
+            message: 'El recurso solicitado no existe.'
+          }
+        });
+      }
+	  else if (err.status === 409) {
+        router.navigate(['/error'], {
+          queryParams: {
+            code: 409,
+            title: 'Conflicto',
+            message: backendMessage
+          }
+        });
+      }
+
+
+      else if (err.status >= 500) {
+        router.navigate(['/error'], {
+          queryParams: {
+            code: err.status,
+            title: 'Error interno',
+            message: 'Se ha producido un error en el servidor.'
+          }
+        });
+      }
+
+      return throwError(() => err);
+    })
+  );
 };

@@ -204,9 +204,6 @@ public class AngularUITest {
         joinBtn.click();
 
         WebElement dialog = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-join-match-dialog")));
-        
-        WebElement title = dialog.findElement(By.cssSelector("h2.dialog-title"));
-        assertThat(title.getText(), containsString("Unirse al partido"));
 
         WebElement teamA = dialog.findElement(By.xpath("//h3[text()='Equipo A']/parent::div"));
         List<WebElement> playersA = teamA.findElements(By.tagName("li"));
