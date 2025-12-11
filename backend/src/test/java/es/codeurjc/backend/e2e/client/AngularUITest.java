@@ -598,7 +598,7 @@ public class AngularUITest {
         WebElement maxPriceInput = driver.findElement(By.cssSelector("input[formcontrolname='maxPrice']"));
         maxPriceInput.sendKeys("20");
 
-        WebElement submitBtn = driver.findElement(By.cssSelector("button.create-btn[type='submit']"));
+        WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
         scrollIntoView(submitBtn);
         submitBtn.click();
 
