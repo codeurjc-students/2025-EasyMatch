@@ -1,6 +1,7 @@
 package es.codeurjc.backend.e2e.server;
 
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import io.restassured.RestAssured;
@@ -19,6 +21,7 @@ import io.restassured.response.Response;
 @Tag("e2e")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes = es.codeurjc.easymatch.EasyMatchApplication.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
 
@@ -75,22 +78,7 @@ public class UserRestControllerTest {
     @Order(4)
     public void testDeleteUser(){
         long id = 4L;
-        String loginJson = """
-            {
-                "username": "juan@emeal.com",
-                "password": "juanma1"
-            }
-        """;
-        Response loginResponse = given()
-            .contentType(ContentType.JSON)
-            .body(loginJson)
-        .when()
-            .post("/api/v1/auth/login")
-        .then()
-            .extract()
-            .response();
-
-        String cookie = loginResponse.getCookie("AuthToken");
+        String cookie = loginAndGetCookie("juan@emeal.com", "juanma1");
 
         given()
             .cookie("AuthToken", cookie)
@@ -128,5 +116,89 @@ public class UserRestControllerTest {
             .body("stats.totalMatches", equalTo(0));
 
     }
+
+    @Test
+    @Order(6)
+    public void testReplaceUserAsAdmin(){
+
+        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        assertThat(cookie, notNullValue());
+
+        String newUserJson = """
+            {
+                "realname": "Temporal User",
+                "username": "temporalUser",
+                "email": "temporal@emeal.com",
+                "password": "tempPass",
+                "birthDate": "1990-01-01T00:00:00Z",
+                "gender": true,
+                "description": "Temporal test user"
+            }
+        """;
+
+        Response createResponse = given()
+                .contentType(ContentType.JSON)
+                .cookie("AuthToken", cookie)
+                .body(newUserJson)
+        .when()
+                .post("/api/v1/users/")
+        .then()
+                .statusCode(201)
+                .extract()
+                .response();
+
+        long createdId = Integer.toUnsignedLong(createResponse.path("id"));
+        assertThat(createdId, greaterThan(0L));
+
+        String replaceJson = """
+            {
+                "realname": "Usuario Reemplazado",
+                "username": "userReplaced",
+                "email": "replaced@emeal.com",
+                "password": "newPass123",
+                "birthDate": "1999-09-09T00:00:00Z",
+                "gender": false,
+                "description": "Usuario modificado con PUT",
+                "level": 6.5
+            }
+        """;
+
+        given()
+                .contentType(ContentType.JSON)
+                .cookie("AuthToken", cookie)
+                .body(replaceJson)
+        .when()
+                .put("/api/v1/users/{id}", createdId)
+        .then()
+                .statusCode(200)
+                .body("id", equalTo((int) createdId))
+                .body("realname", equalTo("Usuario Reemplazado"))
+                .body("username", equalTo("userReplaced"))
+                .body("email", equalTo("replaced@emeal.com"));
+
+    }
+
+    private String loginAndGetCookie(String email, String password) {
+        String loginJson = 
+            String.format("""
+                {
+                    "username": "%s",
+                    "password": "%s"
+                }
+                """, email, password);
+
+        Response loginResponse = given()
+            .contentType(ContentType.JSON)
+            .body(loginJson)
+        .when()
+            .post("/api/v1/auth/login")
+        .then()
+            .extract()
+            .response();
+
+        String cookie = loginResponse.getCookie("AuthToken");
+        return cookie;
+    }
+
 
 }

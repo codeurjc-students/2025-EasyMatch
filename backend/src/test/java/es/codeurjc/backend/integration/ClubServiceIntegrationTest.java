@@ -21,8 +21,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.codeurjc.dto.ClubDTO;
+import es.codeurjc.dto.PriceRangeDTO;
+import es.codeurjc.dto.ScheduleDTO;
+import es.codeurjc.dto.SportDTO;
 import es.codeurjc.model.Club;
 import es.codeurjc.service.ClubService;
+import jakarta.transaction.Transactional;
 
 
 
@@ -64,21 +68,10 @@ public class ClubServiceIntegrationTest {
         assertThat(ex.getMessage(),equalTo("Club with id " + id + " does not exist."));
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    @Test
-    @Order(4)
-    public void deleteExistingClubIntegrationTest(){
-        long id = 3L;
-        int numClubs = clubService.findAll().size();
-        clubService.delete(id);
-        List<Club> clubs = clubService.findAll();
-        assertThat(clubService.exist(id), equalTo(false));
-        assertThat(clubs.size(), equalTo(numClubs - 1));
-    } 
 
     @Test 
-    @Order(5)
-    public void testSaveClubIntegrationTest(){
+    @Order(4)
+    public void saveClubIntegrationTest(){
         int numClubsBefore = clubService.findAll().size();
 
         Club club = new Club();
@@ -97,6 +90,58 @@ public class ClubServiceIntegrationTest {
         assertThat(numClubsAfter, equalTo(numClubsBefore + 1));
         assertThat(clubService.exist(savedClub.getId()), equalTo(true));
     }
+
+    
+    @Transactional
+    @Test 
+    @Order(5)
+    @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
+    public void replaceClubIntegrationTest(){
+        Long id = 3L;
+        List<SportDTO> sportsInitialized = clubService.getClub(id).sports();
+        List<Integer> numberOfCourts = clubService.getClub(id).numberOfCourts();
+        ClubDTO updatedDTO = new ClubDTO(
+            id,
+            "Club Actualizado",
+            "Barcelona",
+            "Avenida Dos 22",
+            "600333444",
+            "actualizado@club.com",
+            "www.actualizado.com",
+            new ScheduleDTO("8:00","20:00"),
+            new PriceRangeDTO(10,20,"€/hora"),
+            sportsInitialized,
+            numberOfCourts
+        );
+
+        ClubDTO replacedClub = clubService.replaceClub(id, updatedDTO);
+
+        assertThat(replacedClub.id(), equalTo(id));
+        assertThat(replacedClub.name(), equalTo("Club Actualizado"));
+        assertThat(replacedClub.city(), equalTo("Barcelona"));
+        assertThat(replacedClub.address(), equalTo("Avenida Dos 22"));
+        assertThat(replacedClub.phone(), equalTo("600333444"));
+        assertThat(replacedClub.email(), equalTo("actualizado@club.com"));
+        assertThat(replacedClub.web(), equalTo("www.actualizado.com"));
+        assertThat(replacedClub.schedule(), isA(ScheduleDTO.class));
+        assertThat(replacedClub.priceRange(), isA(PriceRangeDTO.class));
+        assertThat(replacedClub.sports(), isA(List.class));
+
+    }
+
+    
+    @Test
+    @Order(6)
+    @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
+    public void deleteExistingClubIntegrationTest(){
+        long id = 3L;
+        int numClubs = clubService.findAll().size();
+        clubService.delete(id);
+        List<Club> clubs = clubService.findAll();
+        assertThat(clubService.exist(id), equalTo(false));
+        assertThat(clubs.size(), equalTo(numClubs - 1));
+    } 
+
 
 
 

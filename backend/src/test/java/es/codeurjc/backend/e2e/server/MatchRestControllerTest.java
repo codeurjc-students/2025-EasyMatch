@@ -77,7 +77,7 @@ public class MatchRestControllerTest {
     @Test
     @Order(4)
     public void testCreateMatch(){
-        String cookie = loginAndGetCookie();
+        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
 
         String newMatchJson = """
             {
@@ -124,7 +124,7 @@ public class MatchRestControllerTest {
     @Order(5)
     public void testJoinMatch(){
         long id = 4L;
-        String cookie = loginAndGetCookie();
+        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
 
         String teamSelectedJson = """
             {
@@ -147,7 +147,7 @@ public class MatchRestControllerTest {
     @Order(6)
     public void testLeaveMatch(){
         long id = 4L;
-        String cookie = loginAndGetCookie();
+        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
 
         given()
             .contentType(ContentType.JSON)
@@ -157,14 +157,78 @@ public class MatchRestControllerTest {
         .then()
             .statusCode(200);
     }
-    
-    private String loginAndGetCookie() {
-        String loginJson = """
+    @Test
+    @Order(7)
+    public void testReplaceMatch() {
+        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        long matchId = 1L; 
+
+        String updatedMatchJson = """
             {
-                "username": "pedro@emeal.com",
-                "password": "pedroga4"
+                "date": "2025-12-01T20:00:00Z",
+                "type": false,
+                "isPrivate": true,
+                "price": 15.0,
+                "sport":{
+                    "id": 1,
+                    "name": "Tenis"
+                },
+                "club":{
+                    "id": 2,
+                    "name": "Padel Center Pro",
+                    "city": "Barcelona"
+                }
             }
         """;
+
+        given()
+            .contentType(ContentType.JSON)
+            .cookie("AuthToken", cookie)
+            .body(updatedMatchJson)
+        .when()
+            .put("/api/v1/matches/{id}", matchId)
+        .then()
+            .statusCode(200)
+            .body("id", equalTo((int) matchId))
+            .body("price", equalTo(15.0f))
+            .body("isPrivate", equalTo(true))
+            .body("type", equalTo(false))
+            .body("club.city", equalTo("Barcelona"))
+            .body("date", equalTo("2025-12-01T20:00:00"));
+    }
+
+    @Test
+    @Order(8)
+    public void testDeleteMatchAsAdmin() {
+        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        long matchIdToDelete = 3L; 
+
+        given()
+            .cookie("AuthToken", cookie)
+        .when()
+            .delete("/api/v1/matches/{id}", matchIdToDelete)
+        .then()
+            .statusCode(200)
+            .body("id", equalTo((int) matchIdToDelete));
+
+        given()
+        .when()
+            .get("/api/v1/matches/{id}", matchIdToDelete)
+        .then()
+            .statusCode(404);
+    }
+
+
+    
+    private String loginAndGetCookie(String email, String password) {
+        String loginJson = 
+            String.format("""
+                {
+                    "username": "%s",
+                    "password": "%s"
+                }
+                """, email, password);
+
         Response loginResponse = given()
             .contentType(ContentType.JSON)
             .body(loginJson)

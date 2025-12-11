@@ -96,21 +96,21 @@ import es.codeurjc.service.UserService;
 
     @DeleteMapping(&quot;/{id}&quot;)
     public MatchDTO deleteMatch(@PathVariable long id) {
-<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
 <span class="nc" id="L100">            throw new ResponseStatusException(HttpStatus.FORBIDDEN,&quot;Solo un administrador puede eliminar un partido&quot;);</span>
         }
-<span class="nc" id="L102">        MatchDTO deletedMatch = matchService.getMatch(id);</span>
-<span class="nc" id="L103">        matchService.delete(id);</span>
-<span class="nc" id="L104">        return deletedMatch;</span>
+<span class="fc" id="L102">        MatchDTO deletedMatch = matchService.getMatch(id);</span>
+<span class="fc" id="L103">        matchService.delete(id);</span>
+<span class="fc" id="L104">        return deletedMatch;</span>
         
     }
 
     @PutMapping(&quot;/{id}&quot;)
     public MatchDTO replaceMatch(@PathVariable long id, @RequestBody MatchDTO updatedMatchDTO) {
-<span class="nc bnc" id="L110" title="All 2 branches missed.">        if(!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if(!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
 <span class="nc" id="L111">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Solo un administrador puede editar un partido&quot;);</span>
         }
-<span class="nc" id="L113">        return matchService.replaceMatch(id, updatedMatchDTO);</span>
+<span class="fc" id="L113">        return matchService.replaceMatch(id, updatedMatchDTO);</span>
     }
 
 

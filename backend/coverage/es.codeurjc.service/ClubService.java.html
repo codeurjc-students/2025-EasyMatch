@@ -72,7 +72,7 @@ public class ClubService {
 
     @Transactional(readOnly = true)
     public ClubDTO getClub(long id) {
-<span class="pc" id="L75">		return mapper.toDTO(clubRepository.findById(id).orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND)));</span>
+<span class="fc" id="L75">		return mapper.toDTO(clubRepository.findById(id).orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND)));</span>
 	}
 
     @Transactional(readOnly = true)
@@ -104,23 +104,23 @@ public class ClubService {
 <span class="nc" id="L104">	}</span>
 
     public ClubDTO createClub(ClubDTO clubDTO) {
-<span class="nc" id="L107">        Club club = mapper.toDomain(clubDTO);</span>
-<span class="nc" id="L108">        this.save(club);</span>
-<span class="nc" id="L109">        return toDTO(club);</span>
+<span class="fc" id="L107">        Club club = mapper.toDomain(clubDTO);</span>
+<span class="fc" id="L108">        this.save(club);</span>
+<span class="fc" id="L109">        return toDTO(club);</span>
     }
 
     public ClubDTO replaceClub(long id, ClubDTO updatedClubDTO) {
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (clubRepository.existsById(id)) {</span>
-<span class="nc" id="L114">			Club club = clubRepository.findById(id).orElseThrow();</span>
-<span class="nc" id="L115">            Club updatedClub = mapper.toDomain(updatedClubDTO);</span>
-<span class="nc" id="L116">            updatedClub.setId(id);</span>
-<span class="nc" id="L117">            updatedClub.setImage(club.getImage());</span>
-<span class="nc" id="L118">            updatedClub.setSports(club.getSports());</span>
-<span class="nc" id="L119">            updatedClub.setNumberOfCourts(club.getNumberOfCourts());</span>
-<span class="nc" id="L120">            clubRepository.save(updatedClub);</span>
-<span class="nc" id="L121">            return toDTO(updatedClub);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if (clubRepository.existsById(id)) {</span>
+<span class="fc" id="L114">			Club club = clubRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L115">            Club updatedClub = mapper.toDomain(updatedClubDTO);</span>
+<span class="fc" id="L116">            updatedClub.setId(id);</span>
+<span class="fc" id="L117">            updatedClub.setImage(club.getImage());</span>
+<span class="fc" id="L118">            updatedClub.setSports(club.getSports());</span>
+<span class="fc" id="L119">            updatedClub.setNumberOfCourts(club.getNumberOfCourts());</span>
+<span class="fc" id="L120">            clubRepository.save(updatedClub);</span>
+<span class="fc" id="L121">            return toDTO(updatedClub);</span>
  		} else {
-<span class="nc" id="L123"> 			throw new NoSuchElementException();</span>
+<span class="fc" id="L123"> 			throw new NoSuchElementException(&quot;Club with id &quot; + id + &quot; does not exist.&quot;);</span>
  		}
     }
 

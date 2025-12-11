@@ -51,9 +51,9 @@ import es.codeurjc.service.UserService;
     public ResponseEntity&lt;UserDTO&gt; createUser(@RequestBody UserDTO userDTO) throws IOException {
 <span class="fc" id="L52">        boolean isAdmin = false;</span>
         try {
-<span class="nc" id="L54">            User logged = userService.getLoggedUser();</span>
-<span class="nc" id="L55">            isAdmin = logged.getRoles().contains(&quot;ADMIN&quot;);</span>
-<span class="pc" id="L56">        } catch (NoSuchElementException e ) {</span>
+<span class="fc" id="L54">            User logged = userService.getLoggedUser();</span>
+<span class="fc" id="L55">            isAdmin = logged.getRoles().contains(&quot;ADMIN&quot;);</span>
+<span class="fc" id="L56">        } catch (NoSuchElementException e ) {</span>
 <span class="fc" id="L57">            isAdmin = false;</span>
         }
 <span class="fc" id="L59">        userDTO = userService.createUser(userDTO, isAdmin);</span>
@@ -96,7 +96,7 @@ import es.codeurjc.service.UserService;
 
     @DeleteMapping(&quot;/{id}&quot;)
     public UserDTO deleteUser(@PathVariable long id) {
-<span class="pc bpc" id="L99" title="4 of 6 branches missed.">        if((id != userService.getLoggedUser().getId() || id == 1) &amp;&amp; !userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
+<span class="pc bpc" id="L99" title="2 of 6 branches missed.">        if((id != userService.getLoggedUser().getId() || id == 1) &amp;&amp; !userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
 <span class="nc" id="L100">            throw new ResponseStatusException(HttpStatus.FORBIDDEN,&quot;Solo el admin o el mismo usuario puede borrar su cuenta&quot;);</span>
         }
 <span class="fc" id="L102">        UserDTO deletedUser = userService.getUser(id);</span>
@@ -107,10 +107,10 @@ import es.codeurjc.service.UserService;
     @PutMapping(&quot;/{id}&quot;)
     public UserDTO replaceUser(@PathVariable long id, @RequestBody UserDTO updatedUserDTO) {
         
-<span class="nc bnc" id="L110" title="All 4 branches missed.">        if(!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;) || userService.getLoggedUser().getId() != id){</span>
+<span class="pc bpc" id="L110" title="3 of 4 branches missed.">        if(!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;) &amp;&amp; userService.getLoggedUser().getId() != id){</span>
 <span class="nc" id="L111">            throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
         }
-<span class="nc" id="L113">        return userService.replaceUser(id, updatedUserDTO);</span>
+<span class="fc" id="L113">        return userService.replaceUser(id, updatedUserDTO);</span>
     }
 
     @GetMapping(&quot;/{id}/matches/&quot;)

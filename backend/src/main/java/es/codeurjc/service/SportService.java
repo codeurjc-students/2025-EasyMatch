@@ -1,6 +1,5 @@
 package es.codeurjc.service;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,6 +20,14 @@ import es.codeurjc.repository.SportRepository;
 @Service
 public class SportService {
 
+    public SportService(SportRepository sportRepository, MatchRepository matchRepository,
+            ClubRepository clubRepository, SportMapper mapper) {
+        this.sportRepository = sportRepository;
+        this.matchRepository = matchRepository;
+        this.clubRepository = clubRepository;
+        this.mapper = mapper;
+    }
+
     @Autowired
     private SportRepository sportRepository;
 
@@ -32,6 +39,8 @@ public class SportService {
 
     @Autowired
     private SportMapper mapper;
+
+    
 
     public Optional<Sport> findById(long id) {
 		return sportRepository.findById(id);
@@ -54,11 +63,11 @@ public class SportService {
         if (sportOptional.isPresent()) {
             if (matchRepository.existsBySportId(id)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT,
-                        "Cannot delete sport because there are matches using it.");
+                        "Ese deporte no se puede borrar porque hay partidos que lo usan.");
             }
             if(clubRepository.existsBySportsId(id)){
                 throw new ResponseStatusException(HttpStatus.CONFLICT,
-                        "Cannot delete sport because there are clubs using it.");
+                        "Ese deporte no se puede borrar porque hay clubes que lo usan.");
             }
             sportRepository.deleteById(id);
         } else {
@@ -77,7 +86,7 @@ public class SportService {
         return mapper.toDTO(sport);
     }
 
-    public SportDTO createSport(SportDTO sportDTO) throws IOException {
+    public SportDTO createSport(SportDTO sportDTO) {
         Sport sport = mapper.toDomain(sportDTO);
         this.save(sport);
         return mapper.toDTO(sport);

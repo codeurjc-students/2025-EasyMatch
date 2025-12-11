@@ -107,7 +107,7 @@ public class UserRestController {
     @PutMapping("/{id}")
     public UserDTO replaceUser(@PathVariable long id, @RequestBody UserDTO updatedUserDTO) {
         
-        if(!userService.getLoggedUser().getRoles().contains("ADMIN") || userService.getLoggedUser().getId() != id){
+        if(!userService.getLoggedUser().getRoles().contains("ADMIN") && userService.getLoggedUser().getId() != id){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         return userService.replaceUser(id, updatedUserDTO);

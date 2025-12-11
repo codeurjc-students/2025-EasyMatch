@@ -41,11 +41,11 @@ export class AdminSportsComponent implements OnInit {
     });
   }
 
-  editMatch(id: number) {
+  editSport(id: number) {
     this.router.navigate(['/admin/sports/create'], { queryParams: { id } });
   }
 
-  createMatch() {
+  createSport() {
     this.router.navigate(['/admin/sports/create']);
   }
 

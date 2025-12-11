@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2025-12-03T19:30:24+0100&quot;,
-    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)&quot;
+    date = &quot;2025-12-11T14:14:56+0100&quot;,
+    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.44.0.v20251118-1623, environment: Java 21.0.9 (Eclipse Adoptium)&quot;
 )
 @Component
 <span class="fc" id="L26">public class MatchMapperImpl implements MatchMapper {</span>
@@ -40,8 +40,8 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L40">        Float price = null;</span>
 <span class="fc" id="L41">        SportDTO sport = null;</span>
 <span class="fc" id="L42">        BasicClubDTO club = null;</span>
-<span class="fc" id="L43">        List&lt;UserDTO&gt; team1Players = null;</span>
-<span class="fc" id="L44">        List&lt;UserDTO&gt; team2Players = null;</span>
+<span class="fc" id="L43">        Set&lt;UserDTO&gt; team1Players = null;</span>
+<span class="fc" id="L44">        Set&lt;UserDTO&gt; team2Players = null;</span>
 <span class="fc" id="L45">        MatchResultDTO result = null;</span>
 
 <span class="fc" id="L47">        id = match.getId();</span>
@@ -53,8 +53,8 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L53">        price = (float) match.getPrice();</span>
 <span class="fc" id="L54">        sport = sportToSportDTO( match.getSport() );</span>
 <span class="fc" id="L55">        club = clubToBasicClubDTO( match.getClub() );</span>
-<span class="fc" id="L56">        team1Players = userSetToUserDTOList( match.getTeam1Players() );</span>
-<span class="fc" id="L57">        team2Players = userSetToUserDTOList( match.getTeam2Players() );</span>
+<span class="fc" id="L56">        team1Players = userSetToUserDTOSet( match.getTeam1Players() );</span>
+<span class="fc" id="L57">        team2Players = userSetToUserDTOSet( match.getTeam2Players() );</span>
 <span class="fc" id="L58">        result = matchResultToMatchResultDTO( match.getResult() );</span>
 
 <span class="fc" id="L60">        MatchDTO matchDTO = new MatchDTO( id, date, type, isPrivate, state, organizer, price, sport, club, team1Players, team2Players, result );</span>
@@ -71,7 +71,7 @@ import org.springframework.stereotype.Component;
 <span class="nc" id="L71">        List&lt;MatchDTO&gt; list = new ArrayList&lt;MatchDTO&gt;( matches.size() );</span>
 <span class="nc bnc" id="L72" title="All 2 branches missed.">        for ( Match match : matches ) {</span>
 <span class="nc" id="L73">            list.add( toDTO( match ) );</span>
-<span class="nc" id="L74">        }</span>
+        }
 
 <span class="nc" id="L76">        return list;</span>
     }
@@ -98,8 +98,8 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L98">            match.setPrice( matchDTO.price() );</span>
         }
 <span class="fc" id="L100">        match.setResult( matchResultDTOToMatchResult( matchDTO.result() ) );</span>
-<span class="fc" id="L101">        match.setTeam1Players( userDTOListToUserSet( matchDTO.team1Players() ) );</span>
-<span class="fc" id="L102">        match.setTeam2Players( userDTOListToUserSet( matchDTO.team2Players() ) );</span>
+<span class="fc" id="L101">        match.setTeam1Players( userDTOSetToUserSet( matchDTO.team1Players() ) );</span>
+<span class="fc" id="L102">        match.setTeam2Players( userDTOSetToUserSet( matchDTO.team2Players() ) );</span>
 
 <span class="fc" id="L104">        return match;</span>
     }
@@ -148,7 +148,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L148">        List&lt;ModeDTO&gt; list1 = new ArrayList&lt;ModeDTO&gt;( list.size() );</span>
 <span class="fc bfc" id="L149" title="All 2 branches covered.">        for ( Mode mode : list ) {</span>
 <span class="fc" id="L150">            list1.add( modeToModeDTO( mode ) );</span>
-<span class="fc" id="L151">        }</span>
+        }
 
 <span class="fc" id="L153">        return list1;</span>
     }
@@ -250,17 +250,17 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L250">        return userDTO;</span>
     }
 
-    protected List&lt;UserDTO&gt; userSetToUserDTOList(Set&lt;User&gt; set) {
+    protected Set&lt;UserDTO&gt; userSetToUserDTOSet(Set&lt;User&gt; set) {
 <span class="fc bfc" id="L254" title="All 2 branches covered.">        if ( set == null ) {</span>
 <span class="fc" id="L255">            return null;</span>
         }
 
-<span class="fc" id="L258">        List&lt;UserDTO&gt; list = new ArrayList&lt;UserDTO&gt;( set.size() );</span>
+<span class="fc" id="L258">        Set&lt;UserDTO&gt; set1 = LinkedHashSet.newLinkedHashSet( set.size() );</span>
 <span class="fc bfc" id="L259" title="All 2 branches covered.">        for ( User user : set ) {</span>
-<span class="fc" id="L260">            list.add( userToUserDTO( user ) );</span>
-<span class="fc" id="L261">        }</span>
+<span class="fc" id="L260">            set1.add( userToUserDTO( user ) );</span>
+        }
 
-<span class="fc" id="L263">        return list;</span>
+<span class="fc" id="L263">        return set1;</span>
     }
 
     protected MatchResultDTO matchResultToMatchResultDTO(MatchResult matchResult) {
@@ -329,14 +329,14 @@ import org.springframework.stereotype.Component;
     }
 
     protected List&lt;Mode&gt; modeDTOListToModeList(List&lt;ModeDTO&gt; list) {
-<span class="pc bpc" id="L332" title="1 of 2 branches missed.">        if ( list == null ) {</span>
-<span class="nc" id="L333">            return null;</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        if ( list == null ) {</span>
+<span class="fc" id="L333">            return null;</span>
         }
 
 <span class="fc" id="L336">        List&lt;Mode&gt; list1 = new ArrayList&lt;Mode&gt;( list.size() );</span>
 <span class="fc bfc" id="L337" title="All 2 branches covered.">        for ( ModeDTO modeDTO : list ) {</span>
 <span class="fc" id="L338">            list1.add( modeDTOToMode( modeDTO ) );</span>
-<span class="fc" id="L339">        }</span>
+        }
 
 <span class="fc" id="L341">        return list1;</span>
     }
@@ -357,22 +357,22 @@ import org.springframework.stereotype.Component;
     }
 
     protected User basicUserDTOToUser(BasicUserDTO basicUserDTO) {
-<span class="pc bpc" id="L360" title="1 of 2 branches missed.">        if ( basicUserDTO == null ) {</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">        if ( basicUserDTO == null ) {</span>
 <span class="fc" id="L361">            return null;</span>
         }
 
-<span class="nc" id="L364">        User user = new User();</span>
+<span class="fc" id="L364">        User user = new User();</span>
 
-<span class="nc bnc" id="L366" title="All 2 branches missed.">        if ( basicUserDTO.id() != null ) {</span>
-<span class="nc" id="L367">            user.setId( basicUserDTO.id() );</span>
+<span class="pc bpc" id="L366" title="1 of 2 branches missed.">        if ( basicUserDTO.id() != null ) {</span>
+<span class="fc" id="L367">            user.setId( basicUserDTO.id() );</span>
         }
-<span class="nc" id="L369">        user.setRealname( basicUserDTO.realname() );</span>
-<span class="nc" id="L370">        user.setUsername( basicUserDTO.username() );</span>
-<span class="nc bnc" id="L371" title="All 2 branches missed.">        if ( basicUserDTO.level() != null ) {</span>
-<span class="nc" id="L372">            user.setLevel( basicUserDTO.level() );</span>
+<span class="fc" id="L369">        user.setRealname( basicUserDTO.realname() );</span>
+<span class="fc" id="L370">        user.setUsername( basicUserDTO.username() );</span>
+<span class="pc bpc" id="L371" title="1 of 2 branches missed.">        if ( basicUserDTO.level() != null ) {</span>
+<span class="fc" id="L372">            user.setLevel( basicUserDTO.level() );</span>
         }
 
-<span class="nc" id="L375">        return user;</span>
+<span class="fc" id="L375">        return user;</span>
     }
 
     protected MatchResult matchResultDTOToMatchResult(MatchResultDTO matchResultDTO) {
@@ -401,63 +401,63 @@ import org.springframework.stereotype.Component;
     }
 
     protected PlayerStats playerStatsDTOToPlayerStats(PlayerStatsDTO playerStatsDTO) {
-<span class="nc bnc" id="L404" title="All 2 branches missed.">        if ( playerStatsDTO == null ) {</span>
+<span class="pc bpc" id="L404" title="1 of 2 branches missed.">        if ( playerStatsDTO == null ) {</span>
 <span class="nc" id="L405">            return null;</span>
         }
 
-<span class="nc" id="L408">        PlayerStats playerStats = new PlayerStats();</span>
+<span class="fc" id="L408">        PlayerStats playerStats = new PlayerStats();</span>
 
-<span class="nc" id="L410">        playerStats.setTotalMatches( playerStatsDTO.totalMatches() );</span>
-<span class="nc" id="L411">        playerStats.setWins( playerStatsDTO.wins() );</span>
-<span class="nc" id="L412">        playerStats.setDraws( playerStatsDTO.draws() );</span>
-<span class="nc" id="L413">        playerStats.setLosses( playerStatsDTO.losses() );</span>
-<span class="nc" id="L414">        playerStats.setWinRate( playerStatsDTO.winRate() );</span>
+<span class="fc" id="L410">        playerStats.setTotalMatches( playerStatsDTO.totalMatches() );</span>
+<span class="fc" id="L411">        playerStats.setWins( playerStatsDTO.wins() );</span>
+<span class="fc" id="L412">        playerStats.setDraws( playerStatsDTO.draws() );</span>
+<span class="fc" id="L413">        playerStats.setLosses( playerStatsDTO.losses() );</span>
+<span class="fc" id="L414">        playerStats.setWinRate( playerStatsDTO.winRate() );</span>
 
-<span class="nc" id="L416">        return playerStats;</span>
+<span class="fc" id="L416">        return playerStats;</span>
     }
 
     protected User userDTOToUser(UserDTO userDTO) {
-<span class="nc bnc" id="L420" title="All 2 branches missed.">        if ( userDTO == null ) {</span>
+<span class="pc bpc" id="L420" title="1 of 2 branches missed.">        if ( userDTO == null ) {</span>
 <span class="nc" id="L421">            return null;</span>
         }
 
-<span class="nc" id="L424">        User user = new User();</span>
+<span class="fc" id="L424">        User user = new User();</span>
 
-<span class="nc bnc" id="L426" title="All 2 branches missed.">        if ( userDTO.id() != null ) {</span>
-<span class="nc" id="L427">            user.setId( userDTO.id() );</span>
+<span class="pc bpc" id="L426" title="1 of 2 branches missed.">        if ( userDTO.id() != null ) {</span>
+<span class="fc" id="L427">            user.setId( userDTO.id() );</span>
         }
-<span class="nc" id="L429">        user.setRealname( userDTO.realname() );</span>
-<span class="nc" id="L430">        user.setUsername( userDTO.username() );</span>
-<span class="nc" id="L431">        user.setEmail( userDTO.email() );</span>
-<span class="nc" id="L432">        user.setPassword( userDTO.password() );</span>
-<span class="nc" id="L433">        user.setBirthDate( userDTO.birthDate() );</span>
-<span class="nc bnc" id="L434" title="All 2 branches missed.">        if ( userDTO.gender() != null ) {</span>
-<span class="nc" id="L435">            user.setGender( userDTO.gender() );</span>
+<span class="fc" id="L429">        user.setRealname( userDTO.realname() );</span>
+<span class="fc" id="L430">        user.setUsername( userDTO.username() );</span>
+<span class="fc" id="L431">        user.setEmail( userDTO.email() );</span>
+<span class="fc" id="L432">        user.setPassword( userDTO.password() );</span>
+<span class="fc" id="L433">        user.setBirthDate( userDTO.birthDate() );</span>
+<span class="pc bpc" id="L434" title="1 of 2 branches missed.">        if ( userDTO.gender() != null ) {</span>
+<span class="fc" id="L435">            user.setGender( userDTO.gender() );</span>
         }
-<span class="nc" id="L437">        user.setDescription( userDTO.description() );</span>
-<span class="nc bnc" id="L438" title="All 2 branches missed.">        if ( userDTO.level() != null ) {</span>
-<span class="nc" id="L439">            user.setLevel( userDTO.level() );</span>
+<span class="fc" id="L437">        user.setDescription( userDTO.description() );</span>
+<span class="pc bpc" id="L438" title="1 of 2 branches missed.">        if ( userDTO.level() != null ) {</span>
+<span class="fc" id="L439">            user.setLevel( userDTO.level() );</span>
         }
-<span class="nc" id="L441">        List&lt;String&gt; list = userDTO.roles();</span>
-<span class="nc bnc" id="L442" title="All 2 branches missed.">        if ( list != null ) {</span>
-<span class="nc" id="L443">            user.setRoles( new ArrayList&lt;String&gt;( list ) );</span>
+<span class="fc" id="L441">        List&lt;String&gt; list = userDTO.roles();</span>
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">        if ( list != null ) {</span>
+<span class="fc" id="L443">            user.setRoles( new ArrayList&lt;String&gt;( list ) );</span>
         }
-<span class="nc" id="L445">        user.setStats( playerStatsDTOToPlayerStats( userDTO.stats() ) );</span>
+<span class="fc" id="L445">        user.setStats( playerStatsDTOToPlayerStats( userDTO.stats() ) );</span>
 
-<span class="nc" id="L447">        return user;</span>
+<span class="fc" id="L447">        return user;</span>
     }
 
-    protected Set&lt;User&gt; userDTOListToUserSet(List&lt;UserDTO&gt; list) {
-<span class="pc bpc" id="L451" title="1 of 2 branches missed.">        if ( list == null ) {</span>
+    protected Set&lt;User&gt; userDTOSetToUserSet(Set&lt;UserDTO&gt; set) {
+<span class="fc bfc" id="L451" title="All 2 branches covered.">        if ( set == null ) {</span>
 <span class="fc" id="L452">            return null;</span>
         }
 
-<span class="nc" id="L455">        Set&lt;User&gt; set = LinkedHashSet.newLinkedHashSet( list.size() );</span>
-<span class="nc bnc" id="L456" title="All 2 branches missed.">        for ( UserDTO userDTO : list ) {</span>
-<span class="nc" id="L457">            set.add( userDTOToUser( userDTO ) );</span>
-<span class="nc" id="L458">        }</span>
+<span class="fc" id="L455">        Set&lt;User&gt; set1 = LinkedHashSet.newLinkedHashSet( set.size() );</span>
+<span class="fc bfc" id="L456" title="All 2 branches covered.">        for ( UserDTO userDTO : set ) {</span>
+<span class="fc" id="L457">            set1.add( userDTOToUser( userDTO ) );</span>
+        }
 
-<span class="nc" id="L460">        return set;</span>
+<span class="fc" id="L460">        return set1;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

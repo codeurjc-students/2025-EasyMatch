@@ -173,7 +173,7 @@ public class MatchService {
             matchRepository.save(updatedMatch);
             return toDTO(updatedMatch);
  		} else {
- 			throw new NoSuchElementException();
+ 			throw new NoSuchElementException("Match with id " + id + " does not exist.");
  		}
     }
     

@@ -167,7 +167,7 @@ public class UserService {
 
     public UserDTO createUser(UserDTO userDTO, boolean isAdmin) throws IOException {
 <span class="fc" id="L169">        User user = mapper.toDomain(userDTO);</span>
-<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (!isAdmin) {</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (!isAdmin) {</span>
 <span class="fc" id="L171">            user.setLevel(0.0f);</span>
         }
 <span class="fc" id="L173">        user.setStats(new PlayerStats(0,0,0,0));</span>
@@ -204,23 +204,23 @@ public class UserService {
     }
 
     public UserDTO replaceUser(long id, UserDTO updatedUserDTO) {
-<span class="nc bnc" id="L207" title="All 2 branches missed.">        if (userRepository.existsById(id)) {</span>
-<span class="nc" id="L208">			User user = userRepository.findById(id).orElseThrow();</span>
-<span class="nc" id="L209">            User updatedUser = mapper.toDomain(updatedUserDTO);</span>
-<span class="nc" id="L210">            updatedUser.setId(id);</span>
-<span class="nc" id="L211">            updatedUser.setImage(user.getImage());</span>
-<span class="nc bnc" id="L212" title="All 4 branches missed.">            if(!updatedUser.getPassword().isEmpty() &amp;&amp; !updatedUser.getPassword().equals(user.getPassword())){</span>
-<span class="nc" id="L213">                String encodedPassword = passwordEncoder.encode(updatedUser.getPassword());</span>
-<span class="nc" id="L214">                updatedUser.setPassword(encodedPassword);</span>
-<span class="nc bnc" id="L215" title="All 4 branches missed.">            }else if(updatedUser.getPassword() == null || updatedUser.getPassword().isEmpty()){</span>
-<span class="nc" id="L216">                updatedUser.setPassword(user.getPassword());</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        if (userRepository.existsById(id)) {</span>
+<span class="fc" id="L208">			User user = userRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L209">            User updatedUser = mapper.toDomain(updatedUserDTO);</span>
+<span class="fc" id="L210">            updatedUser.setId(id);</span>
+<span class="fc" id="L211">            updatedUser.setImage(user.getImage());</span>
+<span class="pc bpc" id="L212" title="1 of 4 branches missed.">            if(!updatedUser.getPassword().isEmpty() &amp;&amp; !updatedUser.getPassword().equals(user.getPassword())){</span>
+<span class="fc" id="L213">                String encodedPassword = passwordEncoder.encode(updatedUser.getPassword());</span>
+<span class="fc" id="L214">                updatedUser.setPassword(encodedPassword);</span>
+<span class="pc bpc" id="L215" title="2 of 4 branches missed.">            }else if(updatedUser.getPassword() == null || updatedUser.getPassword().isEmpty()){</span>
+<span class="fc" id="L216">                updatedUser.setPassword(user.getPassword());</span>
             }
-<span class="nc" id="L218">            updatedUser.setRoles(user.getRoles());</span>
-<span class="nc" id="L219">            updatedUser.setStats(user.getStats());</span>
-<span class="nc" id="L220">            userRepository.save(updatedUser);</span>
-<span class="nc" id="L221">            return toDTO(updatedUser);</span>
+<span class="fc" id="L218">            updatedUser.setRoles(user.getRoles());</span>
+<span class="fc" id="L219">            updatedUser.setStats(user.getStats());</span>
+<span class="fc" id="L220">            userRepository.save(updatedUser);</span>
+<span class="fc" id="L221">            return toDTO(updatedUser);</span>
  		} else {
-<span class="nc" id="L223"> 			throw new NoSuchElementException();</span>
+<span class="fc" id="L223"> 			throw new NoSuchElementException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
  		}
     }
 

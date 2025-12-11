@@ -106,7 +106,7 @@ public class ClubRestController {
 
     @PutMapping("/{id}")
     public ClubDTO replaceClub(@PathVariable long id, @RequestBody ClubDTO updatedClubDTO) {
-        if(userService.getLoggedUser().getRoles().contains("ADMIN") ){
+        if(!userService.getLoggedUser().getRoles().contains("ADMIN") ){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo el admin puede editar un club");
         }
         return clubService.replaceClub(id, updatedClubDTO);

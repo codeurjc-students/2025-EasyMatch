@@ -1,6 +1,6 @@
 <div class="admin-header">
   <h2>Admin > Deportes</h2>
-  <button mat-raised-button color="primary" class="new-user-btn" (click)="createMatch()">
+  <button mat-raised-button color="primary" class="new-entity-btn" (click)="createSport()">
     <mat-icon>add</mat-icon> Crear deporte
   </button>
 </div>
@@ -47,7 +47,7 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>Acciones</th>
     <td mat-cell *matCellDef="let c">
-      <button mat-icon-button color="primary" (click)="editMatch(c.id)">
+      <button mat-icon-button color="primary" (click)="editSport(c.id)">
         <mat-icon class="edit-icon">edit</mat-icon>
       </button>
 

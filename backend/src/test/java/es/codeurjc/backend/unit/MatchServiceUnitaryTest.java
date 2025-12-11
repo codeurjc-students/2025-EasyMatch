@@ -1,5 +1,6 @@
 package es.codeurjc.backend.unit;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import es.codeurjc.dto.UserMapper;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
+import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.Mode;
 import es.codeurjc.model.ScoringType;
@@ -58,7 +60,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void getMatchesUnitaryTest(){   
+    public void getMatchesTest(){   
 
         //GIVEN
         PageRequest pageable = PageRequest.of(0, 10);
@@ -82,7 +84,7 @@ public class MatchServiceUnitaryTest {
         assertThat(result.getNumberOfElements(),equalTo(expected.getNumberOfElements()));
     }
     @Test
-    public void getMatchByIdUnitaryTest(){
+    public void getMatchByIdTest(){
         //GIVEN
         long id = 1;
         Match match = new Match(null, true, false, true, null,5.00, null,null);
@@ -97,7 +99,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void deleteExistingMatchUnitaryTest(){
+    public void deleteExistingMatchTest(){
         //GIVEN
         long id = 1;
         Match match = new Match(null, false, true, false, null,2.00, null,null);
@@ -111,7 +113,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void deleteNonExistingMatchUnitaryTest(){
+    public void deleteNonExistingMatchTest(){
         //GIVEN
         Random random = new Random();
         long id = 1 + random.nextInt(100);
@@ -126,7 +128,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void createMatchUnitaryTest(){
+    public void createMatchTest(){
         //GIVEN
         UserDTO userDTO = new UserDTO(
             1L,
@@ -155,7 +157,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void joinExistingMatchUnitaryTest(){
+    public void joinExistingMatchTest(){
         //GIVEN
         long id = 4L;
         User user = new User();
@@ -175,7 +177,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void joinNonExistingMatchUnitaryTest(){
+    public void joinNonExistingMatchTest(){
         long id = 1L;
         when(matchRepository.existsById(id)).thenReturn(false);
         NoSuchElementException ex = assertThrows(NoSuchElementException.class, () ->{
@@ -185,7 +187,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void joinMatchWithInvalidTeamUnitaryTest(){
+    public void joinMatchWithInvalidTeamTest(){
         long id = 1L;
         User organizer =  new User();
         Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
@@ -207,7 +209,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test 
-    public void joinMatchUserAlreadyJoinedUnitaryTest(){
+    public void joinMatchUserAlreadyJoinedTest(){
         //GIVEN
         long id = 4L;
         User organizer =  new User();
@@ -231,7 +233,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test 
-    public void joinFullMatchUnitaryTest(){
+    public void joinFullMatchTest(){
         //GIVEN
         long id = 4L;
         User user1 =  new User();
@@ -256,7 +258,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test 
-    public void leaveMatchUnitaryTest(){
+    public void leaveMatchTest(){
         long id = 4L;
         User user1 =  new User();
         user1.setId(1L);
@@ -277,5 +279,42 @@ public class MatchServiceUnitaryTest {
         assertThat(match.getTeam1Players(),not(hasItem(user2)));    
     }
 
+    @Test 
+    public void replaceExistingMatchTest(){
+        //GIVEN
+        long id = 2L;
+        Optional<Match> matchOptional = Optional.of(new Match(LocalDateTime.of(2025,5,12,11,0),true,true,true,new User(),9.99f,new Sport(), new Club()));
+        Match updatedMatch = new Match(LocalDateTime.of(2025,5,12,12,30),true,true,true,new User(),10.49f,new Sport(), new Club());
+        updatedMatch.setId(id);
+        MatchDTO updatedMatchDTO = mapper.toDTO(updatedMatch);
+
+        //WHEN
+        when(matchRepository.existsById(id)).thenReturn(true);
+        when(matchRepository.findById(id)).thenReturn(matchOptional);
+
+        MatchDTO replacedMatchDTO = matchService.replaceMatch(id, updatedMatchDTO);
+
+        //THEN
+        assertThat(updatedMatchDTO, equalTo(replacedMatchDTO));
+        verify(matchRepository,times(1)).save(any(Match.class));
+
+    }
+
+    @Test 
+    public void replaceNonExistingMatchTest(){
+        //GIVEN
+        Random random = new Random();
+        long id = 1 + random.nextInt(100);
+        Optional<Match> emptyMatch = Optional.empty();
+        Match updatedMatch =  new Match();
+        MatchDTO updatedMatchDTO = mapper.toDTO(updatedMatch);
+
+        //WHEN
+        when(matchRepository.findById(id)).thenReturn(emptyMatch);
+
+        //THEN
+        NoSuchElementException ex = assertThrows(NoSuchElementException.class, ()->  matchService.replaceMatch(id, updatedMatchDTO));
+        assertThat(ex.getMessage(),equalTo("Match with id " + id + " does not exist."));
+    }
 
 }

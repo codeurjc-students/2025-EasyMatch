@@ -220,7 +220,7 @@ public class UserService {
             userRepository.save(updatedUser);
             return toDTO(updatedUser);
  		} else {
- 			throw new NoSuchElementException();
+ 			throw new NoSuchElementException("User with id " + id + " does not exist.");
  		}
     }
 

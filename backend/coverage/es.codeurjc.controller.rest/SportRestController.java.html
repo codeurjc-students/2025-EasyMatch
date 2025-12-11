@@ -43,37 +43,37 @@ import es.codeurjc.service.UserService;
 
     @GetMapping(&quot;/{id}&quot;)
     public SportDTO getSport(@PathVariable Long id) {
-<span class="nc" id="L46">        return sportService.getSport(id);</span>
+<span class="fc" id="L46">        return sportService.getSport(id);</span>
     }
 
     @DeleteMapping(&quot;/{id}&quot;)
     public SportDTO deleteSport(@PathVariable Long id) {
-<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)) {</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)) {</span>
 <span class="nc" id="L52">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Solo el admin puede eliminar un deporte.&quot;);</span>
         }
 
-<span class="nc" id="L55">        SportDTO deletedSport = sportService.getSport(id);</span>
-<span class="nc" id="L56">        sportService.delete(id);</span>
-<span class="nc" id="L57">        return deletedSport;</span>
+<span class="fc" id="L55">        SportDTO deletedSport = sportService.getSport(id);</span>
+<span class="fc" id="L56">        sportService.delete(id);</span>
+<span class="fc" id="L57">        return deletedSport;</span>
     }
 
     @PostMapping(&quot;/&quot;)
     public ResponseEntity&lt;SportDTO&gt; createSport(@RequestBody SportDTO sportDTO) throws IOException {
-<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
 <span class="nc" id="L63">            throw new ResponseStatusException(HttpStatus.FORBIDDEN); </span>
         }
-<span class="nc" id="L65">        sportDTO = sportService.createSport(sportDTO);</span>
-<span class="nc" id="L66">        URI location = fromCurrentRequest().path(&quot;/{id}&quot;).buildAndExpand(sportDTO.id()).toUri();</span>
+<span class="fc" id="L65">        sportDTO = sportService.createSport(sportDTO);</span>
+<span class="fc" id="L66">        URI location = fromCurrentRequest().path(&quot;/{id}&quot;).buildAndExpand(sportDTO.id()).toUri();</span>
 
-<span class="nc" id="L68">        return ResponseEntity.created(location).body(sportDTO);</span>
+<span class="fc" id="L68">        return ResponseEntity.created(location).body(sportDTO);</span>
     }
 
     @PutMapping(&quot;/{id}&quot;)
     public SportDTO replaceSport(@PathVariable long id, @RequestBody SportDTO updatedSportDTO) {
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        if(!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;) ){</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if(!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;) ){</span>
 <span class="nc" id="L74">            throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
         }
-<span class="nc" id="L76">        return sportService.replaceSport(id, updatedSportDTO);</span>
+<span class="fc" id="L76">        return sportService.replaceSport(id, updatedSportDTO);</span>
     }
 
 }

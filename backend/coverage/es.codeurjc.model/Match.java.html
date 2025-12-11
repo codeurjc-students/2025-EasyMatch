@@ -89,8 +89,8 @@ public class Match {
 <span class="fc" id="L89">    }</span>
 
 	public boolean containsPlayer(User player) {
-<span class="pc bpc" id="L92" title="2 of 6 branches missed.">        return (team1Players != null &amp;&amp; team1Players.contains(player))</span>
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">            || (team2Players != null &amp;&amp; team2Players.contains(player));</span>
+<span class="pc bpc" id="L92" title="1 of 4 branches missed.">        return (team1Players != null &amp;&amp; team1Players.contains(player))</span>
+<span class="pc bpc" id="L93" title="2 of 4 branches missed.">            || (team2Players != null &amp;&amp; team2Players.contains(player));</span>
     }
 
 	public boolean didPlayerWin(User player) {
@@ -245,8 +245,8 @@ public class Match {
 	@Override
 	public String toString() {
 <span class="nc" id="L247">		return &quot;Match [id=&quot; + id + &quot;, date=&quot; + date + &quot;, type=&quot; + type + &quot;, isPrivate=&quot; + isPrivate + &quot;, state=&quot; + state</span>
-				+ &quot;, organizer=&quot; + organizer + &quot;, sport=&quot; + sport + &quot;, club=&quot; + club + &quot;, team1=&quot; + team1Players + &quot;team2=&quot;+ 
-				team2Players + &quot;]&quot;;
+<span class="nc" id="L248">				+ &quot;, organizer=&quot; + organizer + &quot;, sport=&quot; + sport + &quot;, club=&quot; + club + &quot;, team1=&quot; + team1Players + &quot;team2=&quot;+ </span>
+<span class="nc" id="L249">				team2Players + &quot;]&quot;;</span>
 	}
 
 }

@@ -105,6 +105,8 @@ public class ClubService {
 
     public ClubDTO createClub(ClubDTO clubDTO) {
         Club club = mapper.toDomain(clubDTO);
+        club.setSports(List.of());
+        club.setNumberOfCourts(List.of());
         this.save(club);
         return toDTO(club);
     }
@@ -120,7 +122,7 @@ public class ClubService {
             clubRepository.save(updatedClub);
             return toDTO(updatedClub);
  		} else {
- 			throw new NoSuchElementException();
+ 			throw new NoSuchElementException("Club with id " + id + " does not exist.");
  		}
     }
 

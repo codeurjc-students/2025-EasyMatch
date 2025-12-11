@@ -17,27 +17,11 @@ describe('MatchService', () => {
         username: 'pedro@emeal.com',    
         password: 'pedroga4'
     };
+    let adminLoginRequest = {
+      username: 'admin@emeal.com',
+      password: 'admin'
+    };
 
-    beforeEach(() =>{
-        TestBed.configureTestingModule({imports:[HttpClientModule], providers: [MatchService]});
-        service = TestBed.inject(MatchService);
-        loginService = TestBed.inject(LoginService);
-    });
-    
-    it('should be created', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('getMatches should return API\'s value as an Observable', (done: DoneFn) => {
-        service.getMatches(0, 10,'').subscribe(response => {
-            expect(response).toBeTruthy();
-            expect(Array.isArray(response.content)).toBeTrue();
-            expect(response.content.length).toBeGreaterThan(0);
-            done();
-        });
-    });
-
-   it('createMatch should send a valid payload and return the created match', (done: DoneFn) => {
     const mockSport: Sport = {
       id: 1,
       name: 'Fútbol',
@@ -63,6 +47,27 @@ describe('MatchService', () => {
       price: 15,
       club: mockClub,
     };
+
+    beforeEach(() =>{
+        TestBed.configureTestingModule({imports:[HttpClientModule], providers: [MatchService]});
+        service = TestBed.inject(MatchService);
+        loginService = TestBed.inject(LoginService);
+    });
+    
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
+
+    it('getMatches should return API\'s value as an Observable', (done: DoneFn) => {
+        service.getMatches(0, 10,'').subscribe(response => {
+            expect(response).toBeTruthy();
+            expect(Array.isArray(response.content)).toBeTrue();
+            expect(response.content.length).toBeGreaterThan(0);
+            done();
+        });
+    });
+
+   it('createMatch should send a valid payload and return the created match', (done: DoneFn) => {
 
     loginService.login(loginRequest).subscribe(
       response => {
@@ -113,5 +118,77 @@ describe('MatchService', () => {
           });
       })
    });
+
+   it('updateMatch should update match fields when admin is logged in', (done: DoneFn) => {
+
+    
+
+    loginService.login(adminLoginRequest).subscribe({
+      next: () => {
+
+        service.createMatch(mockMatch).subscribe({
+          next: (created: Match) => {
+            expect(created).toBeTruthy();
+
+            const updatedMatch: Partial<Match> = {
+              ...created,
+              price: 99.99,
+              isPrivate: !created.isPrivate
+            };
+
+            service.updateMatch(created.id!, updatedMatch).subscribe({
+              next: updated => {
+                expect(updated).toBeTruthy();
+                expect(updated.price).toBe(99.99);
+                expect(updated.isPrivate).toBe(!created.isPrivate);
+                done();
+              },
+              error: err => {
+                fail(`updateMatch failed: ${err.message}`);
+                done();
+              }
+            });
+
+          },
+          error: err => {
+            fail(`createMatch failed: ${err.message}`);
+            done();
+          }
+        });
+      }
+    });
+
+  });
+
+  it('deleteMatch should remove a match when admin is logged in', (done: DoneFn) => {
+    loginService.login(adminLoginRequest).subscribe({
+      next: () => {
+        service.createMatch(mockMatch).subscribe({
+          next: (created: Match) => {
+            expect(created).toBeTruthy();
+            const id = created.id;
+
+            service.deleteMatch(id!).subscribe({
+              next: (response: Match) => {
+                expect(response).toBeTruthy();
+                expect(response.id).toBe(id);
+                done();
+              },
+              error: err => {
+                fail(`deleteMatch failed: ${err.message}`);
+                done();
+              }
+            });
+          },
+          error: err => {
+            fail(`createMatch failed: ${err.message}`);
+            done();
+          }
+        });
+      }
+    });
+  });
+
+
 
 });
