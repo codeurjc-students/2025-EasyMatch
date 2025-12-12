@@ -562,6 +562,8 @@ public class AngularUITest {
 
         goToAdminClubsPage();
 
+        waitForAngularToFinish();
+
         List<WebElement> initialRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
@@ -938,8 +940,13 @@ public class AngularUITest {
 
         waitForAngularToFinish();
 
-        WebElement firstRow = driver.findElement(By.cssSelector("table.admin-table tr.mat-mdc-row"));
-        WebElement editBtn = firstRow.findElement(By.cssSelector("button .edit-icon"));
+        List<WebElement> rows = driver.findElements(
+                By.cssSelector("table.admin-table tr.mat-mdc-row")
+        );
+        assertThat(rows.size(), greaterThan(0));
+        
+        WebElement firstRow = rows.get(0);
+        WebElement editBtn = firstRow.findElement(By.cssSelector(".edit-icon"));
         scrollIntoView(editBtn);
         editBtn.click();
 
