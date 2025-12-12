@@ -571,7 +571,7 @@ public class AngularUITest {
 
         WebElement newClubBtn = wait.until(
                 ExpectedConditions.elementToBeClickable(
-                        By.cssSelector("button.new-entity-btn, button.create-club-btn, button.mat-raised-button")
+                        By.cssSelector(".new-entity-btn")
                 )
         );
         scrollIntoView(newClubBtn);
