@@ -60,7 +60,7 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public MatchDTO getMatch(long id) {
-<span class="fc" id="L63">        return toDTO(findById(id).orElseThrow());</span>
+<span class="fc" id="L63">        return toDTO(findById(id).orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND)));</span>
     }
     
     @Transactional(readOnly = true)
@@ -161,7 +161,21 @@ public class MatchService {
 <span class="fc" id="L161">            matchRepository.save(match);</span>
         }
 <span class="fc" id="L163">     }</span>
-
+    public MatchDTO replaceMatch(long id, MatchDTO updatedMatchDTO) {
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (matchRepository.existsById(id)) {</span>
+<span class="fc" id="L166">            Match match = matchRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L167">            Match updatedMatch = mapper.toDomain(updatedMatchDTO);</span>
+<span class="fc" id="L168">            updatedMatch.setId(id);</span>
+<span class="fc" id="L169">            updatedMatch.setOrganizer(match.getOrganizer());</span>
+<span class="fc" id="L170">            updatedMatch.setTeam1Players(match.getTeam1Players());</span>
+<span class="fc" id="L171">            updatedMatch.setTeam2Players(match.getTeam2Players());</span>
+<span class="fc" id="L172">            updatedMatch.setState(match.getState());</span>
+<span class="fc" id="L173">            matchRepository.save(updatedMatch);</span>
+<span class="fc" id="L174">            return toDTO(updatedMatch);</span>
+ 		} else {
+<span class="fc" id="L176"> 			throw new NoSuchElementException(&quot;Match with id &quot; + id + &quot; does not exist.&quot;);</span>
+ 		}
+    }
     
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

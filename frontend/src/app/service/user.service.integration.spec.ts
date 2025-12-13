@@ -12,10 +12,16 @@ describe('UserService', () => {
   let service: UserService;
   let loginService: LoginService;
 
-  const loginRequest = {
+  const userLoginRequest = {
     username: 'pedro@emeal.com',
     password: 'pedroga4'
   };
+
+  const adminLoginRequest = {
+    username: 'admin@emeal.com',
+    password: 'admin'
+  };
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -62,12 +68,12 @@ describe('UserService', () => {
   });
 
   it('getCurrentUser should return the authenticated user', (done) => {
-    loginService.login(loginRequest).subscribe({
+    loginService.login(userLoginRequest).subscribe({
       next: () => {
         service.getCurrentUser().subscribe({
           next: (user: User) => {
             expect(user).toBeTruthy();
-            expect(user.id).toBe(1);
+            expect(user.id).toBe(2);
             expect(user.username).toBe('pedro123');
             expect(user.realname).toBe('Pedro Garcia');
             done();
@@ -86,13 +92,13 @@ describe('UserService', () => {
   });
 
   it('deleteUser should delete the authenticated user', (done) => {
-    const testUserId = 1;
+    const testUserId = 2;
 
-    loginService.login(loginRequest).subscribe({
+    loginService.login(userLoginRequest).subscribe({
       next: () => {
         service.deleteUser(testUserId).subscribe({
           next: (user: User) => {
-            expect(user.id).toBe(1);
+            expect(user.id).toBe(2);
             done();
           },
           error: err => {
@@ -107,6 +113,106 @@ describe('UserService', () => {
       }
     });
   });
+
+  it('deleteUser should delete any user when admin is logged in', (done: DoneFn) => {
+
+    const mockUser: Partial<User> = {
+      realname: 'Carlos',
+      username: 'carlitos55',
+      password: 'test',
+      email: 'carlitos55@emeal.com',
+      birthDate: new Date(),
+      gender: false,
+      description: 'Test delete user'
+    };
+
+
+    service.registerUser(mockUser).subscribe({
+      next: (createdUser: User) => {
+        expect(createdUser).toBeTruthy();
+
+        loginService.login(adminLoginRequest).subscribe({
+
+          next: () => {
+            service.deleteUser(createdUser.id!).subscribe({
+              next: (response: any) => {
+                expect(response).toBeTruthy();
+                expect(response.id).toBe(createdUser.id);
+                done();
+              },
+              error: err => {
+                fail(`deleteUser failed: ${err.message}`);
+                done();
+              }
+            });
+          },
+
+          error: err => {
+            fail(`admin login failed: ${err.message}`);
+            done();
+          }
+        });
+      },
+
+      error: err => {
+        fail(`registerUser failed: ${err.message}`);
+        done();
+      }
+    });
+  });
+
+  it('updateUser should edit any user when admin is logged in', (done: DoneFn) => {
+
+    const mockUser: Partial<User> = {
+      realname: 'Pepe',
+      username: 'pepe22',
+      password: 'test',
+      email: 'pepe22@emeal.com',
+      birthDate: new Date(),
+      gender: true,
+      description: 'Descripción original'
+    };
+
+    service.registerUser(mockUser).subscribe({
+      next: (createdUser: User) => {
+
+        const updatedUser: Partial<User> = {
+          ...createdUser,
+          realname: 'Pepe Modificado',
+          description: 'Modificado por admin'
+        };
+
+        loginService.login(adminLoginRequest).subscribe({
+
+          next: () => {
+            service.updateUser(createdUser.id!, updatedUser).subscribe({
+              next: updated => {
+                expect(updated).toBeTruthy();
+                expect(updated.realname).toBe('Pepe Modificado');
+                expect(updated.description).toBe('Modificado por admin');
+                done();
+              },
+              error: err => {
+                fail(`replaceUser(admin) failed: ${err.message}`);
+                done();
+              }
+            });
+          },
+
+          error: err => {
+            fail(`admin login failed: ${err.message}`);
+            done();
+          }
+        });
+      },
+
+      error: err => {
+        fail(`registerUser failed: ${err.message}`);
+        done();
+      }
+    });
+  });
+
 
   
 

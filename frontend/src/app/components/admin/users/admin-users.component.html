@@ -1,0 +1,65 @@
+<div class="admin-header">
+  <h2>Admin > Usuarios</h2>
+  <button mat-raised-button color="primary" class="new-entity-btn" (click)="createUser()">
+    <mat-icon>add</mat-icon> Crear usuario
+  </button>
+</div>
+
+<table mat-table [dataSource]="users" class="admin-table">
+
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <td mat-cell *matCellDef="let u">{{ u.id }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="realname">
+    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+    <td mat-cell *matCellDef="let u">{{ u.realname }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="username">
+    <th mat-header-cell *matHeaderCellDef>Username</th>
+    <td mat-cell *matCellDef="let u">{{ u.username }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="gender">
+    <th mat-header-cell *matHeaderCellDef>Sexo</th>
+    <td mat-cell *matCellDef="let u">{{ u.gender ? 'Hombre' : 'Mujer' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <td mat-cell *matCellDef="let u">{{ u.email }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="level">
+    <th mat-header-cell *matHeaderCellDef>Nivel</th>
+    <td mat-cell *matCellDef="let u">{{ u.level }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef>Descripción</th>
+    <td mat-cell *matCellDef="let u">{{ u.description }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+    <td mat-cell *matCellDef="let u">
+      <button mat-icon-button color="primary" (click)="editUser(u.id)">
+        <mat-icon class="edit-icon">edit</mat-icon>
+      </button>
+
+      <button mat-icon-button color="warn" (click)="deleteUser(u.id)">
+        <mat-icon class="delete-icon">delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+</table>
+
+
+<mat-paginator [length]="totalElements()" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)" showFirstLastButtons>
+</mat-paginator>

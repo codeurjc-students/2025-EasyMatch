@@ -1,0 +1,64 @@
+<div class="admin-header">
+  <h2>Admin > Deportes</h2>
+  <button mat-raised-button color="primary" class="new-entity-btn" (click)="createSport()">
+    <mat-icon>add</mat-icon> Crear deporte
+  </button>
+</div>
+
+<table mat-table [dataSource]="sports" class="admin-table">
+
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <td mat-cell *matCellDef="let s">{{ s.id }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+    <td mat-cell *matCellDef="let s">{{ s.name }}</td>
+  </ng-container>
+
+  
+  <ng-container matColumnDef="scoringType">
+    <th mat-header-cell *matHeaderCellDef>Tipo de puntuación</th>
+    <td mat-cell *matCellDef="let s">
+      <span class="scoring-badge" [attr.data-type]="s.scoringType | scoringTypeLabel">{{ s.scoringType | scoringTypeLabel }}</span>
+    </td>
+  </ng-container>
+
+
+  
+  <ng-container matColumnDef="modes">
+    <th mat-header-cell *matHeaderCellDef>Modos de juego</th>
+    <td mat-cell *matCellDef="let s">
+      <ul class="modes-list">
+        @for (m of s.modes; track m.name) {
+          <li class="mode-item">
+            <span class="mode-name">{{ m.name }}</span>
+            <span class="mode-players">{{ m.playersPerGame }} jugadores</span>
+          </li>
+        }
+      </ul>
+    </td>
+  </ng-container>
+
+
+
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+    <td mat-cell *matCellDef="let c">
+      <button mat-icon-button color="primary" (click)="editSport(c.id)">
+        <mat-icon class="edit-icon">edit</mat-icon>
+      </button>
+
+      <button mat-icon-button color="warn" (click)="deleteSport(c.id)">
+        <mat-icon class="delete-icon">delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+</table>
+

@@ -5,6 +5,7 @@ import { Sport } from "../models/sport.model";
 import { Club } from "../models/club.model";
 import { Match } from "../models/match.model";
 import { LoginService } from "./login.service";
+import { ScoringType } from "../models/scoring-type";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 jasmine.getEnv().configure({ random: false });
@@ -15,6 +16,36 @@ describe('MatchService', () => {
     let loginRequest = {
         username: 'pedro@emeal.com',    
         password: 'pedroga4'
+    };
+    let adminLoginRequest = {
+      username: 'admin@emeal.com',
+      password: 'admin'
+    };
+
+    const mockSport: Sport = {
+      id: 1,
+      name: 'Fútbol',
+      modes: [{ name: '7v7', playersPerGame: 14 }],
+      scoringType: ScoringType.SCORE
+    };
+
+    const mockClub: Club = {
+      id: 1,
+      name: 'Club Test',
+      city: 'Madrid',
+      address: 'Calle Falsa 123',
+      sports: [mockSport],
+      schedule: { openingTime: '09:00', closingTime: '22:00' },
+      priceRange: { minPrice: 10, maxPrice: 20, unit: '€/hora' },
+    };
+
+    const mockMatch: Partial<Match> = {
+      date: new Date(),
+      type: true,
+      isPrivate: false,
+      sport: mockSport,
+      price: 15,
+      club: mockClub,
     };
 
     beforeEach(() =>{
@@ -37,30 +68,6 @@ describe('MatchService', () => {
     });
 
    it('createMatch should send a valid payload and return the created match', (done: DoneFn) => {
-    const mockSport: Sport = {
-      id: 1,
-      name: 'Fútbol',
-      modes: [{ name: '7v7', playersPerGame: 14 }],
-    };
-
-    const mockClub: Club = {
-      id: 1,
-      name: 'Club Test',
-      city: 'Madrid',
-      address: 'Calle Falsa 123',
-      sports: [mockSport],
-      schedule: { openingTime: '09:00', closingTime: '22:00' },
-      priceRange: { minPrice: 10, maxPrice: 20, unit: '€/hora' },
-    };
-
-    const mockMatch: Partial<Match> = {
-      date: new Date(),
-      type: true,
-      isPrivate: false,
-      sport: mockSport,
-      price: 15,
-      club: mockClub,
-    };
 
     loginService.login(loginRequest).subscribe(
       response => {
@@ -111,5 +118,77 @@ describe('MatchService', () => {
           });
       })
    });
+
+   it('updateMatch should update match fields when admin is logged in', (done: DoneFn) => {
+
+    
+
+    loginService.login(adminLoginRequest).subscribe({
+      next: () => {
+
+        service.createMatch(mockMatch).subscribe({
+          next: (created: Match) => {
+            expect(created).toBeTruthy();
+
+            const updatedMatch: Partial<Match> = {
+              ...created,
+              price: 99.99,
+              isPrivate: !created.isPrivate
+            };
+
+            service.updateMatch(created.id!, updatedMatch).subscribe({
+              next: updated => {
+                expect(updated).toBeTruthy();
+                expect(updated.price).toBe(99.99);
+                expect(updated.isPrivate).toBe(!created.isPrivate);
+                done();
+              },
+              error: err => {
+                fail(`updateMatch failed: ${err.message}`);
+                done();
+              }
+            });
+
+          },
+          error: err => {
+            fail(`createMatch failed: ${err.message}`);
+            done();
+          }
+        });
+      }
+    });
+
+  });
+
+  it('deleteMatch should remove a match when admin is logged in', (done: DoneFn) => {
+    loginService.login(adminLoginRequest).subscribe({
+      next: () => {
+        service.createMatch(mockMatch).subscribe({
+          next: (created: Match) => {
+            expect(created).toBeTruthy();
+            const id = created.id;
+
+            service.deleteMatch(id!).subscribe({
+              next: (response: Match) => {
+                expect(response).toBeTruthy();
+                expect(response.id).toBe(id);
+                done();
+              },
+              error: err => {
+                fail(`deleteMatch failed: ${err.message}`);
+                done();
+              }
+            });
+          },
+          error: err => {
+            fail(`createMatch failed: ${err.message}`);
+            done();
+          }
+        });
+      }
+    });
+  });
+
+
 
 });

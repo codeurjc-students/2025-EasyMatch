@@ -3,6 +3,7 @@ import { ClubComponent } from './club.component';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { ScoringType } from '../../models/scoring-type';
 
 describe('ClubComponent', () => {
   let component: ClubComponent;
@@ -15,8 +16,8 @@ describe('ClubComponent', () => {
     city: 'Madrid',
     address: 'Calle Falsa 123',
     sports: [
-      { name: 'Fútbol', modes: [{ name: '7v7', playersPerGame: 14 }] },
-      { name: 'Tenis', modes: [{ name: 'Individual', playersPerGame: 2 }] },
+      { name: 'Fútbol', modes: [{ name: '7v7', playersPerGame: 14 }], scoringType: ScoringType.SETS },
+      { name: 'Tenis', modes: [{ name: 'Individual', playersPerGame: 2 }], scoringType: ScoringType.SCORE },
     ],
     schedule: { openingTime: '09:00', closingTime: '22:00' },
     priceRange: { minPrice: 8, maxPrice: 15, unit: '€/hora' },

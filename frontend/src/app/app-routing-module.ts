@@ -1,20 +1,28 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { canActivateAuth } from './guards/auth.guard';
+import { ErrorPageComponent } from './components/error/error-page.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) },
+  { path: 'admin', loadChildren: () => import('./components/admin/admin-routing').then(m => m.ADMIN_ROUTES), canActivate: [canActivateAuth] },
   { path: 'matches', loadComponent: () => import('./components/match-list/match-list').then(m => m.MatchListComponent), canActivate: [canActivateAuth] },
   { path: 'clubs', loadComponent: () => import('./components/club-list/club-list.component').then(m => m.ClubListComponent), canActivate: [canActivateAuth]},
   { path: 'matches/create', loadComponent : () => import('./components/match-create/match-create.component').then(c => c.MatchCreateComponent), canActivate: [canActivateAuth] },
   { path: 'profile', loadComponent : () => import('./components/user/user.component').then(c => c.UserComponent), canActivate: [canActivateAuth] },
   { path: 'register', loadComponent : () => import('./components/register/register.component').then(c => c.RegisterComponent)},
-  { path: 'my-matches', loadComponent: () => import('./components/my-matches/my-matches.component').then(m => m.MyMatchesComponent)},
-  { path: '**', redirectTo: 'login' },
-  {path: 'error',
-  loadComponent: () =>
-    import('./components/error/error.component').then(m => m.ErrorComponent)},
+  { path: 'my-matches', loadComponent: () => import('./components/my-matches/my-matches.component').then(m => m.MyMatchesComponent), canActivate: [canActivateAuth] },
+  {
+    path: '**',
+    component: ErrorPageComponent,
+    data: {
+      code: 404,
+      title: 'Página no encontrada',
+      message: 'La página que buscas no existe o fue movida.'
+    }
+  },
+  {path: 'error', loadComponent: () => import('./components/error/error-page.component').then(m => m.ErrorPageComponent)},
 ];
 
 @NgModule({

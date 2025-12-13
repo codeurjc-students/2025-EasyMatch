@@ -30,7 +30,7 @@ export class HeaderComponent {
   private loadUser(): void {
     this.userService.getCurrentUser().subscribe({
       next: (data) => this.user = signal({id: data.id, realname: data.realname, username: data.username, email: data.email, birthDate: data.birthDate, gender: data.gender, description: data.description, level: data.level,
-        stats: data.stats
+        stats: data.stats, roles: data.roles
       } ),
       error: (err) => console.error('Error al obtener el usuario:', err),
     });

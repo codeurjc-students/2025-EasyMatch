@@ -9,6 +9,7 @@ import { JoinMatchResponse } from '../models/join-match-response';
 @Injectable({ providedIn: 'root' })
 export class MatchService {
   
+  
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
@@ -45,6 +46,24 @@ export class MatchService {
     return this.http.get<Match>(`${this.apiUrl}/matches/${id}`,{withCredentials : true});
   }
 
+  getAllMatches(page = 0, size = 10): Observable<{
+    content: Match[];
+    totalElements: number;
+    totalPages: number;
+    number: number;
+  }>{
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sort', 'id,asc');
+    return this.http
+      .get<{ content: Match[]; totalElements: number; totalPages: number; number: number }>(
+        `${this.apiUrl}/matches/`,
+        { params, withCredentials: true }
+      ).pipe(map(response => ({ ...response, content: response.content })));
+
+  }
+
   createMatch(matchData: Partial<Match>): Observable<Match> {
     const payload = {
       ...matchData,
@@ -62,11 +81,19 @@ export class MatchService {
   }
 
   joinMatch(id: number, team: string): Observable<JoinMatchResponse> {
-    return this.http.put<JoinMatchResponse>(`${this.apiUrl}/matches/${id}`, { team }, { withCredentials: true });
+    return this.http.put<JoinMatchResponse>(`${this.apiUrl}/matches/${id}/users/me`, { team }, { withCredentials: true });
   }
   
   leaveMatch(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/matches/${id}`, { withCredentials: true });
+    return this.http.delete(`${this.apiUrl}/matches/${id}/users/me`, { withCredentials: true });
+  }
+
+  deleteMatch(id: number): Observable<Match> {
+      return this.http.delete<Match>(`${this.apiUrl}/matches/${id}`, { withCredentials: true });
+  }
+
+  updateMatch(editingId: number, matchData: Partial<Match>) : Observable<Match> {
+      return this.http.put<Match>(`${this.apiUrl}/matches/${editingId}`, matchData, { withCredentials: true });
   }
   
 

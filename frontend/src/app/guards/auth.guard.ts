@@ -5,14 +5,11 @@ import { firstValueFrom } from 'rxjs';
 
 export const canActivateAuth: CanActivateFn = async () => {
   const authService = inject(AuthService);
-  const router = inject(Router);
 
-  const isLoggedIn = await firstValueFrom(authService.checkAuthStatus());
-
-  if (!isLoggedIn) {
-    router.navigate(['/login']);
+  try {
+    const isLoggedIn = await firstValueFrom(authService.checkAuthStatus());
+    return isLoggedIn;
+  } catch {
     return false;
   }
-
-  return true;
 };

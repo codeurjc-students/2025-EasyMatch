@@ -1,0 +1,105 @@
+<div class="admin-form-container">
+  <mat-card class="admin-form-card">
+    <h2>
+      <mat-icon>stadium</mat-icon>
+      {{ editingId ? 'Editar Club' : 'Crear Club' }}
+    </h2>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="phone" type="number" />
+        </mat-form-field>
+
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Web</mat-label>
+          <input matInput formControlName="web" type="text" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Dirección</mat-label>
+          <input matInput formControlName="address"/>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Ciudad</mat-label>
+          <input matInput formControlName="city" type="text" />
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Hora de apertura</mat-label>
+          <input matInput type="time" formControlName="openingTime" placeholder="Selecciona hora" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Hora de cierre</mat-label>
+          <input matInput type="time" formControlName="closingTime" placeholder="Selecciona hora" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Precio mínimo</mat-label>
+          <input matInput formControlName="minPrice" type="number" />
+        </mat-form-field>
+
+         <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Precio máximo</mat-label>
+          <input matInput formControlName="maxPrice" type="number" />
+        </mat-form-field>
+        
+        <div class="photo-row">
+          <img
+            *ngIf="photoPreview; else noPhoto"
+            [src]="photoPreview"
+            class="user-photo-preview"
+            alt="Foto del usuario"
+          />
+
+          <ng-template #noPhoto>
+            <div class="no-photo user-photo-preview">Sin foto</div>
+          </ng-template>
+
+          <button  class="create-btn" mat-stroked-button color="primary" type="button" (click)="fileInput.click()">
+            <mat-icon>upload</mat-icon> Subir foto
+          </button>
+
+          <input
+            type="file"
+            hidden
+            accept="image/*"
+            #fileInput
+            (change)="onPhotoSelected($event)"
+          />
+        </div>
+
+
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" class="go-back-btn" (click)="cancel()">
+          <mat-icon>arrow_back</mat-icon> Volver
+        </button>
+
+        <button mat-flat-button color="primary" class="create-btn" type="submit">
+          <mat-icon>check</mat-icon>
+          Guardar
+        </button>
+      </div>
+
+    </form>
+
+  </mat-card>
+</div>

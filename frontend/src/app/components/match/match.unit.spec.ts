@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchComponent } from './match';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
+import { ScoringType } from '../../models/scoring-type';
 
 
 describe('MatchComponent', () => {
@@ -24,8 +25,8 @@ describe('MatchComponent', () => {
         draws: 0,
         losses: 0,
         winRate: 0
-    }
-    
+    },
+    roles: [] 
   }
 
   const mockClub =  { 
@@ -33,7 +34,7 @@ describe('MatchComponent', () => {
       city: 'Madrid', 
       name: 'Club Deportivo Madrid',  
       address: 'Calle Falsa 123',
-      sports: [{ name: 'Futbol', modes: [{name: "7v7", playersPerGame: 14}]}],
+      sports: [{ name: 'Futbol', modes: [{name: "7v7", playersPerGame: 14}], scoringType: ScoringType.SCORE}],
       schedule: { openingTime: '09:00', closingTime: '22:00' },
       priceRange: { minPrice: 8, maxPrice: 15, unit: '€/hora' }
   }
@@ -46,7 +47,8 @@ describe('MatchComponent', () => {
     organizer: mockUser,
     sport: {
       name: 'Futbol',
-      modes: [{ name: '7v7', playersPerGame: 14 }]
+      modes: [{ name: '7v7', playersPerGame: 14 }],
+      scoringType: ScoringType.SCORE
     },
     price: Number(10),
     club: mockClub,

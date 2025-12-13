@@ -10,6 +10,7 @@ import { LoginService } from '../../service/login.service';
 import { LoginRequest } from '../../models/auth/login-request.model';
 import { Router, RouterLink } from '@angular/router';
 import { ErrorService } from '../../service/error.service';
+import { AuthResponse } from '../../models/auth/auth-response.model';
 
 @Component({
   selector: 'app-login',
@@ -71,15 +72,25 @@ export class LoginComponent {
     const loginRequest = this.getLoginRequest();
 
     this.loginService.login(loginRequest).subscribe({
-      next: () => {
+      next: (response : AuthResponse) => {
         this.loading.set(false);
-        this.router.navigate(['/matches'])
+        if (response.authorities.match('ROLE_ADMIN')){
+          this.router.navigate(['/admin']);
+        }else{
+          this.router.navigate(['/matches']);
+        }
+        
       },
       error: (err) => {
         this.loading.set(false);
+        if (err.status === 401) {
+          this.errorMessage.set('Credenciales inválidas');
+        } else {
+          this.errorMessage.set('Error inesperado. Inténtalo más tarde.');
+        }
         this.errorService.setError(err.status ?? 500, err.message ?? 'Error desconocido');
-        this.errorMessage.set(err.message);
-        this.router.navigate(['/error']);
+        
+        this.router.navigate(['/']);
       },
     });
   }

@@ -84,6 +84,10 @@ public class DatabaseInitializer {
         Sport sport4 = new Sport("Voleibol", modesOfVolley,ScoringType.SETS);
         Sport volley = sportService.save(sport4);
 
+        User admin = new User("Admin","admin","admin@emeal.com","admin",LocalDateTime.of(1985,1,1,0,0),true,"Administrador del sistema",6.99f,"ADMIN","USER");
+        setUserImage(admin,"/images/default-avatar.jpg");
+        userService.save(admin);
+
         User pedro = new User("Pedro Garcia","pedro123","pedro@emeal.com","pedroga4",LocalDateTime.of(1990,5,20,0,0),true,"Apasionado del tenis",5.12f,"USER");
         setUserImage(pedro,"/images/pedro.jpg");
         userService.save(pedro);

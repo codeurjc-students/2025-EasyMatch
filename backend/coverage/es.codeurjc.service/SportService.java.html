@@ -2,53 +2,105 @@
 
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.SportDTO;
 import es.codeurjc.dto.SportMapper;
 import es.codeurjc.model.Sport;
+import es.codeurjc.repository.ClubRepository;
+import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.repository.SportRepository;
 
 @Service
-<span class="fc" id="L16">public class SportService {</span>
+public class SportService {
+
+<span class="fc" id="L23">    public SportService(SportRepository sportRepository, MatchRepository matchRepository,</span>
+            ClubRepository clubRepository, SportMapper mapper) {
+<span class="fc" id="L25">        this.sportRepository = sportRepository;</span>
+<span class="fc" id="L26">        this.matchRepository = matchRepository;</span>
+<span class="fc" id="L27">        this.clubRepository = clubRepository;</span>
+<span class="fc" id="L28">        this.mapper = mapper;</span>
+<span class="fc" id="L29">    }</span>
 
     @Autowired
     private SportRepository sportRepository;
 
     @Autowired
+    private MatchRepository matchRepository;
+    
+    @Autowired
+    private ClubRepository clubRepository;
+
+    @Autowired
     private SportMapper mapper;
 
+    
+
     public Optional&lt;Sport&gt; findById(long id) {
-<span class="fc" id="L25">		return sportRepository.findById(id);</span>
+<span class="fc" id="L46">		return sportRepository.findById(id);</span>
 	}
 
     public List&lt;Sport&gt; findAll() {
-<span class="nc" id="L29">        return sportRepository.findAll();</span>
+<span class="fc" id="L50">        return sportRepository.findAll();</span>
     }
 
     public boolean exist(long id) {
-<span class="nc" id="L33">        return sportRepository.existsById(id);  </span>
+<span class="fc" id="L54">        return sportRepository.existsById(id);  </span>
     }
 
     public Sport save(Sport sport) {
-<span class="fc" id="L37">        return sportRepository.save(sport);</span>
+<span class="fc" id="L58">        return sportRepository.save(sport);</span>
     }
 
     public void delete(Long id) {
-<span class="nc" id="L41">        Optional&lt;Sport&gt; sportOptional = sportRepository.findById(id);</span>
-<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (sportOptional.isPresent()) {</span>
-<span class="nc" id="L43">            sportRepository.deleteById(id);</span>
-<span class="nc" id="L44">        } else {</span>
-<span class="nc" id="L45">            throw new IllegalArgumentException(&quot;Sport with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="fc" id="L62">        Optional&lt;Sport&gt; sportOptional = sportRepository.findById(id);</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (sportOptional.isPresent()) {</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (matchRepository.existsBySportId(id)) {</span>
+<span class="fc" id="L65">                throw new ResponseStatusException(HttpStatus.CONFLICT,</span>
+<span class="fc" id="L66">                        &quot;Ese deporte no se puede borrar porque hay partidos que lo usan.&quot;);</span>
+            }
+<span class="fc bfc" id="L68" title="All 2 branches covered.">            if(clubRepository.existsBySportsId(id)){</span>
+<span class="fc" id="L69">                throw new ResponseStatusException(HttpStatus.CONFLICT,</span>
+<span class="fc" id="L70">                        &quot;Ese deporte no se puede borrar porque hay clubes que lo usan.&quot;);</span>
+            }
+<span class="fc" id="L72">            sportRepository.deleteById(id);</span>
+<span class="fc" id="L73">        } else {</span>
+<span class="fc" id="L74">            throw new IllegalArgumentException(&quot;Sport with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
-<span class="nc" id="L47">    }</span>
+<span class="fc" id="L76">    }</span>
 
 
     public Collection&lt;SportDTO&gt; getSports() {
-<span class="fc" id="L51">        return mapper.toDTOs(sportRepository.findAll());</span>
+<span class="fc" id="L80">        return mapper.toDTOs(sportRepository.findAll());</span>
+    }
+
+    public SportDTO getSport(long id) {
+<span class="fc" id="L84">        Sport sport = sportRepository.findById(id)</span>
+<span class="fc" id="L85">                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Deporte no encontrado&quot;));</span>
+<span class="fc" id="L86">        return mapper.toDTO(sport);</span>
+    }
+
+    public SportDTO createSport(SportDTO sportDTO) {
+<span class="fc" id="L90">        Sport sport = mapper.toDomain(sportDTO);</span>
+<span class="fc" id="L91">        this.save(sport);</span>
+<span class="fc" id="L92">        return mapper.toDTO(sport);</span>
+    }
+
+    public SportDTO replaceSport(long id, SportDTO updatedSportDTO) {
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        if (sportRepository.existsById(id)) {</span>
+<span class="fc" id="L97">            Sport updatedSport = mapper.toDomain(updatedSportDTO);</span>
+<span class="fc" id="L98">            updatedSport.setId(id);</span>
+<span class="fc" id="L99">            sportRepository.save(updatedSport);</span>
+<span class="fc" id="L100">            return mapper.toDTO(updatedSport);</span>
+ 		} else {
+<span class="nc" id="L102"> 			throw new NoSuchElementException();</span>
+ 		}
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

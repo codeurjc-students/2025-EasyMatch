@@ -1,0 +1,86 @@
+<div class="admin-form-container">
+  <mat-card class="admin-form-card">
+    <h2>
+      <mat-icon>sports_soccer</mat-icon>
+      {{ editingId ? 'Editar Partido' : 'Crear Partido' }}
+    </h2>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Club</mat-label>
+            <mat-select formControlName="club">
+                <mat-option *ngFor="let c of clubs" [value]="c">{{ c.name }}, {{ c.city}}</mat-option>
+            </mat-select>
+            <mat-hint *ngIf="loadingClubs">Cargando clubes...</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Deporte</mat-label>
+            <mat-select formControlName="sport">
+                <mat-option *ngFor="let s of sports" [value]="s">{{ s.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Modo</mat-label>
+            <mat-select formControlName="mode" [disabled]="!modes.length" >
+                <mat-option *ngFor="let m of modes" [value]="m">
+                {{ m.name }} ({{ m.playersPerGame }} jugadores)
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Precio</mat-label>
+            <input matInput formControlName="price" type="number" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Fecha</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Selecciona fecha" />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Hora</mat-label>
+            <input matInput type="time" formControlName="time" placeholder="Selecciona hora" />
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Tipo de partido</mat-label>
+            <mat-select formControlName="type">
+                <mat-option [value]="true">Competitivo</mat-option>
+                <mat-option [value]="false">Amistoso</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Tipo de privacidad </mat-label>
+            <mat-select formControlName="isPrivate">
+                <mat-option [value]="true">Privado</mat-option>
+                <mat-option [value]="false">Público</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" class="go-back-btn" (click)="cancel()">
+          <mat-icon>arrow_back</mat-icon> Volver
+        </button>
+
+        <button mat-flat-button color="primary" class="create-btn" type="submit">
+          <mat-icon>check</mat-icon>
+          Guardar
+        </button>
+      </div>
+
+    </form>
+
+  </mat-card>
+</div>

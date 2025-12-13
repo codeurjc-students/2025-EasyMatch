@@ -1,11 +1,13 @@
 package es.codeurjc.backend.unit;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +46,7 @@ public class ClubServiceUnitaryTest {
     }
 
     @Test
-    public void getClubsUnitaryTest(){
+    public void getClubsTest(){
         //GIVEN
         PageRequest pageable = PageRequest.of(0, 10);
         Club club1 = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
@@ -62,9 +64,9 @@ public class ClubServiceUnitaryTest {
     }
 
     @Test
-    public void getClubByIdUnitaryTest(){
+    public void getClubByIdTest(){
         //GIVEN
-        long id = 1;
+        long id = 1L;
         Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
         club.setId(id);
         Optional<Club> optionalClub = Optional.of(club);
@@ -77,9 +79,9 @@ public class ClubServiceUnitaryTest {
     }
 
     @Test
-    public void deleteExistingClubUnitaryTest(){
+    public void deleteExistingClubTest(){
         //GIVEN
-        long id = 1;
+        long id = 1L;
         Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
         club.setId(id);
         Optional<Club> optionalClub = Optional.of(club);
@@ -93,9 +95,9 @@ public class ClubServiceUnitaryTest {
     }
 
     @Test
-    public void deleteNonExistingClubUnitaryTest(){
+    public void deleteNonExistingClubTest(){
         //GIVEN
-        long id = 5;
+        long id = 5L;
         Optional<Club> emptyClub = Optional.empty();
 
         //WHEN
@@ -108,7 +110,7 @@ public class ClubServiceUnitaryTest {
     }
 
     @Test
-    public void saveClubUnitaryTest(){
+    public void saveClubTest(){
         //GIVEN
         Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
 
@@ -119,5 +121,42 @@ public class ClubServiceUnitaryTest {
         //THEN
         assertThat(savedClub, equalTo(club));
     }
+    @Test
+    public void replaceNonExistingClubTest(){
+        //GIVEN
+        long id = 9L;
+        Optional<Club> emptyClub = Optional.empty();
+        Club updatedClub =  new Club();
+        ClubDTO updatedClubDTO = mapper.toDTO(updatedClub);
+
+        //WHEN
+        when(clubRepository.findById(id)).thenReturn(emptyClub);
+
+        //THEN
+        NoSuchElementException ex = assertThrows(NoSuchElementException.class, ()->  clubService.replaceClub(id, updatedClubDTO));
+        assertThat(ex.getMessage(),equalTo("Club with id " + id + " does not exist."));
+
+    }
+
+    @Test
+    public void replaceExistingClubTest(){
+        //GIVEN
+        long id = 1L;
+        Optional<Club> clubOptional = Optional.of(new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com"));
+        Club updatedClub = new Club("Club Social","Barcelona","Calle Falsa 456","987654321","clubsocial@emeal.com","www.clubsocial.com");
+        updatedClub.setId(id);
+        ClubDTO updatedClubDTO = mapper.toDTO(updatedClub);
+
+        //WHEN
+        when(clubRepository.existsById(id)).thenReturn(true);
+        when(clubRepository.findById(id)).thenReturn(clubOptional);
+        ClubDTO replacedClubDTO = clubService.replaceClub(id, updatedClubDTO);
+
+        //THEN
+        assertThat(updatedClubDTO, equalTo(replacedClubDTO));
+        verify(clubRepository,times(1)).save(any(Club.class));
+
+    }
+
 
 }

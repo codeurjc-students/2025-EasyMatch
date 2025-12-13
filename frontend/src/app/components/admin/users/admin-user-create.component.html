@@ -1,0 +1,98 @@
+<div class="admin-form-container">
+  <mat-card class="admin-form-card">
+    <h2>
+      <mat-icon>person</mat-icon>
+      {{ editingId ? 'Editar Usuario' : 'Crear Usuario' }}
+    </h2>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Nombre completo</mat-label>
+          <input matInput formControlName="realname" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput formControlName="password" type="password" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Fecha de nacimiento</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="birthDate" placeholder="Selecciona fecha" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Género</mat-label>
+          <mat-select formControlName="gender">
+            <mat-option [value]="true">Hombre</mat-option>
+            <mat-option [value]="false">Mujer</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="description-field">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput rows="3" formControlName="description"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>{{ editingId ? 'Nivel' : 'Nivel inicial' }}</mat-label>
+          <input matInput type="number" formControlName="level" />
+        </mat-form-field>
+
+        <div class="photo-row">
+          <img
+            *ngIf="photoPreview; else noPhoto"
+            [src]="photoPreview"
+            class="user-photo-preview"
+            alt="Foto del usuario"
+          />
+
+          <ng-template #noPhoto>
+            <div class="no-photo user-photo-preview">Sin foto</div>
+          </ng-template>
+
+          <button  class="create-btn" mat-stroked-button color="primary" type="button" (click)="fileInput.click()">
+            <mat-icon>upload</mat-icon> Subir foto
+          </button>
+
+          <input
+            type="file"
+            hidden
+            accept="image/*"
+            #fileInput
+            (change)="onPhotoSelected($event)"
+          />
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" class="go-back-btn" (click)="cancel()">
+          <mat-icon>arrow_back</mat-icon> Volver
+        </button>
+
+        <button mat-flat-button color="primary" class="create-btn" type="submit">
+          <mat-icon>check</mat-icon>
+          Guardar
+        </button>
+      </div>
+
+    </form>
+
+  </mat-card>
+</div>

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.model.User;
@@ -71,7 +73,7 @@ public class MatchRestController {
         return ResponseEntity.created(location).body(matchDTO);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/users/me")
     public ResponseEntity<Map<String, String>> joinMatch(@PathVariable long id, @RequestBody JoinMatchRequest request) {
         matchService.joinMatch(id, request.getTeam());
         
@@ -82,14 +84,33 @@ public class MatchRestController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> leaveMatch(@PathVariable long id) {
+    @DeleteMapping("/{id}/users/me")
+    public ResponseEntity<Map<String, String> > leaveMatch(@PathVariable long id) {
         User user = userService.getLoggedUser();
         matchService.leaveMatch(id, user);
         Map<String, String> response = new HashMap<>();
         response.put("status", "SUCCESS");
         response.put("message","Player removed from match");
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public MatchDTO deleteMatch(@PathVariable long id) {
+        if (!userService.getLoggedUser().getRoles().contains("ADMIN")){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo un administrador puede eliminar un partido");
+        }
+        MatchDTO deletedMatch = matchService.getMatch(id);
+        matchService.delete(id);
+        return deletedMatch;
+        
+    }
+
+    @PutMapping("/{id}")
+    public MatchDTO replaceMatch(@PathVariable long id, @RequestBody MatchDTO updatedMatchDTO) {
+        if(!userService.getLoggedUser().getRoles().contains("ADMIN")){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo un administrador puede editar un partido");
+        }
+        return matchService.replaceMatch(id, updatedMatchDTO);
     }
 
 
