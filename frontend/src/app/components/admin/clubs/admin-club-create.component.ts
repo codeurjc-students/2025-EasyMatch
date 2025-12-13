@@ -152,17 +152,17 @@ export class AdminClubCreateComponent implements OnInit {
             this.clubService.replaceClubImage(newId, this.photoFile).subscribe({
               next: () => {
                 this.snackBar.open('✅ Club creado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
-                this.router.navigate(['/admin/clubs']);
+                window.location.href = '/admin/clubs';
               },
               error: (err) => {
                 console.error('Error al subir foto tras crear club:', err);
                 this.snackBar.open('❌ Club creado, pero error subiendo foto', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
-                this.router.navigate(['/admin/clubs']);
+                window.location.href = '/admin/clubs';
               }
             });
           } else {
             this.snackBar.open('✅ Club creado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
-            this.router.navigate(['/admin/clubs']);
+            window.location.href = '/admin/clubs';
           }
         },
         error: (err) => {
@@ -180,12 +180,12 @@ export class AdminClubCreateComponent implements OnInit {
           const reader = new FileReader();
           reader.onload = () => this.photoPreview = reader.result as string;
           reader.readAsDataURL(blob);
-          setTimeout(() => this.router.navigate(['/admin/clubs']), 800);
+          setTimeout(() => window.location.href = '/admin/clubs', 800);
         },
-        error: () => this.router.navigate(['/admin/clubs'])
+        error: () => window.location.href = '/admin/clubs'
       });
     } else {
-      this.router.navigate(['/admin/clubs']);
+      window.location.href = '/admin/clubs';
     }
   }
 
@@ -201,6 +201,6 @@ export class AdminClubCreateComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['/admin/clubs']);
+    window.location.href = '/admin/clubs';
   }
 }

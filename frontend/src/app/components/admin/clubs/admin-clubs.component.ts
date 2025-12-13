@@ -29,7 +29,7 @@ export class AdminClubsComponent implements OnInit {
   pageIndex = 0;
 
   clubs: Club[] = [];
-  displayedColumns = ['id', 'name', 'address', 'city', 'email', 'website', 'phone', 'actions',];
+  displayedColumns = ['id', 'name', 'address', 'city', 'email', 'web', 'phone', 'actions',];
 
   ngOnInit(): void {
     this.loadClubs(this.pageIndex, this.pageSize);

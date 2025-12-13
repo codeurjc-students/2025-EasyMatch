@@ -1,5 +1,6 @@
 package es.codeurjc.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Optional;
 
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -103,10 +105,11 @@ public class ClubService {
 		clubRepository.save(club); 
 	}
 
-    public ClubDTO createClub(ClubDTO clubDTO) {
+    public ClubDTO createClub(ClubDTO clubDTO) throws IOException {
         Club club = mapper.toDomain(clubDTO);
         club.setSports(List.of());
         club.setNumberOfCourts(List.of());
+        setClubImage(club, "/images/default-club-image.jpg");
         this.save(club);
         return toDTO(club);
     }
@@ -136,6 +139,16 @@ public class ClubService {
 		club.setImage(BlobProxy.generateProxy(inputStream, size));
 
 		clubRepository.save(club);
+	}
+
+    private void setClubImage(Club club, String classpathResource) throws IOException {
+         try {
+            Resource image = new ClassPathResource(classpathResource);
+		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error at processing the image");
+        }
+	
 	}
 
 }
