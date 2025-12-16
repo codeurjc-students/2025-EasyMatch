@@ -183,6 +183,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>es.codeurjc.easymatch.EasyMatchApplication</mainClass>
+				</configuration>
 			</plugin>
 
 			<plugin>
