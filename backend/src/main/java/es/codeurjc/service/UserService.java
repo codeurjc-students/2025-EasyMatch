@@ -83,7 +83,9 @@ public class UserService {
 		return userRepository.existsById(id);
 	}
 
-    public User update(User user){
+    public User update(User user) {
+        User managed = userRepository.findById(user.getId()).orElseThrow();
+        user.setImage(managed.getImage());
         return userRepository.save(user);
     }
     
