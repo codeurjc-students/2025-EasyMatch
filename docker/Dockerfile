@@ -6,13 +6,15 @@
 FROM node:20 AS frontend-builder
 
 # Set working directory where all subsequent commands will be executed
-WORKDIR /app/frontend
+WORKDIR /app
 
-# Copy code from frontend folder
-COPY ./frontend/ /app/frontend
+COPY frontend/package*.json ./
+COPY frontend/angular.json ./
+COPY frontend/tsconfig*.json ./
+COPY frontend/src ./src
 
-# Build frontend
-RUN npm install && npm run build
+RUN npm install
+RUN npm run build -- --configuration=production --base-href=/
 
 #########################
 # Step 2: Backend build #
@@ -22,16 +24,20 @@ RUN npm install && npm run build
 FROM maven:3.9.9-eclipse-temurin-21-jammy AS backend-builder
 
 # Set working directory where all subsequent commands will be executed
-WORKDIR /app/backend
+WORKDIR /app
 
 # Copy dependencies from backend project
-COPY ./backend/pom.xml /app/backend/
+COPY ./backend/pom.xml ./
 
 # Download dependencies from backend project
 RUN mvn dependency:go-offline
 
 # Copy code from backend project
-COPY ./backend/src /backend/src
+COPY ./backend/src ./src
+
+
+# Copy frontend build
+COPY --from=frontend-builder /app/dist/frontend/browser/ ./src/main/resources/static/
 
 # Build backend
 RUN mvn -B package -DskipTests
@@ -44,21 +50,14 @@ RUN mvn -B package -DskipTests
 FROM eclipse-temurin:21-jre
 
 # Set working directory where JAR is
-WORKDIR /usr/src/app/
+WORKDIR /app
 
 # Copy JAR from backend container
-COPY --from=backend-builder /app/backend/target/*.jar /usr/src/app/app.jar
+COPY --from=backend-builder /app/target/*.jar app.jar
 
 # Copy keystore for HTTPS
 COPY ./backend/src/main/resources/keystore.jks /app/keystore.jks
 
-# Copy frontend build
-COPY --from=frontend-builder /app/frontend/dist/frontend /app/static
-
 EXPOSE 8443
 
-ENV SPRING_DATASOURCE_URL=jdbc:mysql://mysql-container:3306/dbeasymatch
-ARG SPRING_DATASOURCE_USERNAME=
-ARG SPRING_DATASOURCE_PASSWORD=
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
