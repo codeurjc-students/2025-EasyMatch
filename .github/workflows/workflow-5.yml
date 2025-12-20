@@ -1,0 +1,50 @@
+name: Build image and publish compose on workflow dispatch
+
+on:
+  workflow_dispatch:  
+     inputs:
+      ref:
+        description: Branch or commit to build
+        required: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate tag
+        id: tag
+        run: |
+            BRANCH=$(git branch --show-current || echo "detached")
+            BRANCH_CLEAN=$(echo "$BRANCH" | sed 's/\//-/g')
+            COMMIT_SHORT=$(git rev-parse --short HEAD)
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
+            TAG="${BRANCH_CLEAN}-${TIMESTAMP}-${COMMIT_SHORT}"
+            echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build docker image
+        working-directory: ./docker
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/easymatch:${{ steps.tag.outputs.tag }} -f Dockerfile ..
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/easymatch:${{ steps.tag.outputs.tag }}
+
+      - name: Update docker-compose.yml with tag
+        working-directory: ./docker
+        run: |
+          sed -i "s|easymatch:[^ ]*|easymatch:${{ steps.tag.outputs.tag }}|g" docker-compose.yml
+
+      - name: Publish docker-compose bundle
+        working-directory: ./docker
+        run: |
+            docker compose -f docker-compose.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:${{ steps.tag.outputs.tag }} --with-env=true < <(printf "y\n")
+            
