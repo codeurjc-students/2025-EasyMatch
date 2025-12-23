@@ -8,7 +8,6 @@
 - [Architecture](#-architecture)
 - [Quality Control](#-quality-control)
 - [Development Process](#-development-process)
-- [Code editing and execution](#-code-editing-and-execution)
 
 ## 📖 Introduction
 
@@ -50,6 +49,10 @@ The website relies on the following technologies for its execution:
   - **Spring Data**: facilitates interaction with the database.
   - **Spring Security**: handles authentication and authorization.
 - **MySQL**: database used to store and manage the application data. For more information, consult the [MySQL official website](https://www.mysql.com/).
+
+### Deployment
+
+**Docker** is used as the containerization technology to deploy the application, ensuring a consistent and portable execution environment. For more information, please refer to the [official Docker website](https://www.docker.com/).
 
 
 ## 🔧 Tools 
@@ -173,17 +176,57 @@ ng test --watch=false --code-coverage
 The next picture illustrates the coverage report of the executed tests:
 ![Coverage report frontend image](/images/frontendTestsCoverage.png)
 
+
 This process generates the report in the ```/frontend/coverage/frontend directory```. By opening the ```index.html``` file from that folder will display the coverage report in the browser.
 
-## 🔁 Development process
+## 🐋 Deployment with Docker
 
+### Image build
+
+The project provides **Docker images** with 2 different tags: one intended for development (**dev**) and another for production, which corresponds to the **current stable version** of the application (at this moment **0.1**). To build the image using the Dockerfile, navigate to docker directory in the project and execute the following command:
+```bash
+docker build -f ./Dockerfile -t dmunozm5/easymatch:tag ..
+```
+### Image publication
+The Docker images were published to Docker Hub in this [Docker repository](https://hub.docker.com/repositories/dmunozm5) using the following command:
+
+```bash
+docker push dmunozm5/easymatch:tag
+```
+
+After it’s published, you can pull the image from the repository to use it locally.
+
+```bash
+docker pull dmunozm5/easymatch:tag
+```
+
+The [docker-compose.yml](https://github.com/codeurjc-students/2025-EasyMatch/blob/acd6919ff579c7d7f4a9460930405406af5dd6af/docker/docker-compose.yml) file was published as an **OCI artifact** in this [Docker repository](https://hub.docker.com/repositories/dmunozm5) using the following command:
+```bash
+docker compose -f docker-compose.yml publish dmunozm5/easymatch-compose:tag --with-env -y
+```
+
+### Deploying the app using OCI artefact
+To deploy the application, execute the **docker-compose** file with the following command inside docker's folder: 
+```bash
+docker compose -f docker-compose.yml up
+```
+
+## 🔁 Development process
+### Git
+**Git** was used as the version control system for this project. The branching strategy follows **GitHub Flow**, with the following branch types:
+
+- **main/master** which corresponds to the stable branch, always ready for deployment.
+- **feature** used to implement new features. Each branch represents a single feature along with its corresponding tests.
+- **fix** where bug-fixing occurs. Each branch addresses a specific bug.
+- **documentation** used to add or update project documentation.
+All changes are merged into **main/master** through **Pull Requests** (PR) at the end of the process.
 ### Continuous Integration (CI)
 
 For Continuous Integration (CI), this project uses **GitHub Actions**. Two workflows were implemented to automate testing and ensure code quality:
 
 #### Basic quality control
 
-This workflow ```workflow1.yml``` is triggered on every commit made to non-main branches, specifically when changes occur in either the backend or frontend source code.
+This workflow ```workflow-1.yml``` is triggered on every commit made to non-main branches, specifically when changes occur in either the backend or frontend source code.
 
 ##### Jobs
 
@@ -197,7 +240,7 @@ This workflow ```workflow1.yml``` is triggered on every commit made to non-main 
 
 #### Complete quality control
 
-This workflow ```workflow2.yml``` is triggered when a Pull Request is opened targeting the main branch. It performs a complete validation pipeline of both the frontend and backend, including unit, integration, and system tests.
+This workflow ```workflow-2.yml``` is triggered when a Pull Request is opened targeting the main branch. It performs a complete validation pipeline of both the frontend and backend, including unit, integration, and system tests.
 
 ##### Jobs
 
@@ -222,108 +265,27 @@ This workflow ```workflow2.yml``` is triggered when a Pull Request is opened tar
 
 - **frontend-integration-tests**: Execute frontend integration tests using the same test runner ```npx ng test --include "src/**/*.integration.spec.ts" --watch=false --browsers=ChromeHeadless --no-progress```
 
-## 👨‍💻 Code editing and execution
+### Continuous Delivery (CD)
+For Continuous Delivery, this project uses 3 workflows, each triggered by different scenarios:
+  - **Pull Request to main**
+  - **Release creation**
+  - **Workflow dispatch from any branch**
 
-### 📁 Repository cloning
-In order to **clone this GitHub repository**, run the following command in your terminal:
+#### Pull Request to main 
+This workflow ```workflow-3.yml``` is triggered whenever a pull request is opened against the main branch.
+
+#### Release creation
+This workflow ```workflow-4.yml``` is triggered whenever a release is created. It performs the same jobs as the previous workflows but with one key difference: it publishes both **Docker images** and **Compose artifacts** using **release version** and **latest** as tags.
+
+#### Workflow dispatch from any branch
+This workflow ```workflow-5.yml``` can be triggered **manually** from any branch using the **workflow_dispatch** event. It runs the same jobs as the previous workflows, but the tagging strategy is different: 
+The Docker image and Compose artifact are tagged using the format:
 ```bash
-git clone https://github.com/codeurjc-students/2025-EasyMatch.git
-```
-Next, navigate to the project directory:
-
-```bash
-cd 2025-EasyMatch
-```
-#### Requirements
-
-<table>
-  <thead>
-    <tr>
-      <th>Software / Tool</th>
-      <th>Version</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Java</td>
-      <td>21</td>
-    </tr>
-    <tr>
-      <td>Maven</td>
-      <td>3.9</td>
-    </tr>
-    <tr>
-      <td>Spring Boot</td>
-      <td>3.5</td>
-    </tr>
-    <tr>
-      <td>Node.js</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <td>npm</td>
-      <td>10.9</td>
-    </tr>
-    <tr>
-      <td>MySQL</td>
-      <td>8.0</td>
-    </tr>
-    <tr>
-      <td>XAMPP</td>
-      <td>8.0</td>
-    </tr>
-    <tr>
-      <td>Visual Studio Code</td>
-      <td>1.88</td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-### 🚀 Execution
-This section describes the steps required to run the EasyMatch website locally, including the database setup and the execution of all components.
-
-#### Database and required services
-
-In order to the backend server, you must first start the database server which in this case is MySQL:
-1. Open **XAMPP** (or you favourite local server manager).
-2. Start both **Apache** and **MySQL** servers as shown in the next screenshot
-![Xampp Control Panel](/images/xamppControlPanel.png)
-3. Access phpMyAdmin (or the MySQL CLI) and create a new database named ```dbeasymatch```
-```
-CREATE DATABASE dbeasymatch;
+<branch-name>-<date-hour>-<commit>
 ```
 
-#### Backend server
-First, you must navigate to the folder ```backend``` where ```pom.xml``` is located: 
-```bash
-cd backend
-```
-Then, the backend server can be launched either directly from **VS Code** or via terminal using **Maven**. :
-```bash
-mvn spring-boot:run
-```
 
-This command starts the **Spring Boot application** and **connects** it to the previously created **MySQL database**.
-
-#### Frontend client
-In order to start the **Angular** frontend application, navigate to the ```frontend``` directory 
-```bash
-cd frontend
-```
-and execute the following commands:
-```bash
-npm install
-npm start
-```
-This will launch the Angular development server, which by default runs on port 4200 and communicates with the backend through the REST API.
-
-#### Website access
-Once both the backend and frontend are running, open your browser and access ```http://localhost:4200```. From this url, you can explore and interact with the **EasyMatch web application** running locally.
-
-
-### ⚙️ Tools Usage
+### ⚙️ Tools usage
 
 #### VS Code
 Visual Studio Code is the primary IDE used for developing the application. It is simple to use; the main requirements are having a **JDK** installed on your system (for this project, JDK 21 is recommended) and installing the **Java Extension Pack** and **Spring Boot Extension Pack** extensions for Visual Studio Code.
