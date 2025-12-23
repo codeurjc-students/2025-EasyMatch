@@ -31,5 +31,5 @@ jobs:
         working-directory: ./docker
         run: |
           sed -i "s|easymatch:[^ ]*|easymatch:${{ steps.release.outputs.TAG }}|g" docker-compose.yml
-          docker compose -f docker-compose.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:${{ steps.release.outputs.TAG }} --with-env=true < <(printf "y\n")
-          docker compose -f docker-compose.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:latest --with-env=true < <(printf "y\n")
+          docker compose -f docker-compose.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:${{ steps.release.outputs.TAG }} --with-env -y
+          docker compose -f docker-compose.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:latest --with-env -y

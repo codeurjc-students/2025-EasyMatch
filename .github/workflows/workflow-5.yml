@@ -46,5 +46,5 @@ jobs:
       - name: Publish docker-compose bundle
         working-directory: ./docker
         run: |
-            docker compose -f docker-compose.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:${{ steps.tag.outputs.tag }} --with-env=true < <(printf "y\n")
+            docker compose -f docker-compose.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:${{ steps.tag.outputs.tag }} --with-env -y
             
