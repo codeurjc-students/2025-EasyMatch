@@ -32,9 +32,11 @@ To see the **main functionalities** of this version of the website, watch the fo
 
 ##### Registered users
 
-
+https://github.com/user-attachments/assets/d3e034ac-da1c-4f17-a090-8ceda25d31c8
 
 ##### Administrators
+
+https://github.com/user-attachments/assets/0095e56f-bfc6-4e7b-bafd-28fb4b955b34
 
 
 
