@@ -1,11 +1,44 @@
 # 2025-EasyMatch
 ### 📖 Introduction
-EasyMatch is a website that helps you **organize** padel, tennis, beach volleyball, or 7v7 football **matches** — either with friends (**private**) or with strangers (**public**) at a similar skill level. It also includes a live chat feature to communicate with other players or to get help from clubs or the site’s administrators. <br/><br/>
+EasyMatch is a website that helps you **organize** padel, tennis, beach volleyball, or football **matches** — either with friends (**private**) or with strangers (**public**) at a similar skill level. It also includes a live chat feature to communicate with other players or to get help from clubs or the site’s administrators. <br/><br/>
 
-<img width="780" height="550" alt="image" src="https://github.com/user-attachments/assets/74e54123-e17a-4205-bf10-bcac98d5cf69" />
-  <br/><br/>
+![Login page](images/loginPageScreenshot.png)
 
-In this document, **only** the functional and technical objectives of the EasyMatch application have been defined. Development has been initiated, but the implementation is not yet functional.
+In this document, the functional and technical objectives of the EasyMatch application have been defined. While the current implementation is **functional** and includes the **essential features**, the website is still under active development in order to extend and improve its overall functionality.
+
+#### Summary of version 0.1 functionality
+Version 0.1 of this application provides the **core functionality** required to **organize** and manage **sports matches** in a simple and effective way. At this stage, **anonymous users** can browse registered clubs and search for available matches without authentication, while **registered users** are able to create public or private matches, join existing ones, and view basic profile information and match history. As well as deleting their own account. **Administrators** have full permissions to view, create, edit, and delete any entity on the platform in order to ensure proper usage and system integrity.
+
+
+##### Open matches page 
+![Open matches page](images/openMatchesPageScreenshot.png)
+
+##### Clubs page 
+![Clubs page](images/clubsPageScreenshot.png)
+
+##### Profile page
+![Profile page](images/profilePageScreenshot.png)
+
+##### Admin page
+![Admin page](images/adminPageScreenshot.png)
+
+
+
+### Future development and planned functionalities
+
+In upcoming versions, the EasyMatch application is expected to incorporate **intermediate and advanced functionalities**. These include the ability for users to **add, edit, and validate match results**, visualize skill-level progression through analytics and charts, and communicate in real time via an **integrated chat system**. Additionally, **more sophisticated rating algorithms** will be introduced to dynamically adjust player levels based on match outcomes and opponent strength. From an administrative perspective, future releases will also provide advanced moderation tools, incident management, and deeper access to platform activity data.
+
+To see the **main functionalities** of this version of the website, watch the following videos attached below:
+
+##### Registered users
+
+https://github.com/user-attachments/assets/d3e034ac-da1c-4f17-a090-8ceda25d31c8
+
+##### Administrators
+
+https://github.com/user-attachments/assets/0095e56f-bfc6-4e7b-bafd-28fb4b955b34
+
+
 
 ## Table of contents
 
@@ -15,6 +48,8 @@ In this document, **only** the functional and technical objectives of the EasyMa
 - [Analysis](#analysis)
 - [Monitoring](#monitoring)
 - [Authors](#authors)
+- [Development Guide](/docs/DevelopmentGuide.md)
+- [Execution](/docs/Execution.md)
 
 
 ## Objectives
@@ -25,7 +60,7 @@ The web page aims to **make organizing sports matches easier** by providing a ce
 1. The system should allow users to **create public matches** (open to anyone) or **private** matches (for friends only), specifying the sport, date, and time.  
 2. The system should allow users to **search for and join public matches** at partnered clubs filtering by sport, skill level, date, city...  
 3. The system should allow users to **leave those matches** before they are closed, meaning before all spots have been filled.  
-4. The system should allow users to **view and/or edit their basic information** (profile picture, username, match history, skill-level graph, etc.). Likewise, the system should allow them to delete their account.  
+4. The system should allow users to **view and edit their basic information** (profile picture, username, match history, skill-level graph, etc.). Likewise, the system should allow them to delete their account.  
 5. The system should allow users to **add the result of a completed match**, which must then be validated by both pairs of players.  
 6. The system should include a **real-time communication channel** that allows players to chat with each other, as well as with club staff and site administrators, to resolve questions or issues.  
 
@@ -71,29 +106,29 @@ The development of the website will be carried out following an **incremental** 
 ## Detailed Functionalities
 
 ### 🟢**Basic Functionalities**
-These allow the website to fulfill its minimum purpose — organizing matches.
+All basic functionalities described below **are already implemented**. These allow the website to fulfill its minimum purpose — organizing matches.
+
+#### 🧑‍🤝‍🧑**Registered User**
+- **Create public and private matches**, specifying club(location), sport, mode, time, and price. 
+- **Search and join open matches**, filtering by club, sport and/or schedule (morning, evening or night).
+- **Leave a match before the number of spots is filled**.
+- **View basic profile information**, including username, real name, email, birth date, basic statistics like win rate, profile photo, current skill level and match history.
+
+#### 🛠️**Administrator**
+- **View, create, edit, and delete any entity** including users, matches, sports, and clubs.
+- **Moderate and manage all matches** (user or admin-created) to ensure proper use of the platform.
+- **Validate, update, or remove club information** to ensure accuracy and consistency.
+---
+
+### 🟡**Intermediate Functionalities**
+All intermediate functionalities defined below are **not yet implemented**. These enhance the user experience but are not essential for the system to function. 
 
 #### 👤**Anonymous User**
 - View **basic information of the clubs** associated with the platform (name, address, available facilities, contact information, etc.).
 - **Search for open matches** but not join them.
 
 #### 🧑‍🤝‍🧑**Registered User**
-- **Create public and private matches**, specifying sport, date, time, and location (club or private court).
-- **Search and join open matches**, filtering by sport, date, time, and city.
-- **Leave a match before the number of spots is filled**.
-- **Manage basic profile information**, including profile photo, username, match history, level progression, and the option to delete the account.
-
-#### 🛠️**Administrator**
-- **Validate and maintain club information** (additions, removals, and updates).
-- **Supervise user-created matches** to ensure proper use of the platform.
-
----
-
-### 🟡**Intermediate Functionalities**
-These enhance the user experience but are not essential for the system to function.
-
-#### 🧑‍🤝‍🧑**Registered User**
-- **View match history** (past games played).
+- **Add and edit match results**.
 - **See player level progression** through charts.
 - **Edit personal information**, such as profile photo, username, phone number, or email address.
 
@@ -103,10 +138,11 @@ These enhance the user experience but are not essential for the system to functi
 ---
 
 ### 🔴**Advanced Functionalities**
-These represent the most complex and interactive features, providing full platform functionality.
+All advanced functionalities defined below are **not yet implemented**. These represent the most complex and interactive features, providing full platform functionality.
 
 #### 🧑‍🤝‍🧑**Registered User**
-- **Record match results**, which must be validated by both player pairs.
+- **Validate match results**, which must be confirmed by both player pairs.
+
 - **Chat in real time** with other players, club staff, or administrators.
 - **Advanced skill-level algorithm** that adjusts player ratings based on results and opponents’ levels.
 

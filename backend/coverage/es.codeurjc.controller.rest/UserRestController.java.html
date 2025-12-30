@@ -55,7 +55,7 @@ import es.codeurjc.service.UserService;
 <span class="fc" id="L55">            isAdmin = logged.getRoles().contains(&quot;ADMIN&quot;);</span>
 <span class="fc" id="L56">        } catch (NoSuchElementException e ) {</span>
 <span class="fc" id="L57">            isAdmin = false;</span>
-        }
+<span class="fc" id="L58">        }</span>
 <span class="fc" id="L59">        userDTO = userService.createUser(userDTO, isAdmin);</span>
 
 <span class="fc" id="L61">        URI location = fromCurrentRequest().path(&quot;/{id}&quot;).buildAndExpand(userDTO.id()).toUri();</span>

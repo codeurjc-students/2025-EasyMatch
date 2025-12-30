@@ -33,8 +33,8 @@ public class User {
     private boolean gender; // 1 male, 0 female
     private String description;
     private float level; // from 1 to 7
-    @Embedded
-<span class="fc" id="L37">    private PlayerStats stats = new PlayerStats();</span>
+<span class="fc" id="L36">    @Embedded</span>
+    private PlayerStats stats = new PlayerStats();
 
     @ManyToMany(mappedBy = &quot;team1Players&quot;)
     private List&lt;Match&gt; matchesAsTeam1Player;
@@ -55,8 +55,8 @@ public class User {
         // Used by JPA
 <span class="fc" id="L56">    }</span>
 
-<span class="fc" id="L58">    public User(String realname, String username, String email, String password, LocalDateTime birthDate,</span>
-            boolean gender, String description, float level, String... roles) {
+    public User(String realname, String username, String email, String password, LocalDateTime birthDate,
+<span class="fc" id="L59">            boolean gender, String description, float level, String... roles) {</span>
 <span class="fc" id="L60">        this.realname = realname;</span>
 <span class="fc" id="L61">        this.username = username;</span>
 <span class="fc" id="L62">        this.email = email;</span>

@@ -28,4 +28,4 @@ jobs:
       - name: Publish docker-compose-dev.yml
         working-directory: ./docker
         run: |
-          docker compose -f docker-compose-dev.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:dev --with-env=true < <(printf "y\n")
+          docker compose -f docker-compose-dev.yml publish ${{ secrets.DOCKERHUB_USERNAME }}/easymatch-compose:dev --with-env -y

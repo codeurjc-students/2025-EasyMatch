@@ -20,8 +20,8 @@ import es.codeurjc.repository.SportRepository;
 @Service
 public class SportService {
 
-<span class="fc" id="L23">    public SportService(SportRepository sportRepository, MatchRepository matchRepository,</span>
-            ClubRepository clubRepository, SportMapper mapper) {
+    public SportService(SportRepository sportRepository, MatchRepository matchRepository,
+<span class="fc" id="L24">            ClubRepository clubRepository, SportMapper mapper) {</span>
 <span class="fc" id="L25">        this.sportRepository = sportRepository;</span>
 <span class="fc" id="L26">        this.matchRepository = matchRepository;</span>
 <span class="fc" id="L27">        this.clubRepository = clubRepository;</span>
@@ -63,14 +63,14 @@ public class SportService {
 <span class="fc bfc" id="L63" title="All 2 branches covered.">        if (sportOptional.isPresent()) {</span>
 <span class="fc bfc" id="L64" title="All 2 branches covered.">            if (matchRepository.existsBySportId(id)) {</span>
 <span class="fc" id="L65">                throw new ResponseStatusException(HttpStatus.CONFLICT,</span>
-<span class="fc" id="L66">                        &quot;Ese deporte no se puede borrar porque hay partidos que lo usan.&quot;);</span>
+                        &quot;Ese deporte no se puede borrar porque hay partidos que lo usan.&quot;);
             }
 <span class="fc bfc" id="L68" title="All 2 branches covered.">            if(clubRepository.existsBySportsId(id)){</span>
 <span class="fc" id="L69">                throw new ResponseStatusException(HttpStatus.CONFLICT,</span>
-<span class="fc" id="L70">                        &quot;Ese deporte no se puede borrar porque hay clubes que lo usan.&quot;);</span>
+                        &quot;Ese deporte no se puede borrar porque hay clubes que lo usan.&quot;);
             }
 <span class="fc" id="L72">            sportRepository.deleteById(id);</span>
-<span class="fc" id="L73">        } else {</span>
+        } else {
 <span class="fc" id="L74">            throw new IllegalArgumentException(&quot;Sport with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
 <span class="fc" id="L76">    }</span>

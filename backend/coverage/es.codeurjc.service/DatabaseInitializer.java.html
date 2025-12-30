@@ -142,12 +142,12 @@ import jakarta.transaction.Transactional;
 <span class="fc" id="L142">        clubService.save(club4);</span>
 
 <span class="fc" id="L144">        Club club5 = new Club(</span>
-<span class="fc" id="L145">            &quot;Volleyball Pro Center&quot;, </span>
-<span class="fc" id="L146">            &quot;Murcia&quot;, </span>
-<span class="fc" id="L147">            &quot;Calle de Carlos Alcaraz, 6&quot;, </span>
-<span class="fc" id="L148">            &quot;684274292&quot;,</span>
-<span class="fc" id="L149">            &quot;volleyballcenter@outlook.com&quot;,</span>
-<span class="fc" id="L150">            &quot;www.volleyballcenter.com&quot;</span>
+            &quot;Volleyball Pro Center&quot;, 
+            &quot;Murcia&quot;, 
+            &quot;Calle de Carlos Alcaraz, 6&quot;, 
+            &quot;684274292&quot;,
+            &quot;volleyballcenter@outlook.com&quot;,
+            &quot;www.volleyballcenter.com&quot;
         );
 <span class="fc" id="L152">        club5.setSports(List.of(volley));</span>
 <span class="fc" id="L153">        club5.setNumberOfCourts(List.of(3));</span>
@@ -183,35 +183,35 @@ import jakarta.transaction.Transactional;
 
 <span class="fc" id="L184">        Match tennisMatch1 = new Match(</span>
 <span class="fc" id="L185">            LocalDateTime.of(2025, 9, 10, 10, 30),</span>
-<span class="fc" id="L186">            true, </span>
-<span class="fc" id="L187">            false,</span>
-<span class="fc" id="L188">            false, </span>
-<span class="fc" id="L189">            pedro, </span>
-<span class="fc" id="L190">            4.50,</span>
-<span class="fc" id="L191">            tennis,</span>
-<span class="fc" id="L192">            club1</span>
+            true, 
+            false,
+            false, 
+            pedro, 
+            4.50,
+            tennis,
+            club1
         );
 
 <span class="fc" id="L195">        Match tennisMatch2 = new Match(</span>
 <span class="fc" id="L196">            LocalDateTime.of(2025, 9, 18, 12, 0),</span>
-<span class="fc" id="L197">            true,</span>
-<span class="fc" id="L198">            false,</span>
-<span class="fc" id="L199">            false,</span>
-<span class="fc" id="L200">            pedro,</span>
-<span class="fc" id="L201">            4.50,</span>
-<span class="fc" id="L202">            tennis,</span>
-<span class="fc" id="L203">            club3</span>
+            true,
+            false,
+            false,
+            pedro,
+            4.50,
+            tennis,
+            club3
         );
 
 <span class="fc" id="L206">        Match tennisMatch3 = new Match(</span>
 <span class="fc" id="L207">            LocalDateTime.of(2025, 10, 1, 9, 30),</span>
-<span class="fc" id="L208">            true,</span>
-<span class="fc" id="L209">            false,</span>
-<span class="fc" id="L210">            false,</span>
-<span class="fc" id="L211">            maria,</span>
-<span class="fc" id="L212">            4.50,</span>
-<span class="fc" id="L213">            tennis,</span>
-<span class="fc" id="L214">            club3</span>
+            true,
+            false,
+            false,
+            maria,
+            4.50,
+            tennis,
+            club3
         );
 
 <span class="fc" id="L217">        tennisMatch1.setTeam1Players(Set.of(pedro));</span>
@@ -241,9 +241,9 @@ import jakarta.transaction.Transactional;
          try {
 <span class="fc" id="L242">            Resource image = new ClassPathResource(classpathResource);</span>
 <span class="fc" id="L243">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="pc" id="L244">        } catch (IOException e) {</span>
+<span class="nc" id="L244">        } catch (IOException e) {</span>
 <span class="nc" id="L245">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
-        }
+<span class="fc" id="L246">        }</span>
 	
 <span class="fc" id="L248">	}</span>
 
@@ -251,9 +251,9 @@ import jakarta.transaction.Transactional;
          try {
 <span class="fc" id="L252">            Resource image = new ClassPathResource(classpathResource);</span>
 <span class="fc" id="L253">		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="pc" id="L254">        } catch (IOException e) {</span>
+<span class="nc" id="L254">        } catch (IOException e) {</span>
 <span class="nc" id="L255">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
-        }
+<span class="fc" id="L256">        }</span>
 	
 <span class="fc" id="L258">	}</span>
 }
