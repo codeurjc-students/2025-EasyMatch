@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2025-12-11T14:14:56+0100&quot;,
-    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.44.0.v20251118-1623, environment: Java 21.0.9 (Eclipse Adoptium)&quot;
+    date = &quot;2025-12-30T20:00:05+0100&quot;,
+    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)&quot;
 )
 @Component
 <span class="fc" id="L26">public class MatchMapperImpl implements MatchMapper {</span>
@@ -71,7 +71,7 @@ import org.springframework.stereotype.Component;
 <span class="nc" id="L71">        List&lt;MatchDTO&gt; list = new ArrayList&lt;MatchDTO&gt;( matches.size() );</span>
 <span class="nc bnc" id="L72" title="All 2 branches missed.">        for ( Match match : matches ) {</span>
 <span class="nc" id="L73">            list.add( toDTO( match ) );</span>
-        }
+<span class="nc" id="L74">        }</span>
 
 <span class="nc" id="L76">        return list;</span>
     }
@@ -148,7 +148,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L148">        List&lt;ModeDTO&gt; list1 = new ArrayList&lt;ModeDTO&gt;( list.size() );</span>
 <span class="fc bfc" id="L149" title="All 2 branches covered.">        for ( Mode mode : list ) {</span>
 <span class="fc" id="L150">            list1.add( modeToModeDTO( mode ) );</span>
-        }
+<span class="fc" id="L151">        }</span>
 
 <span class="fc" id="L153">        return list1;</span>
     }
@@ -258,7 +258,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L258">        Set&lt;UserDTO&gt; set1 = LinkedHashSet.newLinkedHashSet( set.size() );</span>
 <span class="fc bfc" id="L259" title="All 2 branches covered.">        for ( User user : set ) {</span>
 <span class="fc" id="L260">            set1.add( userToUserDTO( user ) );</span>
-        }
+<span class="fc" id="L261">        }</span>
 
 <span class="fc" id="L263">        return set1;</span>
     }
@@ -336,7 +336,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L336">        List&lt;Mode&gt; list1 = new ArrayList&lt;Mode&gt;( list.size() );</span>
 <span class="fc bfc" id="L337" title="All 2 branches covered.">        for ( ModeDTO modeDTO : list ) {</span>
 <span class="fc" id="L338">            list1.add( modeDTOToMode( modeDTO ) );</span>
-        }
+<span class="fc" id="L339">        }</span>
 
 <span class="fc" id="L341">        return list1;</span>
     }
@@ -455,7 +455,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L455">        Set&lt;User&gt; set1 = LinkedHashSet.newLinkedHashSet( set.size() );</span>
 <span class="fc bfc" id="L456" title="All 2 branches covered.">        for ( UserDTO userDTO : set ) {</span>
 <span class="fc" id="L457">            set1.add( userDTOToUser( userDTO ) );</span>
-        }
+<span class="fc" id="L458">        }</span>
 
 <span class="fc" id="L460">        return set1;</span>
     }

@@ -78,7 +78,7 @@ The following IDEs and auxiliary tools were used during the development of this 
 
 ### Deployment architecture
 
-The user engages with the frontend (Angular), which communicates with the backend (Spring) via the REST API. The backend, in turn, interacts with the MySQL database using JDBC to store and retrieve data.
+The user engages with the **frontend** (Angular), which communicates with the **backend** (Spring) via the **REST API**. The backend, in turn, interacts with the **MySQL database** using JDBC to store and retrieve data.
 
 ```mermaid
 flowchart LR
@@ -95,6 +95,11 @@ As it is shown in the previous diagram, the deployment of the application is div
   2. **Backend process** which on port 8080 (http), but in a near future will switch to 8443 (https).
   3. **MySQL database** which runs on port 3306.
 
+### Domain model 
+
+It is composed mainly of 4 entities: **User**, **Match**, **Sport** and **Club**. Embedded classes such as **MatchResult** or **PlayerStats** are modeled as value objects and represented using composition relationships, as they do not have an independent lifecycle.
+
+![Domain model image](/images/domainModelDiagram.jpg)
 
 ### REST API
 

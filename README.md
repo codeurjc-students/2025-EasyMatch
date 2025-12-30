@@ -9,6 +9,7 @@ In this document, the functional and technical objectives of the EasyMatch appli
 #### Summary of version 0.1 functionality
 Version 0.1 of this application provides the **core functionality** required to **organize** and manage **sports matches** in a simple and effective way. At this stage, **anonymous users** can browse registered clubs and search for available matches without authentication, while **registered users** are able to create public or private matches, join existing ones, and view basic profile information and match history. As well as deleting their own account. **Administrators** have full permissions to view, create, edit, and delete any entity on the platform in order to ensure proper usage and system integrity.
 
+
 ##### Open matches page 
 ![Open matches page](images/openMatchesPageScreenshot.png)
 
@@ -26,6 +27,15 @@ Version 0.1 of this application provides the **core functionality** required to 
 ### Future development and planned functionalities
 
 In upcoming versions, the EasyMatch application is expected to incorporate **intermediate and advanced functionalities**. These include the ability for users to **add, edit, and validate match results**, visualize skill-level progression through analytics and charts, and communicate in real time via an **integrated chat system**. Additionally, **more sophisticated rating algorithms** will be introduced to dynamically adjust player levels based on match outcomes and opponent strength. From an administrative perspective, future releases will also provide advanced moderation tools, incident management, and deeper access to platform activity data.
+
+To see the **main functionalities** of this version of the website, watch the following videos attached below:
+
+##### Registered users
+
+
+
+##### Administrators
+
 
 
 ## Table of contents
