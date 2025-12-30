@@ -75,7 +75,8 @@ The following IDEs and auxiliary tools were used during the development of this 
 
 ## 🏛️ Architecture 
 
-### Deployment Architecture
+
+### Deployment architecture
 
 The user engages with the frontend (Angular), which communicates with the backend (Spring) via the REST API. The backend, in turn, interacts with the MySQL database using JDBC to store and retrieve data.
 
@@ -101,7 +102,18 @@ This project includes a complete OpenAPI specification that describes all availa
 To make the documentation easier to explore, it has been converted to a static HTML file format using OpenAPI and it is used [RawGitHackservice](https://raw.githack.com) so it can be accessible without executing the application.
 
 🔗 Access the API documentation here:
-👉 [OpenAPI HTML Documentation](https://raw.githack.com/danielmunmar/2025-EasyMatch/docs/api-docs.html) <!-- Adaptar cuando se genere esta documentación -->
+👉 [OpenAPI HTML Documentation](https://raw.githack.com/codeurjc-students/2025-EasyMatch/refs/heads/main/docs/api/api-docs.html)
+
+### Server architecture
+
+The next diagram shows the backend structure, highlighting the different layers of the hexagonal architecture and the way they interact with one another:
+
+![Backend structure diagram](/images/backendStructureDiagram.jpg)
+
+### Client architecture
+The next diagram presents the frontend structure, outlining the different layers of the **MVC architecture** and the way they interact with one another.
+<br>
+![Frontend structure diagram](/images/frontendStructureDiagram.jpg)
 
 
 
@@ -212,6 +224,18 @@ docker compose -f docker-compose.yml up
 ```
 
 ## 🔁 Development process
+The application is developed using an **incremental** and **cyclical** workflow aligned with **Agile principles**, integrating selected practices from methodologies such as **Extreme Programming** (**XP**) and **Kanban**. This approach emphasizes brief development cycles, continuous integration, and the use of automated tests to ensure code quality and steady progress.
+
+
+
+### Task coordination
+Task management throughout the development lifecycle was handled using **``GitHub Issues``** and **``GitHub Projects``**.
+- **GitHub Issues** were used to define and track individual tasks associated with each stage of development, which were organized into milestones representing the different phases.
+- **GitHub Projects** provided a Kanban-style board that allowed these issues to be visualized, organized, and managed efficiently.
+
+#### GitHub project board
+![GitHub project board](/images/projectBoardGitHub.png)
+
 ### Git
 **Git** was used as the version control system for this project. The branching strategy follows **GitHub Flow**, with the following branch types:
 
@@ -273,12 +297,16 @@ For Continuous Delivery, this project uses 3 workflows, each triggered by differ
 
 #### Pull Request to main 
 This workflow ```workflow-3.yml``` is triggered whenever a pull request is opened against the main branch.
+##### Steps
+- **Login to DockerHub** using my credentials via GitHub project secrets. 
+- **Build docker image** under the **dev** tag with ``docker build -t dmunozm5/easymatch:tag -f Dockerfile ..``, and publish it on Docker Hub with ``docker push dmunozm5/easymatch:tag``.
+- **Publish docker-compose-dev.yml** as an OCI artifact under the **dev** tag with ``docker compose -f docker-compose-dev.yml publish dmunozm5/easymatch-compose:dev --with-env -y``.
 
 #### Release creation
-This workflow ```workflow-4.yml``` is triggered whenever a release is created. It performs the same jobs as the previous workflows but with one key difference: it publishes both **Docker images** and **Compose artifacts** using **release version** and **latest** as tags.
+This workflow ```workflow-4.yml``` is triggered whenever a release is created. It performs the same steps as the previous workflows but with one key difference: it publishes both **Docker images** and **Compose artifacts** using **release version** and **latest** as tags.
 
 #### Workflow dispatch from any branch
-This workflow ```workflow-5.yml``` can be triggered **manually** from any branch using the **workflow_dispatch** event. It runs the same jobs as the previous workflows, but the tagging strategy is different: 
+This workflow ```workflow-5.yml``` can be triggered **manually** from any branch using the **workflow_dispatch** event. It runs the same steps as the previous workflows, but the tagging strategy is different: 
 The Docker image and Compose artifact are tagged using the format:
 ```bash
 <branch-name>-<date-hour>-<commit>
@@ -288,7 +316,7 @@ The Docker image and Compose artifact are tagged using the format:
 ### ⚙️ Tools usage
 
 #### VS Code
-Visual Studio Code is the primary IDE used for developing the application. It is simple to use; the main requirements are having a **JDK** installed on your system (for this project, JDK 21 is recommended) and installing the **Java Extension Pack** and **Spring Boot Extension Pack** extensions for Visual Studio Code.
+Visual Studio Code is the primary IDE used for developing the application. It is simple to use: the main requirements are having a **JDK** installed on your system (for this project, JDK 21 is recommended) and installing the **Java Extension Pack** and **Spring Boot Extension Pack** extensions for Visual Studio Code.
 
 #### Postman 
 **Postman** is a tool used to send and test API requests and is also available as a **Visual Studio Code extension**. In this project, it is used to validate the backend endpoints. The API requests are organized into **Postman collections**, which can be imported into Postman (or the VS Code extension) to run the tests. To use it, first install Postman, then import the provided collection files from the project repository here: [EasyMatch Postman Collection](/EasyMatch%20collection.postman_collection.json).
