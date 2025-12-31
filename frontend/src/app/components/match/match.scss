@@ -73,20 +73,21 @@
     }
 
     .match-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      margin-top: 0.25rem;
+      display: grid;                 
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem 1rem;
 
       .match-row {
-        display: flex;
+        display: inline-flex;
         align-items: center;
+        min-width: 0;  
         color: #424242;
         font-size: 0.95rem;
 
         mat-icon {
           margin-right: 6px;
           font-size: 20px;
+          flex-shrink: 0;
         }
       }
     }
@@ -226,3 +227,4 @@
     text-transform: none;
   }
 }
+

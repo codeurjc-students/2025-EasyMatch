@@ -27,6 +27,7 @@ public class Match {
     private Boolean type; // competitive 1, friendly 0
     private Boolean isPrivate; // private 1, public 0
     private Boolean state; // open 1, closed 0
+	private int modeSelected; 
 
 	@ManyToOne
 	@JoinColumn(name = "organizer_id")
@@ -62,11 +63,12 @@ public class Match {
     private MatchResult result;
 	
 
-	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state,User organizer, double price, Sport sport, Club club) {
+	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state, int modeSelected, User organizer, double price, Sport sport, Club club) {
 		this.date = date;
 		this.type = type;
 		this.isPrivate = isPrivate;
 		this.state = state;
+		this.modeSelected = modeSelected;
 		this.organizer = organizer;
 		this.price = price;
 		this.sport = sport;
@@ -239,6 +241,17 @@ public class Match {
 
 	public void setTeam2Players(Set<User> team2Players) {
 		this.team2Players = team2Players;
+	}
+
+	
+	public int getModeSelected() {
+		return modeSelected;
+	}
+
+
+
+	public void setModeSelected(int modeSelected) {
+		this.modeSelected = modeSelected;
 	}
 
 

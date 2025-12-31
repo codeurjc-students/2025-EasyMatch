@@ -138,7 +138,7 @@ export class AdminMatchCreateComponent implements OnInit {
 
     const localISOString = new Date(dateTime.getTime() - dateTime.getTimezoneOffset() * 60000).toISOString();
 
-    const matchData = { ...rest, date: localISOString };
+    const matchData = { ...rest, date: localISOString, modeSelected: this.form.value.sport.modes.indexOf(this.form.value.mode) };
 
     if (this.editingId) {
       this.matchService.updateMatch(this.editingId, matchData).subscribe(() => {
