@@ -1,55 +1,151 @@
 <app-header></app-header>
+
 <mat-card class="user-card" id="user-card" *ngIf="!loading() && user() as u">
   <div class="user-header">
     <div class="user-avatar">
-      <img class="avatar" [src]="getUserImage(u.id) || 'assets/default-avatar.jpg'" alt="Usuario" />
+      <img
+        class="avatar"
+        [src]="photoPreview || getUserImage(u.id)"
+        alt="Usuario"
+      />
+
+      <input
+        type="file"
+        accept="image/*"
+        hidden
+        #fileInput
+        (change)="onPhotoSelected($event)"
+      />
+
+      <button *ngIf="editing()"
+        mat-stroked-button
+        type="button"
+        (click)="fileInput.click()"
+      >
+        <mat-icon>edit</mat-icon>Cambiar foto
+      </button>
     </div>
 
     <div class="user-info">
-      <h2>{{ u.realname }}</h2>
-      <p class="username">@{{ u.username }}</p>
-      <p class="birthdate">Nacido en {{ u.birthDate | date: 'MMMM yyyy' }}</p>
 
-      <div class="user-meta">
-        <p><mat-icon>email</mat-icon> {{ u.email }}</p>
-        <p><mat-icon>person</mat-icon> {{ u.gender ? 'Hombre' : 'Mujer' }}</p>
-      </div>
+      <ng-container *ngIf="!editing(); else editMode">
 
-      <p class="description" *ngIf="u.description">{{ u.description }}</p>
+        <h2>{{ u.realname }}</h2>
+        <p class="username">@{{ u.username }}</p>
+        <p class="birthdate">
+          Nacido en {{ u.birthDate | date: 'MMMM yyyy' }}
+        </p>
 
-      <div class="stats">
-        <div id ="totalMatches" class="stat">
-          <h3>{{ u.stats.totalMatches}}</h3>
-          <p>Partidos</p>
+        <div class="user-meta">
+          <p><mat-icon>email</mat-icon> {{ u.email }}</p>
+          <p><mat-icon>person</mat-icon> {{ u.gender ? 'Hombre' : 'Mujer' }}</p>
         </div>
-        <div id ="wins" class="stat">
-          <h3>{{ u.stats.wins}}</h3>
-          <p>Victorias</p>
-        </div>
-        <div id ="winRate" class="stat">
-          <h3>{{ u.stats.winRate | number: '1.2-2' }}%</h3>
-          <p>% Victorias</p>
-        </div>
-        <div id ="maxLevel" class="stat">
-          <h3>{{ u.level | number: '1.2-2' }}</h3>
-          <p>Nivel máx.</p>
-        </div>
-      </div>
 
-      <div class="actions">
-        <button mat-stroked-button color="primary" (click)="onEditProfile()">
-          <mat-icon>edit</mat-icon> Editar perfil
-        </button>
+        <p class="description" *ngIf="u.description">{{ u.description }}</p>
 
-        <button mat-flat-button id="delete_account_btn"color="warn" (click)="onDeleteAccount(u.id)">
-          <mat-icon>delete_forever</mat-icon> Eliminar cuenta
-        </button>
-      </div>
+        <div class="stats">
+          <div id="totalMatches" class="stat">
+            <h3>{{ u.stats.totalMatches }}</h3>
+            <p>Partidos</p>
+          </div>
+          <div id="wins" class="stat">
+            <h3>{{ u.stats.wins }}</h3>
+            <p>Victorias</p>
+          </div>
+          <div id="winRate" class="stat">
+            <h3>{{ u.stats.winRate | number: '1.2-2' }}%</h3>
+            <p>% Victorias</p>
+          </div>
+          <div id="maxLevel" class="stat">
+            <h3>{{ u.level | number: '1.2-2' }}</h3>
+            <p>Nivel máx.</p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button mat-stroked-button color="primary" (click)="startEdit()">
+            <mat-icon>edit</mat-icon> Editar perfil
+          </button>
+
+          <button
+            mat-flat-button
+            id="delete_account_btn"
+            color="warn"
+            (click)="onDeleteAccount(u.id)"
+          >
+            <mat-icon>delete_forever</mat-icon> Eliminar cuenta
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #editMode>
+        <form [formGroup]="form" class="edit-form">
+
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre real</mat-label>
+            <input matInput formControlName="realname" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre de usuario</mat-label>
+            <input matInput formControlName="username" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Género</mat-label>
+            <mat-select formControlName="gender">
+              <mat-option [value]="true">Hombre</mat-option>
+              <mat-option [value]="false">Mujer</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Fecha</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="birthDate"
+              placeholder="Selecciona fecha"
+            />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput rows="3" formControlName="description"></textarea>
+          </mat-form-field>
+
+
+          <div class="actions">
+            <button mat-stroked-button type="button" (click)="cancelEdit()">
+              Cancelar
+            </button>
+
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              [disabled]="form.invalid || saving()"
+              (click)="save()"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      </ng-template>
+
     </div>
   </div>
 </mat-card>
 
 <mat-card *ngIf="loading()" class="loading-card">
-  <mat-icon class="spin">autorenew</mat-icon> Cargando perfil...
+  <mat-icon class="spin">autorenew</mat-icon>
+  Cargando perfil...
 </mat-card>
 
