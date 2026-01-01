@@ -20,7 +20,7 @@ const mockUser = {
   realname: 'Carlos García',
   username: 'cgarcia',
   email: 'carlos@example.com',
-  birthDate: new Date('1990-05-14'),
+  birthDate: '1990-05-14T00:00:00.000Z',
   gender: true,
   description: 'Jugador apasionado del fútbol',
   level: 7.5,
@@ -88,22 +88,23 @@ describe('UserComponent', () => {
   });
 
   it('should load and render user data', () => {
+    component.user.set(mockUser as any);
+    component.loading.set(false);
+
     fixture.detectChanges();
+
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.querySelector('h2')?.textContent).toContain('Carlos García');
-    expect(compiled.querySelector('.username')?.textContent).toContain('@cgarcia');
-    expect(compiled.querySelector('#totalMatches h3')?.textContent).toContain('120');
-    expect(compiled.querySelector('#winRate h3')?.textContent).toContain('66.67');
+    const name = compiled.querySelector('.user-info h2');
+    const username = compiled.querySelector('.username');
+    const totalMatches = compiled.querySelector('#totalMatches h3');
+    const winRate = compiled.querySelector('#winRate h3');
+
+    expect(name?.textContent?.trim()).toBe('Carlos García');
+    expect(username?.textContent?.trim()).toBe('@cgarcia');
+    expect(totalMatches?.textContent?.trim()).toBe('120');
+    expect(winRate?.textContent?.trim()).toContain('66.67');
   });
-
-  /* it('should call onEditProfile() when edit button clicked', () => {
-    spyOn(component, 'onEditProfile');
-    const btn = fixture.debugElement.query(By.css('button[color="primary"]'));
-    btn.triggerEventHandler('click');
-    expect(component.onEditProfile).toHaveBeenCalled();
-  }); */
-
 
   it('should not delete user if dialog canceled', () => {
     const dialogSpy = spyOn(dialog, 'open').and.returnValue({

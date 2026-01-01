@@ -67,6 +67,7 @@ export class MatchComponent implements OnInit{
         this.service.joinMatch(this.match.id!, team).subscribe({
           next: () => {
             this.snack.open('✅ ¡Te has unido al partido!', 'Cerrar', { duration: 3000 });
+            this.reloadAfterSave();
           },
           error: (err) => {
             console.error('Error al unirse:', err);
@@ -80,6 +81,7 @@ export class MatchComponent implements OnInit{
     this.service.leaveMatch(matchId).subscribe({
       next: () => {
         this.snack.open('✅ Has abandado el partido correctamente', 'Cerrar', { duration: 3000 });
+        this.reloadAfterSave();
       },
       error: (err) => {
         console.error("Error al abandonar el partido:", err)
@@ -136,6 +138,10 @@ export class MatchComponent implements OnInit{
     const inTeam1 = match.team1Players.some(p => p.id == userId);
     const inTeam2 = match.team2Players.some(p => p.id == userId);
     return inTeam1 || inTeam2;
+  }
+
+  private reloadAfterSave() {
+    window.location.reload();
   }
 
 }

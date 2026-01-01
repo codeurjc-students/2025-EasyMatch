@@ -49,11 +49,7 @@ export class AdminMatchCreateComponent implements OnInit {
   modes: {name: string, playersPerGame: number}[] = [];
   loadingClubs = true;
   loadingSports = true;
-  
 
-
-
-  
   ngOnInit(): void {
     this.form = this.fb.group({
       sport: ['', Validators.required],

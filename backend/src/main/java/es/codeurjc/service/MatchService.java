@@ -27,7 +27,7 @@ public class MatchService {
         this.matchRepository = matchRepository;
         this.mapper = mapper;
         this.userService = userService;
-        this.userMapper = userMapper;
+        this.userMapper = userMapper; 
     }
 
     @Autowired
@@ -113,7 +113,7 @@ public class MatchService {
         if (matchRepository.existsById(id)) {
 			Match match = matchRepository.findById(id).orElseThrow();
 			User loggedUser = userService.getLoggedUser();
-            int playersPerGame = match.getSport().getModes().get(0).getPlayersPerGame();
+            int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();
             int totalPlayers = match.getTeam1Players().size() + match.getTeam2Players().size();
             
             if (!team.equalsIgnoreCase("A") && !team.equalsIgnoreCase("B")) { 

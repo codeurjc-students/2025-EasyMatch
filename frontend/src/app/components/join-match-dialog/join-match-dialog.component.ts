@@ -36,7 +36,7 @@ export class JoinMatchDialogComponent {
   }
 
   get maxPlayers(): number{
-    return this.data.match.sport.modes[0].playersPerGame / 2;
+    return this.data.match.sport.modes[this.data.match.modeSelected].playersPerGame / 2;
   }
 
 

@@ -144,20 +144,17 @@ export class UserComponent implements OnInit {
       realname: raw.realname,
       username: raw.username,
       email: raw.email,
-      birthDate: raw.birthDate,
+      birthDate: this.toLocalMidnightISOString(raw.birthDate),
       gender: raw.gender,
       description: raw.description,
-      level: raw.level 
+      level: raw.level
     };
-
 
     this.userService.updateUser(this.user()!.id, payload).subscribe({
       next: (updated) => {
         if (this.photoFile) {
           this.userService.replaceUserImage(updated.id, this.photoFile).subscribe({
-            next: () => {
-              this.afterSuccessfulSave(updated, true);
-            },
+            next: () => this.afterSuccessfulSave(updated, true),
             error: (err) => {
               console.error('Error al subir foto:', err);
               this.afterSuccessfulSave(updated, false);
@@ -177,6 +174,7 @@ export class UserComponent implements OnInit {
       }
     });
   }
+
 
 
   onDeleteAccount(id: number): void {
@@ -233,6 +231,13 @@ export class UserComponent implements OnInit {
       );
     }
   }
+  private toLocalMidnightISOString(date: Date): string {
+    const localDate = new Date(date);
+    localDate.setHours(0, 0, 0, 0);
 
+    return new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    ).toISOString();
+  }
 }
 

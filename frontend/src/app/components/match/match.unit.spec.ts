@@ -44,6 +44,7 @@ describe('MatchComponent', () => {
     type: true,
     isPrivate: false,
     state: true,
+    modeSelected: 0,
     organizer: mockUser,
     sport: {
       name: 'Futbol',
