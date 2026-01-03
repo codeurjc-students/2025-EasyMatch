@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.1.0
 info:
   title: OpenAPI definition
   version: v0
@@ -6,46 +6,41 @@ servers:
 - url: http://localhost:8080
   description: Generated server url
 paths:
-  /api/auth/refresh:
-    post:
+  /api/v1/users/{id}:
+    get:
       tags:
-      - login-controller
-      operationId: refreshToken
+      - user-rest-controller
+      operationId: getUser
       parameters:
-      - name: RefreshToken
-        in: cookie
-        required: false
+      - name: id
+        in: path
+        required: true
         schema:
-          type: string
+          type: integer
+          format: int64
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/AuthResponse"
-  /api/auth/logout:
-    post:
+                $ref: "#/components/schemas/UserDTO"
+    put:
       tags:
-      - login-controller
-      operationId: logOut
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/AuthResponse"
-  /api/auth/login:
-    post:
-      tags:
-      - login-controller
-      operationId: login
+      - user-rest-controller
+      operationId: replaceUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginRequest"
+              $ref: "#/components/schemas/UserDTO"
         required: true
       responses:
         "200":
@@ -53,8 +48,164 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/AuthResponse"
-  /api/matches/{id}:
+                $ref: "#/components/schemas/UserDTO"
+    delete:
+      tags:
+      - user-rest-controller
+      operationId: deleteUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+  /api/v1/users/{id}/image:
+    get:
+      tags:
+      - user-rest-controller
+      operationId: getUserImage
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    put:
+      tags:
+      - user-rest-controller
+      operationId: putUserImage
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageFile:
+                  type: string
+                  format: binary
+              required:
+              - imageFile
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    post:
+      tags:
+      - user-rest-controller
+      operationId: createUserImage
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageFile:
+                  type: string
+                  format: binary
+              required:
+              - imageFile
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/sports/{id}:
+    get:
+      tags:
+      - sport-rest-controller
+      operationId: getSport
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SportDTO"
+    put:
+      tags:
+      - sport-rest-controller
+      operationId: replaceSport
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SportDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SportDTO"
+    delete:
+      tags:
+      - sport-rest-controller
+      operationId: deleteSport
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SportDTO"
+  /api/v1/matches/{id}:
     get:
       tags:
       - match-rest-controller
@@ -73,7 +224,491 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/MatchDTO"
-  /api/matches/:
+    put:
+      tags:
+      - match-rest-controller
+      operationId: replaceMatch
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MatchDTO"
+    delete:
+      tags:
+      - match-rest-controller
+      operationId: deleteMatch
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MatchDTO"
+  /api/v1/matches/{id}/users/me:
+    put:
+      tags:
+      - match-rest-controller
+      operationId: joinMatch
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JoinMatchRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+    delete:
+      tags:
+      - match-rest-controller
+      operationId: leaveMatch
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /api/v1/clubs/{id}:
+    get:
+      tags:
+      - club-rest-controller
+      operationId: getClub
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClubDTO"
+    put:
+      tags:
+      - club-rest-controller
+      operationId: replaceClub
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClubDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClubDTO"
+    delete:
+      tags:
+      - club-rest-controller
+      operationId: deleteClub
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClubDTO"
+  /api/v1/clubs/{id}/image:
+    get:
+      tags:
+      - club-rest-controller
+      operationId: getClubImage
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    put:
+      tags:
+      - club-rest-controller
+      operationId: putclubImage
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageFile:
+                  type: string
+                  format: binary
+              required:
+              - imageFile
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    post:
+      tags:
+      - club-rest-controller
+      operationId: createClubImage
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageFile:
+                  type: string
+                  format: binary
+              required:
+              - imageFile
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/users/:
+    get:
+      tags:
+      - user-rest-controller
+      operationId: getUsers
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageUserDTO"
+    post:
+      tags:
+      - user-rest-controller
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+  /api/v1/sports/:
+    get:
+      tags:
+      - sport-rest-controller
+      operationId: getSports
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SportDTO"
+    post:
+      tags:
+      - sport-rest-controller
+      operationId: createSport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SportDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SportDTO"
+  /api/v1/matches:
+    get:
+      tags:
+      - match-rest-controller
+      operationId: getFilteredMatches
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: sport
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: includeFriendlies
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: timeRange
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageMatchDTO"
+    post:
+      tags:
+      - match-rest-controller
+      operationId: creatematch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MatchDTO"
+  /api/v1/clubs/:
+    get:
+      tags:
+      - club-rest-controller
+      operationId: getClubs
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageClubDTO"
+    post:
+      tags:
+      - club-rest-controller
+      operationId: createClub
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClubDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClubDTO"
+  /api/v1/auth/refresh:
+    post:
+      tags:
+      - login-controller
+      operationId: refreshToken
+      parameters:
+      - name: RefreshToken
+        in: cookie
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/v1/auth/logout:
+    post:
+      tags:
+      - login-controller
+      operationId: logOut
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/v1/auth/login:
+    post:
+      tags:
+      - login-controller
+      summary: User login
+      description: Authenticates the user and returns JWT tokens (access and refresh).
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+              example:
+                status: SUCCESS
+                message: Auth successful. Tokens are created in cookie.
+        "401":
+          description: Invalid credentials
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/v1/users/{id}/matches/:
+    get:
+      tags:
+      - user-rest-controller
+      operationId: getUserMatches
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MatchDTO"
+  /api/v1/users/me:
+    get:
+      tags:
+      - user-rest-controller
+      operationId: me
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+  /api/v1/matches/:
     get:
       tags:
       - match-rest-controller
@@ -91,27 +726,154 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PageMatchDTO"
+  /api/v1/clubs:
+    get:
+      tags:
+      - club-rest-controller
+      operationId: getFilteredClubs
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: sport
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: city
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageClubDTO"
+  /api/v1/auth/status:
+    get:
+      tags:
+      - login-controller
+      operationId: status
+      responses:
+        "200":
+          description: OK
 components:
   schemas:
-    AuthResponse:
+    PlayerStatsDTO:
       type: object
       properties:
-        status:
-          type: string
-          enum:
-          - SUCCESS
-          - FAILURE
-        message:
-          type: string
-        error:
-          type: string
-    LoginRequest:
+        totalMatches:
+          type: integer
+          format: int32
+        wins:
+          type: integer
+          format: int32
+        draws:
+          type: integer
+          format: int32
+        losses:
+          type: integer
+          format: int32
+        winRate:
+          type: number
+          format: double
+    UserDTO:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+        realname:
+          type: string
         username:
+          type: string
+        email:
           type: string
         password:
           type: string
+        birthDate:
+          type: string
+          format: date-time
+        gender:
+          type: boolean
+        description:
+          type: string
+        level:
+          type: number
+          format: float
+        stats:
+          $ref: "#/components/schemas/PlayerStatsDTO"
+        roles:
+          type: array
+          items:
+            type: string
+    ModeDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        playersPerGame:
+          type: integer
+          format: int32
+    SportDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        modes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ModeDTO"
+        scoringType:
+          type: string
+          enum:
+          - SCORE
+          - SETS
+    BasicClubDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        city:
+          type: string
+    BasicUserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        realname:
+          type: string
+        username:
+          type: string
+        level:
+          type: number
+          format: float
     MatchDTO:
       type: object
       properties:
@@ -127,25 +889,208 @@ components:
           type: boolean
         state:
           type: boolean
+        modeSelected:
+          type: integer
+          format: int32
         organizer:
-          type: string
+          $ref: "#/components/schemas/BasicUserDTO"
+        price:
+          type: number
+          format: float
         sport:
+          $ref: "#/components/schemas/SportDTO"
+        club:
+          $ref: "#/components/schemas/BasicClubDTO"
+        team1Players:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserDTO"
+          uniqueItems: true
+        team2Players:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserDTO"
+          uniqueItems: true
+        result:
+          $ref: "#/components/schemas/MatchResultDTO"
+    MatchResultDTO:
+      type: object
+      properties:
+        team1Name:
+          type: string
+        team2Name:
+          type: string
+        team1Score:
+          type: integer
+          format: int32
+        team2Score:
+          type: integer
+          format: int32
+        team1Sets:
+          type: integer
+          format: int32
+        team2Sets:
+          type: integer
+          format: int32
+        team1GamesPerSet:
+          type: array
+          items:
+            type: integer
+            format: int32
+        team2GamesPerSet:
+          type: array
+          items:
+            type: integer
+            format: int32
+    JoinMatchRequest:
+      type: object
+      properties:
+        team:
+          type: string
+    ClubDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        web:
+          type: string
+        schedule:
+          $ref: "#/components/schemas/ScheduleDTO"
+        priceRange:
+          $ref: "#/components/schemas/PriceRangeDTO"
+        sports:
+          type: array
+          items:
+            $ref: "#/components/schemas/SportDTO"
+        numberOfCourts:
+          type: array
+          items:
+            type: integer
+            format: int32
+    PriceRangeDTO:
+      type: object
+      properties:
+        minPrice:
+          type: number
+          format: double
+        maxPrice:
+          type: number
+          format: double
+        unit:
+          type: string
+    ScheduleDTO:
+      type: object
+      properties:
+        openingTime:
+          type: string
+        closingTime:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - SUCCESS
+          - FAILURE
+        message:
+          type: string
+        error:
+          type: string
+        authorities:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
           type: string
     Pageable:
       type: object
       properties:
         page:
+          type: integer
+          format: int32
           minimum: 0
-          type: integer
-          format: int32
         size:
-          minimum: 1
           type: integer
           format: int32
+          minimum: 1
         sort:
           type: array
           items:
             type: string
+    PageUserDTO:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserDTO"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        unpaged:
+          type: boolean
+        paged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     PageMatchDTO:
       type: object
       properties:
@@ -153,6 +1098,13 @@ components:
           type: integer
           format: int64
         totalPages:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
           type: integer
           format: int32
         size:
@@ -166,50 +1118,40 @@ components:
           type: integer
           format: int32
         sort:
-          type: array
-          items:
-            $ref: "#/components/schemas/SortObject"
-        numberOfElements:
+          $ref: "#/components/schemas/SortObject"
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+    PageClubDTO:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
           type: integer
           format: int32
         first:
           type: boolean
         last:
           type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClubDTO"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
         pageable:
           $ref: "#/components/schemas/PageableObject"
         empty:
-          type: boolean
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          type: array
-          items:
-            $ref: "#/components/schemas/SortObject"
-        unpaged:
-          type: boolean
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        pageNumber:
-          type: integer
-          format: int32
-    SortObject:
-      type: object
-      properties:
-        direction:
-          type: string
-        nullHandling:
-          type: string
-        ascending:
-          type: boolean
-        property:
-          type: string
-        ignoreCase:
           type: boolean
