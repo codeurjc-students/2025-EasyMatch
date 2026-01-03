@@ -95,7 +95,7 @@ public class UserService {
 <span class="fc" id="L95">        user.setPassword(encodedPassword);</span>
 <span class="fc bfc" id="L96" title="All 2 branches covered.">		if (user.getUsername().equals(&quot;admin&quot;)) {</span>
 <span class="fc" id="L97">			user.setRoles(List.of(&quot;USER&quot;, &quot;ADMIN&quot;));</span>
-		} else {
+<span class="fc" id="L98">		} else {</span>
 <span class="fc" id="L99">			user.setRoles(List.of(&quot;USER&quot;));</span>
 		}
 <span class="fc" id="L101">		User savedUser = userRepository.save(user);</span>
@@ -111,15 +111,15 @@ public class UserService {
 <span class="fc" id="L111">            User user = userOptional.get();</span>
 <span class="fc bfc" id="L112" title="All 2 branches covered.">            for (Match match : user.getMatchesAsTeam1Player()) {</span>
 <span class="fc" id="L113">                match.getTeam1Players().remove(user);</span>
-<span class="fc" id="L114">            }</span>
+            }
 <span class="fc bfc" id="L115" title="All 2 branches covered.">            for (Match match : user.getMatchesAsTeam2Player()) {</span>
 <span class="fc" id="L116">                match.getTeam2Players().remove(user);</span>
-<span class="fc" id="L117">            }</span>
+            }
 
 <span class="fc bfc" id="L119" title="All 2 branches covered.">            for (Match match : user.getOrganizedMatches()) {</span>
 <span class="fc" id="L120">                match.setOrganizer(null);</span>
 <span class="fc" id="L121">                matchRepository.delete(match);</span>
-<span class="fc" id="L122">            }</span>
+            }
 <span class="fc" id="L123">            userRepository.deleteById(id); </span>
 <span class="fc" id="L124">        }else {</span>
 <span class="fc" id="L125">            throw new IllegalArgumentException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
@@ -143,7 +143,7 @@ public class UserService {
 
 <span class="fc" id="L144">            email = ((UserDetails)principal).getUsername();</span>
 
-        } else {
+<span class="fc" id="L146">        } else {</span>
 
 <span class="fc" id="L148">            email = principal.toString();</span>
 
@@ -188,9 +188,9 @@ public class UserService {
          try {
 <span class="fc" id="L189">            Resource image = new ClassPathResource(classpathResource);</span>
 <span class="fc" id="L190">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="nc" id="L191">        } catch (IOException e) {</span>
+<span class="pc" id="L191">        } catch (IOException e) {</span>
 <span class="nc" id="L192">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
-<span class="fc" id="L193">        }</span>
+        }
 	
 <span class="fc" id="L195">	}</span>
 

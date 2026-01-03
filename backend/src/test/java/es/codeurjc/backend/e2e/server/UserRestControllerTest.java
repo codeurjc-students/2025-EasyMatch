@@ -124,7 +124,7 @@ public class UserRestControllerTest {
         String cookie = loginAndGetCookie("admin@emeal.com","admin");
         assertThat(cookie, notNullValue());
 
-        String newUserJson = """
+        String editedUserJson = """
             {
                 "realname": "Temporal User",
                 "username": "temporalUser",
@@ -136,10 +136,10 @@ public class UserRestControllerTest {
             }
         """;
 
-        Response createResponse = given()
+        Response editResponse = given()
                 .contentType(ContentType.JSON)
                 .cookie("AuthToken", cookie)
-                .body(newUserJson)
+                .body(editedUserJson)
         .when()
                 .post("/api/v1/users/")
         .then()
@@ -147,8 +147,8 @@ public class UserRestControllerTest {
                 .extract()
                 .response();
 
-        long createdId = Integer.toUnsignedLong(createResponse.path("id"));
-        assertThat(createdId, greaterThan(0L));
+        long editedId = Integer.toUnsignedLong(editResponse.path("id"));
+        assertThat(editedId, greaterThan(0L));
 
         String replaceJson = """
             {
@@ -168,14 +168,47 @@ public class UserRestControllerTest {
                 .cookie("AuthToken", cookie)
                 .body(replaceJson)
         .when()
-                .put("/api/v1/users/{id}", createdId)
+                .put("/api/v1/users/{id}", editedId)
         .then()
                 .statusCode(200)
-                .body("id", equalTo((int) createdId))
+                .body("id", equalTo((int) editedId))
                 .body("realname", equalTo("Usuario Reemplazado"))
                 .body("username", equalTo("userReplaced"))
                 .body("email", equalTo("replaced@emeal.com"));
 
+    }
+
+    @Test
+    @Order(7)
+    public void testReplaceUserAsRegularUser(){
+
+        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        assertThat(cookie, notNullValue());
+        long userId = 2L; 
+        String replaceJson = """
+            {
+                "realname": "Usuario Reemplazado",
+                "username": "userReplaced",
+                "email": "replaced@emeal.com",
+                "password": "newPass123",
+                "birthDate": "1999-09-09T00:00:00Z",
+                "gender": false,
+                "description": "Usuario modificado con PUT",
+                "level": 6.5
+            }
+        """;
+        given()
+                .contentType(ContentType.JSON)
+                .cookie("AuthToken", cookie)
+                .body(replaceJson)
+        .when()
+                .put("/api/v1/users/{id}", userId)
+        .then()
+                .statusCode(200)
+                .body("id", equalTo((int) userId))
+                .body("realname", equalTo("Usuario Reemplazado"))
+                .body("username", equalTo("userReplaced"))
+                .body("email", equalTo("replaced@emeal.com"));
     }
 
     private String loginAndGetCookie(String email, String password) {

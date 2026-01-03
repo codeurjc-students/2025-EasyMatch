@@ -113,7 +113,7 @@ export class MatchCreateComponent implements OnInit {
 
     const localISOString = new Date(dateTime.getTime() - dateTime.getTimezoneOffset() * 60000).toISOString();
 
-    const matchData = { ...rest, date: localISOString };
+    const matchData = { ...rest, date: localISOString, modeSelected: this.matchForm.value.sport.modes.indexOf(this.matchForm.value.mode) };
 
     this.creating = true;
     this.matchService.createMatch(matchData).subscribe({

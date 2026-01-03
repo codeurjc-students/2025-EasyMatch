@@ -56,8 +56,8 @@ import jakarta.validation.Valid;
     @GetMapping(&quot;/status&quot;)
     public ResponseEntity&lt;Void&gt; status() {
 <span class="fc" id="L58">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="pc bpc" id="L59" title="3 of 6 branches missed.">        if (authentication == null || !authentication.isAuthenticated()</span>
-                || authentication instanceof AnonymousAuthenticationToken) {
+<span class="pc bpc" id="L59" title="2 of 4 branches missed.">        if (authentication == null || !authentication.isAuthenticated()</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                || authentication instanceof AnonymousAuthenticationToken) {</span>
 <span class="nc" id="L61">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();</span>
         }
 <span class="fc" id="L63">        return ResponseEntity.ok().build();</span>

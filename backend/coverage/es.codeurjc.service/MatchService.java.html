@@ -27,7 +27,7 @@ public class MatchService {
 <span class="fc" id="L27">        this.matchRepository = matchRepository;</span>
 <span class="fc" id="L28">        this.mapper = mapper;</span>
 <span class="fc" id="L29">        this.userService = userService;</span>
-<span class="fc" id="L30">        this.userMapper = userMapper;</span>
+<span class="fc" id="L30">        this.userMapper = userMapper; </span>
 <span class="fc" id="L31">    }</span>
 
     @Autowired
@@ -76,7 +76,7 @@ public class MatchService {
 <span class="fc" id="L76">        return matchRepository.findFilteredMatches(pageable,</span>
 <span class="fc bfc" id="L77" title="All 2 branches covered.">            search != null ? &quot;%&quot; + search.toLowerCase() + &quot;%&quot; : null, </span>
 <span class="fc bfc" id="L78" title="All 2 branches covered.">            sport != null ? sport.toLowerCase() : null, </span>
-            includeFriendlies, 
+<span class="fc" id="L79">            includeFriendlies, </span>
 <span class="fc bfc" id="L80" title="All 2 branches covered.">            timeRange != null ? timeRange.toLowerCase() : null, true)</span>
 <span class="fc" id="L81">            .map(this::toDTO);</span>
     }
@@ -92,7 +92,7 @@ public class MatchService {
 <span class="fc" id="L92">        Optional&lt;Match&gt; matchOptional = matchRepository.findById(id);</span>
 <span class="fc bfc" id="L93" title="All 2 branches covered.">        if (matchOptional.isPresent()) {</span>
 <span class="fc" id="L94">            matchRepository.deleteById(id);</span>
-        } else {
+<span class="fc" id="L95">        } else {</span>
 <span class="fc" id="L96">            throw new IllegalArgumentException(&quot;Match with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
 <span class="fc" id="L98">    }</span>
@@ -113,7 +113,7 @@ public class MatchService {
 <span class="fc bfc" id="L113" title="All 2 branches covered.">        if (matchRepository.existsById(id)) {</span>
 <span class="fc" id="L114">			Match match = matchRepository.findById(id).orElseThrow();</span>
 <span class="fc" id="L115">			User loggedUser = userService.getLoggedUser();</span>
-<span class="fc" id="L116">            int playersPerGame = match.getSport().getModes().get(0).getPlayersPerGame();</span>
+<span class="fc" id="L116">            int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();</span>
 <span class="fc" id="L117">            int totalPlayers = match.getTeam1Players().size() + match.getTeam2Players().size();</span>
             
 <span class="fc bfc" id="L119" title="All 4 branches covered.">            if (!team.equalsIgnoreCase(&quot;A&quot;) &amp;&amp; !team.equalsIgnoreCase(&quot;B&quot;)) { </span>
@@ -130,7 +130,7 @@ public class MatchService {
 <span class="nc" id="L130">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Ya se ha unido a este partido&quot;);</span>
                     else
 <span class="fc" id="L132">                        match.addPlayerToTeam1(loggedUser);</span>
-                }else{
+<span class="fc" id="L133">                }else{</span>
 <span class="pc bpc" id="L134" title="1 of 2 branches missed.">                    if (match.getTeam2Players().size() &gt;= playersPerGame / 2)</span>
 <span class="nc" id="L135">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Equipo B lleno&quot;);</span>
 <span class="fc bfc" id="L136" title="All 2 branches covered.">                    if (match.containsPlayer(loggedUser))</span>
@@ -141,7 +141,7 @@ public class MatchService {
 <span class="fc" id="L141">                totalPlayers++;</span>
 <span class="pc bpc" id="L142" title="1 of 2 branches missed.">                if (totalPlayers == playersPerGame) match.setState(false);</span>
 <span class="fc" id="L143">                matchRepository.save(match);</span>
-            }else{
+<span class="fc" id="L144">            }else{</span>
 <span class="fc" id="L145">                throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;El partido esta lleno&quot;);</span>
             }
 <span class="fc" id="L147">			return toDTO(match);</span>
@@ -157,7 +157,7 @@ public class MatchService {
 <span class="fc bfc" id="L157" title="All 2 branches covered.">        match.getTeam2Players().removeIf(p -&gt; p.getId() == user.getId());</span>
 <span class="pc bpc" id="L158" title="3 of 4 branches missed.">        if (match.getTeam1Players().isEmpty() &amp;&amp; match.getTeam2Players().isEmpty()){</span>
 <span class="nc" id="L159">            matchRepository.deleteById(id);</span>
-        }else{
+<span class="nc" id="L160">        }else{</span>
 <span class="fc" id="L161">            matchRepository.save(match);</span>
         }
 <span class="fc" id="L163">     }</span>

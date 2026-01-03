@@ -95,7 +95,7 @@ The development of the website will be carried out following an **incremental** 
 
 - <ins>**Phase 6 (April 15<sup>th</sup> to May 15<sup>th</sup>)**</ins>: **Writing the final report** 
 
-- <ins>**Phase 7 (May 15<sup>th</sup> to June <sup>th</sup>)**</ins>: **Preparation of the presentation** 
+- <ins>**Phase 7 (May 15<sup>th</sup> to June 15<sup>th</sup>)**</ins>: **Preparation of the presentation** 
 
 ---
 

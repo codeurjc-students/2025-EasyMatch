@@ -157,11 +157,11 @@ public class DatabaseInitializer {
         clubService.save(club5);
 
         
-        Match match1 = new Match(date1,true,false,true,pedro,3.49f,tennis,club1);
-        Match match2 = new Match(date2,false,true,true,maria,8.99f, paddle,club2);
-        Match match3 = new Match(date3,true,false,true,luis,6.49f,tennis,club3);
-        Match match4 = new Match(date4,true,false,true,juan,4.49f,football,club4);
-        Match match5 = new Match(date5,true,false,true,silvia,3.25f,volley,club5);
+        Match match1 = new Match(date1,true,false,true,0,pedro,3.49f,tennis,club1);
+        Match match2 = new Match(date2,false,true,true,1,maria,8.99f, paddle,club2);
+        Match match3 = new Match(date3,true,false,true,1,luis,6.49f,tennis,club3);
+        Match match4 = new Match(date4,true,false,true,0,juan,4.49f,football,club4);
+        Match match5 = new Match(date5,true,false,true,1,silvia,3.25f,volley,club5);
 
         match1.setTeam1Players(Set.of(match1.getOrganizer()));
         match1.setTeam2Players(new HashSet<>());
@@ -185,7 +185,8 @@ public class DatabaseInitializer {
             LocalDateTime.of(2025, 9, 10, 10, 30),
             true, 
             false,
-            false, 
+            false,
+            0, 
             pedro, 
             4.50,
             tennis,
@@ -197,6 +198,7 @@ public class DatabaseInitializer {
             true,
             false,
             false,
+            0,
             pedro,
             4.50,
             tennis,
@@ -208,6 +210,7 @@ public class DatabaseInitializer {
             true,
             false,
             false,
+            0,
             maria,
             4.50,
             tennis,

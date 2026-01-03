@@ -94,7 +94,12 @@ export class AdminUserCreateComponent implements OnInit {
    async save() {
     if (this.form.invalid) return;
 
-    const payload = this.form.value;
+    const raw = this.form.value;
+
+    const payload = {
+      ...raw,
+      birthDate: this.toLocalMidnightISOString(raw.birthDate)
+    };
 
     if (this.editingId) {
       this.userService.updateUser(this.editingId, payload).subscribe({
@@ -178,6 +183,15 @@ export class AdminUserCreateComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  private toLocalMidnightISOString(date: Date): string {
+    const localDate = new Date(date);
+    localDate.setHours(0, 0, 0, 0);
+
+    return new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    ).toISOString();
+  }
+  
   cancel() {
     this.router.navigate(['/admin/users']);
   }

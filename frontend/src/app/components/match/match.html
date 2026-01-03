@@ -27,7 +27,7 @@
 
         <div class="match-row">
           <mat-icon color="primary">group</mat-icon>
-          <span id="number-players">{{ getTotalPlayers()}}/{{ match.sport.modes[0].playersPerGame }} jugadores</span>
+          <span id="number-players">{{ getTotalPlayers()}}/{{ match.sport.modes[match.modeSelected].playersPerGame }} jugadores</span>
         </div>
 
         <div class="match-row">

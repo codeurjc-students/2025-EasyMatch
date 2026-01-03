@@ -65,10 +65,10 @@ public class MatchServiceUnitaryTest {
         //GIVEN
         PageRequest pageable = PageRequest.of(0, 10);
 
-        Match match1 = new Match(null, false, true, false, new User(),3.50, new Sport(),null);
-        Match match2 = new Match(null, true, true, false, new User(),2.75, new Sport(),null);
-        Match match3 = new Match(null, false, false, true, new User(),9.95, new Sport(),null);
-        Match match4 = new Match(null, true, false, true, new User(),2.50, new Sport(),null);
+        Match match1 = new Match(null, false, true, false,0, new User(),3.50, new Sport(),null);
+        Match match2 = new Match(null, true, true, false,0,new User(),2.75, new Sport(),null);
+        Match match3 = new Match(null, false, false, true,0, new User(),9.95, new Sport(),null);
+        Match match4 = new Match(null, true, false, true,0, new User(),2.50, new Sport(),null);
 
         List<Match> matchList = List.of(match1,match2,match3,match4);
 
@@ -87,7 +87,7 @@ public class MatchServiceUnitaryTest {
     public void getMatchByIdTest(){
         //GIVEN
         long id = 1;
-        Match match = new Match(null, true, false, true, null,5.00, null,null);
+        Match match = new Match(null, true, false, true,0, null,5.00, null,null);
         match.setId(id);
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
@@ -102,7 +102,7 @@ public class MatchServiceUnitaryTest {
     public void deleteExistingMatchTest(){
         //GIVEN
         long id = 1;
-        Match match = new Match(null, false, true, false, null,2.00, null,null);
+        Match match = new Match(null, false, true, false,0, null,2.00, null,null);
         match.setId(id);
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
@@ -143,7 +143,7 @@ public class MatchServiceUnitaryTest {
             List.of("USER")
         );
         
-        Match match = new Match(null, true, false, true, null,4.00, null,null);
+        Match match = new Match(null, true, false, true,0, null,4.00, null,null);
         MatchDTO matchDTO = mapper.toDTO(match);
         //WHEN
         when(userService.getLoggedUserDTO()).thenReturn(userDTO);
@@ -163,7 +163,7 @@ public class MatchServiceUnitaryTest {
         User user = new User();
         User organizer =  new User();
         Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
-        Match match = new Match(null, true, false, true, organizer,5.00, sport,null);
+        Match match = new Match(null, true, false, true,0, organizer,5.00, sport,null);
         match.setId(id);
         match.setTeam1Players(new HashSet<>(Set.of(organizer)));
         match.setTeam2Players(new HashSet<>());
@@ -191,7 +191,7 @@ public class MatchServiceUnitaryTest {
         long id = 1L;
         User organizer =  new User();
         Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
-        Match match = new Match(null, true, false, true, organizer,5.00, sport,null);
+        Match match = new Match(null, true, false, true,0, organizer,5.00, sport,null);
         match.setId(id);
         match.setTeam1Players(new HashSet<>(Set.of(organizer)));
         match.setTeam2Players(new HashSet<>());
@@ -214,7 +214,7 @@ public class MatchServiceUnitaryTest {
         long id = 4L;
         User organizer =  new User();
         Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
-        Match match = new Match(null, true, false, true, organizer,5.00, sport,null);
+        Match match = new Match(null, true, false, true,0, organizer,5.00, sport,null);
         match.setId(id);
         match.setTeam1Players(new HashSet<>(Set.of(organizer)));
         match.setTeam2Players(new HashSet<>());
@@ -240,7 +240,7 @@ public class MatchServiceUnitaryTest {
         User user2 =  new User();
         User user3 = new User();
         Sport sport = new Sport("Tenis",List.of(new Mode("Singles",2)),ScoringType.SETS);
-        Match match = new Match(null, true, false, true, user1,5.00, sport,null);
+        Match match = new Match(null, true, false, true,0, user1,5.00, sport,null);
         match.setId(id);
         match.setTeam1Players(new HashSet<>(Set.of(user1)));
         match.setTeam2Players(new HashSet<>(Set.of(user2)));
@@ -266,7 +266,7 @@ public class MatchServiceUnitaryTest {
         user2.setId(2L);
         User user3 =  new User();
         user3.setId(3L);
-        Match match = new Match(null, true, false, true, user1,5.00,null,null);
+        Match match = new Match(null, true, false, true,0, user1,5.00,null,null);
         match.setId(id);
         match.setTeam1Players(new HashSet<>(Set.of(user1,user2)));
         match.setTeam2Players(new HashSet<>(Set.of(user3)));
@@ -283,8 +283,8 @@ public class MatchServiceUnitaryTest {
     public void replaceExistingMatchTest(){
         //GIVEN
         long id = 2L;
-        Optional<Match> matchOptional = Optional.of(new Match(LocalDateTime.of(2025,5,12,11,0),true,true,true,new User(),9.99f,new Sport(), new Club()));
-        Match updatedMatch = new Match(LocalDateTime.of(2025,5,12,12,30),true,true,true,new User(),10.49f,new Sport(), new Club());
+        Optional<Match> matchOptional = Optional.of(new Match(LocalDateTime.of(2025,5,12,11,0),true,true,true,0,new User(),9.99f,new Sport(), new Club()));
+        Match updatedMatch = new Match(LocalDateTime.of(2025,5,12,12,30),true,true,true,0,new User(),10.49f,new Sport(), new Club());
         updatedMatch.setId(id);
         MatchDTO updatedMatchDTO = mapper.toDTO(updatedMatch);
 

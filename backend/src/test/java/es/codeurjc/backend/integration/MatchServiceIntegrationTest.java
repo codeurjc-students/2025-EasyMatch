@@ -167,6 +167,7 @@ public class MatchServiceIntegrationTest {
             true, 
             false, 
             true, 
+            0,
             organizer, 
             5.49f, 
             sport, 
