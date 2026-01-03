@@ -67,7 +67,7 @@ public class ClubService {
 <span class="fc" id="L67">        Optional&lt;Club&gt; clubOptional = clubRepository.findById(id);</span>
 <span class="fc bfc" id="L68" title="All 2 branches covered.">        if (clubOptional.isPresent()) {</span>
 <span class="fc" id="L69">            clubRepository.deleteById(id);</span>
-        } else {
+<span class="fc" id="L70">        } else {</span>
 <span class="fc" id="L71">            throw new IllegalArgumentException(&quot;Club with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
 <span class="fc" id="L73">    }</span>
@@ -145,9 +145,9 @@ public class ClubService {
          try {
 <span class="fc" id="L146">            Resource image = new ClassPathResource(classpathResource);</span>
 <span class="fc" id="L147">		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="nc" id="L148">        } catch (IOException e) {</span>
+<span class="pc" id="L148">        } catch (IOException e) {</span>
 <span class="nc" id="L149">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
-<span class="fc" id="L150">        }</span>
+        }
 	
 <span class="fc" id="L152">	}</span>
 

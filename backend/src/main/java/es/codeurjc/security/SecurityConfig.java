@@ -61,7 +61,6 @@ public class SecurityConfig {
 		http.authenticationProvider(authenticationProvider());
 
 		http
-			.securityMatcher("/api/**")
 			.exceptionHandling(handling -> handling.authenticationEntryPoint(unauthorizedHandlerJwt));
 		
 		http
@@ -77,14 +76,19 @@ public class SecurityConfig {
 					.requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasAnyRole("USER")
 					.requestMatchers(HttpMethod.GET, "/api/v1/clubs/**").permitAll()
 					.requestMatchers(HttpMethod.POST, "/api/v1/clubs/**").hasAnyRole("ADMIN")
-					.requestMatchers(HttpMethod.PUT, "/api/v1/clubs/**").hasAnyRole("USER")
-					.requestMatchers(HttpMethod.DELETE, "/api/v1/clubs/**").hasAnyRole("USER")
+					.requestMatchers(HttpMethod.PUT, "/api/v1/clubs/**").hasAnyRole("ADMIN")
+					.requestMatchers(HttpMethod.DELETE, "/api/v1/clubs/**").hasAnyRole("ADMIN")
 					.requestMatchers(HttpMethod.GET,"/api/v1/sports/**").permitAll()
+					.requestMatchers(HttpMethod.PUT,"/api/v1/sports/**").hasAnyRole("ADMIN")
+					.requestMatchers(HttpMethod.POST,"/api/v1/sports/**").hasAnyRole("ADMIN")
+					.requestMatchers(HttpMethod.DELETE,"/api/v1/sports/**").hasAnyRole("ADMIN")
 					.requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                     // DOCUMENTATION
 					.requestMatchers("/v3/api-docs/**").permitAll()
 					.requestMatchers("/swagger-ui.html").permitAll()
 					.requestMatchers("/swagger-ui/**").permitAll()
+					.requestMatchers("/v3/api-docs.yaml").permitAll()
+					.requestMatchers("/api-docs/**").permitAll()
 					// PUBLIC ENDPOINTS
 					.anyRequest().permitAll()
 			);

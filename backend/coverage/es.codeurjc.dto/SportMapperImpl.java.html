@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2025-12-30T20:00:03+0100&quot;,
-    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)&quot;
+    date = &quot;2026-01-03T00:32:53+0100&quot;,
+    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.44.0.v20251118-1623, environment: Java 21.0.9 (Eclipse Adoptium)&quot;
 )
 @Component
 <span class="fc" id="L18">public class SportMapperImpl implements SportMapper {</span>
@@ -47,7 +47,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L47">        List&lt;SportDTO&gt; list = new ArrayList&lt;SportDTO&gt;( sports.size() );</span>
 <span class="fc bfc" id="L48" title="All 2 branches covered.">        for ( Sport sport : sports ) {</span>
 <span class="fc" id="L49">            list.add( toDTO( sport ) );</span>
-<span class="fc" id="L50">        }</span>
+        }
 
 <span class="fc" id="L52">        return list;</span>
     }
@@ -92,7 +92,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L92">        List&lt;ModeDTO&gt; list1 = new ArrayList&lt;ModeDTO&gt;( list.size() );</span>
 <span class="fc bfc" id="L93" title="All 2 branches covered.">        for ( Mode mode : list ) {</span>
 <span class="fc" id="L94">            list1.add( modeToModeDTO( mode ) );</span>
-<span class="fc" id="L95">        }</span>
+        }
 
 <span class="fc" id="L97">        return list1;</span>
     }
@@ -120,7 +120,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L120">        List&lt;Mode&gt; list1 = new ArrayList&lt;Mode&gt;( list.size() );</span>
 <span class="fc bfc" id="L121" title="All 2 branches covered.">        for ( ModeDTO modeDTO : list ) {</span>
 <span class="fc" id="L122">            list1.add( modeDTOToMode( modeDTO ) );</span>
-<span class="fc" id="L123">        }</span>
+        }
 
 <span class="fc" id="L125">        return list1;</span>
     }

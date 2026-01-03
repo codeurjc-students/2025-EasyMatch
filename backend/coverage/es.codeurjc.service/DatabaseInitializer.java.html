@@ -142,12 +142,12 @@ import jakarta.transaction.Transactional;
 <span class="fc" id="L142">        clubService.save(club4);</span>
 
 <span class="fc" id="L144">        Club club5 = new Club(</span>
-            &quot;Volleyball Pro Center&quot;, 
-            &quot;Murcia&quot;, 
-            &quot;Calle de Carlos Alcaraz, 6&quot;, 
-            &quot;684274292&quot;,
-            &quot;volleyballcenter@outlook.com&quot;,
-            &quot;www.volleyballcenter.com&quot;
+<span class="fc" id="L145">            &quot;Volleyball Pro Center&quot;, </span>
+<span class="fc" id="L146">            &quot;Murcia&quot;, </span>
+<span class="fc" id="L147">            &quot;Calle de Carlos Alcaraz, 6&quot;, </span>
+<span class="fc" id="L148">            &quot;684274292&quot;,</span>
+<span class="fc" id="L149">            &quot;volleyballcenter@outlook.com&quot;,</span>
+<span class="fc" id="L150">            &quot;www.volleyballcenter.com&quot;</span>
         );
 <span class="fc" id="L152">        club5.setSports(List.of(volley));</span>
 <span class="fc" id="L153">        club5.setNumberOfCourts(List.of(3));</span>
@@ -157,11 +157,11 @@ import jakarta.transaction.Transactional;
 <span class="fc" id="L157">        clubService.save(club5);</span>
 
         
-<span class="fc" id="L160">        Match match1 = new Match(date1,true,false,true,pedro,3.49f,tennis,club1);</span>
-<span class="fc" id="L161">        Match match2 = new Match(date2,false,true,true,maria,8.99f, paddle,club2);</span>
-<span class="fc" id="L162">        Match match3 = new Match(date3,true,false,true,luis,6.49f,tennis,club3);</span>
-<span class="fc" id="L163">        Match match4 = new Match(date4,true,false,true,juan,4.49f,football,club4);</span>
-<span class="fc" id="L164">        Match match5 = new Match(date5,true,false,true,silvia,3.25f,volley,club5);</span>
+<span class="fc" id="L160">        Match match1 = new Match(date1,true,false,true,0,pedro,3.49f,tennis,club1);</span>
+<span class="fc" id="L161">        Match match2 = new Match(date2,false,true,true,1,maria,8.99f, paddle,club2);</span>
+<span class="fc" id="L162">        Match match3 = new Match(date3,true,false,true,1,luis,6.49f,tennis,club3);</span>
+<span class="fc" id="L163">        Match match4 = new Match(date4,true,false,true,0,juan,4.49f,football,club4);</span>
+<span class="fc" id="L164">        Match match5 = new Match(date5,true,false,true,1,silvia,3.25f,volley,club5);</span>
 
 <span class="fc" id="L166">        match1.setTeam1Players(Set.of(match1.getOrganizer()));</span>
 <span class="fc" id="L167">        match1.setTeam2Players(new HashSet&lt;&gt;());</span>
@@ -183,78 +183,81 @@ import jakarta.transaction.Transactional;
 
 <span class="fc" id="L184">        Match tennisMatch1 = new Match(</span>
 <span class="fc" id="L185">            LocalDateTime.of(2025, 9, 10, 10, 30),</span>
-            true, 
-            false,
-            false, 
-            pedro, 
-            4.50,
-            tennis,
-            club1
+<span class="fc" id="L186">            true, </span>
+<span class="fc" id="L187">            false,</span>
+<span class="fc" id="L188">            false,</span>
+<span class="fc" id="L189">            0, </span>
+<span class="fc" id="L190">            pedro, </span>
+<span class="fc" id="L191">            4.50,</span>
+<span class="fc" id="L192">            tennis,</span>
+<span class="fc" id="L193">            club1</span>
         );
 
-<span class="fc" id="L195">        Match tennisMatch2 = new Match(</span>
-<span class="fc" id="L196">            LocalDateTime.of(2025, 9, 18, 12, 0),</span>
-            true,
-            false,
-            false,
-            pedro,
-            4.50,
-            tennis,
-            club3
+<span class="fc" id="L196">        Match tennisMatch2 = new Match(</span>
+<span class="fc" id="L197">            LocalDateTime.of(2025, 9, 18, 12, 0),</span>
+<span class="fc" id="L198">            true,</span>
+<span class="fc" id="L199">            false,</span>
+<span class="fc" id="L200">            false,</span>
+<span class="fc" id="L201">            0,</span>
+<span class="fc" id="L202">            pedro,</span>
+<span class="fc" id="L203">            4.50,</span>
+<span class="fc" id="L204">            tennis,</span>
+<span class="fc" id="L205">            club3</span>
         );
 
-<span class="fc" id="L206">        Match tennisMatch3 = new Match(</span>
-<span class="fc" id="L207">            LocalDateTime.of(2025, 10, 1, 9, 30),</span>
-            true,
-            false,
-            false,
-            maria,
-            4.50,
-            tennis,
-            club3
+<span class="fc" id="L208">        Match tennisMatch3 = new Match(</span>
+<span class="fc" id="L209">            LocalDateTime.of(2025, 10, 1, 9, 30),</span>
+<span class="fc" id="L210">            true,</span>
+<span class="fc" id="L211">            false,</span>
+<span class="fc" id="L212">            false,</span>
+<span class="fc" id="L213">            0,</span>
+<span class="fc" id="L214">            maria,</span>
+<span class="fc" id="L215">            4.50,</span>
+<span class="fc" id="L216">            tennis,</span>
+<span class="fc" id="L217">            club3</span>
         );
 
-<span class="fc" id="L217">        tennisMatch1.setTeam1Players(Set.of(pedro));</span>
-<span class="fc" id="L218">        tennisMatch1.setTeam2Players(Set.of(maria));</span>
+<span class="fc" id="L220">        tennisMatch1.setTeam1Players(Set.of(pedro));</span>
+<span class="fc" id="L221">        tennisMatch1.setTeam2Players(Set.of(maria));</span>
 
-<span class="fc" id="L220">        tennisMatch2.setTeam1Players(Set.of(pedro));</span>
-<span class="fc" id="L221">        tennisMatch2.setTeam2Players(Set.of(luis));</span>
+<span class="fc" id="L223">        tennisMatch2.setTeam1Players(Set.of(pedro));</span>
+<span class="fc" id="L224">        tennisMatch2.setTeam2Players(Set.of(luis));</span>
 
-<span class="fc" id="L223">        tennisMatch3.setTeam1Players(Set.of(maria));</span>
-<span class="fc" id="L224">        tennisMatch3.setTeam2Players(Set.of(pedro));</span>
+<span class="fc" id="L226">        tennisMatch3.setTeam1Players(Set.of(maria));</span>
+<span class="fc" id="L227">        tennisMatch3.setTeam2Players(Set.of(pedro));</span>
 
-<span class="fc" id="L226">        tennisMatch1.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Maria Lopez&quot;, 2, 1,List.of(6,4,6),List.of(3,6,2))); // Pedro wins</span>
-<span class="fc" id="L227">        tennisMatch2.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Luis Sanchez&quot;, 0, 2,List.of(3,4), List.of(6,6))); // Pedro loses</span>
-<span class="fc" id="L228">        tennisMatch3.setResult(new MatchResult(&quot;Maria Lopez&quot;, &quot;Pedro Garcia&quot;, 2, 0,List.of(6,6), List.of(2,1))); // Pedro loses</span>
+<span class="fc" id="L229">        tennisMatch1.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Maria Lopez&quot;, 2, 1,List.of(6,4,6),List.of(3,6,2))); // Pedro wins</span>
+<span class="fc" id="L230">        tennisMatch2.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Luis Sanchez&quot;, 0, 2,List.of(3,4), List.of(6,6))); // Pedro loses</span>
+<span class="fc" id="L231">        tennisMatch3.setResult(new MatchResult(&quot;Maria Lopez&quot;, &quot;Pedro Garcia&quot;, 2, 0,List.of(6,6), List.of(2,1))); // Pedro loses</span>
 
 
-<span class="fc" id="L231">        matchService.save(tennisMatch1);</span>
-<span class="fc" id="L232">        matchService.save(tennisMatch2);</span>
-<span class="fc" id="L233">        matchService.save(tennisMatch3);</span>
+<span class="fc" id="L234">        matchService.save(tennisMatch1);</span>
+<span class="fc" id="L235">        matchService.save(tennisMatch2);</span>
+<span class="fc" id="L236">        matchService.save(tennisMatch3);</span>
 
-<span class="fc" id="L235">        pedro.updateStats(tennisMatch1.didPlayerWin(pedro), false); // wins</span>
-<span class="fc" id="L236">        pedro.updateStats(tennisMatch2.didPlayerWin(pedro), false); // loses</span>
-<span class="fc" id="L237">        pedro.updateStats(tennisMatch3.didPlayerWin(pedro), false); // loses</span>
-<span class="fc" id="L238">        userService.update(pedro);</span>
-<span class="fc" id="L239">    }</span>
+<span class="fc" id="L238">        pedro.updateStats(tennisMatch1.didPlayerWin(pedro), false); // wins</span>
+<span class="fc" id="L239">        pedro.updateStats(tennisMatch2.didPlayerWin(pedro), false); // loses</span>
+<span class="fc" id="L240">        pedro.updateStats(tennisMatch3.didPlayerWin(pedro), false); // loses</span>
+<span class="fc" id="L241">        userService.update(pedro);</span>
+<span class="fc" id="L242">    }</span>
     private void setUserImage(User user, String classpathResource) throws IOException {
          try {
-<span class="fc" id="L242">            Resource image = new ClassPathResource(classpathResource);</span>
-<span class="fc" id="L243">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="nc" id="L244">        } catch (IOException e) {</span>
-<span class="nc" id="L245">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
-<span class="fc" id="L246">        }</span>
+<span class="fc" id="L245">            Resource image = new ClassPathResource(classpathResource);</span>
+<span class="fc" id="L246">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
+<span class="pc" id="L247">        } catch (IOException e) {</span>
+<span class="nc" id="L248">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
+        }
 	
-<span class="fc" id="L248">	}</span>
+<span class="fc" id="L251">	}</span>
 
     private void setClubImage(Club club, String classpathResource) throws IOException {
          try {
-<span class="fc" id="L252">            Resource image = new ClassPathResource(classpathResource);</span>
-<span class="fc" id="L253">		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="nc" id="L254">        } catch (IOException e) {</span>
-<span class="nc" id="L255">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
-<span class="fc" id="L256">        }</span>
+<span class="fc" id="L255">            Resource image = new ClassPathResource(classpathResource);</span>
+<span class="fc" id="L256">		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
+<span class="pc" id="L257">        } catch (IOException e) {</span>
+<span class="nc" id="L258">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
+        }
 	
-<span class="fc" id="L258">	}</span>
+<span class="fc" id="L261">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

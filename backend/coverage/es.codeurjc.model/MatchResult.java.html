@@ -30,8 +30,8 @@ public class MatchResult {
 <span class="nc" id="L30">        this.team2Score = team2Score;</span>
 <span class="nc" id="L31">    }</span>
 
-    public MatchResult(String team1Name, String team2Name, Integer team1Sets, Integer team2Sets,List&lt;Integer&gt; team1GamesPerSetIntegers,
-<span class="fc" id="L34">     List&lt;Integer&gt; team2GamesPerSet) {</span>
+<span class="fc" id="L33">    public MatchResult(String team1Name, String team2Name, Integer team1Sets, Integer team2Sets,List&lt;Integer&gt; team1GamesPerSetIntegers,</span>
+     List&lt;Integer&gt; team2GamesPerSet) {
 <span class="fc" id="L35">        this.team1Name = team1Name;</span>
 <span class="fc" id="L36">        this.team2Name = team2Name;</span>
 <span class="fc" id="L37">        this.team1Sets = team1Sets;</span>
@@ -60,7 +60,7 @@ public class MatchResult {
     public String getResultSummary(ScoringType scoringType) {
 <span class="nc bnc" id="L61" title="All 2 branches missed.">        return switch (scoringType) {</span>
 <span class="nc" id="L62">            case SCORE -&gt; String.format(&quot;%s %d - %d %s&quot;,</span>
-                    team1Name, team1Score, team2Score, team2Name);
+<span class="nc" id="L63">                    team1Name, team1Score, team2Score, team2Name);</span>
 <span class="nc" id="L64">            case SETS -&gt; getSetsSummary();</span>
         };
     }
@@ -68,7 +68,7 @@ public class MatchResult {
     private String getSetsSummary() {
 <span class="nc" id="L69">        StringBuilder sb = new StringBuilder();</span>
 <span class="nc" id="L70">        sb.append(String.format(&quot;%s %d sets - %d sets %s&quot;,</span>
-                team1Name, team1Sets, team2Sets, team2Name));
+<span class="nc" id="L71">                team1Name, team1Sets, team2Sets, team2Name));</span>
 
 <span class="nc bnc" id="L73" title="All 4 branches missed.">        if (team1GamesPerSet != null &amp;&amp; team2GamesPerSet != null</span>
 <span class="nc bnc" id="L74" title="All 2 branches missed.">                &amp;&amp; team1GamesPerSet.size() == team2GamesPerSet.size()) {</span>
@@ -112,14 +112,14 @@ public class MatchResult {
     @Override
     public String toString() {
 <span class="nc" id="L114">        return &quot;MatchResult{&quot; +</span>
-                &quot;team1Name='&quot; + team1Name + '\'' +
-                &quot;, team2Name='&quot; + team2Name + '\'' +
-                &quot;, team1Score=&quot; + team1Score +
-                &quot;, team2Score=&quot; + team2Score +
-                &quot;, team1Sets=&quot; + team1Sets +
-                &quot;, team2Sets=&quot; + team2Sets +
-                &quot;, team1GamesPerSet=&quot; + team1GamesPerSet +
-                &quot;, team2GamesPerSet=&quot; + team2GamesPerSet +
+<span class="nc" id="L115">                &quot;team1Name='&quot; + team1Name + '\'' +</span>
+<span class="nc" id="L116">                &quot;, team2Name='&quot; + team2Name + '\'' +</span>
+<span class="nc" id="L117">                &quot;, team1Score=&quot; + team1Score +</span>
+<span class="nc" id="L118">                &quot;, team2Score=&quot; + team2Score +</span>
+<span class="nc" id="L119">                &quot;, team1Sets=&quot; + team1Sets +</span>
+<span class="nc" id="L120">                &quot;, team2Sets=&quot; + team2Sets +</span>
+<span class="nc" id="L121">                &quot;, team1GamesPerSet=&quot; + team1GamesPerSet +</span>
+<span class="nc" id="L122">                &quot;, team2GamesPerSet=&quot; + team2GamesPerSet +</span>
                 '}';
     }
 }
