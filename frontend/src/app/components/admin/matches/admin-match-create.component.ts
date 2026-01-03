@@ -92,8 +92,14 @@ export class AdminMatchCreateComponent implements OnInit {
   loadMatch(id: number) {
     this.matchService.getMatch(id).subscribe({
         next: (m: Match) => {
-            const dateObj = new Date(m.date);
-            const timeString = dateObj.toISOString().substring(11, 16);
+            const dateTime = new Date(m.date);
+            const hours = dateTime.getHours();
+            const minutes = dateTime.getMinutes();
+            dateTime.setHours(hours, minutes, 0, 0);
+
+            const localISOString = new Date(dateTime.getTime() - dateTime.getTimezoneOffset() * 60000).toISOString();
+
+            const timeString = localISOString.substring(11, 16);
 
             const selectedClub = this.clubs.find(c => c.id === m.club.id) ?? null;
             const selectedSport = selectedClub?.sports.find(s => s.id === m.sport.id) ?? null;
@@ -109,7 +115,7 @@ export class AdminMatchCreateComponent implements OnInit {
             this.form.get('mode')?.enable();
             
             this.form.patchValue({
-                date: dateObj,
+                date: dateTime,
                 time: timeString,
                 type: m.type,
                 isPrivate: m.isPrivate,
