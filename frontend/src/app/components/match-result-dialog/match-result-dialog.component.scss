@@ -1,0 +1,61 @@
+.dialog-title {
+  padding: 20px 24px;
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.teams-card {
+  padding: 1rem;
+}
+
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  border-radius: 10px;
+  overflow: hidden;
+
+  th{
+    color: #3f51b5;
+  }
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #5c5c5c;
+    border-left: 1px solid #5c5c5c;
+    border-right: 1px solid #5c5c5c;
+  }
+
+
+  .team-label {
+    font-weight: bold;
+    text-align: left;
+    padding-left: 12px;
+    color: #3f51b5;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.team-label {
+  font-weight: 600;
+  text-align: left;
+}
+
+.score-input,
+.set-input {
+  width: 60px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.confirm-btn {
+  background: #1e88e5 !important;
+  color: white !important;
+}

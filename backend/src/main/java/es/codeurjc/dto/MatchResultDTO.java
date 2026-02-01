@@ -7,8 +7,6 @@ public record MatchResultDTO(
     String team2Name,
     Integer team1Score,
     Integer team2Score,
-    Integer team1Sets,
-    Integer team2Sets,
     List<Integer> team1GamesPerSet,
     List<Integer> team2GamesPerSet
 ){

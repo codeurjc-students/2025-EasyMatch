@@ -5,10 +5,10 @@ import { Match } from '../models/match.model';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { JoinMatchResponse } from '../models/join-match-response';
+import { MatchResult } from '../models/match-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class MatchService {
-  
   
   private apiUrl = environment.apiUrl;
 
@@ -95,8 +95,10 @@ export class MatchService {
   updateMatch(editingId: number, matchData: Partial<Match>) : Observable<Match> {
       return this.http.put<Match>(`${this.apiUrl}/matches/${editingId}`, matchData, { withCredentials: true });
   }
+
+  addResult(matchId: number, result: MatchResult): Observable<Match> {
+    return this.http.put<Match>(`${this.apiUrl}/matches/${matchId}/result`, result,{ withCredentials: true });
+  }
   
 
 }
-
-

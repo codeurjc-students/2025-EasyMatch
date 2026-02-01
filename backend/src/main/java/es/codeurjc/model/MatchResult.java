@@ -12,9 +12,6 @@ public class MatchResult {
     private Integer team1Score;
     private Integer team2Score;
 
-    private Integer team1Sets;
-    private Integer team2Sets;
-
     @ElementCollection
     private List<Integer> team1GamesPerSet;
 
@@ -30,23 +27,44 @@ public class MatchResult {
         this.team2Score = team2Score;
     }
 
-    public MatchResult(String team1Name, String team2Name, Integer team1Sets, Integer team2Sets,List<Integer> team1GamesPerSetIntegers,
+    public MatchResult(String team1Name, String team2Name,List<Integer> team1GamesPerSetIntegers,
      List<Integer> team2GamesPerSet) {
         this.team1Name = team1Name;
         this.team2Name = team2Name;
-        this.team1Sets = team1Sets;
-        this.team2Sets = team2Sets;
         this.team1GamesPerSet = team1GamesPerSetIntegers;
         this.team2GamesPerSet = team2GamesPerSet;
     }
-    
+
+    public int getTeam1SetsWon() {
+        if (team1GamesPerSet == null || team2GamesPerSet == null) return 0;
+
+        int won = 0;
+        for (int i = 0; i < team1GamesPerSet.size(); i++) {
+            if (team1GamesPerSet.get(i) > team2GamesPerSet.get(i)) {
+                won++;
+            }
+        }
+        return won;
+    }
+
+    public int getTeam2SetsWon() {
+        if (team1GamesPerSet == null || team2GamesPerSet == null) return 0;
+
+        int won = 0;
+        for (int i = 0; i < team2GamesPerSet.size(); i++) {
+            if (team2GamesPerSet.get(i) > team1GamesPerSet.get(i)) {
+                won++;
+            }
+        }
+        return won;
+    }
 
     public String getWinner(ScoringType scoringType) {
         if (scoringType == null) return "Tipo de puntuación no definido";
 
         return switch (scoringType) {
             case SCORE -> compare(team1Score, team2Score);
-            case SETS -> compare(team1Sets, team2Sets);
+            case SETS -> compare(getTeam1SetsWon(), getTeam2SetsWon());
         };
     }
 
@@ -55,33 +73,6 @@ public class MatchResult {
         if (v1 > v2) return team1Name;
         if (v2 > v1) return team2Name;
         return "Empate";
-    }
-
-    public String getResultSummary(ScoringType scoringType) {
-        return switch (scoringType) {
-            case SCORE -> String.format("%s %d - %d %s",
-                    team1Name, team1Score, team2Score, team2Name);
-            case SETS -> getSetsSummary();
-        };
-    }
-
-    private String getSetsSummary() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%s %d sets - %d sets %s",
-                team1Name, team1Sets, team2Sets, team2Name));
-
-        if (team1GamesPerSet != null && team2GamesPerSet != null
-                && team1GamesPerSet.size() == team2GamesPerSet.size()) {
-            sb.append(" [");
-            for (int i = 0; i < team1GamesPerSet.size(); i++) {
-                sb.append(team1GamesPerSet.get(i))
-                  .append("-")
-                  .append(team2GamesPerSet.get(i));
-                if (i < team1GamesPerSet.size() - 1) sb.append(", ");
-            }
-            sb.append("]");
-        }
-        return sb.toString();
     }
 
 
@@ -97,12 +88,6 @@ public class MatchResult {
     public Integer getTeam2Score() { return team2Score; }
     public void setTeam2Score(Integer team2Score) { this.team2Score = team2Score; }
 
-    public Integer getTeam1Sets() { return team1Sets; }
-    public void setTeam1Sets(Integer team1Sets) { this.team1Sets = team1Sets; }
-
-    public Integer getTeam2Sets() { return team2Sets; }
-    public void setTeam2Sets(Integer team2Sets) { this.team2Sets = team2Sets; }
-
     public List<Integer> getTeam1GamesPerSet() { return team1GamesPerSet; }
     public void setTeam1GamesPerSet(List<Integer> team1GamesPerSet) { this.team1GamesPerSet = team1GamesPerSet; }
 
@@ -116,8 +101,6 @@ public class MatchResult {
                 ", team2Name='" + team2Name + '\'' +
                 ", team1Score=" + team1Score +
                 ", team2Score=" + team2Score +
-                ", team1Sets=" + team1Sets +
-                ", team2Sets=" + team2Sets +
                 ", team1GamesPerSet=" + team1GamesPerSet +
                 ", team2GamesPerSet=" + team2GamesPerSet +
                 '}';

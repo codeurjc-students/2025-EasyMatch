@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.MatchDTO;
+import es.codeurjc.dto.MatchResultDTO;
 import es.codeurjc.model.User;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
@@ -102,7 +103,6 @@ public class MatchRestController {
         MatchDTO deletedMatch = matchService.getMatch(id);
         matchService.delete(id);
         return deletedMatch;
-        
     }
 
     @PutMapping("/{id}")
@@ -113,6 +113,17 @@ public class MatchRestController {
         return matchService.replaceMatch(id, updatedMatchDTO);
     }
 
+    @GetMapping("{id}/result")
+    public MatchResultDTO getMatchResult(@PathVariable long id) {
+        return matchService.getMatchResult(id);
+    }
 
+    @PutMapping("/{id}/result")
+    public MatchResultDTO addOrUpdateMatchResult(@PathVariable long id, @RequestBody MatchResultDTO resultData) {
+        if(matchService.getMatch(id).organizer().id() != userService.getLoggedUserDTO().id()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo el organizador del partido puede añadir o editar el resultado");
+        }
+        return matchService.addOrUpdateMatchResult(id, resultData);
+    }
 
 }

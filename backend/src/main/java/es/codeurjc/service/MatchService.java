@@ -1,5 +1,6 @@
 package es.codeurjc.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -13,8 +14,11 @@ import org.springframework.stereotype.Service;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.dto.MatchResultDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.MatchResult;
+import es.codeurjc.model.ScoringType;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.MatchRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,7 +154,7 @@ public class MatchService {
  		}
      }
 
-     public void leaveMatch(long id, User user) {
+    public void leaveMatch(long id, User user) {
         Match match = matchRepository.findById(id).orElseThrow();
 
         match.getTeam1Players().removeIf(p -> p.getId() == user.getId());
@@ -160,7 +164,7 @@ public class MatchService {
         }else{
             matchRepository.save(match);
         }
-     }
+    }
     public MatchDTO replaceMatch(long id, MatchDTO updatedMatchDTO) {
         if (matchRepository.existsById(id)) {
             Match match = matchRepository.findById(id).orElseThrow();
@@ -173,8 +177,50 @@ public class MatchService {
             matchRepository.save(updatedMatch);
             return toDTO(updatedMatch);
  		} else {
- 			throw new NoSuchElementException("Match with id " + id + " does not exist.");
+ 			throw new NoSuchElementException("El partido con id " + id + " no existe.");
  		}
     }
-    
+
+    public MatchResultDTO addOrUpdateMatchResult(long id, MatchResultDTO resultData) {
+        if (matchRepository.existsById(id)) {
+            Match match = matchRepository.findById(id).orElseThrow();
+            MatchResult result = new MatchResult();
+            if (resultData.team1Name() != null && resultData.team2Name() != null) {
+                result.setTeam1Name(resultData.team1Name());
+                result.setTeam2Name(resultData.team2Name());
+            } else {
+                result.setTeam1Name("A");
+                result.setTeam2Name("B");
+            }
+            if(match.getSport().getScoringType() == ScoringType.SCORE){ 
+                result.setTeam1Score(resultData.team1Score());
+                result.setTeam2Score(resultData.team2Score());
+                result.setTeam1GamesPerSet(new ArrayList<>());
+                result.setTeam2GamesPerSet(new ArrayList<>());
+            }else if (match.getSport().getScoringType() == ScoringType.SETS){
+                result.setTeam1Score(0);
+                result.setTeam2Score(0);
+                result.setTeam1GamesPerSet(resultData.team1GamesPerSet());
+                result.setTeam2GamesPerSet(resultData.team2GamesPerSet());
+            }
+            match.setResult(result);
+            match.getTeam1Players().forEach(user -> {
+                user.updateStats(match.didPlayerWin(user), false);
+                userService.update(user);
+            });
+            match.getTeam2Players().forEach(user -> {
+                user.updateStats(match.didPlayerWin(user), false);
+                userService.update(user);
+            });
+            matchRepository.save(match);
+            return resultData;
+ 		} else {
+ 			throw new NoSuchElementException("El partido con id " + id + " no existe.");
+ 		}
+    }
+
+    public MatchResultDTO getMatchResult(long id) {
+        return getMatch(id).result() == null ? new MatchResultDTO(null, null, null, null, null, null) : getMatch(id).result();
+    }
+
 }
