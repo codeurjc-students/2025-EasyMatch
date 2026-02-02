@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ import es.codeurjc.dto.BasicUserDTO;
 import es.codeurjc.dto.ClubDTO;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.dto.MatchResultDTO;
 import es.codeurjc.dto.SportDTO;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.model.Club;
@@ -187,6 +189,26 @@ public class MatchServiceIntegrationTest {
         assertThat(replacedMatch.club(), isA(BasicClubDTO.class));
         assertThat(replacedMatch.team1Players(), isA(Set.class));
         assertThat(replacedMatch.team2Players(), isA(Set.class));
+    }
+
+    @Test
+    @Order(8)
+    @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
+    public void addOrUpdateMatchResultTest(){
+        long id = 6L;
+        MatchDTO match = matchService.getMatch(id);
+        assertThat(match.state(), equalTo(false));
+
+        MatchResultDTO resultDTO = new MatchResultDTO("A", "B",0,0,new ArrayList<>(List.of(6,3,7)), new ArrayList<>(List.of(4,6,5)));
+
+        matchService.addOrUpdateMatchResult(id, resultDTO);
+
+        MatchDTO matchWithResult = matchService.getMatch(id);
+        assertThat(matchWithResult.result(), isA(MatchResultDTO.class));
+        assertThat(matchWithResult.result().team1GamesPerSet(), equalTo(List.of(6,3,7)));
+        assertThat(matchWithResult.result().team2GamesPerSet(), equalTo(List.of(4,6,5)));
+        assertThat(matchWithResult.state(), equalTo(false));
+        
     }
 
     

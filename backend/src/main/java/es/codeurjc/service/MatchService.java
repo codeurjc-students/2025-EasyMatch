@@ -118,13 +118,12 @@ public class MatchService {
 			Match match = matchRepository.findById(id).orElseThrow();
 			User loggedUser = userService.getLoggedUser();
             int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();
-            int totalPlayers = match.getTeam1Players().size() + match.getTeam2Players().size();
             
             if (!team.equalsIgnoreCase("A") && !team.equalsIgnoreCase("B")) { 
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El equipo debe ser A o B");
             }
                 
-            if (totalPlayers < playersPerGame){
+            if (!match.isFull()){
                 
                 if (team.equalsIgnoreCase("A")) {
                     if (match.getTeam1Players().size() >= playersPerGame / 2 )
@@ -142,8 +141,7 @@ public class MatchService {
                     else
                         match.addPlayerToTeam2(loggedUser);
                 }
-                totalPlayers++;
-                if (totalPlayers == playersPerGame) match.setState(false);
+                if (match.isFull()) match.setState(false);
                 matchRepository.save(match);
             }else{
                 throw new ResponseStatusException(HttpStatus.CONFLICT,"El partido esta lleno");
@@ -184,6 +182,10 @@ public class MatchService {
     public MatchResultDTO addOrUpdateMatchResult(long id, MatchResultDTO resultData) {
         if (matchRepository.existsById(id)) {
             Match match = matchRepository.findById(id).orElseThrow();
+            if (!match.isFull()){
+                throw new ResponseStatusException(HttpStatus.CONFLICT,"No se puede añadir el resultado a un partido incompleto");
+            }
+            
             MatchResult result = new MatchResult();
             if (resultData.team1Name() != null && resultData.team2Name() != null) {
                 result.setTeam1Name(resultData.team1Name());
@@ -203,15 +205,26 @@ public class MatchService {
                 result.setTeam1GamesPerSet(resultData.team1GamesPerSet());
                 result.setTeam2GamesPerSet(resultData.team2GamesPerSet());
             }
+
             match.setResult(result);
-            match.getTeam1Players().forEach(user -> {
-                user.updateStats(match.didPlayerWin(user), false);
-                userService.update(user);
-            });
-            match.getTeam2Players().forEach(user -> {
-                user.updateStats(match.didPlayerWin(user), false);
-                userService.update(user);
-            });
+
+            if (match.getResult() == null){
+                match.getTeam1Players().forEach(user -> {
+                    user.updateStats(match.didPlayerWin(user), false);
+                    userService.update(user);
+                });
+                match.getTeam2Players().forEach(user -> {
+                    user.updateStats(match.didPlayerWin(user), false);
+                    userService.update(user);
+                });match.getTeam1Players().forEach(user -> {
+                    user.updateStats(match.didPlayerWin(user), false);
+                    userService.update(user);
+                });
+                match.getTeam2Players().forEach(user -> {
+                    user.updateStats(match.didPlayerWin(user), false);
+                    userService.update(user);
+                });
+            }
             matchRepository.save(match);
             return resultData;
  		} else {

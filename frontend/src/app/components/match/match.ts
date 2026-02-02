@@ -122,7 +122,7 @@ export class MatchComponent implements OnInit{
     dialogRef.afterClosed().subscribe(result => {
       if (!result) return;
 
-      this.service.addResult(match.id!, result).subscribe({
+      this.service.addMatchResult(match.id!, result).subscribe({
         next: () => {
           this.snack.open('✅ Resultado guardado', 'Cerrar', { duration: 3000 });
           this.reloadAfterSave();
@@ -134,11 +134,11 @@ export class MatchComponent implements OnInit{
     });
   }
 
-  addResult(match: Match) {
+  addMatchResult(match: Match) {
     this.openResultDialog(match);
   }
 
-  editResult(match: Match) {
+  editMatchResult(match: Match) {
     this.openResultDialog(match);
   }
 

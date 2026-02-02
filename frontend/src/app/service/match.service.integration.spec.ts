@@ -6,6 +6,7 @@ import { Club } from "../models/club.model";
 import { Match } from "../models/match.model";
 import { LoginService } from "./login.service";
 import { ScoringType } from "../models/scoring-type";
+import { MatchResult } from "../models/match-result.model";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 jasmine.getEnv().configure({ random: false });
@@ -120,9 +121,6 @@ describe('MatchService', () => {
    });
 
    it('updateMatch should update match fields when admin is logged in', (done: DoneFn) => {
-
-    
-
     loginService.login(adminLoginRequest).subscribe({
       next: () => {
 
@@ -189,6 +187,32 @@ describe('MatchService', () => {
     });
   });
 
-
-
+  it('addMatchReult should add result to a match when organizer is logged in', (done: DoneFn) => {
+    const mockResult: MatchResult = {
+      team1Name: "A",
+      team2Name: "B",
+      team1Score: 0,
+      team2Score: 0,
+      team1GamesPerSet: [6,6],
+      team2GamesPerSet: [2,1]
+    };
+    loginService.login(loginRequest).subscribe({
+      next: () => {
+            const id = 6;
+            service.addMatchResult(id!, mockResult).subscribe({
+              next: (matchResult: MatchResult) => {
+                expect(matchResult).toBeTruthy();
+                expect(matchResult.team1GamesPerSet).toEqual(mockResult.team1GamesPerSet);
+                expect(matchResult.team2GamesPerSet).toEqual(mockResult.team2GamesPerSet);
+                done();
+              },
+              error: err => {
+                fail(`addMatchResult failed: ${err.message}`);
+                done();
+              }
+            });
+          
+      }
+    });
+  });
 });

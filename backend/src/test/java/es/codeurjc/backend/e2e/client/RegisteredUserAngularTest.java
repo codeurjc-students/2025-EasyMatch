@@ -2,6 +2,7 @@ package es.codeurjc.backend.e2e.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -197,7 +198,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(8) 
+    @Order(9) 
     public void verifyProfilePageLoadsAndAccountDeletionWorks(){
         loginUser("pedro@emeal.com","pedroga4");
 
@@ -211,8 +212,8 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         assertThat(currentUser.findElement(By.cssSelector(".birthdate")).getText(), containsString("mayo 1990"));
         assertThat(currentUser.findElement(By.cssSelector(".description")).getText(), equalTo("Nuevo perfil actualizado"));
         assertThat(currentUser.findElement(By.id("totalMatches")).getText(), containsString("3"));
-        assertThat(currentUser.findElement(By.id("wins")).getText(), containsString("1"));
-        assertThat(currentUser.findElement(By.id("winRate")).getText(), containsString("33,33%"));
+        assertThat(currentUser.findElement(By.id("wins")).getText(), containsString("2"));
+        assertThat(currentUser.findElement(By.id("winRate")).getText(), containsString("66,67%"));
         assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,12"));
         
         WebElement deleteBtn = driver.findElement(By.id("delete_account_btn"));
@@ -229,7 +230,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
     }
 
     @Test 
-    @Order(6)
+    @Order(8)
     public void verifyCreateMatchPageAndSubmitForm(){
         loginUser("pedro@emeal.com","pedroga4");
         WebElement createMatchBtn = driver.findElement(By.id("create-match-btn"));
@@ -279,5 +280,79 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         WebElement match1 = driver.findElement(By.id("match-card9")).findElement(By.className("organizer-name"));
         assertThat(match1.getText(), equalTo("Pedro Garcia"));
 
+    }
+
+    @Test
+    @Order(9)
+    public void verifyMatchResultEditionWorks(){
+        loginUser("pedro@emeal.com","pedroga4");
+
+        WebElement optionsMenu = driver.findElement(By.className("user-info"));
+        optionsMenu.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("my-matches-btn")));
+        WebElement myMatchesBtn = driver.findElement(By.className("my-matches-btn"));
+        scrollIntoView(myMatchesBtn);
+        myMatchesBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-my-matches")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
+        WebElement matchWithResult = driver.findElement(By.id("match-card7"));
+        WebElement editResultBtn = matchWithResult.findElement(By.className("edit-result-btn"));
+        scrollIntoView(editResultBtn);
+        editResultBtn.click();
+
+        WebElement resultDialog = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("app-match-result-dialog")));
+        List<WebElement> setInputs = resultDialog.findElements(By.className("set-input"));
+        assertEquals(4, setInputs.size());
+
+        // TEAM A
+        setInputs.get(0).clear();
+        setInputs.get(0).sendKeys("6");
+        setInputs.get(1).clear();
+        setInputs.get(1).sendKeys("6");
+
+        // TEAM B
+        setInputs.get(2).clear();
+        setInputs.get(2).sendKeys("4");
+        setInputs.get(3).clear();
+        setInputs.get(3).sendKeys("4");
+
+        WebElement saveBtn = resultDialog.findElement(By.className("confirm-btn"));
+        saveBtn.click();
+
+        wait.until(ExpectedConditions.invisibilityOf(resultDialog));
+
+        waitForPageReload();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("match-card7")));
+        matchWithResult = driver.findElement(By.id("match-card7"));
+
+        WebElement viewResultBtn = wait.until(
+            ExpectedConditions.elementToBeClickable(
+                matchWithResult.findElement(By.className("view-result-btn"))
+            )
+        );
+        viewResultBtn.click();
+
+        WebElement viewDialog = wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("app-match-result-dialog")
+            )
+        );
+
+        List<WebElement> setTexts = viewDialog.findElements(By.className("set-text"));
+        assertEquals(4, setTexts.size(), "Número incorrecto de sets en modo readonly");
+
+        assertEquals("6", setTexts.get(0).getText());
+        assertEquals("6", setTexts.get(1).getText());
+
+
+        assertEquals("4", setTexts.get(2).getText());
+        assertEquals("4", setTexts.get(3).getText());
+
+        WebElement cancelBtn = viewDialog.findElement(By.xpath(".//button[.//span[contains(text(),'Cancelar')]]"));
+        cancelBtn.click();
+
+        wait.until(ExpectedConditions.invisibilityOf(viewDialog));
     }
 }

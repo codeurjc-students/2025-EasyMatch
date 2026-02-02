@@ -96,11 +96,11 @@
             <mat-icon>visibility</mat-icon>
             Ver resultado
           </button>
-          <button mat-raised-button color="primary" class="edit-result-btn" (click)="editResult(match)" *ngIf="hasResult(match)">
+          <button mat-raised-button color="primary" class="edit-result-btn" (click)="editMatchResult(match)" *ngIf="hasResult(match)">
             <mat-icon>edit</mat-icon>
             Editar resultado
           </button>
-          <button mat-raised-button color="primary" class="add-result-btn" (click)="addResult(match)" *ngIf="!hasResult(match)">
+          <button mat-raised-button color="primary" class="add-result-btn" (click)="addMatchResult(match)" *ngIf="!hasResult(match)">
             <mat-icon>add</mat-icon>
             Añadir resultado
           </button>

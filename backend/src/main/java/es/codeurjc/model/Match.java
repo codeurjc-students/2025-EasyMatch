@@ -113,6 +113,12 @@ public class Match {
         return !didPlayerWin(player);
     }
 
+	public boolean isFull() {
+		int playersPerGame = sport.getModes().get(modeSelected).getPlayersPerGame();
+		int totalPlayers = (team1Players != null ? team1Players.size() : 0) + (team2Players != null ? team2Players.size() : 0);
+		return totalPlayers >= playersPerGame;
+	}
+
 	public long getId() {
 		return id;
 	}

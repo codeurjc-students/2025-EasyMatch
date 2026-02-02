@@ -157,6 +157,7 @@ public class MatchRestControllerTest {
         .then()
             .statusCode(200);
     }
+
     @Test
     @Order(7)
     public void testReplaceMatch() {
@@ -218,8 +219,79 @@ public class MatchRestControllerTest {
             .statusCode(404);
     }
 
+    @Test
+    @Order(9)
+    public void testAddOrUpdateIncompleteMatchResult(){
+        long matchId = 1L;
+        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        String resultJson = """
+            {
+                "team1Name": "A",
+                "team2Name": "B",
+                "team1GamesPerSet": [6, 6],
+                "team2GamesPerSet": [4, 3]
+            }
+        """;
+        given()
+            .contentType(ContentType.JSON)
+            .cookie("AuthToken", cookie)
+            .body(resultJson)
+        .when()
+            .put("/api/v1/matches/{id}/result", matchId)
+        .then()
+            .statusCode(409)
+            .body("message", equalTo("No se puede añadir el resultado a un partido incompleto"));
+    }
 
-    
+    @Test
+    @Order(10)
+    public void testAddOrUpdateFullMatchResult(){
+        long matchId = 1L;
+        String cookie = loginAndGetCookie("silvia@emeal.com","silvia5");
+        String teamSelectedJson = """
+            {
+            "team": "B"
+            }
+        """;
+        given()
+            .contentType(ContentType.JSON)
+            .cookie("AuthToken", cookie)
+            .body(teamSelectedJson)
+        .when()
+            .put("/api/v1/matches/{id}/users/me", matchId)
+        .then()
+            .statusCode(200)
+            .body("status",equalTo("SUCCESS"))
+            .body("message", equalTo("Player added to team B"));
+        
+        given()
+            .contentType(ContentType.JSON)
+            .cookie("AuthToken", cookie)
+        .post("/api/v1/auth/logout")
+                .then()
+                .body("status", equalTo("SUCCESS"))
+                .body("message", equalTo("logout successfully"));   
+
+        cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        
+        String resultJson = """
+            {
+                "team1Name": "A",
+                "team2Name": "B",
+                "team1GamesPerSet": [6, 3, 7],
+                "team2GamesPerSet": [4, 6, 5]
+            }
+        """;
+        given()
+            .contentType(ContentType.JSON)
+            .cookie("AuthToken", cookie)
+            .body(resultJson)
+        .when()
+            .put("/api/v1/matches/{id}/result", matchId)
+        .then()
+            .statusCode(200);
+    }
+
     private String loginAndGetCookie(String email, String password) {
         String loginJson = 
             String.format("""

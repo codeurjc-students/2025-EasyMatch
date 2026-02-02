@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.dto.MatchResultDTO;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.repository.MatchRepository;
@@ -314,7 +315,56 @@ public class MatchServiceUnitaryTest {
 
         //THEN
         NoSuchElementException ex = assertThrows(NoSuchElementException.class, ()->  matchService.replaceMatch(id, updatedMatchDTO));
-        assertThat(ex.getMessage(),equalTo("Match with id " + id + " does not exist."));
+        assertThat(ex.getMessage(),equalTo("El partido con id " + id + " no existe."));
+    }
+
+    @Test
+    public void addOrUpdateMatchResultToExistingMatchTest(){
+        //GIVEN
+        long id = 3L;
+        User organizer =  new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true,0, organizer,5.00, sport,null);
+        match.setId(id);
+        match.setTeam1Players(new HashSet<>(Set.of(organizer,new User())));
+        match.setTeam2Players(new HashSet<>(Set.of(new User(),new User())));
+        Optional<Match> optionalMatch = Optional.of(match);
+        //WHEN
+        when(matchRepository.existsById(id)).thenReturn(true);
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+
+        MatchResultDTO resultDTO = new MatchResultDTO("A","B",6,4,List.of(6,7),List.of(4,5));
+        MatchResultDTO addedResultDTO = matchService.addOrUpdateMatchResult(id, resultDTO);
+
+        //THEN
+        assertThat(addedResultDTO.team1Name(), equalTo(resultDTO.team1Name()));
+        assertThat(addedResultDTO.team2Name(), equalTo(resultDTO.team2Name()));
+        verify(matchRepository,times(1)).save(any(Match.class));
+    }
+
+    @Test
+    public void addOrUpdateMatchResultToIncompleteMatchTest(){
+        //GIVEN
+        long id = 3L;
+        User organizer =  new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true,0, organizer,5.00, sport,null);
+        match.setId(id);
+        match.setTeam1Players(new HashSet<>(Set.of(organizer)));
+        match.setTeam2Players(new HashSet<>(Set.of(new User(),new User())));
+        Optional<Match> optionalMatch = Optional.of(match);
+        //WHEN
+        when(matchRepository.existsById(id)).thenReturn(true);
+        when(matchRepository.findById(id)).thenReturn(optionalMatch);
+
+        MatchResultDTO resultDTO = new MatchResultDTO("A","B",6,4,List.of(6,7),List.of(4,5));
+
+        //THEN
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
+            matchService.addOrUpdateMatchResult(id, resultDTO);
+        });
+        assertThat(ex.getReason(),equalTo("No se puede añadir el resultado a un partido incompleto"));
+        assertThat(ex.getStatusCode().toString(),equalTo("409 CONFLICT"));
     }
 
 }

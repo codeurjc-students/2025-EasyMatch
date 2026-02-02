@@ -96,8 +96,8 @@ export class MatchService {
       return this.http.put<Match>(`${this.apiUrl}/matches/${editingId}`, matchData, { withCredentials: true });
   }
 
-  addResult(matchId: number, result: MatchResult): Observable<Match> {
-    return this.http.put<Match>(`${this.apiUrl}/matches/${matchId}/result`, result,{ withCredentials: true });
+  addMatchResult(matchId: number, result: MatchResult): Observable<MatchResult> {
+    return this.http.put<MatchResult>(`${this.apiUrl}/matches/${matchId}/result`, result,{ withCredentials: true });
   }
   
 
