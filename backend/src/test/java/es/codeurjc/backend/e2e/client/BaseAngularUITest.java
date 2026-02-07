@@ -87,6 +87,13 @@ public abstract class BaseAngularUITest {
         waitForAngularToFinish();
     }
 
+    protected void clickWithJs(WebElement element) {
+        ((JavascriptExecutor) driver).executeScript(
+            "arguments[0].scrollIntoView({block:'center'}); arguments[0].click();",
+            element
+        );
+    }
+
     protected void loginUser(String email, String password) {
         driver.get("http://localhost:" + port + "/");
 

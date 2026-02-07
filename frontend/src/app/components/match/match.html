@@ -90,49 +90,17 @@
       <mat-divider class="divider"></mat-divider>
       <mat-card-content class="result-section">
 
-        <h3 class="result-title">
-          Resultado
-        </h3>
-
-        <div class="result-table-container">
-          <table class="result-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th *ngFor="let s of match.result.team1GamesPerSet; let i = index">Set {{ i + 1 }}</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td class="team-label">Equipo A</td>
-                <td *ngFor="let s of match.result.team1GamesPerSet; let i = index">
-                  {{ s || 0 }}
-                </td>
-              </tr>
-
-              <tr>
-                <td class="team-label">Equipo B</td>
-                <td *ngFor="let s of match.result.team2GamesPerSet; let i = index">
-                  {{ s || 0 }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
         
         <div class="add-result-container">
-          <button mat-raised-button color="primary" class="edit-result-btn" (click)="editResult(match)" *ngIf="hasResult(match)">
+          <button mat-raised-button color="primary" class="view-result-btn" (click)="viewResult(match)" *ngIf="hasResult(match)">
+            <mat-icon>visibility</mat-icon>
+            Ver resultado
+          </button>
+          <button mat-raised-button color="primary" class="edit-result-btn" (click)="editMatchResult(match)" *ngIf="hasResult(match)">
             <mat-icon>edit</mat-icon>
             Editar resultado
           </button>
-          <button 
-            mat-raised-button 
-            color="primary" 
-            class="add-result-btn"
-            (click)="addResult(match)"
-             *ngIf="!hasResult(match)"
-          >
+          <button mat-raised-button color="primary" class="add-result-btn" (click)="addMatchResult(match)" *ngIf="!hasResult(match)">
             <mat-icon>add</mat-icon>
             Añadir resultado
           </button>

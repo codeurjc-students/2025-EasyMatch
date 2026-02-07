@@ -1,0 +1,122 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon color="primary">emoji_events</mat-icon>
+  Resultado del partido
+</h2>
+
+<mat-dialog-content>
+
+  <mat-card class="teams-card">
+
+    @if (!isSets()) {
+      <table class="result-table editable">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Puntos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="team-label">Equipo A</td>
+            <td>
+              @if (!isReadonly) {
+                <input
+                  matInput
+                  type="number"
+                  class="score-input"
+                  [value]="team1Score()"
+                  (input)="team1Score.set($any($event.target).valueAsNumber)"
+                />
+              } @else {
+                <span class="score-text">{{ team1Score() }}</span>
+              }
+            </td>
+          </tr>
+          <tr>
+            <td class="team-label">Equipo B</td>
+            <td>
+              @if (!isReadonly) {
+                <input
+                  matInput
+                  type="number"
+                  class="score-input"
+                  [value]="team2Score()"
+                  (input)="team2Score.set($any($event.target).valueAsNumber)"
+                />
+              } @else {
+                <span class="score-text">{{ team2Score() }}</span>
+              }
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    }
+    
+    @if (isSets()) {
+      <table class="result-table editable">
+        <thead>
+          <tr>
+            <th></th>
+            @for (s of team1Sets(); track $index) {
+              <th>Set {{ $index + 1 }}</th>
+            }
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td class="team-label">Equipo A</td>
+            @for (s of team1Sets(); track $index) {
+              <td>
+                @if (!isReadonly) {
+                  <input
+                    matInput
+                    type="number"
+                    class="set-input"
+                    min="0" max="7"
+                    [value]="s"
+                    (input)="updateSet('A', $index, $any($event.target).valueAsNumber)"
+                  />
+                } @else {
+                  <span class="set-text">{{ s }}</span>
+                }
+              </td>
+            }
+          </tr>
+
+          <tr>
+            <td class="team-label">Equipo B</td>
+            @for (s of team2Sets(); track $index) {
+              <td>
+                @if (!isReadonly) {
+                  <input
+                    matInput
+                    type="number"
+                    min="0" max="7"
+                    class="set-input"
+                    [value]="s"
+                    (input)="updateSet('B', $index, $any($event.target).valueAsNumber)"
+                  />
+                } @else {
+                  <span class="set-text">{{ s }}</span>
+                }
+              </td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    }
+    <div class="error-message" *ngIf="errorMessage()">
+      <mat-icon color="warn">error</mat-icon>
+      {{ errorMessage() }}
+    </div>
+  </mat-card>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onCancel()">Cancelar</button>
+  <button mat-flat-button color="primary" class="confirm-btn" *ngIf="!isReadonly" (click)="onConfirm()">
+    Guardar
+  </button>
+</mat-dialog-actions>

@@ -241,7 +241,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
         scrollIntoView(submitBtn);
-        submitBtn.click();
+        clickWithJs(submitBtn);
 
         WebElement oldElement = submitBtn;
         wait.until(ExpectedConditions.stalenessOf(oldElement));

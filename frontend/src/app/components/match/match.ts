@@ -14,6 +14,8 @@ import { JoinMatchDialogComponent } from '../join-match-dialog/join-match-dialog
 import { UserService } from '../../service/user.service';
 import { User } from '../../models/user.model';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatchResultDialogComponent } from '../match-result-dialog/match-result-dialog.component';
+
 
 
 @Component({
@@ -92,6 +94,7 @@ export class MatchComponent implements OnInit{
       }
     });
   }
+  
   openLeaveDialog(match: Match) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
@@ -109,12 +112,55 @@ export class MatchComponent implements OnInit{
       }
     });
   }
-  addResult(match: Match) {
-    console.log("Añadir resultado para partido", match.id);
+  
+  private openResultDialog(match: Match) {
+    const dialogRef = this.dialog.open(MatchResultDialogComponent, {
+      width: '500px',
+      data: { match }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+
+      this.service.addMatchResult(match.id!, result).subscribe({
+        next: () => {
+          this.snack.open('✅ Resultado guardado', 'Cerrar', { duration: 3000 });
+          this.reloadAfterSave();
+        },
+        error: (err) => {
+          console.error('Error al guardar el resultado:', err);
+
+          const message =
+            err?.error?.message ||
+            err?.error ||
+            'Error al guardar el resultado';
+
+          this.snack.open(`❌ ${message}`, 'Cerrar', {
+            duration: 4000
+          });
+        }
+      });
+    });
   }
-  editResult(match: Match) {
-    throw new Error('Method not implemented.');
+
+  addMatchResult(match: Match) {
+    this.openResultDialog(match);
   }
+
+  editMatchResult(match: Match) {
+    this.openResultDialog(match);
+  }
+
+  viewResult(match: Match) {
+    this.dialog.open(MatchResultDialogComponent, {
+      width: '500px',
+      data: {
+        match,
+        readonly: true
+      }
+    });
+  }
+
   hasResult(match: Match): boolean {
     if (!match.result) return false;
 
@@ -145,7 +191,3 @@ export class MatchComponent implements OnInit{
   }
 
 }
-  
-
-
-

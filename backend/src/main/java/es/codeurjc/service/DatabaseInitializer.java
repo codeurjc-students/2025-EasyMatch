@@ -226,9 +226,9 @@ public class DatabaseInitializer {
         tennisMatch3.setTeam1Players(Set.of(maria));
         tennisMatch3.setTeam2Players(Set.of(pedro));
 
-        tennisMatch1.setResult(new MatchResult("Pedro Garcia", "Maria Lopez", 2, 1,List.of(6,4,6),List.of(3,6,2))); // Pedro wins
-        tennisMatch2.setResult(new MatchResult("Pedro Garcia", "Luis Sanchez", 0, 2,List.of(3,4), List.of(6,6))); // Pedro loses
-        tennisMatch3.setResult(new MatchResult("Maria Lopez", "Pedro Garcia", 2, 0,List.of(6,6), List.of(2,1))); // Pedro loses
+        tennisMatch1.setResult(new MatchResult("Pedro Garcia", "Maria Lopez",List.of(6,4,6),List.of(3,6,2))); // Pedro wins
+        tennisMatch2.setResult(new MatchResult("Pedro Garcia", "Luis Sanchez",List.of(3,4), List.of(6,6))); // Pedro loses
+        tennisMatch3.setResult(new MatchResult("Maria Lopez", "Pedro Garcia",List.of(2,1), List.of(6,6))); // Pedro loses
 
 
         matchService.save(tennisMatch1);

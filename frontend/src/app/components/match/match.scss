@@ -166,63 +166,19 @@
     border-radius: 12px;
   }
 
-  .result-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #1e1f29;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .result-table-container {
-    overflow-x: auto;
-  }
-
-  .result-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #111;
-      border-left: 1px solid #111;
-      border-right: 1px solid #111;
-      color: #323232;
-    }
-
-    th {
-      background: #fff;
-      font-weight: 600;
-      color: #1e1f29;
-    }
-
-    .team-label {
-      font-weight: bold;
-      text-align: left;
-      padding-left: 12px;
-      color: #1e1f29;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: none;
-    }
-  }
+  
 
   .add-result-container {
-    margin-top: 1rem;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  .add-result-btn, .edit-result-button {
+  .add-result-btn, .edit-result-btn, .view-result-btn {
     border-radius: 8px;
     font-weight: 600;
+    font-size: 12px;
     padding: 0 1.2rem;
     text-transform: none;
   }
