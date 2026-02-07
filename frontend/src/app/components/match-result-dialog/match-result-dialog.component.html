@@ -73,6 +73,7 @@
                     matInput
                     type="number"
                     class="set-input"
+                    min="0" max="7"
                     [value]="s"
                     (input)="updateSet('A', $index, $any($event.target).valueAsNumber)"
                   />
@@ -91,6 +92,7 @@
                   <input
                     matInput
                     type="number"
+                    min="0" max="7"
                     class="set-input"
                     [value]="s"
                     (input)="updateSet('B', $index, $any($event.target).valueAsNumber)"
@@ -104,7 +106,10 @@
         </tbody>
       </table>
     }
-
+    <div class="error-message" *ngIf="errorMessage()">
+      <mat-icon color="warn">error</mat-icon>
+      {{ errorMessage() }}
+    </div>
   </mat-card>
 
 </mat-dialog-content>

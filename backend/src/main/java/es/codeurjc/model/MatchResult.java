@@ -68,6 +68,10 @@ public class MatchResult {
         };
     }
 
+    public boolean isCompleted() {
+        return (team1Score != null && team2Score != null) || (team1GamesPerSet != null && !team1GamesPerSet.isEmpty() && team2GamesPerSet != null && !team2GamesPerSet.isEmpty());
+    }
+
     private String compare(Integer v1, Integer v2) {
         if (v1 == null || v2 == null) return "Sin resultado";
         if (v1 > v2) return team1Name;

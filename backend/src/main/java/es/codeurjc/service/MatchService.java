@@ -185,7 +185,7 @@ public class MatchService {
             if (!match.isFull()){
                 throw new ResponseStatusException(HttpStatus.CONFLICT,"No se puede añadir el resultado a un partido incompleto");
             }
-            
+            boolean isNewResult = !match.getResult().isCompleted();
             MatchResult result = new MatchResult();
             if (resultData.team1Name() != null && resultData.team2Name() != null) {
                 result.setTeam1Name(resultData.team1Name());
@@ -205,18 +205,14 @@ public class MatchService {
                 result.setTeam1GamesPerSet(resultData.team1GamesPerSet());
                 result.setTeam2GamesPerSet(resultData.team2GamesPerSet());
             }
-
             match.setResult(result);
-
-            if (match.getResult() == null){
-                match.getTeam1Players().forEach(user -> {
-                    user.updateStats(match.didPlayerWin(user), false);
-                    userService.update(user);
-                });
-                match.getTeam2Players().forEach(user -> {
-                    user.updateStats(match.didPlayerWin(user), false);
-                    userService.update(user);
-                });match.getTeam1Players().forEach(user -> {
+            try {
+                match.validateResult(result);
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            }
+            if (isNewResult) {
+                 match.getTeam1Players().forEach(user -> {
                     user.updateStats(match.didPlayerWin(user), false);
                     userService.update(user);
                 });

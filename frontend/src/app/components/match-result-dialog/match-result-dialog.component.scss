@@ -59,3 +59,12 @@
   background: #1e88e5 !important;
   color: white !important;
 }
+
+.error-message {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #d32f2f;
+  font-size: 0.85rem;
+}

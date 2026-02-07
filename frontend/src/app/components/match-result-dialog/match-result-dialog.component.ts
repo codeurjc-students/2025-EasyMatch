@@ -46,6 +46,7 @@ export class MatchResultDialogComponent {
 
   team1Score = signal<number>(this.data.match.result?.team1Score ?? 0);
   team2Score = signal<number>(this.data.match.result?.team2Score ?? 0);
+  errorMessage = signal<string | null>(null);
 
   team1Sets = signal<number[]>(
     this.data.match.result?.team1GamesPerSet?.length
@@ -74,9 +75,17 @@ export class MatchResultDialogComponent {
   }
 
   onConfirm() {
+    
     if (this.isSets()) {
       let team1Sets = [...this.team1Sets()];
       let team2Sets = [...this.team2Sets()];
+      const isValid = team1Sets.every(v => v >= 0 && v <= 7)
+        && team2Sets.every(v => v >= 0 && v <= 7);
+
+      if (!isValid) {
+        this.errorMessage.set('Los juegos por set deben estar entre 0 y 7');
+        return;
+      }
 
       if (
         team1Sets.length > 1 &&
@@ -91,6 +100,10 @@ export class MatchResultDialogComponent {
         team1GamesPerSet: team1Sets,
         team2GamesPerSet: team2Sets
       });
+      return;
+    }
+    if (this.team1Score() < 0 || this.team2Score() < 0) {
+      this.errorMessage.set('Los puntos deben ser números positivos');
       return;
     }
     this.dialogRef.close({

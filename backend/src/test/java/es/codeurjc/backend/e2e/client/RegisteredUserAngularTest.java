@@ -198,7 +198,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(9) 
+    @Order(10) 
     public void verifyProfilePageLoadsAndAccountDeletionWorks(){
         loginUser("pedro@emeal.com","pedroga4");
 
@@ -341,7 +341,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         );
 
         List<WebElement> setTexts = viewDialog.findElements(By.className("set-text"));
-        assertEquals(4, setTexts.size(), "Número incorrecto de sets en modo readonly");
+        assertEquals(4, setTexts.size());
 
         assertEquals("6", setTexts.get(0).getText());
         assertEquals("6", setTexts.get(1).getText());
@@ -355,4 +355,5 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
 
         wait.until(ExpectedConditions.invisibilityOf(viewDialog));
     }
+
 }

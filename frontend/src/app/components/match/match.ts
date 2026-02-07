@@ -127,8 +127,17 @@ export class MatchComponent implements OnInit{
           this.snack.open('✅ Resultado guardado', 'Cerrar', { duration: 3000 });
           this.reloadAfterSave();
         },
-        error: () => {
-          this.snack.open('❌ Error al guardar el resultado', 'Cerrar', { duration: 4000 });
+        error: (err) => {
+          console.error('Error al guardar el resultado:', err);
+
+          const message =
+            err?.error?.message ||
+            err?.error ||
+            'Error al guardar el resultado';
+
+          this.snack.open(`❌ ${message}`, 'Cerrar', {
+            duration: 4000
+          });
         }
       });
     });

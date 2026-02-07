@@ -1,6 +1,7 @@
 package es.codeurjc.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.Embedded;
@@ -117,6 +118,75 @@ public class Match {
 		int playersPerGame = sport.getModes().get(modeSelected).getPlayersPerGame();
 		int totalPlayers = (team1Players != null ? team1Players.size() : 0) + (team2Players != null ? team2Players.size() : 0);
 		return totalPlayers >= playersPerGame;
+	}
+
+	public void validateResult(MatchResult result) {
+		if (result == null) {
+			throw new IllegalArgumentException("El resultado no puede ser nulo");
+		}
+
+		if (sport.getScoringType() == ScoringType.SCORE) {
+			validateScoreResult(result);
+		} else if (sport.getScoringType() == ScoringType.SETS) {
+			validateSetsResult(result);
+		}
+	}
+
+	private void validateScoreResult(MatchResult result) {
+
+		if (result.getTeam1Score() == null || result.getTeam2Score() == null) {
+			throw new IllegalArgumentException("Los scores no pueden ser nulos");
+		}
+
+		if (result.getTeam1Score() < 0 || result.getTeam2Score() < 0) {
+			throw new IllegalArgumentException("Los scores no pueden ser negativos");
+		}
+	}
+
+	private void validateSetsResult(MatchResult result) {
+
+		List<Integer> team1Sets = result.getTeam1GamesPerSet();
+		List<Integer> team2Sets = result.getTeam2GamesPerSet();
+
+		if (team1Sets == null || team2Sets == null) {
+			throw new IllegalArgumentException("Los sets no pueden ser nulos");
+		}
+
+		if (team1Sets.size() != team2Sets.size()) {
+			throw new IllegalArgumentException("El número de sets debe coincidir");
+		}
+
+		if (team1Sets.isEmpty()) {
+			throw new IllegalArgumentException("Debe haber al menos un set");
+		}
+
+		for (int i = 0; i < team1Sets.size(); i++) {
+			int s1 = team1Sets.get(i);
+			int s2 = team2Sets.get(i);
+
+			if (s1 < 0 || s2 < 0) {
+				throw new IllegalArgumentException("Los juegos por set no pueden ser negativos");
+			}
+
+			if (s1 > 7 || s2 > 7) {
+				throw new IllegalArgumentException("Los juegos por set no pueden ser mayores a 7");
+			}
+
+			if (s1 == 6 && s2 > 4 || s2 == 6 && s1 > 4) {
+				throw new IllegalArgumentException("Un set se gana al llegar a 6 juegos con una diferencia de al menos 2 juegos");
+			}
+			if (s1 == 7 && s2 != 6 && s2 != 5 || s2 == 7 && s1 != 6 && s1 != 5) {
+				throw new IllegalArgumentException("Un set se puede ganar al llegar a 7 juegos si el otro equipo tiene 5 o 6 juegos");
+			}
+
+			if (s1 != 6 && s1 != 7 && s2 != 6 && s2 != 7) {
+				throw new IllegalArgumentException("Un set se gana al llegar a 6 juegos con una diferencia de al menos 2 juegos, o al llegar a 7 juegos si el otro equipo tiene 5 o 6 juegos");
+			}
+
+			if (s1 == s2) {
+				throw new IllegalArgumentException("No puede haber empate en un set");
+			}
+		}
 	}
 
 	public long getId() {
