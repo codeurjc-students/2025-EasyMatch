@@ -31,6 +31,7 @@ import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.MatchResult;
 import es.codeurjc.model.Mode;
 import es.codeurjc.model.ScoringType;
 import es.codeurjc.model.User;
@@ -328,6 +329,7 @@ public class MatchServiceUnitaryTest {
         match.setId(id);
         match.setTeam1Players(new HashSet<>(Set.of(organizer,new User())));
         match.setTeam2Players(new HashSet<>(Set.of(new User(),new User())));
+        match.setResult(new MatchResult());
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
         when(matchRepository.existsById(id)).thenReturn(true);
