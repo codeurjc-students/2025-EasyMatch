@@ -299,8 +299,9 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
         WebElement matchWithResult = driver.findElement(By.id("match-card7"));
         WebElement editResultBtn = matchWithResult.findElement(By.className("edit-result-btn"));
-        scrollIntoView(editResultBtn);
-        editResultBtn.click();
+        wait.until(ExpectedConditions.elementToBeClickable(editResultBtn));
+        clickWithJs(editResultBtn);
+
 
         WebElement resultDialog = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("app-match-result-dialog")));
         List<WebElement> setInputs = resultDialog.findElements(By.className("set-input"));
