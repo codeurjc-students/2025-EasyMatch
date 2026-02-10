@@ -228,17 +228,54 @@ public class DatabaseInitializer {
 
         tennisMatch1.setResult(new MatchResult("Pedro Garcia", "Maria Lopez",List.of(6,4,6),List.of(3,6,2))); // Pedro wins
         tennisMatch2.setResult(new MatchResult("Pedro Garcia", "Luis Sanchez",List.of(3,4), List.of(6,6))); // Pedro loses
-        tennisMatch3.setResult(new MatchResult("Maria Lopez", "Pedro Garcia",List.of(2,1), List.of(6,6))); // Pedro loses
+        tennisMatch3.setResult(new MatchResult("Maria Lopez", "Pedro Garcia",List.of(2,1), List.of(6,6))); // Pedro wins
 
 
         matchService.save(tennisMatch1);
         matchService.save(tennisMatch2);
         matchService.save(tennisMatch3);
 
-        pedro.updateStats(tennisMatch1.didPlayerWin(pedro), false); // wins
-        pedro.updateStats(tennisMatch2.didPlayerWin(pedro), false); // loses
-        pedro.updateStats(tennisMatch3.didPlayerWin(pedro), false); // loses
-        userService.update(pedro);
+        for (User user : tennisMatch1.getTeam1Players()) {
+            boolean won = tennisMatch1.didPlayerWin(user);
+            user.updateStats(won, false);
+            user.applyMatchResult(won, tennisMatch1.getDate());
+            userService.update(user);
+        }
+
+        for (User user : tennisMatch1.getTeam2Players()) {
+            boolean won = tennisMatch1.didPlayerWin(user);
+            user.updateStats(won, false);
+            user.applyMatchResult(won, tennisMatch1.getDate());
+            userService.update(user);
+        }
+
+        for (User user : tennisMatch2.getTeam1Players()) {
+            boolean won = tennisMatch2.didPlayerWin(user);
+            user.updateStats(won, false);
+            user.applyMatchResult(won, tennisMatch2.getDate());
+            userService.update(user);
+        }
+
+        for (User user : tennisMatch2.getTeam2Players()) {
+            boolean won = tennisMatch2.didPlayerWin(user);
+            user.updateStats(won, false);
+            user.applyMatchResult(won, tennisMatch2.getDate());
+            userService.update(user);
+        }
+
+        for (User user : tennisMatch3.getTeam1Players()) {
+            boolean won = tennisMatch3.didPlayerWin(user);
+            user.updateStats(won, false);
+            user.applyMatchResult(won, tennisMatch3.getDate());
+            userService.update(user);
+        }
+
+        for (User user : tennisMatch3.getTeam2Players()) {
+            boolean won = tennisMatch3.didPlayerWin(user);
+            user.updateStats(won, false);
+            user.applyMatchResult(won, tennisMatch3.getDate());
+            userService.update(user);
+        }
     }
     private void setUserImage(User user, String classpathResource) throws IOException {
          try {

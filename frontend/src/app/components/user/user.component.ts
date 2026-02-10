@@ -17,6 +17,7 @@ import { HeaderComponent } from '../header/header.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { environment } from '../../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { Router } from '@angular/router';
 
 @Component({
@@ -33,6 +34,7 @@ import { Router } from '@angular/router';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    NgxChartsModule,
     HeaderComponent
   ],
   templateUrl: './user.component.html',
@@ -51,6 +53,7 @@ export class UserComponent implements OnInit {
   saving = signal(false);
   photoFile: File | null = null;
   photoPreview: string | null = null;
+  levelChartData = signal<any[]>([]);
 
   private apiUrl = environment.apiUrl;
   form!: FormGroup;
@@ -73,6 +76,7 @@ export class UserComponent implements OnInit {
         this.user.set(data);
         this.patchForm(data);
         this.loadUserImage(data.id);
+        this.buildLevelChart(data);
         this.loading.set(false);
       },
       error: (err) => {
@@ -175,8 +179,6 @@ export class UserComponent implements OnInit {
     });
   }
 
-
-
   onDeleteAccount(id: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
@@ -212,6 +214,23 @@ export class UserComponent implements OnInit {
     });
   }
 
+  goToMyMatches(): void {
+    this.router.navigate(['/my-matches']);
+  }
+  
+  get maxLevel(): number{
+    const u = this.user();
+    if(!u) return 0;
+
+    let maxLevel = u.level;
+    for(const entry of u.levelHistory ?? []){
+      if (entry.levelBefore > maxLevel ){
+        maxLevel = entry.levelBefore;
+      }
+    }
+    return maxLevel;
+  }
+
   private afterSuccessfulSave(user: User, photoOk: boolean): void {
     this.user.set(user);
     this.editing.set(false);
@@ -239,5 +258,31 @@ export class UserComponent implements OnInit {
       localDate.getTime() - localDate.getTimezoneOffset() * 60000
     ).toISOString();
   }
+
+  
+  private buildLevelChart(user: User): void {
+    if (!user.levelHistory?.length) {
+      this.levelChartData.set([]);
+      return;
+    }
+
+    const series = user.levelHistory.map(h => ({
+      name: new Date(h.date).toLocaleDateString(),
+      value: h.levelBefore
+    }));
+
+    series.push({
+      name: 'Actual',
+      value: user.level
+    });
+
+    this.levelChartData.set([
+      {
+        name: 'Nivel',
+        series
+      }
+    ]);
+  }
+
 }
 

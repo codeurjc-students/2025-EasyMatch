@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app';
@@ -11,6 +12,7 @@ import { MatchComponent } from './components/match/match';
 @NgModule({
   imports: [
     BrowserModule,
+    NgxChartsModule,
     HttpClientModule,
     MatchComponent,
     MatchListComponent,
