@@ -320,7 +320,7 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void addOrUpdateMatchResultToExistingMatchTest(){
+    public void addMatchResultToExistingMatchTest(){
         //GIVEN
         long id = 3L;
         User organizer =  new User();
@@ -341,11 +341,15 @@ public class MatchServiceUnitaryTest {
         //THEN
         assertThat(addedResultDTO.team1Name(), equalTo(resultDTO.team1Name()));
         assertThat(addedResultDTO.team2Name(), equalTo(resultDTO.team2Name()));
+        assertThat(addedResultDTO.team1GamesPerSet(), equalTo(resultDTO.team1GamesPerSet()));
+        assertThat(addedResultDTO.team2GamesPerSet(), equalTo(resultDTO.team2GamesPerSet()));
+        int totalPlayers = match.getTeam1Players().size() + match.getTeam2Players().size();
+        verify(userService,times(totalPlayers)).update(any(User.class));
         verify(matchRepository,times(1)).save(any(Match.class));
     }
 
     @Test
-    public void addOrUpdateMatchResultToIncompleteMatchTest(){
+    public void addMatchResultToIncompleteMatchTest(){
         //GIVEN
         long id = 3L;
         User organizer =  new User();

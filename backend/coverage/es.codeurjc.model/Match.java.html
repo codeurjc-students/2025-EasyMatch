@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Match.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">EasyMatch</a> &gt; <a href="index.source.html" class="el_package">es.codeurjc.model</a> &gt; <span class="el_source">Match.java</span></div><h1>Match.java</h1><pre class="source lang-java linenums">package es.codeurjc.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.Embedded;
@@ -63,203 +64,278 @@ public class Match {
     private MatchResult result;
 	
 
-<span class="fc" id="L66">	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state, int modeSelected, User organizer, double price, Sport sport, Club club) {</span>
-<span class="fc" id="L67">		this.date = date;</span>
-<span class="fc" id="L68">		this.type = type;</span>
-<span class="fc" id="L69">		this.isPrivate = isPrivate;</span>
-<span class="fc" id="L70">		this.state = state;</span>
-<span class="fc" id="L71">		this.modeSelected = modeSelected;</span>
-<span class="fc" id="L72">		this.organizer = organizer;</span>
-<span class="fc" id="L73">		this.price = price;</span>
-<span class="fc" id="L74">		this.sport = sport;</span>
-<span class="fc" id="L75">		this.club = club;</span>
-<span class="fc" id="L76">	}</span>
+<span class="fc" id="L67">	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state, int modeSelected, User organizer, double price, Sport sport, Club club) {</span>
+<span class="fc" id="L68">		this.date = date;</span>
+<span class="fc" id="L69">		this.type = type;</span>
+<span class="fc" id="L70">		this.isPrivate = isPrivate;</span>
+<span class="fc" id="L71">		this.state = state;</span>
+<span class="fc" id="L72">		this.modeSelected = modeSelected;</span>
+<span class="fc" id="L73">		this.organizer = organizer;</span>
+<span class="fc" id="L74">		this.price = price;</span>
+<span class="fc" id="L75">		this.sport = sport;</span>
+<span class="fc" id="L76">		this.club = club;</span>
+<span class="fc" id="L77">	}</span>
 
 
 
-<span class="fc" id="L80">	public Match() {</span>
+<span class="fc" id="L81">	public Match() {</span>
 		// Used by JPA
-<span class="fc" id="L82">	}</span>
+<span class="fc" id="L83">	}</span>
 
 
 	public void addPlayerToTeam1(User player) {
-<span class="fc" id="L86">        this.team1Players.add(player);</span>
-<span class="fc" id="L87">    }</span>
+<span class="fc" id="L87">        this.team1Players.add(player);</span>
+<span class="fc" id="L88">    }</span>
 
     public void addPlayerToTeam2(User player) {
-<span class="fc" id="L90">        this.team2Players.add(player);</span>
-<span class="fc" id="L91">    }</span>
+<span class="fc" id="L91">        this.team2Players.add(player);</span>
+<span class="fc" id="L92">    }</span>
 
 	public boolean containsPlayer(User player) {
-<span class="pc bpc" id="L94" title="1 of 4 branches missed.">        return (team1Players != null &amp;&amp; team1Players.contains(player))</span>
-<span class="pc bpc" id="L95" title="2 of 4 branches missed.">            || (team2Players != null &amp;&amp; team2Players.contains(player));</span>
+<span class="pc bpc" id="L95" title="1 of 4 branches missed.">        return (team1Players != null &amp;&amp; team1Players.contains(player))</span>
+<span class="pc bpc" id="L96" title="2 of 4 branches missed.">            || (team2Players != null &amp;&amp; team2Players.contains(player));</span>
     }
 
 	public boolean didPlayerWin(User player) {
-<span class="pc bpc" id="L99" title="3 of 6 branches missed.">        if (result == null || sport == null || sport.getScoringType() == null) return false;</span>
-<span class="fc" id="L100">        String winner = result.getWinner(sport.getScoringType());</span>
-<span class="pc bpc" id="L101" title="3 of 6 branches missed.">        if (winner == null || winner.equals(&quot;Empate&quot;) || winner.equals(&quot;Sin resultado&quot;)) return false;</span>
+<span class="pc bpc" id="L100" title="3 of 6 branches missed.">        if (result == null || sport == null || sport.getScoringType() == null) return false;</span>
+<span class="fc" id="L101">        String winner = result.getWinner(sport.getScoringType());</span>
+<span class="pc bpc" id="L102" title="3 of 6 branches missed.">        if (winner == null || winner.equals(&quot;Empate&quot;) || winner.equals(&quot;Sin resultado&quot;)) return false;</span>
 
-<span class="pc bpc" id="L103" title="1 of 4 branches missed.">        if (team1Players != null &amp;&amp; team1Players.contains(player)) {</span>
-<span class="fc" id="L104">            return winner.equals(result.getTeam1Name());</span>
-<span class="pc bpc" id="L105" title="2 of 4 branches missed.">        } else if (team2Players != null &amp;&amp; team2Players.contains(player)) {</span>
-<span class="fc" id="L106">            return winner.equals(result.getTeam2Name());</span>
+<span class="pc bpc" id="L104" title="1 of 4 branches missed.">        if (team1Players != null &amp;&amp; team1Players.contains(player)) {</span>
+<span class="fc" id="L105">            return winner.equals(result.getTeam1Name());</span>
+<span class="pc bpc" id="L106" title="2 of 4 branches missed.">        } else if (team2Players != null &amp;&amp; team2Players.contains(player)) {</span>
+<span class="fc" id="L107">            return winner.equals(result.getTeam2Name());</span>
         }
-<span class="nc" id="L108">        return false;</span>
+<span class="nc" id="L109">        return false;</span>
     }
 
 	public boolean didPlayerLose(User player) {
-<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (!containsPlayer(player)) return false;</span>
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        return !didPlayerWin(player);</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (!containsPlayer(player)) return false;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        return !didPlayerWin(player);</span>
     }
 
+	public boolean isFull() {
+<span class="fc" id="L118">		int playersPerGame = sport.getModes().get(modeSelected).getPlayersPerGame();</span>
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">		int totalPlayers = (team1Players != null ? team1Players.size() : 0) + (team2Players != null ? team2Players.size() : 0);</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		return totalPlayers &gt;= playersPerGame;</span>
+	}
+
+	public void validateResult(MatchResult result) {
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		if (result == null) {</span>
+<span class="nc" id="L125">			throw new IllegalArgumentException(&quot;El resultado no puede ser nulo&quot;);</span>
+		}
+
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">		if (sport.getScoringType() == ScoringType.SCORE) {</span>
+<span class="nc" id="L129">			validateScoreResult(result);</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">		} else if (sport.getScoringType() == ScoringType.SETS) {</span>
+<span class="fc" id="L131">			validateSetsResult(result);</span>
+		}
+<span class="fc" id="L133">	}</span>
+
+	private void validateScoreResult(MatchResult result) {
+
+<span class="nc bnc" id="L137" title="All 4 branches missed.">		if (result.getTeam1Score() == null || result.getTeam2Score() == null) {</span>
+<span class="nc" id="L138">			throw new IllegalArgumentException(&quot;Los scores no pueden ser nulos&quot;);</span>
+		}
+
+<span class="nc bnc" id="L141" title="All 4 branches missed.">		if (result.getTeam1Score() &lt; 0 || result.getTeam2Score() &lt; 0) {</span>
+<span class="nc" id="L142">			throw new IllegalArgumentException(&quot;Los scores no pueden ser negativos&quot;);</span>
+		}
+<span class="nc" id="L144">	}</span>
+
+	private void validateSetsResult(MatchResult result) {
+
+<span class="fc" id="L148">		List&lt;Integer&gt; team1Sets = result.getTeam1GamesPerSet();</span>
+<span class="fc" id="L149">		List&lt;Integer&gt; team2Sets = result.getTeam2GamesPerSet();</span>
+
+<span class="pc bpc" id="L151" title="2 of 4 branches missed.">		if (team1Sets == null || team2Sets == null) {</span>
+<span class="nc" id="L152">			throw new IllegalArgumentException(&quot;Los sets no pueden ser nulos&quot;);</span>
+		}
+
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">		if (team1Sets.size() != team2Sets.size()) {</span>
+<span class="nc" id="L156">			throw new IllegalArgumentException(&quot;El número de sets debe coincidir&quot;);</span>
+		}
+
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">		if (team1Sets.isEmpty()) {</span>
+<span class="nc" id="L160">			throw new IllegalArgumentException(&quot;Debe haber al menos un set&quot;);</span>
+		}
+
+<span class="fc bfc" id="L163" title="All 2 branches covered.">		for (int i = 0; i &lt; team1Sets.size(); i++) {</span>
+<span class="fc" id="L164">			int s1 = team1Sets.get(i);</span>
+<span class="fc" id="L165">			int s2 = team2Sets.get(i);</span>
+
+<span class="pc bpc" id="L167" title="2 of 4 branches missed.">			if (s1 &lt; 0 || s2 &lt; 0) {</span>
+<span class="nc" id="L168">				throw new IllegalArgumentException(&quot;Los juegos por set no pueden ser negativos&quot;);</span>
+			}
+
+<span class="pc bpc" id="L171" title="2 of 4 branches missed.">			if (s1 &gt; 7 || s2 &gt; 7) {</span>
+<span class="nc" id="L172">				throw new IllegalArgumentException(&quot;Los juegos por set no pueden ser mayores a 7&quot;);</span>
+			}
+
+<span class="pc bpc" id="L175" title="2 of 8 branches missed.">			if (s1 == 6 &amp;&amp; s2 &gt; 4 || s2 == 6 &amp;&amp; s1 &gt; 4) {</span>
+<span class="nc" id="L176">				throw new IllegalArgumentException(&quot;Un set se gana al llegar a 6 juegos con una diferencia de al menos 2 juegos&quot;);</span>
+			}
+<span class="pc bpc" id="L178" title="7 of 12 branches missed.">			if (s1 == 7 &amp;&amp; s2 != 6 &amp;&amp; s2 != 5 || s2 == 7 &amp;&amp; s1 != 6 &amp;&amp; s1 != 5) {</span>
+<span class="nc" id="L179">				throw new IllegalArgumentException(&quot;Un set se puede ganar al llegar a 7 juegos si el otro equipo tiene 5 o 6 juegos&quot;);</span>
+			}
+
+<span class="pc bpc" id="L182" title="3 of 8 branches missed.">			if (s1 != 6 &amp;&amp; s1 != 7 &amp;&amp; s2 != 6 &amp;&amp; s2 != 7) {</span>
+<span class="nc" id="L183">				throw new IllegalArgumentException(&quot;Un set se gana al llegar a 6 juegos con una diferencia de al menos 2 juegos, o al llegar a 7 juegos si el otro equipo tiene 5 o 6 juegos&quot;);</span>
+			}
+
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">			if (s1 == s2) {</span>
+<span class="nc" id="L187">				throw new IllegalArgumentException(&quot;No puede haber empate en un set&quot;);</span>
+			}
+		}
+<span class="fc" id="L190">	}</span>
+
 	public long getId() {
-<span class="fc" id="L117">		return id;</span>
+<span class="fc" id="L193">		return id;</span>
 	}
 
 
 
 	public void setId(long id) {
-<span class="fc" id="L123">		this.id = id;</span>
-<span class="fc" id="L124">	}</span>
+<span class="fc" id="L199">		this.id = id;</span>
+<span class="fc" id="L200">	}</span>
 
 
 	public LocalDateTime getDate() {
-<span class="fc" id="L128">		return date;</span>
+<span class="fc" id="L204">		return date;</span>
 	}
 
 
 
 	public void setDate(LocalDateTime date) {
-<span class="fc" id="L134">		this.date = date;</span>
-<span class="fc" id="L135">	}</span>
+<span class="fc" id="L210">		this.date = date;</span>
+<span class="fc" id="L211">	}</span>
 
 
 	public Boolean getType() {
-<span class="fc" id="L139">		return type;</span>
+<span class="fc" id="L215">		return type;</span>
 	}
 
 
 
 	public void setType(Boolean type) {
-<span class="fc" id="L145">		this.type = type;</span>
-<span class="fc" id="L146">	}</span>
+<span class="fc" id="L221">		this.type = type;</span>
+<span class="fc" id="L222">	}</span>
 
 
 
 	 public Club getClub() {
-<span class="fc" id="L151">		return club;</span>
+<span class="fc" id="L227">		return club;</span>
 	}
 
 
 
 	public void setClub(Club club) {
-<span class="fc" id="L157">		this.club = club;</span>
-<span class="fc" id="L158">	}</span>
+<span class="fc" id="L233">		this.club = club;</span>
+<span class="fc" id="L234">	}</span>
 
 
  
 
 
 	public Sport getSport() {
-<span class="fc" id="L165">		return sport;</span>
+<span class="fc" id="L241">		return sport;</span>
 	}
 
 
 
 	public void setSport(Sport sport) {
-<span class="fc" id="L171">		this.sport = sport;</span>
-<span class="fc" id="L172">	}</span>
+<span class="fc" id="L247">		this.sport = sport;</span>
+<span class="fc" id="L248">	}</span>
 
 
 
 	public User getOrganizer() {
-<span class="fc" id="L177">		return organizer;</span>
+<span class="fc" id="L253">		return organizer;</span>
 	}
 
 
 
 	public void setOrganizer(User organizer) {
-<span class="fc" id="L183">		this.organizer = organizer;</span>
-<span class="fc" id="L184">	}</span>
+<span class="fc" id="L259">		this.organizer = organizer;</span>
+<span class="fc" id="L260">	}</span>
 
 	public Boolean getIsPrivate() {
-<span class="fc" id="L187">		return isPrivate;</span>
+<span class="fc" id="L263">		return isPrivate;</span>
 	}
 
 
 
 	public void setIsPrivate(Boolean isPrivate) {
-<span class="fc" id="L193">		this.isPrivate = isPrivate;</span>
-<span class="fc" id="L194">	}</span>
+<span class="fc" id="L269">		this.isPrivate = isPrivate;</span>
+<span class="fc" id="L270">	}</span>
 
 	public Boolean getState() {
-<span class="fc" id="L197">		return state;</span>
+<span class="fc" id="L273">		return state;</span>
 	}
 
 
 
 	public void setState(Boolean state) {
-<span class="fc" id="L203">		this.state = state;</span>
-<span class="fc" id="L204">	}</span>
+<span class="fc" id="L279">		this.state = state;</span>
+<span class="fc" id="L280">	}</span>
 
 	
 	public double getPrice() {
-<span class="fc" id="L208">		return price;</span>
+<span class="fc" id="L284">		return price;</span>
 	}
 
 	public void setPrice(double price) {
-<span class="fc" id="L212">		this.price = price;</span>
-<span class="fc" id="L213">	}</span>
+<span class="fc" id="L288">		this.price = price;</span>
+<span class="fc" id="L289">	}</span>
 	
 	
 	
 
 	public MatchResult getResult() {
-<span class="fc" id="L219">		return result;</span>
+<span class="fc" id="L295">		return result;</span>
 	}
 
 
 	public void setResult(MatchResult result) {
-<span class="fc" id="L224">		this.result = result;</span>
-<span class="fc" id="L225">	}</span>
+<span class="fc" id="L300">		this.result = result;</span>
+<span class="fc" id="L301">	}</span>
 	
 	public Set&lt;User&gt; getTeam1Players() {
-<span class="fc" id="L228">		return team1Players;</span>
+<span class="fc" id="L304">		return team1Players;</span>
 	}
 
 
 	public void setTeam1Players(Set&lt;User&gt; team1Players) {
-<span class="fc" id="L233">		this.team1Players = team1Players;</span>
-<span class="fc" id="L234">	}</span>
+<span class="fc" id="L309">		this.team1Players = team1Players;</span>
+<span class="fc" id="L310">	}</span>
 
 
 
 	public Set&lt;User&gt; getTeam2Players() {
-<span class="fc" id="L239">		return team2Players;</span>
+<span class="fc" id="L315">		return team2Players;</span>
 	}
 
 	public void setTeam2Players(Set&lt;User&gt; team2Players) {
-<span class="fc" id="L243">		this.team2Players = team2Players;</span>
-<span class="fc" id="L244">	}</span>
+<span class="fc" id="L319">		this.team2Players = team2Players;</span>
+<span class="fc" id="L320">	}</span>
 
 	
 	public int getModeSelected() {
-<span class="fc" id="L248">		return modeSelected;</span>
+<span class="fc" id="L324">		return modeSelected;</span>
 	}
 
 
 
 	public void setModeSelected(int modeSelected) {
-<span class="fc" id="L254">		this.modeSelected = modeSelected;</span>
-<span class="fc" id="L255">	}</span>
+<span class="fc" id="L330">		this.modeSelected = modeSelected;</span>
+<span class="fc" id="L331">	}</span>
 
 
 	@Override
 	public String toString() {
-<span class="nc" id="L260">		return &quot;Match [id=&quot; + id + &quot;, date=&quot; + date + &quot;, type=&quot; + type + &quot;, isPrivate=&quot; + isPrivate + &quot;, state=&quot; + state</span>
-<span class="nc" id="L261">				+ &quot;, organizer=&quot; + organizer + &quot;, sport=&quot; + sport + &quot;, club=&quot; + club + &quot;, team1=&quot; + team1Players + &quot;team2=&quot;+ </span>
-<span class="nc" id="L262">				team2Players + &quot;]&quot;;</span>
+<span class="nc" id="L336">		return &quot;Match [id=&quot; + id + &quot;, date=&quot; + date + &quot;, type=&quot; + type + &quot;, isPrivate=&quot; + isPrivate + &quot;, state=&quot; + state</span>
+<span class="nc" id="L337">				+ &quot;, organizer=&quot; + organizer + &quot;, sport=&quot; + sport + &quot;, club=&quot; + club + &quot;, team1=&quot; + team1Players + &quot;team2=&quot;+ </span>
+<span class="nc" id="L338">				team2Players + &quot;]&quot;;</span>
 	}
 
 }

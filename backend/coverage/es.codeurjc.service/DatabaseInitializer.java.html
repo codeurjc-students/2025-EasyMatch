@@ -226,38 +226,75 @@ import jakarta.transaction.Transactional;
 <span class="fc" id="L226">        tennisMatch3.setTeam1Players(Set.of(maria));</span>
 <span class="fc" id="L227">        tennisMatch3.setTeam2Players(Set.of(pedro));</span>
 
-<span class="fc" id="L229">        tennisMatch1.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Maria Lopez&quot;, 2, 1,List.of(6,4,6),List.of(3,6,2))); // Pedro wins</span>
-<span class="fc" id="L230">        tennisMatch2.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Luis Sanchez&quot;, 0, 2,List.of(3,4), List.of(6,6))); // Pedro loses</span>
-<span class="fc" id="L231">        tennisMatch3.setResult(new MatchResult(&quot;Maria Lopez&quot;, &quot;Pedro Garcia&quot;, 2, 0,List.of(6,6), List.of(2,1))); // Pedro loses</span>
+<span class="fc" id="L229">        tennisMatch1.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Maria Lopez&quot;,List.of(6,4,6),List.of(3,6,2))); // Pedro wins</span>
+<span class="fc" id="L230">        tennisMatch2.setResult(new MatchResult(&quot;Pedro Garcia&quot;, &quot;Luis Sanchez&quot;,List.of(3,4), List.of(6,6))); // Pedro loses</span>
+<span class="fc" id="L231">        tennisMatch3.setResult(new MatchResult(&quot;Maria Lopez&quot;, &quot;Pedro Garcia&quot;,List.of(2,1), List.of(6,6))); // Pedro wins</span>
 
 
 <span class="fc" id="L234">        matchService.save(tennisMatch1);</span>
 <span class="fc" id="L235">        matchService.save(tennisMatch2);</span>
 <span class="fc" id="L236">        matchService.save(tennisMatch3);</span>
 
-<span class="fc" id="L238">        pedro.updateStats(tennisMatch1.didPlayerWin(pedro), false); // wins</span>
-<span class="fc" id="L239">        pedro.updateStats(tennisMatch2.didPlayerWin(pedro), false); // loses</span>
-<span class="fc" id="L240">        pedro.updateStats(tennisMatch3.didPlayerWin(pedro), false); // loses</span>
-<span class="fc" id="L241">        userService.update(pedro);</span>
-<span class="fc" id="L242">    }</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        for (User user : tennisMatch1.getTeam1Players()) {</span>
+<span class="fc" id="L239">            boolean won = tennisMatch1.didPlayerWin(user);</span>
+<span class="fc" id="L240">            user.updateStats(won, false);</span>
+<span class="fc" id="L241">            user.applyMatchResult(won, tennisMatch1.getDate());</span>
+<span class="fc" id="L242">            userService.update(user);</span>
+        }
+
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        for (User user : tennisMatch1.getTeam2Players()) {</span>
+<span class="fc" id="L246">            boolean won = tennisMatch1.didPlayerWin(user);</span>
+<span class="fc" id="L247">            user.updateStats(won, false);</span>
+<span class="fc" id="L248">            user.applyMatchResult(won, tennisMatch1.getDate());</span>
+<span class="fc" id="L249">            userService.update(user);</span>
+        }
+
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        for (User user : tennisMatch2.getTeam1Players()) {</span>
+<span class="fc" id="L253">            boolean won = tennisMatch2.didPlayerWin(user);</span>
+<span class="fc" id="L254">            user.updateStats(won, false);</span>
+<span class="fc" id="L255">            user.applyMatchResult(won, tennisMatch2.getDate());</span>
+<span class="fc" id="L256">            userService.update(user);</span>
+        }
+
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        for (User user : tennisMatch2.getTeam2Players()) {</span>
+<span class="fc" id="L260">            boolean won = tennisMatch2.didPlayerWin(user);</span>
+<span class="fc" id="L261">            user.updateStats(won, false);</span>
+<span class="fc" id="L262">            user.applyMatchResult(won, tennisMatch2.getDate());</span>
+<span class="fc" id="L263">            userService.update(user);</span>
+        }
+
+<span class="fc bfc" id="L266" title="All 2 branches covered.">        for (User user : tennisMatch3.getTeam1Players()) {</span>
+<span class="fc" id="L267">            boolean won = tennisMatch3.didPlayerWin(user);</span>
+<span class="fc" id="L268">            user.updateStats(won, false);</span>
+<span class="fc" id="L269">            user.applyMatchResult(won, tennisMatch3.getDate());</span>
+<span class="fc" id="L270">            userService.update(user);</span>
+        }
+
+<span class="fc bfc" id="L273" title="All 2 branches covered.">        for (User user : tennisMatch3.getTeam2Players()) {</span>
+<span class="fc" id="L274">            boolean won = tennisMatch3.didPlayerWin(user);</span>
+<span class="fc" id="L275">            user.updateStats(won, false);</span>
+<span class="fc" id="L276">            user.applyMatchResult(won, tennisMatch3.getDate());</span>
+<span class="fc" id="L277">            userService.update(user);</span>
+        }
+<span class="fc" id="L279">    }</span>
     private void setUserImage(User user, String classpathResource) throws IOException {
          try {
-<span class="fc" id="L245">            Resource image = new ClassPathResource(classpathResource);</span>
-<span class="fc" id="L246">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="pc" id="L247">        } catch (IOException e) {</span>
-<span class="nc" id="L248">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
+<span class="fc" id="L282">            Resource image = new ClassPathResource(classpathResource);</span>
+<span class="fc" id="L283">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
+<span class="pc" id="L284">        } catch (IOException e) {</span>
+<span class="nc" id="L285">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
         }
 	
-<span class="fc" id="L251">	}</span>
+<span class="fc" id="L288">	}</span>
 
     private void setClubImage(Club club, String classpathResource) throws IOException {
          try {
-<span class="fc" id="L255">            Resource image = new ClassPathResource(classpathResource);</span>
-<span class="fc" id="L256">		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="pc" id="L257">        } catch (IOException e) {</span>
-<span class="nc" id="L258">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
+<span class="fc" id="L292">            Resource image = new ClassPathResource(classpathResource);</span>
+<span class="fc" id="L293">		    club.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
+<span class="pc" id="L294">        } catch (IOException e) {</span>
+<span class="nc" id="L295">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
         }
 	
-<span class="fc" id="L261">	}</span>
+<span class="fc" id="L298">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
