@@ -11,118 +11,118 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2026-02-11T16:32:52+0100&quot;,
-    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.45.0.v20260128-0750, environment: Java 21.0.9 (Eclipse Adoptium)&quot;
+    date = &quot;2026-02-11T21:16:20+0100&quot;,
+    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)&quot;
 )
 @Component
 <span class="fc" id="L18">public class SportMapperImpl implements SportMapper {</span>
 
     @Override
     public SportDTO toDTO(Sport sport) {
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if ( sport == null ) {</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if ( sport == null ) {</span>
 <span class="nc" id="L23">            return null;</span>
         }
 
-<span class="fc" id="L26">        Long id = null;</span>
-<span class="fc" id="L27">        String name = null;</span>
-<span class="fc" id="L28">        List&lt;ModeDTO&gt; modes = null;</span>
-<span class="fc" id="L29">        ScoringType scoringType = null;</span>
+<span class="nc" id="L26">        Long id = null;</span>
+<span class="nc" id="L27">        String name = null;</span>
+<span class="nc" id="L28">        List&lt;ModeDTO&gt; modes = null;</span>
+<span class="nc" id="L29">        ScoringType scoringType = null;</span>
 
-<span class="fc" id="L31">        id = sport.getId();</span>
-<span class="fc" id="L32">        name = sport.getName();</span>
-<span class="fc" id="L33">        modes = modeListToModeDTOList( sport.getModes() );</span>
-<span class="fc" id="L34">        scoringType = sport.getScoringType();</span>
+<span class="nc" id="L31">        id = sport.getId();</span>
+<span class="nc" id="L32">        name = sport.getName();</span>
+<span class="nc" id="L33">        modes = modeListToModeDTOList( sport.getModes() );</span>
+<span class="nc" id="L34">        scoringType = sport.getScoringType();</span>
 
-<span class="fc" id="L36">        SportDTO sportDTO = new SportDTO( id, name, modes, scoringType );</span>
+<span class="nc" id="L36">        SportDTO sportDTO = new SportDTO( id, name, modes, scoringType );</span>
 
-<span class="fc" id="L38">        return sportDTO;</span>
+<span class="nc" id="L38">        return sportDTO;</span>
     }
 
     @Override
     public List&lt;SportDTO&gt; toDTOs(Collection&lt;Sport&gt; sports) {
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if ( sports == null ) {</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if ( sports == null ) {</span>
 <span class="nc" id="L44">            return null;</span>
         }
 
-<span class="fc" id="L47">        List&lt;SportDTO&gt; list = new ArrayList&lt;SportDTO&gt;( sports.size() );</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        for ( Sport sport : sports ) {</span>
-<span class="fc" id="L49">            list.add( toDTO( sport ) );</span>
-        }
+<span class="nc" id="L47">        List&lt;SportDTO&gt; list = new ArrayList&lt;SportDTO&gt;( sports.size() );</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        for ( Sport sport : sports ) {</span>
+<span class="nc" id="L49">            list.add( toDTO( sport ) );</span>
+<span class="nc" id="L50">        }</span>
 
-<span class="fc" id="L52">        return list;</span>
+<span class="nc" id="L52">        return list;</span>
     }
 
     @Override
     public Sport toDomain(SportDTO sportDTO) {
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if ( sportDTO == null ) {</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if ( sportDTO == null ) {</span>
 <span class="nc" id="L58">            return null;</span>
         }
 
-<span class="fc" id="L61">        Sport sport = new Sport();</span>
+<span class="nc" id="L61">        Sport sport = new Sport();</span>
 
-<span class="fc" id="L63">        sport.setId( sportDTO.id() );</span>
-<span class="fc" id="L64">        sport.setName( sportDTO.name() );</span>
-<span class="fc" id="L65">        sport.setModes( modeDTOListToModeList( sportDTO.modes() ) );</span>
-<span class="fc" id="L66">        sport.setScoringType( sportDTO.scoringType() );</span>
+<span class="nc" id="L63">        sport.setId( sportDTO.id() );</span>
+<span class="nc" id="L64">        sport.setName( sportDTO.name() );</span>
+<span class="nc" id="L65">        sport.setModes( modeDTOListToModeList( sportDTO.modes() ) );</span>
+<span class="nc" id="L66">        sport.setScoringType( sportDTO.scoringType() );</span>
 
-<span class="fc" id="L68">        return sport;</span>
+<span class="nc" id="L68">        return sport;</span>
     }
 
     protected ModeDTO modeToModeDTO(Mode mode) {
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if ( mode == null ) {</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if ( mode == null ) {</span>
 <span class="nc" id="L73">            return null;</span>
         }
 
-<span class="fc" id="L76">        String name = null;</span>
-<span class="fc" id="L77">        Integer playersPerGame = null;</span>
+<span class="nc" id="L76">        String name = null;</span>
+<span class="nc" id="L77">        Integer playersPerGame = null;</span>
 
-<span class="fc" id="L79">        name = mode.getName();</span>
-<span class="fc" id="L80">        playersPerGame = mode.getPlayersPerGame();</span>
+<span class="nc" id="L79">        name = mode.getName();</span>
+<span class="nc" id="L80">        playersPerGame = mode.getPlayersPerGame();</span>
 
-<span class="fc" id="L82">        ModeDTO modeDTO = new ModeDTO( name, playersPerGame );</span>
+<span class="nc" id="L82">        ModeDTO modeDTO = new ModeDTO( name, playersPerGame );</span>
 
-<span class="fc" id="L84">        return modeDTO;</span>
+<span class="nc" id="L84">        return modeDTO;</span>
     }
 
     protected List&lt;ModeDTO&gt; modeListToModeDTOList(List&lt;Mode&gt; list) {
-<span class="fc bfc" id="L88" title="All 2 branches covered.">        if ( list == null ) {</span>
-<span class="fc" id="L89">            return null;</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if ( list == null ) {</span>
+<span class="nc" id="L89">            return null;</span>
         }
 
-<span class="fc" id="L92">        List&lt;ModeDTO&gt; list1 = new ArrayList&lt;ModeDTO&gt;( list.size() );</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        for ( Mode mode : list ) {</span>
-<span class="fc" id="L94">            list1.add( modeToModeDTO( mode ) );</span>
-        }
+<span class="nc" id="L92">        List&lt;ModeDTO&gt; list1 = new ArrayList&lt;ModeDTO&gt;( list.size() );</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        for ( Mode mode : list ) {</span>
+<span class="nc" id="L94">            list1.add( modeToModeDTO( mode ) );</span>
+<span class="nc" id="L95">        }</span>
 
-<span class="fc" id="L97">        return list1;</span>
+<span class="nc" id="L97">        return list1;</span>
     }
 
     protected Mode modeDTOToMode(ModeDTO modeDTO) {
-<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if ( modeDTO == null ) {</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if ( modeDTO == null ) {</span>
 <span class="nc" id="L102">            return null;</span>
         }
 
-<span class="fc" id="L105">        Mode mode = new Mode();</span>
+<span class="nc" id="L105">        Mode mode = new Mode();</span>
 
-<span class="fc" id="L107">        mode.setName( modeDTO.name() );</span>
-<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if ( modeDTO.playersPerGame() != null ) {</span>
-<span class="fc" id="L109">            mode.setPlayersPerGame( modeDTO.playersPerGame() );</span>
+<span class="nc" id="L107">        mode.setName( modeDTO.name() );</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if ( modeDTO.playersPerGame() != null ) {</span>
+<span class="nc" id="L109">            mode.setPlayersPerGame( modeDTO.playersPerGame() );</span>
         }
 
-<span class="fc" id="L112">        return mode;</span>
+<span class="nc" id="L112">        return mode;</span>
     }
 
     protected List&lt;Mode&gt; modeDTOListToModeList(List&lt;ModeDTO&gt; list) {
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if ( list == null ) {</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if ( list == null ) {</span>
 <span class="nc" id="L117">            return null;</span>
         }
 
-<span class="fc" id="L120">        List&lt;Mode&gt; list1 = new ArrayList&lt;Mode&gt;( list.size() );</span>
-<span class="fc bfc" id="L121" title="All 2 branches covered.">        for ( ModeDTO modeDTO : list ) {</span>
-<span class="fc" id="L122">            list1.add( modeDTOToMode( modeDTO ) );</span>
-        }
+<span class="nc" id="L120">        List&lt;Mode&gt; list1 = new ArrayList&lt;Mode&gt;( list.size() );</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        for ( ModeDTO modeDTO : list ) {</span>
+<span class="nc" id="L122">            list1.add( modeDTOToMode( modeDTO ) );</span>
+<span class="nc" id="L123">        }</span>
 
-<span class="fc" id="L125">        return list1;</span>
+<span class="nc" id="L125">        return list1;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

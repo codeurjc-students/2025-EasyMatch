@@ -47,7 +47,7 @@ public class User {
     @OneToMany (mappedBy = "organizer")
     private List<Match> organizedMatches;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_level_history", joinColumns = @JoinColumn(name = "user_id"))
     private List<LevelHistory> levelHistory = new ArrayList<>();
 
