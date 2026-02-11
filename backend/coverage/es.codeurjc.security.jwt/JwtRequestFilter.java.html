@@ -37,27 +37,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
 		try {
-<span class="fc" id="L40">			var claims = jwtTokenProvider.validateToken(request, true);</span>
-<span class="fc" id="L41">			var userDetails = userDetailsService.loadUserByUsername(claims.getSubject());</span>
+<span class="nc" id="L40">			var claims = jwtTokenProvider.validateToken(request, true);</span>
+<span class="nc" id="L41">			var userDetails = userDetailsService.loadUserByUsername(claims.getSubject());</span>
 
-<span class="fc" id="L43">			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(</span>
-<span class="fc" id="L44">						userDetails, null, userDetails.getAuthorities());</span>
+<span class="nc" id="L43">			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(</span>
+<span class="nc" id="L44">						userDetails, null, userDetails.getAuthorities());</span>
 				
-<span class="fc" id="L46">			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
-<span class="fc" id="L47">			SecurityContextHolder.getContext().setAuthentication(authentication);</span>
-<span class="fc" id="L48">		} catch (Exception ex) {</span>
-<span class="fc" id="L49">			log.error(&quot;Exception processing JWT Token: &quot;, ex);</span>
-		}
+<span class="nc" id="L46">			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
+<span class="nc" id="L47">			SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+<span class="nc" id="L48">		} catch (Exception ex) {</span>
+<span class="nc" id="L49">			log.error(&quot;Exception processing JWT Token: &quot;, ex);</span>
+<span class="nc" id="L50">		}</span>
 
-<span class="fc" id="L52">		filterChain.doFilter(request, response);</span>
-<span class="fc" id="L53">	}</span>
+<span class="nc" id="L52">		filterChain.doFilter(request, response);</span>
+<span class="nc" id="L53">	}</span>
 	
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
-<span class="fc" id="L57">		String path = request.getServletPath();</span>
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">		return path.startsWith(&quot;/v3/api-docs&quot;)</span>
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">			|| path.startsWith(&quot;/swagger-ui&quot;)</span>
-<span class="pc bpc" id="L60" title="1 of 2 branches missed.">			|| path.startsWith(&quot;/swagger-ui.html&quot;);</span>
+<span class="nc" id="L57">		String path = request.getServletPath();</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">		return path.startsWith(&quot;/v3/api-docs&quot;)</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">			|| path.startsWith(&quot;/swagger-ui&quot;)</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">			|| path.startsWith(&quot;/swagger-ui.html&quot;);</span>
 	}
 
 }

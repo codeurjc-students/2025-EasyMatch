@@ -213,11 +213,15 @@ public class MatchService {
             }
             if (isNewResult) {
                  match.getTeam1Players().forEach(user -> {
-                    user.updateStats(match.didPlayerWin(user), false);
+                    boolean won = match.didPlayerWin(user);
+                    user.updateStats(won, false);
+                    user.applyMatchResult(won, match.getDate());
                     userService.update(user);
                 });
                 match.getTeam2Players().forEach(user -> {
-                    user.updateStats(match.didPlayerWin(user), false);
+                    boolean won = match.didPlayerWin(user);
+                    user.updateStats(won, false);
+                    user.applyMatchResult(won, match.getDate());
                     userService.update(user);
                 });
             }

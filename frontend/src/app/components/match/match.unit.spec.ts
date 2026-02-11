@@ -3,6 +3,7 @@ import { MatchComponent } from './match';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { ScoringType } from '../../models/scoring-type';
+import { LevelHistory } from '../../models/level-history.model';
 
 
 describe('MatchComponent', () => {
@@ -26,6 +27,7 @@ describe('MatchComponent', () => {
         losses: 0,
         winRate: 0
     },
+    levelHistory: [{date: new Date('2024-01-01'), levelBefore: 5.0, levelAfter: 5.5, won: true}],
     roles: [] 
   }
 

@@ -25,13 +25,13 @@ public interface ClubMapper {
 
 
     default ScheduleDTO toScheduleDTO(Schedule schedule) {
-<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (schedule == null) return null;</span>
-<span class="fc" id="L29">        return new ScheduleDTO(schedule.getOpeningTime(), schedule.getClosingTime());</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (schedule == null) return null;</span>
+<span class="nc" id="L29">        return new ScheduleDTO(schedule.getOpeningTime(), schedule.getClosingTime());</span>
     }
 
     default PriceRangeDTO toPriceRangeDTO(PriceRange priceRange) {
-<span class="fc bfc" id="L33" title="All 2 branches covered.">        if (priceRange == null) return null;</span>
-<span class="fc" id="L34">        return new PriceRangeDTO(priceRange.getMinPrice(), priceRange.getMaxPrice(),priceRange.getUnit());</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if (priceRange == null) return null;</span>
+<span class="nc" id="L34">        return new PriceRangeDTO(priceRange.getMinPrice(), priceRange.getMaxPrice(),priceRange.getUnit());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

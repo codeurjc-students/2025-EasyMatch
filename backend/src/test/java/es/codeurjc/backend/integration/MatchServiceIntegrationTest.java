@@ -194,9 +194,11 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(8)
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
-    public void addOrUpdateMatchResultTest(){
+    public void updateMatchResultTest(){
         long id = 6L;
         MatchDTO match = matchService.getMatch(id);
+        User loggedUser = userService.getLoggedUser();
+        int historySizeBefore = loggedUser.getLevelHistory().size();
         assertThat(match.state(), equalTo(false));
 
         MatchResultDTO resultDTO = new MatchResultDTO("A", "B",0,0,new ArrayList<>(List.of(6,3,7)), new ArrayList<>(List.of(4,6,5)));
@@ -209,10 +211,8 @@ public class MatchServiceIntegrationTest {
         assertThat(matchWithResult.result().team2GamesPerSet(), equalTo(List.of(4,6,5)));
         assertThat(matchWithResult.state(), equalTo(false));
         
+        int historySizeAfter = loggedUser.getLevelHistory().size();
+        assertThat(historySizeAfter, equalTo(historySizeBefore));
     }
 
-    
-
-
-    
 }

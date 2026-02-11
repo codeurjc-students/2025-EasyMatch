@@ -26,13 +26,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 	public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
 			final ModelAndView modelAndView) throws Exception {
 
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">		if (modelAndView != null) {</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">		if (modelAndView != null) {</span>
 
 <span class="nc" id="L31">			CsrfToken token = (CsrfToken) request.getAttribute(&quot;_csrf&quot;);</span>
 <span class="nc bnc" id="L32" title="All 2 branches missed.">			if (token != null) {</span>
 <span class="nc" id="L33">				modelAndView.addObject(&quot;token&quot;, token.getToken());</span>
 			}
 		}
-<span class="fc" id="L36">	}</span>
+<span class="nc" id="L36">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

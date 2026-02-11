@@ -32,26 +32,26 @@ public class UserLoginService {
 
 	public ResponseEntity&lt;AuthResponse&gt; login(HttpServletResponse response, LoginRequest loginRequest) {
 		
-<span class="fc" id="L35">		Authentication authentication = authenticationManager.authenticate(</span>
-<span class="fc" id="L36">				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));</span>
+<span class="nc" id="L35">		Authentication authentication = authenticationManager.authenticate(</span>
+<span class="nc" id="L36">				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));</span>
 
-<span class="fc" id="L38">		SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+<span class="nc" id="L38">		SecurityContextHolder.getContext().setAuthentication(authentication);</span>
 
 		
-<span class="fc" id="L41">		String username = loginRequest.getUsername();</span>
-<span class="fc" id="L42">		UserDetails user = userDetailsService.loadUserByUsername(username);</span>
+<span class="nc" id="L41">		String username = loginRequest.getUsername();</span>
+<span class="nc" id="L42">		UserDetails user = userDetailsService.loadUserByUsername(username);</span>
 
-<span class="fc" id="L44">		HttpHeaders responseHeaders = new HttpHeaders();</span>
-<span class="fc" id="L45">		var newAccessToken = jwtTokenProvider.generateAccessToken(user);</span>
-<span class="fc" id="L46">		var newRefreshToken = jwtTokenProvider.generateRefreshToken(user);</span>
+<span class="nc" id="L44">		HttpHeaders responseHeaders = new HttpHeaders();</span>
+<span class="nc" id="L45">		var newAccessToken = jwtTokenProvider.generateAccessToken(user);</span>
+<span class="nc" id="L46">		var newRefreshToken = jwtTokenProvider.generateRefreshToken(user);</span>
 
-<span class="fc" id="L48">		response.addCookie(buildTokenCookie(TokenType.ACCESS, newAccessToken));</span>
-<span class="fc" id="L49">		response.addCookie(buildTokenCookie(TokenType.REFRESH, newRefreshToken));</span>
+<span class="nc" id="L48">		response.addCookie(buildTokenCookie(TokenType.ACCESS, newAccessToken));</span>
+<span class="nc" id="L49">		response.addCookie(buildTokenCookie(TokenType.REFRESH, newRefreshToken));</span>
 
-<span class="fc" id="L51">		AuthResponse loginResponse = new AuthResponse(AuthResponse.Status.SUCCESS,</span>
-<span class="fc" id="L52">				&quot;Auth successful. Tokens are created in cookie.&quot;,user.getAuthorities().toString());</span>
+<span class="nc" id="L51">		AuthResponse loginResponse = new AuthResponse(AuthResponse.Status.SUCCESS,</span>
+<span class="nc" id="L52">				&quot;Auth successful. Tokens are created in cookie.&quot;,user.getAuthorities().toString());</span>
 				
-<span class="fc" id="L54">		return ResponseEntity.ok().headers(responseHeaders).body(loginResponse);</span>
+<span class="nc" id="L54">		return ResponseEntity.ok().headers(responseHeaders).body(loginResponse);</span>
 	}
 
 	public ResponseEntity&lt;AuthResponse&gt; refresh(HttpServletResponse response, String refreshToken) {
@@ -69,38 +69,38 @@ public class UserLoginService {
 <span class="nc" id="L69">		} catch (Exception e) {</span>
 <span class="nc" id="L70">			log.error(&quot;Error while processing refresh token&quot;, e);</span>
 <span class="nc" id="L71">			AuthResponse loginResponse = new AuthResponse(AuthResponse.Status.FAILURE,</span>
-<span class="nc" id="L72">					&quot;Failure while processing refresh token&quot;);</span>
+					&quot;Failure while processing refresh token&quot;);
 <span class="nc" id="L73">			return ResponseEntity.ok().body(loginResponse);</span>
 		}
 	}
 
 	public String logout(HttpServletResponse response) {
-<span class="fc" id="L78">		SecurityContextHolder.clearContext();</span>
-<span class="fc" id="L79">		response.addCookie(removeTokenCookie(TokenType.ACCESS));</span>
-<span class="fc" id="L80">		response.addCookie(removeTokenCookie(TokenType.REFRESH));</span>
+<span class="nc" id="L78">		SecurityContextHolder.clearContext();</span>
+<span class="nc" id="L79">		response.addCookie(removeTokenCookie(TokenType.ACCESS));</span>
+<span class="nc" id="L80">		response.addCookie(removeTokenCookie(TokenType.REFRESH));</span>
 
-<span class="fc" id="L82">		return &quot;logout successfully&quot;;</span>
+<span class="nc" id="L82">		return &quot;logout successfully&quot;;</span>
 	}
 
 	private Cookie buildTokenCookie(TokenType type, String token) {
-<span class="fc" id="L86">		Cookie cookie = new Cookie(type.cookieName, token);</span>
-<span class="fc" id="L87">		cookie.setMaxAge((int) type.duration.getSeconds());</span>
-<span class="fc" id="L88">		cookie.setHttpOnly(true);</span>
-<span class="fc" id="L89">		cookie.setPath(&quot;/&quot;);</span>
-<span class="fc" id="L90">		cookie.setSecure(true);</span>
-<span class="fc" id="L91">		cookie.setAttribute(&quot;SameSite&quot;, &quot;None&quot;);</span>
-<span class="fc" id="L92">		cookie.setDomain(&quot;localhost&quot;);</span>
+<span class="nc" id="L86">		Cookie cookie = new Cookie(type.cookieName, token);</span>
+<span class="nc" id="L87">		cookie.setMaxAge((int) type.duration.getSeconds());</span>
+<span class="nc" id="L88">		cookie.setHttpOnly(true);</span>
+<span class="nc" id="L89">		cookie.setPath(&quot;/&quot;);</span>
+<span class="nc" id="L90">		cookie.setSecure(true);</span>
+<span class="nc" id="L91">		cookie.setAttribute(&quot;SameSite&quot;, &quot;None&quot;);</span>
+<span class="nc" id="L92">		cookie.setDomain(&quot;localhost&quot;);</span>
 
-<span class="fc" id="L94">		return cookie;</span>
+<span class="nc" id="L94">		return cookie;</span>
 	}
 
 	private Cookie removeTokenCookie(TokenType type){
-<span class="fc" id="L98">		Cookie cookie = new Cookie(type.cookieName, &quot;&quot;);</span>
-<span class="fc" id="L99">		cookie.setMaxAge(0);</span>
-<span class="fc" id="L100">		cookie.setHttpOnly(true);</span>
-<span class="fc" id="L101">		cookie.setPath(&quot;/&quot;);</span>
+<span class="nc" id="L98">		Cookie cookie = new Cookie(type.cookieName, &quot;&quot;);</span>
+<span class="nc" id="L99">		cookie.setMaxAge(0);</span>
+<span class="nc" id="L100">		cookie.setHttpOnly(true);</span>
+<span class="nc" id="L101">		cookie.setPath(&quot;/&quot;);</span>
 		
-<span class="fc" id="L103">		return cookie;</span>
+<span class="nc" id="L103">		return cookie;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

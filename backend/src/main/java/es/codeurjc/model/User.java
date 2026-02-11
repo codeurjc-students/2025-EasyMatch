@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -12,6 +13,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
@@ -45,6 +47,10 @@ public class User {
     @OneToMany (mappedBy = "organizer")
     private List<Match> organizedMatches;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_level_history", joinColumns = @JoinColumn(name = "user_id"))
+    private List<LevelHistory> levelHistory = new ArrayList<>();
+
     @Lob
     private Blob image;
     
@@ -70,6 +76,29 @@ public class User {
     
     public void updateStats(boolean won, boolean draw) {
         this.stats.updateStats(won, draw);
+    }
+
+    public void applyMatchResult(boolean won, LocalDateTime matchDate) {
+
+        float previousLevel = this.level;
+
+        float delta = won ? 0.2f : -0.15f;
+        this.level = clampLevel(this.level + delta);
+
+        this.levelHistory.add(
+            new LevelHistory(
+                matchDate,
+                previousLevel,
+                this.level,
+                won
+            )
+        );
+    }
+
+    private float clampLevel(float level){
+        if (level < 1.0f) return 1.0f;
+        if (level > 7.0f) return 7.0f;
+        return level;
     }
 
     public List<Match> getMatchHistory() {
@@ -195,6 +224,14 @@ public class User {
 
     public void setOrganizedMatches(List<Match> organizedMatches) {
         this.organizedMatches = organizedMatches;
+    }
+
+    public List<LevelHistory> getLevelHistory() {
+        return levelHistory;
+    }
+
+    public void setLevelHistory(List<LevelHistory> levelHistory) {
+        this.levelHistory = levelHistory;
     }
     
 }

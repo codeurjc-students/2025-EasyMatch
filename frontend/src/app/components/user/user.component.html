@@ -57,11 +57,10 @@
             <p>% Victorias</p>
           </div>
           <div id="maxLevel" class="stat">
-            <h3>{{ u.level | number: '1.2-2' }}</h3>
+            <h3>{{ maxLevel | number: '1.2-2' }}</h3>
             <p>Nivel máx.</p>
           </div>
         </div>
-
         <div class="actions">
           <button id="edit-profile-btn" mat-stroked-button color="primary" (click)="startEdit()">
             <mat-icon>edit</mat-icon> Editar perfil
@@ -144,6 +143,42 @@
 
     </div>
   </div>
+</mat-card>
+<mat-card class="level-chart-card">
+  <div class="level-chart" *ngIf="levelChartData().length">
+    <h2><mat-icon>trending_up</mat-icon>&nbsp;&nbsp; Progresión de nivel</h2>
+
+    <ngx-charts-line-chart
+      [results]="levelChartData()"
+      [xAxis]="true"
+      [yAxis]="true"
+      [autoScale]="true"
+      [timeline]="true"
+      [roundDomains]="true"
+      [showGridLines]="true"
+    >
+    </ngx-charts-line-chart>
+    <div class="actions">
+      <button
+          mat-flat-button
+          class="view-my-matches-btn"
+          color="warn"
+          (click)="goToMyMatches()"
+        >
+          <mat-icon>visibility</mat-icon> Ver mis partidos
+        </button>
+    </div>
+  </div>
+  <div class="level-chart no-data" *ngIf="levelChartData().length == 0">
+    <h2>
+      <mat-icon>trending_up</mat-icon>&nbsp;&nbsp; Progresión de nivel
+    </h2>
+
+    <p class="no-data-text">
+      No hay resultados disponibles para visualizar la gráfica de progresión de nivel
+    </p>
+  </div>
+
 </mat-card>
 
 <mat-card *ngIf="loading()" class="loading-card">

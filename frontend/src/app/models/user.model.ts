@@ -1,3 +1,5 @@
+import { LevelHistory } from "./level-history.model";
+
 export interface User{
     id: number;
     realname: string;
@@ -7,7 +9,7 @@ export interface User{
     birthDate: Date | string;
     gender?: boolean;
     description: string;
-    level: number,
+    level: number;
     stats: {
         totalMatches: number,
         wins: number,
@@ -15,5 +17,6 @@ export interface User{
         losses: number,
         winRate: number
     }
+    levelHistory : LevelHistory[];
     roles: string[];
 }

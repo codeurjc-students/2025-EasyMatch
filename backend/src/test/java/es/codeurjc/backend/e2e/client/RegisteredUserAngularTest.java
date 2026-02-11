@@ -3,6 +3,7 @@ package es.codeurjc.backend.e2e.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -211,11 +212,26 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         assertThat(currentUser.findElement(By.cssSelector(".username")).getText(), equalTo("@pedro123"));
         assertThat(currentUser.findElement(By.cssSelector(".birthdate")).getText(), containsString("mayo 1990"));
         assertThat(currentUser.findElement(By.cssSelector(".description")).getText(), equalTo("Nuevo perfil actualizado"));
+        //assertThat(currentUser.findElement(By.cssSelector(".description")).getText(), equalTo("Apasionado del tenis"));
         assertThat(currentUser.findElement(By.id("totalMatches")).getText(), containsString("3"));
         assertThat(currentUser.findElement(By.id("wins")).getText(), containsString("2"));
         assertThat(currentUser.findElement(By.id("winRate")).getText(), containsString("66,67%"));
-        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,12"));
+        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,37"));
+
+        // Wait until chart card appears
+        WebElement chartCard = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("level-chart-card")));
         
+        // Verify that chart title appears meaning the chart is rendered
+        WebElement chartTitle = chartCard.findElement(By.xpath(".//h2[contains(.,'Progresión de nivel')]"));
+        assertTrue(chartTitle.isDisplayed());
+
+        /* wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(
+            By.cssSelector("ngx-charts-line-chart svg"), 0
+        ));
+
+        WebElement ngxChart = chartCard.findElement(By.tagName("ngx-charts-line-chart"));
+        assertTrue(ngxChart.isDisplayed()); */
+
         WebElement deleteBtn = driver.findElement(By.id("delete_account_btn"));
         deleteBtn.click();
 
@@ -226,7 +242,6 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
 
         wait.until(ExpectedConditions.urlContains("/login"));
         assertThat(driver.getCurrentUrl(), containsString("/login"));
-
     }
 
     @Test 
