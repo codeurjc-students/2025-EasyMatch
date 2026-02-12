@@ -13,7 +13,7 @@ COPY frontend/angular.json ./
 COPY frontend/tsconfig*.json ./
 COPY frontend/src ./src
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 RUN npm run build -- --configuration=production --base-href=/
 
 #########################
