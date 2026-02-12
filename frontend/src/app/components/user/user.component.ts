@@ -17,7 +17,7 @@ import { HeaderComponent } from '../header/header.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { environment } from '../../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
 import { Router } from '@angular/router';
 
 @Component({
@@ -54,6 +54,12 @@ export class UserComponent implements OnInit {
   photoFile: File | null = null;
   photoPreview: string | null = null;
   levelChartData = signal<any[]>([]);
+  colorScheme = {
+    name: 'blueScheme',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#005CBB']
+  };
 
   private apiUrl = environment.apiUrl;
   form!: FormGroup;
