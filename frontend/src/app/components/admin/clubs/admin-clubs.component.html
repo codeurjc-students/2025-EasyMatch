@@ -42,6 +42,18 @@
     <td mat-cell *matCellDef="let c">{{ c.phone }}</td>
   </ng-container>
 
+  <ng-container matColumnDef="sports">
+    <th mat-header-cell *matHeaderCellDef>Deportes</th>
+    <td mat-cell *matCellDef="let c">
+      <ul class="sports-list">
+        @for (s of c.sports; track s.name) {
+          <li class="sport-item" [attr.data-sport]="s.name?.toLowerCase()">
+            <span class="sport-name">{{ s.name }}</span>
+          </li>
+        }
+      </ul>
+    </td>
+  </ng-container>
 
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>Acciones</th>

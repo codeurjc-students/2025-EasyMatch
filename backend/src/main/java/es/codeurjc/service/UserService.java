@@ -219,7 +219,6 @@ public class UserService {
             }
             updatedUser.setRoles(user.getRoles());
             updatedUser.setStats(user.getStats());
-            updatedUser.setLevel(user.getLevel());
             updatedUser.setLevelHistory(user.getLevelHistory());
             userRepository.save(updatedUser);
             return toDTO(updatedUser);

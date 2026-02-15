@@ -38,7 +38,7 @@
       <div class="title"></div>
 
       <button mat-button [matMenuTriggerFor]="menu">
-        <img class="avatar" src="assets/default-avatar.jpg" />
+        <img class="avatar" [src]="getUserImage(user()?.id || 0) || 'assets/default-avatar.jpg'" alt="Usuario" />
       </button>
 
       <mat-menu #menu="matMenu" class="admin-menu">

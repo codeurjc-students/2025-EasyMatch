@@ -29,7 +29,11 @@
     color: #FFFFFF;
     border: 0.5px solid ;
     border-color: #DEE2E6;
-    font-weight: 550;
+    font-weight: 550; 
+  }
+  th, td {
+    font-size: 0.75rem;
+    padding: 6px 10px;
   }
 
   td {
@@ -69,7 +73,7 @@ mat-paginator {
 }
 
 
-.modes-list {
+.modes-list,.sports-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -78,35 +82,61 @@ mat-paginator {
   gap: 8px;
 }
 
-.mode-item {
-  background: #f3f4f6; 
-  color: #1f2937; 
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 0.85rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+.mode-item, .sport-item {
+  background: #e9eef5;      // azul gris muy suave (más acorde a tu web)
+  color: #2C3E50;           // azul oscuro corporativo
+  border-radius: 6px;       // ligeramente menos redondeado
+  padding: 4px 8px;         // menos espacio
+  font-size: 0.75rem;       // texto más pequeño
+  display: inline-flex;     // más compacto que flex column
+  align-items: center;
+  gap: 4px;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: all 0.15s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-    background: #e5e7eb;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    background: #dde6f3;
   }
 
-  .mode-name {
+  .mode-name, .sport-name {
     font-weight: 600;
-    margin-bottom: 2px;
+    font-size: 0.75rem;
+    margin: 0;
   }
 
   .mode-players {
-    font-size: 0.75rem;
-    color: #6b7280; 
+    font-size: 0.65rem;
+    color: #6b7280;
   }
 }
 
+.sport-item {
+
+  &[data-sport="tenis"] {
+    background: #f1f5f9; 
+    color: #2C3E50;
+  }
+
+  &[data-sport="padel"] {
+    background: #e3f2fd; 
+    color: #1e88e5;
+  }
+
+  &[data-sport="voleibol"],
+  &[data-sport="volley"] {
+    background: #e8f0fe; 
+    color: #1565c0;
+  }
+
+  &[data-sport="futbol"],
+  &[data-sport="fútbol"] {
+    background: #fdecea;
+    color: #c62828;
+  }
+}
 
 .scoring-badge {
   display: inline-block;
@@ -116,7 +146,6 @@ mat-paginator {
   font-weight: 600;
   text-transform: capitalize;
   color: #fff;
-  background: #64748b;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   transition: background 0.2s ease;
 

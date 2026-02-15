@@ -11,6 +11,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ClubService } from '../../../service/club.service';
 import { Club } from '../../../models/club.model';
+import { SportService } from '../../../service/sport.service';
+import { Sport } from '../../../models/sport.model';
 
 @Component({
   selector: 'app-admin-club-create',
@@ -32,7 +34,7 @@ export class AdminClubCreateComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private clubService = inject(ClubService);
-  private router = inject(Router);
+  private sportService = inject(SportService);
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
 
@@ -40,6 +42,8 @@ export class AdminClubCreateComponent implements OnInit {
   editingId: number | null = null;
   photoFile: File | null = null;
   photoPreview: string | null = null;
+  sports: Sport[] = [];
+  originalSportIds: number[] = [];
   
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -53,7 +57,11 @@ export class AdminClubCreateComponent implements OnInit {
       closingTime: ['', Validators.required],
       minPrice: ['', [Validators.required, Validators.min(0)]],
       maxPrice: ['', [Validators.required, Validators.min(0)]],
-      
+      sports: [[], Validators.required] 
+    });
+    this.sportService.getSports().subscribe({
+      next: (data) => this.sports = data,
+      error: (err) => console.error('Error cargando deportes', err)
     });
     this.route.queryParams.subscribe(params => {
       if (params['id']) {
@@ -65,8 +73,12 @@ export class AdminClubCreateComponent implements OnInit {
 
   
   loadClub(id: number) {
+    
     this.clubService.getClub(id).subscribe({
       next: (c: Club) => {
+        const sportIds = c.sports?.map(s => s.id!) || [];
+        this.originalSportIds = [...sportIds];
+
         this.form.patchValue({
           name: c.name,
           address: c.address,
@@ -78,6 +90,7 @@ export class AdminClubCreateComponent implements OnInit {
           closingTime: c.schedule.closingTime,
           minPrice: c.priceRange.minPrice,
           maxPrice: c.priceRange.maxPrice,
+          sports: sportIds
         });
         this.clubService.getClubImage(id).subscribe({
           next: (blob: Blob) => {
@@ -105,7 +118,7 @@ export class AdminClubCreateComponent implements OnInit {
       city: f.city,
       address: f.address,
       web: f.web,
-
+      sports: f.sports.map((id: number) => ({ id })),
       schedule: {
         openingTime: f.openingTime,
         closingTime: f.closingTime
