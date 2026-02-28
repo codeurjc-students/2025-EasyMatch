@@ -1,6 +1,7 @@
 package es.codeurjc.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.MatchResultDTO;
+import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.MatchResult;
@@ -236,4 +238,73 @@ public class MatchService {
         return getMatch(id).result() == null ? new MatchResultDTO(null, null, null, null, null, null) : getMatch(id).result();
     }
 
+    public Collection<UserDTO> getMatchTeam1Players(long id) {
+        Match match = matchRepository.findById(id).orElseThrow();
+        return userMapper.toDTOs(match.getTeam1Players());
+    }
+
+    public Collection<UserDTO> getMatchTeam2Players(long id) {
+        Match match = matchRepository.findById(id).orElseThrow();
+        return userMapper.toDTOs(match.getTeam2Players());
+    }
+
+    public void addPlayerToTeam1(long matchId, long playerId) {
+        Match match = matchRepository.findById(matchId).orElseThrow();
+        UserDTO userDTO = userService.getUser(playerId);
+        User user = userMapper.toDomain(userDTO);
+        int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();
+
+        if (match.getTeam1Players().size() >= playersPerGame / 2 )
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Equipo A lleno");
+
+        if (match.containsPlayer(user))
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Ya se ha unido a este partido");
+        else
+            match.addPlayerToTeam1(user);
+        
+        if (match.isFull()) match.setState(false);
+        matchRepository.save(match);
+    }
+
+    public void addPlayerToTeam2(long matchId, long playerId) {
+        Match match = matchRepository.findById(matchId).orElseThrow();
+        UserDTO userDTO = userService.getUser(playerId);
+        User user = userMapper.toDomain(userDTO);
+        int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();
+
+        if (match.getTeam2Players().size() >= playersPerGame / 2 )
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Equipo B lleno");
+
+        if (match.containsPlayer(user))
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Ya se ha unido a este partido");
+        else
+            match.addPlayerToTeam2(user);
+        
+        if (match.isFull()) match.setState(false);
+        matchRepository.save(match);
+    }
+
+    public void removePlayerFromTeam1(long matchId, long playerId) {
+        Match match = matchRepository.findById(matchId).orElseThrow();
+        UserDTO userDTO = userService.getUser(playerId);
+        User user = userMapper.toDomain(userDTO);
+        match.getTeam1Players().removeIf(p -> p.getId() == user.getId());
+        if (match.getTeam1Players().isEmpty() && match.getTeam2Players().isEmpty()){
+            matchRepository.deleteById(matchId);
+        }else{
+            matchRepository.save(match);
+        }
+    }
+
+    public void removePlayerFromTeam2(long matchId, long playerId) {
+        Match match = matchRepository.findById(matchId).orElseThrow();
+        UserDTO userDTO = userService.getUser(playerId);
+        User user = userMapper.toDomain(userDTO);
+        match.getTeam2Players().removeIf(p -> p.getId() == user.getId());
+        if (match.getTeam1Players().isEmpty() && match.getTeam2Players().isEmpty()){
+            matchRepository.deleteById(matchId);
+        }else{
+            matchRepository.save(match);
+        }
+    }
 }

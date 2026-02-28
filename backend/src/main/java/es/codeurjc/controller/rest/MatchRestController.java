@@ -1,6 +1,7 @@
 package es.codeurjc.controller.rest;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchResultDTO;
+import es.codeurjc.dto.UserDTO;
 import es.codeurjc.model.User;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
@@ -124,6 +126,52 @@ public class MatchRestController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo el organizador del partido puede añadir o editar el resultado");
         }
         return matchService.addOrUpdateMatchResult(id, resultData);
+    }
+
+    @GetMapping ("/{id}/team1Players")
+    public Collection<UserDTO> getMatchTeam1Players(@PathVariable long id) {
+        return matchService.getMatchTeam1Players(id);
+    }
+
+    @GetMapping ("/{id}/team2Players")
+    public Collection<UserDTO> getMatchTeam2Players(@PathVariable long id) {
+        return matchService.getMatchTeam2Players(id);
+    }
+
+    @PostMapping("/{matchId}/team1Players/{playerId}")
+    public ResponseEntity<Map<String, String>> addPlayerToTeam1(@PathVariable long matchId, @PathVariable long playerId) {
+        matchService.addPlayerToTeam1(matchId, playerId);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "SUCCESS");
+        response.put("message", "Player added to team 1");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{matchId}/team2Players/{playerId}")
+    public ResponseEntity<Map<String, String>> addPlayerToTeam2(@PathVariable long matchId, @PathVariable long playerId) {
+        matchService.addPlayerToTeam2(matchId, playerId);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "SUCCESS");
+        response.put("message", "Player added to team 2");
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{matchId}/team1Players/{playerId}")
+    public ResponseEntity<Map<String, String>> removePlayerFromTeam1(@PathVariable long matchId, @PathVariable long playerId) {
+        matchService.removePlayerFromTeam1(matchId, playerId);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "SUCCESS");
+        response.put("message", "Player removed from team 1");
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{matchId}/team2Players/{playerId}")
+    public ResponseEntity<Map<String, String>> removePlayerFromTeam2(@PathVariable long matchId, @PathVariable long playerId) {
+        matchService.removePlayerFromTeam2(matchId, playerId);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "SUCCESS");
+        response.put("message", "Player removed from team 2");
+        return ResponseEntity.ok(response);
     }
 
 }

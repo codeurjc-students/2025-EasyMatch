@@ -53,4 +53,7 @@ export class AdminLayoutComponent {
   getUserImage(id: number): string {
     return `${this.apiUrl}/users/${id}/image`;
   }
+  goToProfile() {
+    window.location.href = "/profile";
+  }
 }

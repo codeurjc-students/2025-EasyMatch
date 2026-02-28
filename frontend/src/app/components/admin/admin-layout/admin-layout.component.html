@@ -42,7 +42,7 @@
       </button>
 
       <mat-menu #menu="matMenu" class="admin-menu">
-        <button mat-menu-item>
+        <button mat-menu-item (click)="goToProfile()">
           <mat-icon>person</mat-icon> Perfil
         </button>
         <button mat-menu-item (click)="logout()" class="logout-btn">

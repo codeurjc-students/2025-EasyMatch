@@ -71,7 +71,7 @@ export class AdminUserCreateComponent implements OnInit {
         email: u.email,
         birthDate: u.birthDate,
         gender: u.gender,
-        level: u.level,
+        level: this.roundToTwoDecimals(u.level),
         description: u.description,
       });
 
@@ -98,6 +98,7 @@ export class AdminUserCreateComponent implements OnInit {
 
     const payload = {
       ...raw,
+      level: this.roundToTwoDecimals(raw.level),
       birthDate: this.toLocalMidnightISOString(raw.birthDate)
     };
 
@@ -194,5 +195,9 @@ export class AdminUserCreateComponent implements OnInit {
   
   cancel() {
     this.router.navigate(['/admin/users']);
+  }
+
+  private roundToTwoDecimals(value: number): number {
+    return Math.round(value * 100) / 100;
   }
 }

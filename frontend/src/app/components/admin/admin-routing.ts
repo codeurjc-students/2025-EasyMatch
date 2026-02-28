@@ -9,6 +9,7 @@ import { AdminMatchCreateComponent } from './matches/admin-match-create.componen
 import { AdminSportsComponent } from './sports/admin-sports.component';
 import { AdminSportCreateComponent } from './sports/admin-sport-create.component';
 import { adminGuard } from '../../guards/admin.guard';
+import { AdminMatchPlayersComponent } from './matches/players/admin-match-players.component';
 
 
 export const ADMIN_ROUTES: Routes = [
@@ -27,6 +28,7 @@ export const ADMIN_ROUTES: Routes = [
       // MATCHES
       { path: 'matches', component: AdminMatchesComponent },
       { path: 'matches/create', component: AdminMatchCreateComponent },
+      { path: 'matches/players', component: AdminMatchPlayersComponent },
       // SPORTS
       { path: 'sports', component: AdminSportsComponent },
       { path: 'sports/create', component: AdminSportCreateComponent },

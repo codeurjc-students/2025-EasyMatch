@@ -1,0 +1,113 @@
+<div class="admin-header">
+  <h2>Admin > Partidos > Jugadores</h2>
+  <button mat-stroked-button color="accent" (click)="backToMatch()">
+    <mat-icon>arrow_back</mat-icon>
+    Volver
+  </button>
+</div>
+
+
+<div class="teams-container admin-table-wrapper">
+  <div class="team-card">
+
+    <h3 class="team-title">Equipo 1</h3>
+
+    <table mat-table [dataSource]="team1Players" class="admin-table">
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let p">{{ p.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let p">
+          {{ p.realname }} ({{ p.username }})
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let p">
+          <button mat-icon-button color="warn"
+                  (click)="removePlayer(1, p.id)">
+            <mat-icon>person_remove</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <div class="add-player-section">
+      <mat-form-field appearance="fill">
+        <mat-label>Añadir jugador</mat-label>
+        <mat-select [(value)]="selectedPlayerTeam1">
+          <mat-option *ngFor="let user of availableUsers"
+                      [value]="user.id">
+            {{ user.realname }} ({{ user.username }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary"
+              (click)="addPlayer(1, selectedPlayerTeam1)">
+        <mat-icon>person_add</mat-icon>
+        Añadir
+      </button>
+    </div>
+
+  </div>
+
+  <div class="team-card">
+
+    <h3 class="team-title">Equipo 2</h3>
+
+    <table mat-table [dataSource]="team2Players" class="admin-table">
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let p">{{ p.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let p">
+          {{ p.realname }} ({{ p.username }})
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let p">
+          <button mat-icon-button color="warn"
+                  (click)="removePlayer(2, p.id)">
+            <mat-icon>person_remove</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <div class="add-player-section ">
+      <mat-form-field appearance="fill">
+        <mat-label>Añadir jugador</mat-label>
+        <mat-select [(value)]="selectedPlayerTeam2">
+          <mat-option *ngFor="let user of availableUsers"
+                      [value]="user.id">
+            {{ user.realname }} ({{ user.username }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary"
+              (click)="addPlayer(2, selectedPlayerTeam2)">
+        <mat-icon>person_add</mat-icon>
+        Añadir
+      </button>
+    </div>
+  </div>
+</div>
