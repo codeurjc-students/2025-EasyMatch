@@ -435,7 +435,7 @@ public class MatchServiceUnitaryTest {
         User player = new User();
         player.setId(playerId);
         Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
-        Match match = new Match(null, true, false, true,0, null,5.00,sport,null);
+        Match match = new Match(null, true, false, true,0, player,5.00,sport,null);
         match.setId(matchId);
         match.setTeam1Players(new HashSet<>(Set.of(player)));
         match.setTeam2Players(new HashSet<>());
@@ -461,7 +461,7 @@ public class MatchServiceUnitaryTest {
         player.setId(playerId);
         User otherPlayer = new User();
         Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
-        Match match = new Match(null, true, false, true,0, null,5.00,sport,null);
+        Match match = new Match(null, true, false, true,0, player,5.00,sport,null);
         match.setId(matchId);
         match.setTeam1Players(new HashSet<>(Set.of(player,otherPlayer)));
         match.setTeam2Players(new HashSet<>());
