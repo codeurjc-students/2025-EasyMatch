@@ -95,7 +95,7 @@ public class UserService {
 <span class="fc" id="L95">        user.setPassword(encodedPassword);</span>
 <span class="fc bfc" id="L96" title="All 2 branches covered.">		if (user.getUsername().equals(&quot;admin&quot;)) {</span>
 <span class="fc" id="L97">			user.setRoles(List.of(&quot;USER&quot;, &quot;ADMIN&quot;));</span>
-<span class="fc" id="L98">		} else {</span>
+		} else {
 <span class="fc" id="L99">			user.setRoles(List.of(&quot;USER&quot;));</span>
 		}
 <span class="fc" id="L101">		User savedUser = userRepository.save(user);</span>
@@ -111,15 +111,15 @@ public class UserService {
 <span class="fc" id="L111">            User user = userOptional.get();</span>
 <span class="fc bfc" id="L112" title="All 2 branches covered.">            for (Match match : user.getMatchesAsTeam1Player()) {</span>
 <span class="fc" id="L113">                match.getTeam1Players().remove(user);</span>
-            }
+<span class="fc" id="L114">            }</span>
 <span class="fc bfc" id="L115" title="All 2 branches covered.">            for (Match match : user.getMatchesAsTeam2Player()) {</span>
 <span class="fc" id="L116">                match.getTeam2Players().remove(user);</span>
-            }
+<span class="fc" id="L117">            }</span>
 
 <span class="fc bfc" id="L119" title="All 2 branches covered.">            for (Match match : user.getOrganizedMatches()) {</span>
 <span class="fc" id="L120">                match.setOrganizer(null);</span>
 <span class="fc" id="L121">                matchRepository.delete(match);</span>
-            }
+<span class="fc" id="L122">            }</span>
 <span class="fc" id="L123">            userRepository.deleteById(id); </span>
 <span class="fc" id="L124">        }else {</span>
 <span class="fc" id="L125">            throw new IllegalArgumentException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
@@ -143,7 +143,7 @@ public class UserService {
 
 <span class="fc" id="L144">            email = ((UserDetails)principal).getUsername();</span>
 
-<span class="fc" id="L146">        } else {</span>
+        } else {
 
 <span class="fc" id="L148">            email = principal.toString();</span>
 
@@ -188,9 +188,9 @@ public class UserService {
          try {
 <span class="fc" id="L189">            Resource image = new ClassPathResource(classpathResource);</span>
 <span class="fc" id="L190">		    user.setImage(BlobProxy.generateProxy(image.getInputStream(), image.contentLength()));</span>
-<span class="pc" id="L191">        } catch (IOException e) {</span>
+<span class="nc" id="L191">        } catch (IOException e) {</span>
 <span class="nc" id="L192">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Error at processing the image&quot;);</span>
-        }
+<span class="fc" id="L193">        }</span>
 	
 <span class="fc" id="L195">	}</span>
 
@@ -219,23 +219,24 @@ public class UserService {
             }
 <span class="fc" id="L220">            updatedUser.setRoles(user.getRoles());</span>
 <span class="fc" id="L221">            updatedUser.setStats(user.getStats());</span>
-<span class="fc" id="L222">            userRepository.save(updatedUser);</span>
-<span class="fc" id="L223">            return toDTO(updatedUser);</span>
+<span class="fc" id="L222">            updatedUser.setLevelHistory(user.getLevelHistory());</span>
+<span class="fc" id="L223">            userRepository.save(updatedUser);</span>
+<span class="fc" id="L224">            return toDTO(updatedUser);</span>
  		} else {
-<span class="fc" id="L225"> 			throw new NoSuchElementException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="fc" id="L226"> 			throw new NoSuchElementException(&quot;User with id &quot; + id + &quot; does not exist.&quot;);</span>
  		}
     }
 
     public void replaceUserImage(long id, InputStream inputStream, long size) {
-<span class="nc" id="L230">		User user = userRepository.findById(id).orElseThrow();</span>
+<span class="nc" id="L231">		User user = userRepository.findById(id).orElseThrow();</span>
 
-<span class="nc bnc" id="L232" title="All 2 branches missed.">		if(user.getImage() == null){</span>
-<span class="nc" id="L233">			throw new NoSuchElementException();</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">		if(user.getImage() == null){</span>
+<span class="nc" id="L234">			throw new NoSuchElementException();</span>
 		}
 
-<span class="nc" id="L236">		user.setImage(BlobProxy.generateProxy(inputStream, size));</span>
+<span class="nc" id="L237">		user.setImage(BlobProxy.generateProxy(inputStream, size));</span>
 
-<span class="nc" id="L238">		userRepository.save(user);</span>
-<span class="nc" id="L239">	}</span>
+<span class="nc" id="L239">		userRepository.save(user);</span>
+<span class="nc" id="L240">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

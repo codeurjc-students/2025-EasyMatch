@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2026-02-11T21:16:21+0100&quot;,
+    date = &quot;2026-03-01T18:33:15+0100&quot;,
     comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)&quot;
 )
 @Component
@@ -74,7 +74,7 @@ import org.springframework.stereotype.Component;
 <span class="nc" id="L74">        List&lt;MatchDTO&gt; list = new ArrayList&lt;MatchDTO&gt;( matches.size() );</span>
 <span class="nc bnc" id="L75" title="All 2 branches missed.">        for ( Match match : matches ) {</span>
 <span class="nc" id="L76">            list.add( toDTO( match ) );</span>
-        }
+<span class="nc" id="L77">        }</span>
 
 <span class="nc" id="L79">        return list;</span>
     }
@@ -154,7 +154,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L154">        List&lt;ModeDTO&gt; list1 = new ArrayList&lt;ModeDTO&gt;( list.size() );</span>
 <span class="fc bfc" id="L155" title="All 2 branches covered.">        for ( Mode mode : list ) {</span>
 <span class="fc" id="L156">            list1.add( modeToModeDTO( mode ) );</span>
-        }
+<span class="fc" id="L157">        }</span>
 
 <span class="fc" id="L159">        return list1;</span>
     }
@@ -247,7 +247,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L247">        List&lt;LevelHistoryDTO&gt; list1 = new ArrayList&lt;LevelHistoryDTO&gt;( list.size() );</span>
 <span class="fc bfc" id="L248" title="All 2 branches covered.">        for ( LevelHistory levelHistory : list ) {</span>
 <span class="fc" id="L249">            list1.add( levelHistoryToLevelHistoryDTO( levelHistory ) );</span>
-        }
+<span class="fc" id="L250">        }</span>
 
 <span class="fc" id="L252">        return list1;</span>
     }
@@ -299,7 +299,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L299">        Set&lt;UserDTO&gt; set1 = LinkedHashSet.newLinkedHashSet( set.size() );</span>
 <span class="fc bfc" id="L300" title="All 2 branches covered.">        for ( User user : set ) {</span>
 <span class="fc" id="L301">            set1.add( userToUserDTO( user ) );</span>
-        }
+<span class="fc" id="L302">        }</span>
 
 <span class="fc" id="L304">        return set1;</span>
     }
@@ -373,7 +373,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L373">        List&lt;Mode&gt; list1 = new ArrayList&lt;Mode&gt;( list.size() );</span>
 <span class="fc bfc" id="L374" title="All 2 branches covered.">        for ( ModeDTO modeDTO : list ) {</span>
 <span class="fc" id="L375">            list1.add( modeDTOToMode( modeDTO ) );</span>
-        }
+<span class="fc" id="L376">        }</span>
 
 <span class="fc" id="L378">        return list1;</span>
     }
@@ -479,7 +479,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L479">        List&lt;LevelHistory&gt; list1 = new ArrayList&lt;LevelHistory&gt;( list.size() );</span>
 <span class="pc bpc" id="L480" title="1 of 2 branches missed.">        for ( LevelHistoryDTO levelHistoryDTO : list ) {</span>
 <span class="nc" id="L481">            list1.add( levelHistoryDTOToLevelHistory( levelHistoryDTO ) );</span>
-        }
+<span class="nc" id="L482">        }</span>
 
 <span class="fc" id="L484">        return list1;</span>
     }
@@ -524,7 +524,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L524">        Set&lt;User&gt; set1 = LinkedHashSet.newLinkedHashSet( set.size() );</span>
 <span class="fc bfc" id="L525" title="All 2 branches covered.">        for ( UserDTO userDTO : set ) {</span>
 <span class="fc" id="L526">            set1.add( userDTOToUser( userDTO ) );</span>
-        }
+<span class="fc" id="L527">        }</span>
 
 <span class="fc" id="L529">        return set1;</span>
     }

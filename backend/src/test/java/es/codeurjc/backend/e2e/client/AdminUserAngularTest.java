@@ -2,23 +2,18 @@ package es.codeurjc.backend.e2e.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 @Tag("e2e")
-@TestMethodOrder(OrderAnnotation.class)
 class AdminUserAngularTest extends BaseAngularUITest {
     @Test
-    @Order(1) 
     public void verifyAdminPageLoads(){
         loginUser("admin@emeal.com", "admin");
 
@@ -61,8 +56,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(2)
-    void verifyUserCreationAsAdminWorks() {
+    public void verifyUserCreationAsAdminWorks() {
         loginUser("admin@emeal.com", "admin");
 
         waitForTableReady();
@@ -121,8 +115,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(3)
-    void verifyUserEditionAsAdminWorks() {
+    public void verifyUserEditionAsAdminWorks() {
         loginUser("admin@emeal.com", "admin");
 
          WebElement firstRow = wait.until(
@@ -164,8 +157,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(4)
-    void verifyUserDeletionAsAdminWorks() {
+    public void verifyUserDeletionAsAdminWorks() {
         loginUser("admin@emeal.com", "admin");
 
         List<WebElement> initialRows = wait.until(
@@ -195,23 +187,21 @@ class AdminUserAngularTest extends BaseAngularUITest {
         assertThat(finalRows.size(), is(finalCount));
     }
 
-    /* @Test
-    @Order(5)
+    /*@Test
     void verifyClubCreationWorks() {
         loginUser("admin@emeal.com", "admin");
 
         goToAdminClubsPage();
-
         waitForAngularToFinish();
-
         waitForTableReady();
-        List<WebElement> initialRows = driver.findElements(By.cssSelector("table.admin-table tr.mat-mdc-row")); 
+
+        List<WebElement> initialRows = driver.findElements(
+                By.cssSelector("table.admin-table tr.mat-mdc-row")
+        );
         int initialCount = initialRows.size();
 
         WebElement newClubBtn = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        By.cssSelector(".new-entity-btn")
-                )
+                ExpectedConditions.elementToBeClickable(By.cssSelector(".new-entity-btn"))
         );
         scrollIntoView(newClubBtn);
         newClubBtn.click();
@@ -220,22 +210,31 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         WebElement nameInput = driver.findElement(By.cssSelector("input[formcontrolname='name']"));
         nameInput.sendKeys("Club Selenium Test");
+
         WebElement phoneInput = driver.findElement(By.cssSelector("input[formcontrolname='phone']"));
         phoneInput.sendKeys("666777888");
+
         WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));
         emailInput.sendKeys("club@selenium.com");
+
         WebElement webInput = driver.findElement(By.cssSelector("input[formcontrolname='web']"));
         webInput.sendKeys("www.club-selenium.com");
+
         WebElement addressInput = driver.findElement(By.cssSelector("input[formcontrolname='address']"));
         addressInput.sendKeys("Calle Test 123");
+
         WebElement cityInput = driver.findElement(By.cssSelector("input[formcontrolname='city']"));
         cityInput.sendKeys("Madrid");
+
         WebElement openingTimeInput = driver.findElement(By.cssSelector("input[formcontrolname='openingTime']"));
         openingTimeInput.sendKeys("08:00");
+
         WebElement closingTimeInput = driver.findElement(By.cssSelector("input[formcontrolname='closingTime']"));
         closingTimeInput.sendKeys("23:00");
+
         WebElement minPriceInput = driver.findElement(By.cssSelector("input[formcontrolname='minPrice']"));
         minPriceInput.sendKeys("5");
+
         WebElement maxPriceInput = driver.findElement(By.cssSelector("input[formcontrolname='maxPrice']"));
         maxPriceInput.sendKeys("20");
 
@@ -245,7 +244,6 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         WebElement oldElement = submitBtn;
         wait.until(ExpectedConditions.stalenessOf(oldElement));
-
         wait.until(ExpectedConditions.urlContains("/admin/clubs"));
 
         waitForTableReady();
@@ -255,11 +253,10 @@ class AdminUserAngularTest extends BaseAngularUITest {
         );
 
         assertThat(finalRows.size(), is(initialCount + 1));
-    } */
+    }*/       
 
     @Test
-    @Order(6)
-    void verifyClubEditionAsAdminWorks() {
+    public void verifyClubEditionAsAdminWorks() {
         loginUser("admin@emeal.com", "admin");
 
         goToAdminClubsPage();
@@ -303,8 +300,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(7)
-    void verifyClubDeletionAsAdminWorks() {
+    public void verifyClubDeletionAsAdminWorks() {
         loginUser("admin@emeal.com", "admin");
 
         goToAdminClubsPage();
@@ -342,8 +338,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(8)
-    void verifyMatchCreationAsAdminWorks() {
+    public void verifyMatchCreationAsAdminWorks() {
 
         loginUser("admin@emeal.com", "admin");
         
@@ -425,8 +420,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(9)
-    void verifyMatchEditionAsAdminWorks() {
+    public void verifyMatchEditionAsAdminWorks() {
 
         loginUser("admin@emeal.com", "admin");
 
@@ -474,8 +468,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(10)
-    void verifyMatchDeletionAsAdminWorks() {
+    public void verifyMatchDeletionAsAdminWorks() {
 
         loginUser("admin@emeal.com", "admin");
 
@@ -514,8 +507,95 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(11)
-    void verifySportCreationAsAdminWorks() {
+    public void verifyPlayerAdditionToMatch() {
+
+        loginUser("admin@emeal.com", "admin");
+        goToAdminMatchesPage();
+
+        WebElement firstMatchPlayersBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("table.admin-table tr.mat-mdc-row button[title='Añadir jugador']")
+                )
+        );
+        scrollIntoView(firstMatchPlayersBtn);
+        clickWithJs(firstMatchPlayersBtn);
+
+        waitForPageReload();
+
+        WebElement playerSelect = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector(".team-card:nth-of-type(2) mat-select")
+                )
+        );
+        scrollIntoView(playerSelect);
+        playerSelect.click();
+
+        WebElement firstOption = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("mat-option")
+                )
+        );
+        scrollIntoView(firstOption);
+        firstOption.click();
+
+        WebElement addBtn = driver.findElement(
+                By.cssSelector(".team-card:nth-of-type(2) button[color='primary']")
+        );
+        scrollIntoView(addBtn);
+        addBtn.click();
+
+        WebElement snackBar = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".mat-mdc-snack-bar-container")
+                )
+        );
+
+        assertTrue(snackBar.getText().contains("Acción realizada"), "Snackbar no mostrado correctamente tras añadir jugador");
+    }
+
+    @Test
+    void verifyPlayerRemovalFromMatch() {
+
+        loginUser("admin@emeal.com", "admin");
+
+        goToAdminMatchesPage();
+
+        WebElement firstMatchPlayersBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("table.admin-table tr.mat-mdc-row button[title='Eliminar jugador']")
+                )
+        );
+        scrollIntoView(firstMatchPlayersBtn);
+        clickWithJs(firstMatchPlayersBtn);
+
+        waitForPageReload();
+
+        WebElement removeBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector(".team-card:nth-of-type(1) button[color='warn']")
+                )
+        );
+        scrollIntoView(removeBtn);
+        clickWithJs(removeBtn);
+
+        WebElement confirmBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("mat-dialog-container button[color='warn']")
+                )
+        );
+        scrollIntoView(confirmBtn);
+        clickWithJs(confirmBtn);
+
+        WebElement snackBar = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".mat-mdc-snack-bar-container")
+                )
+        );
+        assertTrue(snackBar.getText().contains("✅ Partido eliminado"), "Snackbar no mostrado correctamente tras eliminar jugador");
+    }
+
+    @Test
+    public void verifySportCreationAsAdminWorks() {
 
         loginUser("admin@emeal.com", "admin");
 
@@ -573,8 +653,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(12)
-    void verifySportEditionAsAdminWorks() {
+    public void verifySportEditionAsAdminWorks() {
 
         loginUser("admin@emeal.com", "admin");
 
@@ -630,8 +709,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
-    @Order(13)
-    void verifySportDeletionAsAdminWorks() {
+    public void verifySportDeletionAsAdminWorks() {
 
         loginUser("admin@emeal.com", "admin");
 

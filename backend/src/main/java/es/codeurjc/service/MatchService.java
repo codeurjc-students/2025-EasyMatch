@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -255,7 +256,7 @@ public class MatchService {
         int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();
 
         if (match.getTeam1Players().size() >= playersPerGame / 2 )
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Equipo A lleno");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Equipo 1 lleno");
 
         if (match.containsPlayer(user))
             throw new ResponseStatusException(HttpStatus.CONFLICT,"Ya se ha unido a este partido");
@@ -273,7 +274,7 @@ public class MatchService {
         int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();
 
         if (match.getTeam2Players().size() >= playersPerGame / 2 )
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Equipo B lleno");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Equipo 2 lleno");
 
         if (match.containsPlayer(user))
             throw new ResponseStatusException(HttpStatus.CONFLICT,"Ya se ha unido a este partido");
@@ -286,9 +287,17 @@ public class MatchService {
 
     public void removePlayerFromTeam1(long matchId, long playerId) {
         Match match = matchRepository.findById(matchId).orElseThrow();
-        UserDTO userDTO = userService.getUser(playerId);
-        User user = userMapper.toDomain(userDTO);
-        match.getTeam1Players().removeIf(p -> p.getId() == user.getId());
+        if (match.getTeam1Players().size() == 0){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"El equipo 1 no tiene jugadores");
+        }
+        match.getTeam1Players().removeIf(p -> Objects.equals(p.getId(), playerId));
+        if (match.getOrganizer().getId() == playerId){
+            if (!match.getTeam1Players().isEmpty()){
+                match.setOrganizer(match.getTeam1Players().iterator().next());
+            }else if (!match.getTeam2Players().isEmpty()){
+                match.setOrganizer(match.getTeam2Players().iterator().next());
+            }
+        }
         if (match.getTeam1Players().isEmpty() && match.getTeam2Players().isEmpty()){
             matchRepository.deleteById(matchId);
         }else{
@@ -298,9 +307,17 @@ public class MatchService {
 
     public void removePlayerFromTeam2(long matchId, long playerId) {
         Match match = matchRepository.findById(matchId).orElseThrow();
-        UserDTO userDTO = userService.getUser(playerId);
-        User user = userMapper.toDomain(userDTO);
-        match.getTeam2Players().removeIf(p -> p.getId() == user.getId());
+        if (match.getTeam2Players().size() == 0){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"El equipo 2 no tiene jugadores");
+        }
+        match.getTeam2Players().removeIf(p -> Objects.equals(p.getId(), playerId));
+        if (match.getOrganizer().getId() == playerId){
+            if (!match.getTeam2Players().isEmpty()){
+                match.setOrganizer(match.getTeam2Players().iterator().next());
+            }else if (!match.getTeam1Players().isEmpty()){
+                match.setOrganizer(match.getTeam1Players().iterator().next());
+            }
+        }
         if (match.getTeam1Players().isEmpty() && match.getTeam2Players().isEmpty()){
             matchRepository.deleteById(matchId);
         }else{

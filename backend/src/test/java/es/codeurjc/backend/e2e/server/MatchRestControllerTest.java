@@ -292,6 +292,40 @@ public class MatchRestControllerTest {
             .statusCode(200);
     }
 
+    @Test
+    @Order(11)
+    public void testAddPlayerToMatchAsAdmin(){
+        long matchId = 2L;
+        long playerId = 6L;
+        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        given()
+            .contentType(ContentType.JSON)
+            .cookie("AuthToken", cookie)
+        .when()
+            .post("/api/v1/matches/{matchId}/team1Players/{playerId}", matchId,playerId)
+        .then()
+            .statusCode(200)
+            .body("status", equalTo("SUCCESS"))
+            .body("message", equalTo("Player added to team 1"));
+    }
+
+    @Test
+    @Order(12)
+    public void testRemovePlayerFromMatchAsAdmin(){
+        long matchId = 2L;
+        long playerId = 6L;
+        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        given()
+            .contentType(ContentType.JSON)
+            .cookie("AuthToken", cookie)
+        .when()
+            .delete("/api/v1/matches/{matchId}/team1Players/{playerId}", matchId,playerId)
+        .then()
+            .statusCode(200)
+            .body("status", equalTo("SUCCESS"))
+            .body("message", equalTo("Player removed from team 1"));
+    }
+
     private String loginAndGetCookie(String email, String password) {
         String loginJson = 
             String.format("""
@@ -313,4 +347,6 @@ public class MatchRestControllerTest {
         String cookie = loginResponse.getCookie("AuthToken");
         return cookie;
     }
+
+    
 }

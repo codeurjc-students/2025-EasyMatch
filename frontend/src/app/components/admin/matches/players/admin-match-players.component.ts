@@ -71,6 +71,7 @@ export class AdminMatchPlayersComponent implements OnInit {
   }
   removePlayer(team: 1 | 2, playerId: number): void {
     const teamName = team === 1 ? 'Equipo 1' : 'Equipo 2';
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       data: {
@@ -82,13 +83,28 @@ export class AdminMatchPlayersComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        if (team === 1) {
-          this.matchService.removePlayerFromTeam1(this.matchId, playerId).subscribe(() => this.afterAction(teamName));
-        } else {
-          this.matchService.removePlayerFromTeam2(this.matchId, playerId).subscribe(() => this.afterAction(teamName));
+      if (!confirmed) return;
+
+      const isLastPlayer =
+        (team === 1 && this.team1Players.length === 1) ||
+        (team === 2 && this.team2Players.length === 1);
+
+      const request$ = team === 1
+        ? this.matchService.removePlayerFromTeam1(this.matchId, playerId)
+        : this.matchService.removePlayerFromTeam2(this.matchId, playerId);
+
+      request$.subscribe(() => {
+        if (isLastPlayer) {
+          this.snackBar.open('✅ Partido eliminado', 'Cerrar', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+          this.router.navigate(['/admin/matches']);
+          return;
         }
-      }
+
+        this.afterAction(teamName);
+      });
     });
   }
 

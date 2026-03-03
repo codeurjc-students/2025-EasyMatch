@@ -140,6 +140,9 @@ public class MatchRestController {
 
     @PostMapping("/{matchId}/team1Players/{playerId}")
     public ResponseEntity<Map<String, String>> addPlayerToTeam1(@PathVariable long matchId, @PathVariable long playerId) {
+        if (!userService.getLoggedUser().getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo un administrador puede añadir jugadores manualmente");
+        }
         matchService.addPlayerToTeam1(matchId, playerId);
         Map<String, String> response = new HashMap<>();
         response.put("status", "SUCCESS");
@@ -149,6 +152,9 @@ public class MatchRestController {
 
     @PostMapping("/{matchId}/team2Players/{playerId}")
     public ResponseEntity<Map<String, String>> addPlayerToTeam2(@PathVariable long matchId, @PathVariable long playerId) {
+        if (!userService.getLoggedUser().getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo un administrador puede añadir jugadores manualmente");
+        }
         matchService.addPlayerToTeam2(matchId, playerId);
         Map<String, String> response = new HashMap<>();
         response.put("status", "SUCCESS");
@@ -158,6 +164,9 @@ public class MatchRestController {
 
     @DeleteMapping("/{matchId}/team1Players/{playerId}")
     public ResponseEntity<Map<String, String>> removePlayerFromTeam1(@PathVariable long matchId, @PathVariable long playerId) {
+        if (!userService.getLoggedUser().getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo un administrador puede eliminar jugadores manualmente");
+        }
         matchService.removePlayerFromTeam1(matchId, playerId);
         Map<String, String> response = new HashMap<>();
         response.put("status", "SUCCESS");
@@ -167,6 +176,9 @@ public class MatchRestController {
 
     @DeleteMapping("/{matchId}/team2Players/{playerId}")
     public ResponseEntity<Map<String, String>> removePlayerFromTeam2(@PathVariable long matchId, @PathVariable long playerId) {
+        if (!userService.getLoggedUser().getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo un administrador puede eliminar jugadores manualmente");
+        }
         matchService.removePlayerFromTeam2(matchId, playerId);
         Map<String, String> response = new HashMap<>();
         response.put("status", "SUCCESS");

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchRestController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">EasyMatch</a> &gt; <a href="index.source.html" class="el_package">es.codeurjc.controller.rest</a> &gt; <span class="el_source">MatchRestController.java</span></div><h1>MatchRestController.java</h1><pre class="source lang-java linenums">package es.codeurjc.controller.rest;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchResultDTO;
+import es.codeurjc.dto.UserDTO;
 import es.codeurjc.model.User;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
@@ -33,7 +35,7 @@ import es.codeurjc.service.UserService;
 @RestController
 @RequestMapping(&quot;/api/v1/matches&quot;)
 @CrossOrigin(origins = &quot;http://localhost:9876&quot;)
-<span class="fc" id="L36">public class MatchRestController {</span>
+<span class="fc" id="L38">public class MatchRestController {</span>
 
     @Autowired
     private MatchService matchService;
@@ -43,7 +45,7 @@ import es.codeurjc.service.UserService;
 
     @GetMapping(&quot;/&quot;)
 	public Page&lt;MatchDTO&gt; getMatches(Pageable pageable) {
-<span class="fc" id="L46">        return matchService.getMatches(pageable);</span>
+<span class="fc" id="L48">        return matchService.getMatches(pageable);</span>
 	}
 
     @GetMapping
@@ -57,73 +59,131 @@ import es.codeurjc.service.UserService;
             
     ) {
         
-<span class="fc" id="L60">        Pageable pageable = PageRequest.of(page, size);</span>
+<span class="fc" id="L62">        Pageable pageable = PageRequest.of(page, size);</span>
 
-<span class="fc" id="L62">        return matchService.getFilteredMatches(pageable,search, sport, includeFriendlies, timeRange);</span>
+<span class="fc" id="L64">        return matchService.getFilteredMatches(pageable,search, sport, includeFriendlies, timeRange);</span>
     }
 
     @GetMapping(&quot;/{id}&quot;)
 	public MatchDTO getMatch(@PathVariable long id) {
-<span class="fc" id="L67">        return matchService.getMatch(id);</span>
+<span class="fc" id="L69">        return matchService.getMatch(id);</span>
 	}
 
     @PostMapping
     public ResponseEntity&lt;MatchDTO&gt; creatematch(@RequestBody MatchDTO matchDTO) {
-<span class="fc" id="L72">        matchDTO = matchService.createMatch(matchDTO);</span>
-<span class="fc" id="L73">        URI location = fromCurrentRequest().path(&quot;/{id}&quot;).buildAndExpand(matchDTO.id()).toUri();</span>
-<span class="fc" id="L74">        return ResponseEntity.created(location).body(matchDTO);</span>
+<span class="fc" id="L74">        matchDTO = matchService.createMatch(matchDTO);</span>
+<span class="fc" id="L75">        URI location = fromCurrentRequest().path(&quot;/{id}&quot;).buildAndExpand(matchDTO.id()).toUri();</span>
+<span class="fc" id="L76">        return ResponseEntity.created(location).body(matchDTO);</span>
     }
 
     @PutMapping(&quot;/{id}/users/me&quot;)
     public ResponseEntity&lt;Map&lt;String, String&gt;&gt; joinMatch(@PathVariable long id, @RequestBody JoinMatchRequest request) {
-<span class="fc" id="L79">        matchService.joinMatch(id, request.getTeam());</span>
+<span class="fc" id="L81">        matchService.joinMatch(id, request.getTeam());</span>
         
-<span class="fc" id="L81">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L82">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
-<span class="fc" id="L83">        response.put(&quot;message&quot;, &quot;Player added to team &quot; + request.getTeam());</span>
+<span class="fc" id="L83">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L84">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
+<span class="fc" id="L85">        response.put(&quot;message&quot;, &quot;Player added to team &quot; + request.getTeam());</span>
 
-<span class="fc" id="L85">        return ResponseEntity.ok(response);</span>
+<span class="fc" id="L87">        return ResponseEntity.ok(response);</span>
     }
 
     @DeleteMapping(&quot;/{id}/users/me&quot;)
     public ResponseEntity&lt;Map&lt;String, String&gt; &gt; leaveMatch(@PathVariable long id) {
-<span class="fc" id="L90">        User user = userService.getLoggedUser();</span>
-<span class="fc" id="L91">        matchService.leaveMatch(id, user);</span>
-<span class="fc" id="L92">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L93">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
-<span class="fc" id="L94">        response.put(&quot;message&quot;,&quot;Player removed from match&quot;);</span>
-<span class="fc" id="L95">        return ResponseEntity.ok(response);</span>
+<span class="fc" id="L92">        User user = userService.getLoggedUser();</span>
+<span class="fc" id="L93">        matchService.leaveMatch(id, user);</span>
+<span class="fc" id="L94">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L95">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
+<span class="fc" id="L96">        response.put(&quot;message&quot;,&quot;Player removed from match&quot;);</span>
+<span class="fc" id="L97">        return ResponseEntity.ok(response);</span>
     }
 
     @DeleteMapping(&quot;/{id}&quot;)
     public MatchDTO deleteMatch(@PathVariable long id) {
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
-<span class="nc" id="L101">            throw new ResponseStatusException(HttpStatus.FORBIDDEN,&quot;Solo un administrador puede eliminar un partido&quot;);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
+<span class="nc" id="L103">            throw new ResponseStatusException(HttpStatus.FORBIDDEN,&quot;Solo un administrador puede eliminar un partido&quot;);</span>
         }
-<span class="fc" id="L103">        MatchDTO deletedMatch = matchService.getMatch(id);</span>
-<span class="fc" id="L104">        matchService.delete(id);</span>
-<span class="fc" id="L105">        return deletedMatch;</span>
+<span class="fc" id="L105">        MatchDTO deletedMatch = matchService.getMatch(id);</span>
+<span class="fc" id="L106">        matchService.delete(id);</span>
+<span class="fc" id="L107">        return deletedMatch;</span>
     }
 
     @PutMapping(&quot;/{id}&quot;)
     public MatchDTO replaceMatch(@PathVariable long id, @RequestBody MatchDTO updatedMatchDTO) {
-<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if(!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
-<span class="nc" id="L111">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Solo un administrador puede editar un partido&quot;);</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if(!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)){</span>
+<span class="nc" id="L113">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Solo un administrador puede editar un partido&quot;);</span>
         }
-<span class="fc" id="L113">        return matchService.replaceMatch(id, updatedMatchDTO);</span>
+<span class="fc" id="L115">        return matchService.replaceMatch(id, updatedMatchDTO);</span>
     }
 
     @GetMapping(&quot;{id}/result&quot;)
     public MatchResultDTO getMatchResult(@PathVariable long id) {
-<span class="nc" id="L118">        return matchService.getMatchResult(id);</span>
+<span class="nc" id="L120">        return matchService.getMatchResult(id);</span>
     }
 
     @PutMapping(&quot;/{id}/result&quot;)
     public MatchResultDTO addOrUpdateMatchResult(@PathVariable long id, @RequestBody MatchResultDTO resultData) {
-<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if(matchService.getMatch(id).organizer().id() != userService.getLoggedUserDTO().id()){</span>
-<span class="nc" id="L124">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Solo el organizador del partido puede añadir o editar el resultado&quot;);</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if(matchService.getMatch(id).organizer().id() != userService.getLoggedUserDTO().id()){</span>
+<span class="nc" id="L126">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Solo el organizador del partido puede añadir o editar el resultado&quot;);</span>
         }
-<span class="fc" id="L126">        return matchService.addOrUpdateMatchResult(id, resultData);</span>
+<span class="fc" id="L128">        return matchService.addOrUpdateMatchResult(id, resultData);</span>
+    }
+
+    @GetMapping (&quot;/{id}/team1Players&quot;)
+    public Collection&lt;UserDTO&gt; getMatchTeam1Players(@PathVariable long id) {
+<span class="fc" id="L133">        return matchService.getMatchTeam1Players(id);</span>
+    }
+
+    @GetMapping (&quot;/{id}/team2Players&quot;)
+    public Collection&lt;UserDTO&gt; getMatchTeam2Players(@PathVariable long id) {
+<span class="fc" id="L138">        return matchService.getMatchTeam2Players(id);</span>
+    }
+
+    @PostMapping(&quot;/{matchId}/team1Players/{playerId}&quot;)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; addPlayerToTeam1(@PathVariable long matchId, @PathVariable long playerId) {
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)) {</span>
+<span class="nc" id="L144">            throw new ResponseStatusException(HttpStatus.FORBIDDEN,&quot;Solo un administrador puede añadir jugadores manualmente&quot;);</span>
+        }
+<span class="fc" id="L146">        matchService.addPlayerToTeam1(matchId, playerId);</span>
+<span class="fc" id="L147">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L148">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
+<span class="fc" id="L149">        response.put(&quot;message&quot;, &quot;Player added to team 1&quot;);</span>
+<span class="fc" id="L150">        return ResponseEntity.ok(response);</span>
+    }
+
+    @PostMapping(&quot;/{matchId}/team2Players/{playerId}&quot;)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; addPlayerToTeam2(@PathVariable long matchId, @PathVariable long playerId) {
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)) {</span>
+<span class="nc" id="L156">            throw new ResponseStatusException(HttpStatus.FORBIDDEN,&quot;Solo un administrador puede añadir jugadores manualmente&quot;);</span>
+        }
+<span class="fc" id="L158">        matchService.addPlayerToTeam2(matchId, playerId);</span>
+<span class="fc" id="L159">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L160">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
+<span class="fc" id="L161">        response.put(&quot;message&quot;, &quot;Player added to team 2&quot;);</span>
+<span class="fc" id="L162">        return ResponseEntity.ok(response);</span>
+    }
+
+    @DeleteMapping(&quot;/{matchId}/team1Players/{playerId}&quot;)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; removePlayerFromTeam1(@PathVariable long matchId, @PathVariable long playerId) {
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)) {</span>
+<span class="nc" id="L168">            throw new ResponseStatusException(HttpStatus.FORBIDDEN,&quot;Solo un administrador puede eliminar jugadores manualmente&quot;);</span>
+        }
+<span class="fc" id="L170">        matchService.removePlayerFromTeam1(matchId, playerId);</span>
+<span class="fc" id="L171">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L172">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
+<span class="fc" id="L173">        response.put(&quot;message&quot;, &quot;Player removed from team 1&quot;);</span>
+<span class="fc" id="L174">        return ResponseEntity.ok(response);</span>
+    }
+
+    @DeleteMapping(&quot;/{matchId}/team2Players/{playerId}&quot;)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; removePlayerFromTeam2(@PathVariable long matchId, @PathVariable long playerId) {
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (!userService.getLoggedUser().getRoles().contains(&quot;ADMIN&quot;)) {</span>
+<span class="nc" id="L180">            throw new ResponseStatusException(HttpStatus.FORBIDDEN,&quot;Solo un administrador puede eliminar jugadores manualmente&quot;);</span>
+        }
+<span class="nc" id="L182">        matchService.removePlayerFromTeam2(matchId, playerId);</span>
+<span class="nc" id="L183">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L184">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
+<span class="nc" id="L185">        response.put(&quot;message&quot;, &quot;Player removed from team 2&quot;);</span>
+<span class="nc" id="L186">        return ResponseEntity.ok(response);</span>
     }
 
 }

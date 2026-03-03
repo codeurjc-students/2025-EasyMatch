@@ -215,4 +215,36 @@ public class MatchServiceIntegrationTest {
         assertThat(historySizeAfter, equalTo(historySizeBefore));
     }
 
+    @Test
+    @Order(9)
+    @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
+    public void addPlayerToMatchAsAdminTest(){
+        long matchId = 4L;
+        long userId = 2L;
+        MatchDTO match = matchService.getMatch(matchId);
+        int teamSizeBefore = match.team1Players().size();
+        matchService.addPlayerToTeam1(matchId, userId);
+        MatchDTO matchAfter = matchService.getMatch(matchId);
+        int teamSizeAfter = matchAfter.team1Players().size();
+        assertThat(teamSizeAfter, equalTo(teamSizeBefore + 1));
+    }
+
+    @Test
+    @Order(10)
+    @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
+    public void removePlayerFromMatchAsAdminTest(){
+        long matchId = 4L;
+        long userId = 2L;
+        MatchDTO matchInitial = matchService.getMatch(matchId);
+        assertFalse(matchInitial.team1Players().isEmpty());
+        matchService.addPlayerToTeam1(matchId, userId);
+
+        MatchDTO match = matchService.getMatch(matchId);
+        int teamSizeBefore = match.team1Players().size();
+        matchService.removePlayerFromTeam1(matchId, userId);
+
+        MatchDTO matchAfter = matchService.getMatch(matchId);
+        int teamSizeAfter = matchAfter.team1Players().size();
+        assertThat(teamSizeAfter, equalTo(teamSizeBefore - 1));
+    }
 }
