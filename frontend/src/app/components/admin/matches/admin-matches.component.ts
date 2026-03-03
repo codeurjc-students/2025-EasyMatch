@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import { Match } from '../../../models/match.model';
   selector: 'app-admin-matches',
   templateUrl: './admin-matches.component.html',
   styleUrls: ['.././admin-entity.component.scss'],
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator, RouterModule],
 })
 export class AdminMatchesComponent implements OnInit {
 
@@ -29,7 +29,7 @@ export class AdminMatchesComponent implements OnInit {
   pageIndex = 0;
 
   matches: Match[] = [];
-  displayedColumns = ['id', 'date', 'type', 'privacy', 'state', 'price', 'club', 'sport','organizer', 'actions',];
+  displayedColumns = ['id', 'date', 'type', 'privacy', 'state', 'price', 'club', 'sport','organizer', 'players', 'actions',];
 
   ngOnInit(): void {
     this.loadMatches(this.pageIndex, this.pageSize);
@@ -88,5 +88,13 @@ export class AdminMatchesComponent implements OnInit {
     this.pageSize = event.pageSize;
     this.pageIndex = event.pageIndex;
     this.loadMatches(this.pageIndex, this.pageSize);
+  }
+
+  addPlayer(matchId: number) {
+    this.router.navigate(['/admin/matches/players'], { queryParams: { matchId } });
+  }
+
+  removePlayer(matchId: number) {
+    this.router.navigate(['/admin/matches/players'], { queryParams: { matchId, remove: true } });
   }
 }

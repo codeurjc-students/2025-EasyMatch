@@ -59,6 +59,15 @@
           <mat-label>Precio máximo</mat-label>
           <input matInput formControlName="maxPrice" type="number" />
         </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Deportes</mat-label>
+          <mat-select formControlName="sports" multiple>
+            <mat-option *ngFor="let s of sports" [value]="s.id" [disabled]="originalSportIds.includes(s.id!)">
+              {{ s.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
         
         <div class="photo-row">
           <img

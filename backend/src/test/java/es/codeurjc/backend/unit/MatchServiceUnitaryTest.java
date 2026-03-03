@@ -373,4 +373,162 @@ public class MatchServiceUnitaryTest {
         assertThat(ex.getStatusCode().toString(),equalTo("409 CONFLICT"));
     }
 
+    @Test
+    public void addPlayerToIncompleteTeamTest(){
+        //GIVEN
+        long matchId = 1L;
+        long playerId = 2L;
+        User player = new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        player.setId(playerId);
+        UserDTO dto = userMapper.toDTO(player);
+        Match match = new Match(null, true, false, true,0, null,5.00,sport,null);
+        match.setId(matchId);
+        match.setTeam1Players(new HashSet<>());
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+
+        //WHEN
+        when(matchRepository.findById(matchId)).thenReturn(optionalMatch);
+        when(userService.getUser(playerId)).thenReturn(dto);
+
+        matchService.addPlayerToTeam1(matchId, playerId);
+
+        //THEN
+        assertThat(match.getTeam1Players().size(), equalTo(1));
+        verify(matchRepository,times(1)).save(match);
+    }
+
+    @Test
+    public void addPlayerToFullTeamTest(){
+        //GIVEN
+        long matchId = 1L;
+        long playerId = 2L;
+        User player = new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        player.setId(playerId);
+        UserDTO playerDTO = userMapper.toDTO(player);
+        Match match = new Match(null, true, false, true,0, null,5.00,sport,null);
+        match.setId(matchId);
+        match.setTeam1Players(new HashSet<>(Set.of(new User(),new User())));
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+
+        //WHEN
+        when(matchRepository.findById(matchId)).thenReturn(optionalMatch);
+        when(userService.getUser(playerId)).thenReturn(playerDTO);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
+            matchService.addPlayerToTeam1(matchId, playerId);
+        });
+
+        //THEN
+        assertThat(ex.getReason(),equalTo("Equipo 1 lleno"));
+        assertThat(ex.getStatusCode().toString(),equalTo("409 CONFLICT"));
+    }
+
+    @Test 
+    public void removeOnlyPlayerFromTeamTest(){
+        //GIVEN
+        long matchId = 1L;
+        long playerId = 2L;
+        User player = new User();
+        player.setId(playerId);
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true,0, player,5.00,sport,null);
+        match.setId(matchId);
+        match.setTeam1Players(new HashSet<>(Set.of(player)));
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+
+        //WHEN
+        when(matchRepository.findById(matchId)).thenReturn(optionalMatch);
+        when(userService.getUser(playerId)).thenReturn(userMapper.toDTO(player));
+
+        matchService.removePlayerFromTeam1(matchId, playerId);
+
+        //THEN
+        assertThat(match.getTeam1Players().size(), equalTo(0));
+        verify(matchRepository,times(1)).deleteById(matchId);
+    }
+
+    @Test
+    public void removePlayerFromFullTeamTest(){
+        //GIVEN
+        long matchId = 1L;
+        long playerId = 2L;
+        User player = new User();
+        player.setId(playerId);
+        User otherPlayer = new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true,0, player,5.00,sport,null);
+        match.setId(matchId);
+        match.setTeam1Players(new HashSet<>(Set.of(player,otherPlayer)));
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+
+        //WHEN
+        when(matchRepository.findById(matchId)).thenReturn(optionalMatch);
+        when(userService.getUser(playerId)).thenReturn(userMapper.toDTO(player));
+
+        matchService.removePlayerFromTeam1(matchId, playerId);
+
+        //THEN
+        assertThat(match.getTeam1Players().size(), equalTo(1));
+        verify(matchRepository,times(1)).save(match);
+    }
+
+    @Test
+    public void removePlayerFromEmptyTeamTest(){
+        //GIVEN
+        long matchId = 1L;
+        long playerId = 2L;
+        User player = new User();
+        player.setId(playerId);
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true,0, null,5.00,sport,null);
+        match.setId(matchId);
+        match.setTeam1Players(new HashSet<>());
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+
+        //WHEN
+        when(matchRepository.findById(matchId)).thenReturn(optionalMatch);
+        when(userService.getUser(playerId)).thenReturn(userMapper.toDTO(player));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
+            matchService.removePlayerFromTeam1(matchId, playerId);
+        });
+
+        //THEN
+        assertThat(ex.getReason(),equalTo("El equipo 1 no tiene jugadores"));
+        assertThat(ex.getStatusCode().toString(),equalTo("409 CONFLICT"));
+    }
+
+    @Test
+    public void removeOrganizerFromTeamTest(){
+        //GIVEN
+        long matchId = 1L;
+        long playerId = 2L;
+        User organizer = new User();
+        organizer.setId(playerId);
+        User otherPlayer = new User();
+        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
+        Match match = new Match(null, true, false, true,0, organizer,5.00,sport,null);
+        match.setId(matchId);
+        match.setTeam1Players(new HashSet<>(Set.of(organizer,otherPlayer)));
+        match.setTeam2Players(new HashSet<>());
+        Optional<Match> optionalMatch = Optional.of(match);
+
+        //WHEN
+        when(matchRepository.findById(matchId)).thenReturn(optionalMatch);
+        when(userService.getUser(playerId)).thenReturn(userMapper.toDTO(organizer));
+
+        matchService.removePlayerFromTeam1(matchId, playerId);
+
+        //THEN
+        assertThat(match.getTeam1Players().size(), equalTo(1));
+        assertThat(match.getOrganizer(), equalTo(otherPlayer));
+    }
+
 }

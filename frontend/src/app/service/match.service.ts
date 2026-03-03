@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { JoinMatchResponse } from '../models/join-match-response';
 import { MatchResult } from '../models/match-result.model';
+import { User } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class MatchService {
@@ -99,6 +100,29 @@ export class MatchService {
   addMatchResult(matchId: number, result: MatchResult): Observable<MatchResult> {
     return this.http.put<MatchResult>(`${this.apiUrl}/matches/${matchId}/result`, result,{ withCredentials: true });
   }
-  
 
+  getTeam1Players(matchId: number): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/matches/${matchId}/team1Players`);
+  }
+
+  getTeam2Players(matchId: number): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/matches/${matchId}/team2Players`);
+  }
+
+  addPlayerToTeam1(matchId: number, userId: number) {
+    return this.http.post(`${this.apiUrl}/matches/${matchId}/team1Players/${userId}`, { userId });
+  }
+
+  addPlayerToTeam2(matchId: number, userId: number) {
+    return this.http.post(`${this.apiUrl}/matches/${matchId}/team2Players/${userId}`, { userId });
+  }
+
+  removePlayerFromTeam1(matchId: number, userId: number) {
+    return this.http.delete(`${this.apiUrl}/matches/${matchId}/team1Players/${userId}`);
+  }
+
+  removePlayerFromTeam2(matchId: number, userId: number) {
+    return this.http.delete(`${this.apiUrl}/matches/${matchId}/team2Players/${userId}`);
+  }
+  
 }

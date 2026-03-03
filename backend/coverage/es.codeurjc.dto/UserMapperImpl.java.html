@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2026-02-11T21:17:35+0100&quot;,
-    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.45.0.v20260128-0750, environment: Java 21.0.9 (Eclipse Adoptium)&quot;
+    date = &quot;2026-03-01T18:33:16+0100&quot;,
+    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)&quot;
 )
 @Component
 <span class="fc" id="L19">public class UserMapperImpl implements UserMapper {</span>
@@ -81,16 +81,16 @@ import org.springframework.stereotype.Component;
 
     @Override
     public List&lt;UserDTO&gt; toDTOs(Collection&lt;User&gt; users) {
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        if ( users == null ) {</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if ( users == null ) {</span>
 <span class="nc" id="L85">            return null;</span>
         }
 
-<span class="nc" id="L88">        List&lt;UserDTO&gt; list = new ArrayList&lt;UserDTO&gt;( users.size() );</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        for ( User user : users ) {</span>
-<span class="nc" id="L90">            list.add( toDTO( user ) );</span>
-        }
+<span class="fc" id="L88">        List&lt;UserDTO&gt; list = new ArrayList&lt;UserDTO&gt;( users.size() );</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        for ( User user : users ) {</span>
+<span class="fc" id="L90">            list.add( toDTO( user ) );</span>
+<span class="fc" id="L91">        }</span>
 
-<span class="nc" id="L93">        return list;</span>
+<span class="fc" id="L93">        return list;</span>
     }
 
     @Override
@@ -176,7 +176,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L176">        List&lt;LevelHistoryDTO&gt; list1 = new ArrayList&lt;LevelHistoryDTO&gt;( list.size() );</span>
 <span class="fc bfc" id="L177" title="All 2 branches covered.">        for ( LevelHistory levelHistory : list ) {</span>
 <span class="fc" id="L178">            list1.add( levelHistoryToLevelHistoryDTO( levelHistory ) );</span>
-        }
+<span class="fc" id="L179">        }</span>
 
 <span class="fc" id="L181">        return list1;</span>
     }
@@ -225,7 +225,7 @@ import org.springframework.stereotype.Component;
 <span class="fc" id="L225">        List&lt;LevelHistory&gt; list1 = new ArrayList&lt;LevelHistory&gt;( list.size() );</span>
 <span class="fc bfc" id="L226" title="All 2 branches covered.">        for ( LevelHistoryDTO levelHistoryDTO : list ) {</span>
 <span class="fc" id="L227">            list1.add( levelHistoryDTOToLevelHistory( levelHistoryDTO ) );</span>
-        }
+<span class="fc" id="L228">        }</span>
 
 <span class="fc" id="L230">        return list1;</span>
     }

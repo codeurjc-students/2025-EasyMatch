@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">EasyMatch</a> &gt; <a href="index.source.html" class="el_package">es.codeurjc.service</a> &gt; <span class="el_source">MatchService.java</span></div><h1>MatchService.java</h1><pre class="source lang-java linenums">package es.codeurjc.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.MatchResultDTO;
+import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.MatchResult;
@@ -27,12 +30,12 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class MatchService {
 
-<span class="fc" id="L30">    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper) {</span>
-<span class="fc" id="L31">        this.matchRepository = matchRepository;</span>
-<span class="fc" id="L32">        this.mapper = mapper;</span>
-<span class="fc" id="L33">        this.userService = userService;</span>
-<span class="fc" id="L34">        this.userMapper = userMapper; </span>
-<span class="fc" id="L35">    }</span>
+<span class="fc" id="L33">    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper) {</span>
+<span class="fc" id="L34">        this.matchRepository = matchRepository;</span>
+<span class="fc" id="L35">        this.mapper = mapper;</span>
+<span class="fc" id="L36">        this.userService = userService;</span>
+<span class="fc" id="L37">        this.userMapper = userMapper; </span>
+<span class="fc" id="L38">    }</span>
 
     @Autowired
 	private MatchRepository matchRepository;
@@ -47,194 +50,279 @@ public class MatchService {
     private UserMapper userMapper;
 
     private MatchDTO toDTO (Match Match) {
-<span class="fc" id="L50">        return mapper.toDTO(Match);</span>
+<span class="fc" id="L53">        return mapper.toDTO(Match);</span>
     }
 
     public Optional&lt;Match&gt; findById(long id) {
-<span class="fc" id="L54">		return matchRepository.findById(id);</span>
+<span class="fc" id="L57">		return matchRepository.findById(id);</span>
 	}
 
     public List&lt;Match&gt; findAll() {
-<span class="fc" id="L58">        return matchRepository.findAll();</span>
+<span class="fc" id="L61">        return matchRepository.findAll();</span>
     }
 
     public Page&lt;Match&gt; findAll(Pageable pageable) {
-<span class="fc" id="L62">		return matchRepository.findAll(pageable);</span>
+<span class="fc" id="L65">		return matchRepository.findAll(pageable);</span>
 	}
 
     @Transactional(readOnly = true)
     public MatchDTO getMatch(long id) {
-<span class="fc" id="L67">        return toDTO(findById(id).orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND)));</span>
+<span class="fc" id="L70">        return toDTO(findById(id).orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND)));</span>
     }
     
     @Transactional(readOnly = true)
     public Page&lt;MatchDTO&gt; getMatches(Pageable pageable) {
-<span class="fc" id="L72">        return findAll(pageable).map(this::toDTO);</span>
+<span class="fc" id="L75">        return findAll(pageable).map(this::toDTO);</span>
     }
 
     @Transactional(readOnly = true)
     public Page&lt;MatchDTO&gt; getFilteredMatches( Pageable pageable, String search, String sport, Boolean includeFriendlies, String timeRange) {
-<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (includeFriendlies == null) {</span>
-<span class="fc" id="L78">            includeFriendlies = true;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (includeFriendlies == null) {</span>
+<span class="fc" id="L81">            includeFriendlies = true;</span>
         }
-<span class="fc" id="L80">        return matchRepository.findFilteredMatches(pageable,</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">            search != null ? &quot;%&quot; + search.toLowerCase() + &quot;%&quot; : null, </span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">            sport != null ? sport.toLowerCase() : null, </span>
-<span class="fc" id="L83">            includeFriendlies, </span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">            timeRange != null ? timeRange.toLowerCase() : null, true)</span>
-<span class="fc" id="L85">            .map(this::toDTO);</span>
+<span class="fc" id="L83">        return matchRepository.findFilteredMatches(pageable,</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            search != null ? &quot;%&quot; + search.toLowerCase() + &quot;%&quot; : null, </span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">            sport != null ? sport.toLowerCase() : null, </span>
+<span class="fc" id="L86">            includeFriendlies, </span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            timeRange != null ? timeRange.toLowerCase() : null, true)</span>
+<span class="fc" id="L88">            .map(this::toDTO);</span>
     }
 
     public boolean exist(long id) {
-<span class="fc" id="L89">        return matchRepository.existsById(id);  </span>
+<span class="fc" id="L92">        return matchRepository.existsById(id);  </span>
     }
     public Match save(Match match) {
-<span class="fc" id="L92">        return matchRepository.save(match);</span>
+<span class="fc" id="L95">        return matchRepository.save(match);</span>
     }
 
     public void delete(Long id) {
-<span class="fc" id="L96">        Optional&lt;Match&gt; matchOptional = matchRepository.findById(id);</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (matchOptional.isPresent()) {</span>
-<span class="fc" id="L98">            matchRepository.deleteById(id);</span>
-<span class="fc" id="L99">        } else {</span>
-<span class="fc" id="L100">            throw new IllegalArgumentException(&quot;Match with id &quot; + id + &quot; does not exist.&quot;);</span>
+<span class="fc" id="L99">        Optional&lt;Match&gt; matchOptional = matchRepository.findById(id);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (matchOptional.isPresent()) {</span>
+<span class="fc" id="L101">            matchRepository.deleteById(id);</span>
+<span class="fc" id="L102">        } else {</span>
+<span class="fc" id="L103">            throw new IllegalArgumentException(&quot;Match with id &quot; + id + &quot; does not exist.&quot;);</span>
         }
-<span class="fc" id="L102">    }</span>
+<span class="fc" id="L105">    }</span>
 
      public MatchDTO createMatch(MatchDTO matchDTO) {
-<span class="fc" id="L105">        Match match = mapper.toDomain(matchDTO);</span>
-<span class="fc" id="L106">        match.setState(true);</span>
+<span class="fc" id="L108">        Match match = mapper.toDomain(matchDTO);</span>
+<span class="fc" id="L109">        match.setState(true);</span>
 
-<span class="fc" id="L108">        User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());</span>
-<span class="fc" id="L109">		match.setOrganizer(loggedUser);</span>
-<span class="fc" id="L110">        match.setTeam1Players(Set.of(loggedUser));</span>
+<span class="fc" id="L111">        User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());</span>
+<span class="fc" id="L112">		match.setOrganizer(loggedUser);</span>
+<span class="fc" id="L113">        match.setTeam1Players(Set.of(loggedUser));</span>
         
-<span class="fc" id="L112"> 		matchRepository.save(match);</span>
-<span class="fc" id="L113"> 		return toDTO(match);</span>
+<span class="fc" id="L115"> 		matchRepository.save(match);</span>
+<span class="fc" id="L116"> 		return toDTO(match);</span>
     }
 
      public MatchDTO joinMatch(long id, String team) {
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (matchRepository.existsById(id)) {</span>
-<span class="fc" id="L118">			Match match = matchRepository.findById(id).orElseThrow();</span>
-<span class="fc" id="L119">			User loggedUser = userService.getLoggedUser();</span>
-<span class="fc" id="L120">            int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (matchRepository.existsById(id)) {</span>
+<span class="fc" id="L121">			Match match = matchRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L122">			User loggedUser = userService.getLoggedUser();</span>
+<span class="fc" id="L123">            int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();</span>
             
-<span class="fc bfc" id="L122" title="All 4 branches covered.">            if (!team.equalsIgnoreCase(&quot;A&quot;) &amp;&amp; !team.equalsIgnoreCase(&quot;B&quot;)) { </span>
-<span class="fc" id="L123">                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,&quot;El equipo debe ser A o B&quot;);</span>
+<span class="pc bpc" id="L125" title="2 of 4 branches missed.">            if (!team.equalsIgnoreCase(&quot;A&quot;) &amp;&amp; !team.equalsIgnoreCase(&quot;B&quot;)) { </span>
+<span class="nc" id="L126">                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,&quot;El equipo debe ser A o B&quot;);</span>
             }
                 
-<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (!match.isFull()){</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">            if (!match.isFull()){</span>
                 
-<span class="fc bfc" id="L128" title="All 2 branches covered.">                if (team.equalsIgnoreCase(&quot;A&quot;)) {</span>
-<span class="pc bpc" id="L129" title="1 of 2 branches missed.">                    if (match.getTeam1Players().size() &gt;= playersPerGame / 2 )</span>
-<span class="nc" id="L130">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Equipo A lleno&quot;);</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                if (team.equalsIgnoreCase(&quot;A&quot;)) {</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                    if (match.getTeam1Players().size() &gt;= playersPerGame / 2 )</span>
+<span class="nc" id="L133">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Equipo A lleno&quot;);</span>
 
-<span class="pc bpc" id="L132" title="1 of 2 branches missed.">                    if (match.containsPlayer(loggedUser))</span>
-<span class="nc" id="L133">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Ya se ha unido a este partido&quot;);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                    if (match.containsPlayer(loggedUser))</span>
+<span class="nc" id="L136">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Ya se ha unido a este partido&quot;);</span>
                     else
-<span class="fc" id="L135">                        match.addPlayerToTeam1(loggedUser);</span>
-<span class="fc" id="L136">                }else{</span>
-<span class="pc bpc" id="L137" title="1 of 2 branches missed.">                    if (match.getTeam2Players().size() &gt;= playersPerGame / 2)</span>
-<span class="nc" id="L138">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Equipo B lleno&quot;);</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">                    if (match.containsPlayer(loggedUser))</span>
-<span class="fc" id="L140">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Ya se ha unido a este partido&quot;);</span>
+<span class="nc" id="L138">                        match.addPlayerToTeam1(loggedUser);</span>
+<span class="nc" id="L139">                }else{</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                    if (match.getTeam2Players().size() &gt;= playersPerGame / 2)</span>
+<span class="nc" id="L141">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Equipo B lleno&quot;);</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">                    if (match.containsPlayer(loggedUser))</span>
+<span class="nc" id="L143">                        throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Ya se ha unido a este partido&quot;);</span>
                     else
-<span class="fc" id="L142">                        match.addPlayerToTeam2(loggedUser);</span>
+<span class="fc" id="L145">                        match.addPlayerToTeam2(loggedUser);</span>
                 }
-<span class="fc bfc" id="L144" title="All 2 branches covered.">                if (match.isFull()) match.setState(false);</span>
-<span class="fc" id="L145">                matchRepository.save(match);</span>
-<span class="fc" id="L146">            }else{</span>
-<span class="fc" id="L147">                throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;El partido esta lleno&quot;);</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">                if (match.isFull()) match.setState(false);</span>
+<span class="fc" id="L148">                matchRepository.save(match);</span>
+<span class="fc" id="L149">            }else{</span>
+<span class="nc" id="L150">                throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;El partido esta lleno&quot;);</span>
             }
-<span class="fc" id="L149">			return toDTO(match);</span>
+<span class="fc" id="L152">			return toDTO(match);</span>
  		} else {
-<span class="fc" id="L151"> 			throw new NoSuchElementException(&quot;No existe ningun partido con el id: &quot; + id);</span>
+<span class="nc" id="L154"> 			throw new NoSuchElementException(&quot;No existe ningun partido con el id: &quot; + id);</span>
  		}
      }
 
     public void leaveMatch(long id, User user) {
-<span class="fc" id="L156">        Match match = matchRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L159">        Match match = matchRepository.findById(id).orElseThrow();</span>
 
-<span class="fc bfc" id="L158" title="All 2 branches covered.">        match.getTeam1Players().removeIf(p -&gt; p.getId() == user.getId());</span>
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        match.getTeam2Players().removeIf(p -&gt; p.getId() == user.getId());</span>
-<span class="pc bpc" id="L160" title="3 of 4 branches missed.">        if (match.getTeam1Players().isEmpty() &amp;&amp; match.getTeam2Players().isEmpty()){</span>
-<span class="nc" id="L161">            matchRepository.deleteById(id);</span>
-<span class="nc" id="L162">        }else{</span>
-<span class="fc" id="L163">            matchRepository.save(match);</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        match.getTeam1Players().removeIf(p -&gt; p.getId() == user.getId());</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        match.getTeam2Players().removeIf(p -&gt; p.getId() == user.getId());</span>
+<span class="pc bpc" id="L163" title="3 of 4 branches missed.">        if (match.getTeam1Players().isEmpty() &amp;&amp; match.getTeam2Players().isEmpty()){</span>
+<span class="nc" id="L164">            matchRepository.deleteById(id);</span>
+<span class="nc" id="L165">        }else{</span>
+<span class="fc" id="L166">            matchRepository.save(match);</span>
         }
-<span class="fc" id="L165">    }</span>
+<span class="fc" id="L168">    }</span>
     public MatchDTO replaceMatch(long id, MatchDTO updatedMatchDTO) {
-<span class="fc bfc" id="L167" title="All 2 branches covered.">        if (matchRepository.existsById(id)) {</span>
-<span class="fc" id="L168">            Match match = matchRepository.findById(id).orElseThrow();</span>
-<span class="fc" id="L169">            Match updatedMatch = mapper.toDomain(updatedMatchDTO);</span>
-<span class="fc" id="L170">            updatedMatch.setId(id);</span>
-<span class="fc" id="L171">            updatedMatch.setOrganizer(match.getOrganizer());</span>
-<span class="fc" id="L172">            updatedMatch.setTeam1Players(match.getTeam1Players());</span>
-<span class="fc" id="L173">            updatedMatch.setTeam2Players(match.getTeam2Players());</span>
-<span class="fc" id="L174">            updatedMatch.setState(match.getState());</span>
-<span class="fc" id="L175">            matchRepository.save(updatedMatch);</span>
-<span class="fc" id="L176">            return toDTO(updatedMatch);</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (matchRepository.existsById(id)) {</span>
+<span class="fc" id="L171">            Match match = matchRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L172">            Match updatedMatch = mapper.toDomain(updatedMatchDTO);</span>
+<span class="fc" id="L173">            updatedMatch.setId(id);</span>
+<span class="fc" id="L174">            updatedMatch.setOrganizer(match.getOrganizer());</span>
+<span class="fc" id="L175">            updatedMatch.setTeam1Players(match.getTeam1Players());</span>
+<span class="fc" id="L176">            updatedMatch.setTeam2Players(match.getTeam2Players());</span>
+<span class="fc" id="L177">            updatedMatch.setState(match.getState());</span>
+<span class="fc" id="L178">            matchRepository.save(updatedMatch);</span>
+<span class="fc" id="L179">            return toDTO(updatedMatch);</span>
  		} else {
-<span class="fc" id="L178"> 			throw new NoSuchElementException(&quot;El partido con id &quot; + id + &quot; no existe.&quot;);</span>
+<span class="nc" id="L181"> 			throw new NoSuchElementException(&quot;El partido con id &quot; + id + &quot; no existe.&quot;);</span>
  		}
     }
 
     public MatchResultDTO addOrUpdateMatchResult(long id, MatchResultDTO resultData) {
-<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if (matchRepository.existsById(id)) {</span>
-<span class="fc" id="L184">            Match match = matchRepository.findById(id).orElseThrow();</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">            if (!match.isFull()){</span>
-<span class="fc" id="L186">                throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;No se puede añadir el resultado a un partido incompleto&quot;);</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (matchRepository.existsById(id)) {</span>
+<span class="fc" id="L187">            Match match = matchRepository.findById(id).orElseThrow();</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            if (!match.isFull()){</span>
+<span class="fc" id="L189">                throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;No se puede añadir el resultado a un partido incompleto&quot;);</span>
             }
-<span class="fc bfc" id="L188" title="All 2 branches covered.">            boolean isNewResult = !match.getResult().isCompleted();</span>
-<span class="fc" id="L189">            MatchResult result = new MatchResult();</span>
-<span class="pc bpc" id="L190" title="1 of 4 branches missed.">            if (resultData.team1Name() != null &amp;&amp; resultData.team2Name() != null) {</span>
-<span class="fc" id="L191">                result.setTeam1Name(resultData.team1Name());</span>
-<span class="fc" id="L192">                result.setTeam2Name(resultData.team2Name());</span>
-<span class="fc" id="L193">            } else {</span>
-<span class="fc" id="L194">                result.setTeam1Name(&quot;A&quot;);</span>
-<span class="fc" id="L195">                result.setTeam2Name(&quot;B&quot;);</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">            boolean isNewResult = !match.getResult().isCompleted();</span>
+<span class="fc" id="L192">            MatchResult result = new MatchResult();</span>
+<span class="pc bpc" id="L193" title="1 of 4 branches missed.">            if (resultData.team1Name() != null &amp;&amp; resultData.team2Name() != null) {</span>
+<span class="fc" id="L194">                result.setTeam1Name(resultData.team1Name());</span>
+<span class="fc" id="L195">                result.setTeam2Name(resultData.team2Name());</span>
+<span class="fc" id="L196">            } else {</span>
+<span class="fc" id="L197">                result.setTeam1Name(&quot;A&quot;);</span>
+<span class="fc" id="L198">                result.setTeam2Name(&quot;B&quot;);</span>
             }
-<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            if(match.getSport().getScoringType() == ScoringType.SCORE){ </span>
-<span class="nc" id="L198">                result.setTeam1Score(resultData.team1Score());</span>
-<span class="nc" id="L199">                result.setTeam2Score(resultData.team2Score());</span>
-<span class="nc" id="L200">                result.setTeam1GamesPerSet(new ArrayList&lt;&gt;());</span>
-<span class="nc" id="L201">                result.setTeam2GamesPerSet(new ArrayList&lt;&gt;());</span>
-<span class="pc bpc" id="L202" title="1 of 2 branches missed.">            }else if (match.getSport().getScoringType() == ScoringType.SETS){</span>
-<span class="fc" id="L203">                result.setTeam1Score(0);</span>
-<span class="fc" id="L204">                result.setTeam2Score(0);</span>
-<span class="fc" id="L205">                result.setTeam1GamesPerSet(resultData.team1GamesPerSet());</span>
-<span class="fc" id="L206">                result.setTeam2GamesPerSet(resultData.team2GamesPerSet());</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">            if(match.getSport().getScoringType() == ScoringType.SCORE){ </span>
+<span class="nc" id="L201">                result.setTeam1Score(resultData.team1Score());</span>
+<span class="nc" id="L202">                result.setTeam2Score(resultData.team2Score());</span>
+<span class="nc" id="L203">                result.setTeam1GamesPerSet(new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L204">                result.setTeam2GamesPerSet(new ArrayList&lt;&gt;());</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">            }else if (match.getSport().getScoringType() == ScoringType.SETS){</span>
+<span class="fc" id="L206">                result.setTeam1Score(0);</span>
+<span class="fc" id="L207">                result.setTeam2Score(0);</span>
+<span class="fc" id="L208">                result.setTeam1GamesPerSet(resultData.team1GamesPerSet());</span>
+<span class="fc" id="L209">                result.setTeam2GamesPerSet(resultData.team2GamesPerSet());</span>
             }
-<span class="fc" id="L208">            match.setResult(result);</span>
+<span class="fc" id="L211">            match.setResult(result);</span>
             try {
-<span class="fc" id="L210">                match.validateResult(result);</span>
-<span class="pc" id="L211">            } catch (IllegalArgumentException e) {</span>
-<span class="nc" id="L212">                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());</span>
+<span class="fc" id="L213">                match.validateResult(result);</span>
+<span class="pc" id="L214">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L215">                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());</span>
             }
-<span class="fc bfc" id="L214" title="All 2 branches covered.">            if (isNewResult) {</span>
-<span class="fc" id="L215">                 match.getTeam1Players().forEach(user -&gt; {</span>
-<span class="fc" id="L216">                    boolean won = match.didPlayerWin(user);</span>
-<span class="fc" id="L217">                    user.updateStats(won, false);</span>
-<span class="fc" id="L218">                    user.applyMatchResult(won, match.getDate());</span>
-<span class="fc" id="L219">                    userService.update(user);</span>
-<span class="fc" id="L220">                });</span>
-<span class="fc" id="L221">                match.getTeam2Players().forEach(user -&gt; {</span>
-<span class="fc" id="L222">                    boolean won = match.didPlayerWin(user);</span>
-<span class="fc" id="L223">                    user.updateStats(won, false);</span>
-<span class="fc" id="L224">                    user.applyMatchResult(won, match.getDate());</span>
-<span class="fc" id="L225">                    userService.update(user);</span>
-<span class="fc" id="L226">                });</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">            if (isNewResult) {</span>
+<span class="fc" id="L218">                 match.getTeam1Players().forEach(user -&gt; {</span>
+<span class="fc" id="L219">                    boolean won = match.didPlayerWin(user);</span>
+<span class="fc" id="L220">                    user.updateStats(won, false);</span>
+<span class="fc" id="L221">                    user.applyMatchResult(won, match.getDate());</span>
+<span class="fc" id="L222">                    userService.update(user);</span>
+<span class="fc" id="L223">                });</span>
+<span class="fc" id="L224">                match.getTeam2Players().forEach(user -&gt; {</span>
+<span class="fc" id="L225">                    boolean won = match.didPlayerWin(user);</span>
+<span class="fc" id="L226">                    user.updateStats(won, false);</span>
+<span class="fc" id="L227">                    user.applyMatchResult(won, match.getDate());</span>
+<span class="fc" id="L228">                    userService.update(user);</span>
+<span class="fc" id="L229">                });</span>
             }
-<span class="fc" id="L228">            matchRepository.save(match);</span>
-<span class="fc" id="L229">            return resultData;</span>
+<span class="fc" id="L231">            matchRepository.save(match);</span>
+<span class="fc" id="L232">            return resultData;</span>
  		} else {
-<span class="nc" id="L231"> 			throw new NoSuchElementException(&quot;El partido con id &quot; + id + &quot; no existe.&quot;);</span>
+<span class="nc" id="L234"> 			throw new NoSuchElementException(&quot;El partido con id &quot; + id + &quot; no existe.&quot;);</span>
  		}
     }
 
     public MatchResultDTO getMatchResult(long id) {
-<span class="nc bnc" id="L236" title="All 2 branches missed.">        return getMatch(id).result() == null ? new MatchResultDTO(null, null, null, null, null, null) : getMatch(id).result();</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        return getMatch(id).result() == null ? new MatchResultDTO(null, null, null, null, null, null) : getMatch(id).result();</span>
     }
 
+    public Collection&lt;UserDTO&gt; getMatchTeam1Players(long id) {
+<span class="fc" id="L243">        Match match = matchRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L244">        return userMapper.toDTOs(match.getTeam1Players());</span>
+    }
+
+    public Collection&lt;UserDTO&gt; getMatchTeam2Players(long id) {
+<span class="fc" id="L248">        Match match = matchRepository.findById(id).orElseThrow();</span>
+<span class="fc" id="L249">        return userMapper.toDTOs(match.getTeam2Players());</span>
+    }
+
+    public void addPlayerToTeam1(long matchId, long playerId) {
+<span class="fc" id="L253">        Match match = matchRepository.findById(matchId).orElseThrow();</span>
+<span class="fc" id="L254">        UserDTO userDTO = userService.getUser(playerId);</span>
+<span class="fc" id="L255">        User user = userMapper.toDomain(userDTO);</span>
+<span class="fc" id="L256">        int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();</span>
+
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">        if (match.getTeam1Players().size() &gt;= playersPerGame / 2 )</span>
+<span class="nc" id="L259">            throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Equipo 1 lleno&quot;);</span>
+
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">        if (match.containsPlayer(user))</span>
+<span class="nc" id="L262">            throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Ya se ha unido a este partido&quot;);</span>
+        else
+<span class="fc" id="L264">            match.addPlayerToTeam1(user);</span>
+        
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        if (match.isFull()) match.setState(false);</span>
+<span class="fc" id="L267">        matchRepository.save(match);</span>
+<span class="fc" id="L268">    }</span>
+
+    public void addPlayerToTeam2(long matchId, long playerId) {
+<span class="fc" id="L271">        Match match = matchRepository.findById(matchId).orElseThrow();</span>
+<span class="fc" id="L272">        UserDTO userDTO = userService.getUser(playerId);</span>
+<span class="fc" id="L273">        User user = userMapper.toDomain(userDTO);</span>
+<span class="fc" id="L274">        int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();</span>
+
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">        if (match.getTeam2Players().size() &gt;= playersPerGame / 2 )</span>
+<span class="nc" id="L277">            throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Equipo 2 lleno&quot;);</span>
+
+<span class="pc bpc" id="L279" title="1 of 2 branches missed.">        if (match.containsPlayer(user))</span>
+<span class="nc" id="L280">            throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;Ya se ha unido a este partido&quot;);</span>
+        else
+<span class="fc" id="L282">            match.addPlayerToTeam2(user);</span>
+        
+<span class="pc bpc" id="L284" title="1 of 2 branches missed.">        if (match.isFull()) match.setState(false);</span>
+<span class="fc" id="L285">        matchRepository.save(match);</span>
+<span class="fc" id="L286">    }</span>
+
+    public void removePlayerFromTeam1(long matchId, long playerId) {
+<span class="fc" id="L289">        Match match = matchRepository.findById(matchId).orElseThrow();</span>
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">        if (match.getTeam1Players().size() == 0){</span>
+<span class="nc" id="L291">            throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;El equipo 1 no tiene jugadores&quot;);</span>
+        }
+<span class="fc" id="L293">        match.getTeam1Players().removeIf(p -&gt; Objects.equals(p.getId(), playerId));</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        if (match.getOrganizer().getId() == playerId){</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">            if (!match.getTeam1Players().isEmpty()){</span>
+<span class="nc" id="L296">                match.setOrganizer(match.getTeam1Players().iterator().next());</span>
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">            }else if (!match.getTeam2Players().isEmpty()){</span>
+<span class="nc" id="L298">                match.setOrganizer(match.getTeam2Players().iterator().next());</span>
+            }
+        }
+<span class="pc bpc" id="L301" title="1 of 4 branches missed.">        if (match.getTeam1Players().isEmpty() &amp;&amp; match.getTeam2Players().isEmpty()){</span>
+<span class="fc" id="L302">            matchRepository.deleteById(matchId);</span>
+<span class="fc" id="L303">        }else{</span>
+<span class="fc" id="L304">            matchRepository.save(match);</span>
+        }
+<span class="fc" id="L306">    }</span>
+
+    public void removePlayerFromTeam2(long matchId, long playerId) {
+<span class="nc" id="L309">        Match match = matchRepository.findById(matchId).orElseThrow();</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        if (match.getTeam2Players().size() == 0){</span>
+<span class="nc" id="L311">            throw new ResponseStatusException(HttpStatus.CONFLICT,&quot;El equipo 2 no tiene jugadores&quot;);</span>
+        }
+<span class="nc" id="L313">        match.getTeam2Players().removeIf(p -&gt; Objects.equals(p.getId(), playerId));</span>
+<span class="nc bnc" id="L314" title="All 2 branches missed.">        if (match.getOrganizer().getId() == playerId){</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">            if (!match.getTeam2Players().isEmpty()){</span>
+<span class="nc" id="L316">                match.setOrganizer(match.getTeam2Players().iterator().next());</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">            }else if (!match.getTeam1Players().isEmpty()){</span>
+<span class="nc" id="L318">                match.setOrganizer(match.getTeam1Players().iterator().next());</span>
+            }
+        }
+<span class="nc bnc" id="L321" title="All 4 branches missed.">        if (match.getTeam1Players().isEmpty() &amp;&amp; match.getTeam2Players().isEmpty()){</span>
+<span class="nc" id="L322">            matchRepository.deleteById(matchId);</span>
+<span class="nc" id="L323">        }else{</span>
+<span class="nc" id="L324">            matchRepository.save(match);</span>
+        }
+<span class="nc" id="L326">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

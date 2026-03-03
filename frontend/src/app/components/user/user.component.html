@@ -150,12 +150,13 @@
 
     <ngx-charts-line-chart
       [results]="levelChartData()"
+      [scheme]="colorScheme"
       [xAxis]="true"
       [yAxis]="true"
       [autoScale]="true"
       [timeline]="true"
       [roundDomains]="true"
-      [showGridLines]="true"
+      [showGridLines]="false"
     >
     </ngx-charts-line-chart>
     <div class="actions">

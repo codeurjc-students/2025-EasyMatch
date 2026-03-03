@@ -29,7 +29,11 @@
     color: #FFFFFF;
     border: 0.5px solid ;
     border-color: #DEE2E6;
-    font-weight: 550;
+    font-weight: 550; 
+  }
+  th, td {
+    font-size: 0.75rem;
+    padding: 6px 10px;
   }
 
   td {
@@ -69,7 +73,7 @@ mat-paginator {
 }
 
 
-.modes-list {
+.modes-list,.sports-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -78,35 +82,63 @@ mat-paginator {
   gap: 8px;
 }
 
-.mode-item {
-  background: #f3f4f6; 
-  color: #1f2937; 
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 0.85rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+.mode-item, .sport-item {
+  background: #e9eef5;      // azul gris muy suave (más acorde a tu web)
+  color: #2C3E50;           // azul oscuro corporativo
+  border-radius: 6px;       // ligeramente menos redondeado
+  padding: 4px 8px;         // menos espacio
+  font-size: 0.75rem;       // texto más pequeño
+  display: inline-flex;     // más compacto que flex column
+  align-items: center;
+  gap: 4px;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: all 0.15s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-    background: #e5e7eb;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    background: #dde6f3;
   }
 
-  .mode-name {
+  .mode-name, .sport-name {
     font-weight: 600;
-    margin-bottom: 2px;
+    font-size: 0.75rem;
+    margin: 0;
   }
 
   .mode-players {
-    font-size: 0.75rem;
-    color: #6b7280; 
+    font-size: 0.65rem;
+    color: #6b7280;
   }
 }
 
+.sport-item {
+
+  
+  &[data-sport="tenis"]{
+    background: #E8F5E9;
+    color: #1B5E20;
+  }
+
+
+  &[data-sport="padel"] {
+    background: #e3f2fd; 
+    color: #1e88e5;
+  }
+
+  &[data-sport="voleibol"],
+  &[data-sport="volley"] {
+    background: #e8f0fe; 
+    color: #1565c0;
+  }
+
+  &[data-sport="futbol"],
+  &[data-sport="fútbol"] {
+    background: #fdecea;
+    color: #c62828;
+  }
+}
 
 .scoring-badge {
   display: inline-block;
@@ -116,7 +148,6 @@ mat-paginator {
   font-weight: 600;
   text-transform: capitalize;
   color: #fff;
-  background: #64748b;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   transition: background 0.2s ease;
 
@@ -127,4 +158,76 @@ mat-paginator {
   &[data-type="Sets"] {
     background: #2563eb; 
   }
+}
+
+.teams-container {
+  display: grid;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 2rem;
+}
+.team-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e3e6ea;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+
+.team-card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.add-player-section {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.add-player-section mat-form-field {
+  width: 300px;
+}
+
+.add-player-section button {
+  margin-right: 3rem;
+  background: linear-gradient(
+    135deg,
+    #243447 0%,
+    #2C3E50 50%,
+    #34495e 100%
+  );
+  color: #ffffff;
+  height: 56px;
+}
+
+.team-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2C3E50;
+  margin-bottom: 0.75rem;
+  border-left: 4px solid #2C3E50;
+  padding-left: 8px;
+}
+
+.admin-header button {
+  background: #ffffff;
+  color: #2C3E50;
+  border: 1px solid #2C3E50;
+  border-radius: 8px;
+  padding: 0 16px;
+  height: 40px;
+  transition: all 0.2s ease;
+  margin-right: 2rem;
+}
+
+.admin-header button mat-icon {
+  font-size: 18px;
+}
+
+.admin-header button:hover {
+  background: #2C3E50;
+  color: #ffffff;
 }

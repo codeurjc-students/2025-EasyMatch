@@ -28,7 +28,7 @@ import es.codeurjc.repository.UserRepository;
 <span class="fc" id="L28">		List&lt;GrantedAuthority&gt; roles = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L29" title="All 2 branches covered.">		for (String role : user.getRoles()) {</span>
 <span class="fc" id="L30">			roles.add(new SimpleGrantedAuthority(&quot;ROLE_&quot; + role));</span>
-		}
+<span class="fc" id="L31">		}</span>
 
 <span class="fc" id="L33">		return new org.springframework.security.core.userdetails.User(user.getEmail(), </span>
 <span class="fc" id="L34">				user.getPassword(), roles);</span>

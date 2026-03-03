@@ -120,7 +120,6 @@ public class ClubService {
             Club updatedClub = mapper.toDomain(updatedClubDTO);
             updatedClub.setId(id);
             updatedClub.setImage(club.getImage());
-            updatedClub.setSports(club.getSports());
             updatedClub.setNumberOfCourts(club.getNumberOfCourts());
             clubRepository.save(updatedClub);
             return toDTO(updatedClub);
