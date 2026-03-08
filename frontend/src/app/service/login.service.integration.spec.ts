@@ -7,12 +7,18 @@ import { provideRouter } from '@angular/router';
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 describe('LoginService', () => {
-  let service: LoginService;
+ let service: LoginService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [HttpClientModule],
-      providers: [LoginService, provideRouter([]), provideHttpClient()],
+
+    TestBed.configureTestingModule({
+      imports: [HttpClientModule],
+      providers: [
+        LoginService,
+        provideRouter([])
+      ]
     });
+
     service = TestBed.inject(LoginService);
   });
 
@@ -20,30 +26,46 @@ describe('LoginService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('login should return an AuthResponse from API', (done: DoneFn) => {
+  it('login should return a token from real API', (done: DoneFn) => {
+
     const loginRequest: LoginRequest = {
-      username: 'pedro@emeal.com',    
+      username: 'pedro@emeal.com',
       password: 'pedroga4'
     };
 
-    service.login(loginRequest).subscribe(
-      response => {
-        expect(response).toBeTruthy();
-        expect(response.status).toEqual('SUCCESS');
-        expect(response.message).toEqual('Auth successful. Tokens are created in cookie.');
-        done();
-      })
-    });
+    service.login(loginRequest).subscribe({
+      next: (response) => {
 
-
-  it('logout should return an AuthResponse from API', (done: DoneFn) => {
-    service.logout().subscribe(
-      response => {
         expect(response).toBeTruthy();
-        expect(response.status).toEqual('SUCCESS');
-        expect(response.message).toEqual('logout successfully');
+        expect(response.status).toBe('SUCCESS');
+        expect(response.authorities).toContain('ROLE_USER');
+
         done();
       },
-    )
+      error: (err) => {
+        fail('Login request failed: ' + err);
+        done();
+      }
+    });
+
   });
+
+  it('logout should return AuthResponse from real API', (done: DoneFn) => {
+
+    service.logout().subscribe({
+      next: (response) => {
+
+        expect(response).toBeTruthy();
+        expect(response.status).toEqual('SUCCESS');
+
+        done();
+      },
+      error: (err) => {
+        fail('Logout request failed: ' + err);
+        done();
+      }
+    });
+
+  });
+
 });

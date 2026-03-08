@@ -1,15 +1,27 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { inject } from '@angular/core';
-import { AuthService } from '../service/auth.service';
-import { firstValueFrom } from 'rxjs';
+import { inject } from "@angular/core";
+import { CanActivateFn, Router } from "@angular/router";
+import { firstValueFrom } from "rxjs";
+import { LoginService } from "../service/login.service";
+
 
 export const canActivateAuth: CanActivateFn = async () => {
-  const authService = inject(AuthService);
 
-  try {
-    const isLoggedIn = await firstValueFrom(authService.checkAuthStatus());
-    return isLoggedIn;
-  } catch {
-    return false;
+  const loginService = inject(LoginService);
+  const router = inject(Router);
+
+  const isLogged = await firstValueFrom(loginService.userLoginOn);
+
+  if (isLogged) {
+    return true;
   }
+
+  router.navigate(['/error'], {
+    queryParams: {
+      code: 401,
+      title: 'No autenticado',
+      message: 'Debes iniciar sesión para acceder a esta sección.'
+    }
+  });
+
+  return false;
 };

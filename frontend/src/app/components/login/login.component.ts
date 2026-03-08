@@ -34,7 +34,12 @@ import { AuthResponse } from '../../models/auth/auth-response.model';
 export class LoginComponent {
   public loginForm: FormGroup;
 
-  constructor(private loginService: LoginService, private fb: FormBuilder, private router: Router, private errorService: ErrorService) {
+  constructor(
+    private loginService: LoginService, 
+    private fb: FormBuilder, 
+    private router: Router, 
+    private errorService: ErrorService
+  ) {
 		this.loginForm = this.fb.nonNullable.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
@@ -74,9 +79,12 @@ export class LoginComponent {
     this.loginService.login(loginRequest).subscribe({
       next: (response : AuthResponse) => {
         this.loading.set(false);
-        if (response.authorities.match('ROLE_ADMIN')){
+
+        const authorities = sessionStorage.getItem("authorities") ?? "";
+
+        if (authorities.includes('ROLE_ADMIN')){
           this.router.navigate(['/admin']);
-        }else{
+        } else {
           this.router.navigate(['/matches']);
         }
         
@@ -90,7 +98,7 @@ export class LoginComponent {
         }
         this.errorService.setError(err.status ?? 500, err.message ?? 'Error desconocido');
         
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
       },
     });
   }

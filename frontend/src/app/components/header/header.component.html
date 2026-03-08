@@ -8,14 +8,29 @@
   <nav class="nav-links">
     <button mat-button id="matches-btn" routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
     <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active">Clubes</button>
-    <button mat-button id="profile-btn" routerLink="/profile" routerLinkActive="active">Perfil</button>
+    @if (isAuthenticated) {
+      <button mat-button id="profile-btn" routerLink="/profile" routerLinkActive="active">Perfil</button>
+    } 
   </nav>
 
   <div class="actions">
-    <button id="create-match-btn" mat-stroked-button color="primary" class="create-btn"  routerLink="/matches/create">
-      <mat-icon>add</mat-icon>
-      Crear Partido
-    </button>
+    @if (isAuthenticated) {
+      <button id="create-match-btn" mat-stroked-button color="primary" class="create-btn"  routerLink="/matches/create">
+        <mat-icon>add</mat-icon>
+        Crear Partido
+      </button>
+    }
+    @if (!isAuthenticated) {
+
+      <button mat-raised-button class="login-btn" routerLink="/login">
+        Iniciar sesión
+      </button>
+
+      <button mat-raised-button class="create-btn" routerLink="/register">
+        Registrarse
+      </button>
+
+    }
 
     @if (user(); as u) {
       <div class="user-info" [matMenuTriggerFor]="userMenu">

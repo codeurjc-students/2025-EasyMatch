@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchService } from '../../service/match.service';
 import { UserService } from '../../service/user.service';
@@ -6,11 +6,12 @@ import { Match } from '../../models/match.model';
 import { HeaderComponent } from '../header/header.component';
 import { MatchComponent } from '../match/match';
 import { MatIcon } from "@angular/material/icon";
+import { MatDivider } from "@angular/material/divider";
 
 @Component({
   selector: 'app-my-matches',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, MatchComponent, MatIcon],
+  imports: [CommonModule, HeaderComponent, MatchComponent, MatIcon, MatDivider],
   templateUrl: './my-matches.component.html',
   styleUrls: ['./my-matches.component.scss']
 })
@@ -22,6 +23,18 @@ export class MyMatchesComponent implements OnInit {
   constructor(
     private userService: UserService
   ) {}
+
+  openMatches = computed(() =>
+    this.matches().filter(m =>
+      m.state === true
+    )
+  );
+
+  closedMatches = computed(() =>
+    this.matches().filter(m =>
+      m.state === false
+    )
+  );
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe({

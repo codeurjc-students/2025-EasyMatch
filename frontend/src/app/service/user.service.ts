@@ -19,6 +19,7 @@ export class UserService {
   }
 
   deleteUser(id: number): Observable<User> {
+    sessionStorage.clear();
     return this.http.delete<User>(`${this.apiUrl}/users/${id}`,{withCredentials : true});
   }
 

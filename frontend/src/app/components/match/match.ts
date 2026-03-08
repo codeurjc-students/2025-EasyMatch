@@ -15,6 +15,7 @@ import { UserService } from '../../service/user.service';
 import { User } from '../../models/user.model';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { MatchResultDialogComponent } from '../match-result-dialog/match-result-dialog.component';
+import { LoginService } from '../../service/login.service';
 
 
 
@@ -37,12 +38,29 @@ export class MatchComponent implements OnInit{
 
   @Input() match!: Match;
   private apiUrl = environment.apiUrl;
-  currentUserId: number = 0;
 
-  constructor(private dialog: MatDialog, private service: MatchService, private userService: UserService, private snack: MatSnackBar) {}
+  constructor(
+    private dialog: MatDialog, 
+    private service: MatchService, 
+    private userService: UserService,
+    private snack: MatSnackBar,
+    private loginService: LoginService
+  ) {}
+
+  currentUserId: number = 0;
+  isAuthenticated = false;
+
   ngOnInit(): void {
-     this.userService.getCurrentUser().subscribe( (user: User) => {
-      this.currentUserId = user.id;
+    this.loginService.userLoginOn.subscribe(isLogged => {
+
+      this.isAuthenticated = isLogged;
+
+      if (!isLogged) return;
+
+      this.userService.getCurrentUser().subscribe((user: User) => {
+        this.currentUserId = user.id;
+      });
+
     });
     
   }

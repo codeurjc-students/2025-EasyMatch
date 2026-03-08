@@ -64,51 +64,52 @@
         </div>
       </div>
     </mat-card-content>
-    @if (match.state == true){
-        @if(!isUserJoined(match, currentUserId)){
-          <mat-card-actions align="end">
-            <button mat-raised-button color="primary" class="join-button" (click)="openJoinDialog(match)">
-              Unirse
-            </button>
-          </mat-card-actions>
-        }@else {
-          <mat-card-actions align="end">
-            <button 
-              mat-raised-button 
-              color = "warn"
-              class="leave-button" 
-              *ngIf="isUserJoined(match, currentUserId)"
-              (click)="openLeaveDialog(match)"
-            >
-              <mat-icon>logout</mat-icon>
-              Abandonar
-            </button>
-          </mat-card-actions>
+    @if(isAuthenticated){
+      @if (match.state == true){
+          @if(!isUserJoined(match, currentUserId)){
+            <mat-card-actions align="end">
+              <button mat-raised-button color="primary" class="join-button" (click)="openJoinDialog(match)">
+                Unirse
+              </button>
+            </mat-card-actions>
+          }@else {
+            <mat-card-actions align="end">
+              <button 
+                mat-raised-button 
+                color = "warn"
+                class="leave-button" 
+                *ngIf="isUserJoined(match, currentUserId)"
+                (click)="openLeaveDialog(match)"
+              >
+                <mat-icon>logout</mat-icon>
+                Abandonar
+              </button>
+            </mat-card-actions>
+            
+          }
+      }@else{
+        <mat-divider class="divider"></mat-divider>
+        <mat-card-content class="result-section">
+
           
-        }
-    }@else{
-      <mat-divider class="divider"></mat-divider>
-      <mat-card-content class="result-section">
+          <div class="add-result-container">
+            <button mat-raised-button color="primary" class="view-result-btn" (click)="viewResult(match)" *ngIf="hasResult(match)">
+              <mat-icon>visibility</mat-icon>
+              Ver resultado
+            </button>
+            <button mat-raised-button color="primary" class="edit-result-btn" (click)="editMatchResult(match)" *ngIf="hasResult(match)">
+              <mat-icon>edit</mat-icon>
+              Editar resultado
+            </button>
+            <button mat-raised-button color="primary" class="add-result-btn" (click)="addMatchResult(match)" *ngIf="!hasResult(match)">
+              <mat-icon>add</mat-icon>
+              Añadir resultado
+            </button>
+          </div>
 
-        
-        <div class="add-result-container">
-          <button mat-raised-button color="primary" class="view-result-btn" (click)="viewResult(match)" *ngIf="hasResult(match)">
-            <mat-icon>visibility</mat-icon>
-            Ver resultado
-          </button>
-          <button mat-raised-button color="primary" class="edit-result-btn" (click)="editMatchResult(match)" *ngIf="hasResult(match)">
-            <mat-icon>edit</mat-icon>
-            Editar resultado
-          </button>
-          <button mat-raised-button color="primary" class="add-result-btn" (click)="addMatchResult(match)" *ngIf="!hasResult(match)">
-            <mat-icon>add</mat-icon>
-            Añadir resultado
-          </button>
-        </div>
+        </mat-card-content>
 
-      </mat-card-content>
-
+      }
     }
-    
   </mat-card>
 </div>

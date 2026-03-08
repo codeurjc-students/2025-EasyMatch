@@ -23,23 +23,37 @@ export class HeaderComponent {
   private apiUrl = environment.apiUrl;
   private loginService = inject(LoginService);
 
+  isAuthenticated = false;
+
   ngOnInit(): void {
-    this.loadUser();
+    this.loginService.userLoginOn.subscribe(value => {
+      this.isAuthenticated = value;
+
+      if (value) {
+        this.loadUser();
+      }
+    });
   }
 
   private loadUser(): void {
-    this.userService.getCurrentUser().subscribe({
-      next: (data) => this.user = signal({id: data.id, realname: data.realname, username: data.username, email: data.email, birthDate: data.birthDate, gender: data.gender, description: data.description, level: data.level,
-        stats: data.stats, levelHistory: data.levelHistory, roles: data.roles
-      } ),
-      error: (err) => console.error('Error al obtener el usuario:', err),
-    });
+    if (this.isAuthenticated){
+      this.userService.getCurrentUser().subscribe({
+        next: (data) => this.user = signal({id: data.id, realname: data.realname, username: data.username, email: data.email, birthDate: data.birthDate, gender: data.gender, description: data.description, level: data.level,
+          stats: data.stats, levelHistory: data.levelHistory, roles: data.roles
+        } ),
+        error: (err) => console.error('Error al obtener el usuario:', err),
+      });
+    }
   }
 
   logout() {
     this.loginService.logout().subscribe({
       next: () => {
-        window.location.href = "/login";
+
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("authorities");
+
+        window.location.href = "/matches";
       },
       error: err => console.error(err)
     });
