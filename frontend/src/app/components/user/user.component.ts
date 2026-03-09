@@ -201,12 +201,13 @@ export class UserComponent implements OnInit {
       if (confirmed) {
         this.userService.deleteUser(id).subscribe({
           next: () => {
+            sessionStorage.clear();
             this.snackBar.open(
               '✅ Tu cuenta ha sido eliminada correctamente',
               'Cerrar',
               { duration: 3000, panelClass: ['success-snackbar'] }
             );
-            this.router.navigateByUrl('/');
+            this.router.navigate(['/login']);
           },
           error: (err) => {
             console.error('Error al eliminar cuenta:', err);
