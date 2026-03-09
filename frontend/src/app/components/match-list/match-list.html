@@ -9,12 +9,12 @@
       <app-match [match]="match"></app-match>
     }
   </section>
-</section>
-<mat-paginator
-  [length]="totalElements()"
-  [pageSize]="pageSize"
+  <mat-paginator
+    [length]="totalElements()"
+    [pageSize]="pageSize"
 
-  [pageIndex]="pageIndex"
-  aria-label="Selector de página"
-  (page)="onPageChange($event)">
-</mat-paginator>
+    [pageIndex]="pageIndex"
+    aria-label="Selector de página"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</section>

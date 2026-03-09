@@ -11,39 +11,39 @@
     <mat-icon>event_busy</mat-icon>
     <p>No tienes partidos todavía.</p>
   </div>
+  <mat-card *ngIf="!loading() && openMatches().length > 0" class="matches-card">
+    <div *ngIf="openMatches().length > 0">
 
-  <div *ngIf="openMatches().length > 0">
-
-    <div class="header">
-      <h2>Partidos abiertos</h2>
+      <div class="header">
+        <h2>Partidos abiertos</h2>
+        <span class="found">{{ openMatches().length }} encontrados</span>
+      </div>
       <mat-divider></mat-divider>
-      <span class="found">{{ openMatches().length }} encontrados</span>
+      <div class="matches-grid">
+        <app-match
+          *ngFor="let m of openMatches()"
+          [match]="m">
+        </app-match>
+      </div>
+
     </div>
+  </mat-card>
+  <mat-card *ngIf="!loading() && closedMatches().length > 0" class="matches-card">
+    <div *ngIf="closedMatches().length > 0">
 
-    <div class="matches-grid">
-      <app-match
-        *ngFor="let m of openMatches()"
-        [match]="m">
-      </app-match>
-    </div>
-
-  </div>
-
-  <div *ngIf="closedMatches().length > 0">
-
-    <div class="header">
-      <h2>Partidos cerrados</h2>
+      <div class="header">
+        <h2>Partidos cerrados</h2>
+        <span class="found">{{ closedMatches().length }} encontrados</span>
+      </div>
       <mat-divider></mat-divider>
-      <span class="found">{{ closedMatches().length }} encontrados</span>
-    </div>
+      <div class="matches-grid">
+        <app-match
+          *ngFor="let m of closedMatches()"
+          [match]="m">
+        </app-match>
+      </div>
 
-    <div class="matches-grid">
-      <app-match
-        *ngFor="let m of closedMatches()"
-        [match]="m">
-      </app-match>
     </div>
-
-  </div>
+  </mat-card>
 
 </div>

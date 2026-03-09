@@ -53,7 +53,7 @@
     button[mat-raised-button] {
       border-radius: 8px;
       text-transform: none;
-      font-weight: 600;
+      font-weight: 500;
       padding: 0 1rem;
       box-shadow: none;
       line-height: 36px;
@@ -61,13 +61,12 @@
     }
 
     
-button[mat-raised-button]:not(.create-btn) {
+    button[mat-raised-button]:not(.create-btn) {
       color: #ffffff;
       background: linear-gradient(90deg, #1e88e5, #42a5f5);
       border: none;
 
       &:hover {
-        // un poco más de contraste en hover
         background: linear-gradient(90deg, #187bd1, #3c9ae8);
       }
 
@@ -84,7 +83,7 @@ button[mat-raised-button]:not(.create-btn) {
     .create-btn {
       background-color: #323232;
       color: #ffffff;
-      font-weight: 600;
+      font-weight: 550;
       text-transform: none;
       border-radius: 8px;
       padding: 0 1rem;

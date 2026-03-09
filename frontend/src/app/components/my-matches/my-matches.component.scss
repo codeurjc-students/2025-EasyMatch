@@ -6,47 +6,53 @@
 .matches-section {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 1.5rem 2rem;
+  gap: 2rem;
+  padding: 2rem;
+  align-items: center;
+}
+
+.matches-card {
+  width: 100%;
+  max-width: 1460px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding-top: 0.5rem;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 0.5rem;
-  
+  padding: 1rem 2rem 0.5rem 2rem;
+
   h2 {
-    color: #323232;
     font-weight: 500;
-    font-size: 1.3rem;
-    color: #1a1a1a;
-    padding-left: 0.4rem;
+    font-size: 1.25rem;
+    color: #323232;
+    padding-left: 0.6rem;
     border-left: 4px solid var(--mat-sys-primary, #1976d2);
   }
 
   .found {
-    background-color: rgba(25, 118, 210, 0.1);
+    background: rgba(25,118,210,0.12);
     color: #1976d2;
-    border-radius: 16px;
-    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 20px;
+    padding: 0.3rem 0.9rem;
   }
-
-
 }
 
 .matches-grid {
   display: grid;
-  grid-template-columns: repeat(4, 340px);
+  grid-template-columns: repeat(4, 330px);
   gap: 1.5rem;
-  padding: 1.5rem 2rem;
-  justify-items: center;
+  padding: 1.5rem 2rem 2rem 2rem;
 }
 
 .empty {
-  margin-top: 1rem;
+  margin-top: 2rem;
   text-align: center;
-  color: #ccc;
+  color: #bdbdbd;
   font-size: 1.1rem;
 
   mat-icon {
@@ -58,14 +64,13 @@
   }
 }
 
-/* --- Loading --- */
 .loading {
   margin-top: 3rem;
   text-align: center;
   color: #ccc;
 
   .spin {
-    animation: spin 1.5s linear infinite;
+    animation: spin 1.2s linear infinite;
     font-size: 36px;
   }
 }

@@ -7,11 +7,12 @@ import { HeaderComponent } from '../header/header.component';
 import { MatchComponent } from '../match/match';
 import { MatIcon } from "@angular/material/icon";
 import { MatDivider } from "@angular/material/divider";
+import { MatCard } from "@angular/material/card";
 
 @Component({
   selector: 'app-my-matches',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, MatchComponent, MatIcon, MatDivider],
+  imports: [CommonModule, HeaderComponent, MatchComponent, MatIcon, MatDivider, MatCard],
   templateUrl: './my-matches.component.html',
   styleUrls: ['./my-matches.component.scss']
 })

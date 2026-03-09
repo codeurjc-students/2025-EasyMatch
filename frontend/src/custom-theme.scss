@@ -6,6 +6,57 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+
+
+@include mat.core();
+$my-blue-theme: mat.define-theme((
+  color: (
+    primary:  mat.$azure-palette
+  ),
+));
+
+@include mat.all-component-themes($my-blue-theme);
+
+:root {
+  @include mat.datepicker-overrides((
+
+    // Calendar background
+    calendar-container-background-color: #ffffff,
+    calendar-container-text-color: #1f2937,
+
+    // Pop-up shadow and shape
+    calendar-container-elevation-shadow: 0px 10px 30px rgba(0,0,0,0.15),
+    calendar-container-shape: 16px,
+
+    // Header (month/year)
+    calendar-header-text-color: #111827,
+    calendar-header-divider-color: #e5e7eb,
+
+    // Navegation buttons
+    calendar-navigation-button-icon-color: #005cbb,
+    calendar-period-button-text-color: #374151,
+    calendar-period-button-icon-color: #005cbb,
+
+    // Day text color
+    calendar-date-text-color: #1f2937,
+
+    // Day hover
+    calendar-date-hover-state-background-color: #e0e7ff,
+
+    // Selected day
+    calendar-date-selected-state-background-color: #005cbb,
+    calendar-date-selected-state-text-color: #ffffff,
+
+    // Current day
+    calendar-date-today-outline-color: #005cbb,
+
+    // Disabled day
+    calendar-date-disabled-state-text-color: #9ca3af
+
+  ));
+}
+
+
 html {
   @include mat.theme((
     color: (

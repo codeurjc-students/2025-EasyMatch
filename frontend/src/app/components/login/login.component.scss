@@ -6,7 +6,7 @@
 
   .login-image {
     flex: 1;
-    background: url('../../../assets/padel.png') center center / cover no-repeat;
+    background: url('../../../assets/padel.jpg') center center / cover no-repeat;
   }
   
   .login-form {
@@ -92,7 +92,7 @@
         height: 48px;
         border-radius: 8px;
         background: linear-gradient(90deg, #1e88e5, #42a5f5);
-        font-weight: 600;
+        font-weight: 500;
       }
 
       .register {
@@ -101,7 +101,7 @@
         font-size: 0.9rem;
 
         .link {
-          font-weight: 600;
+          font-weight: 500;
           color: #90caf9;
           cursor: pointer;
           text-decoration: none;
