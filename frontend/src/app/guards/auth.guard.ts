@@ -9,9 +9,7 @@ export const canActivateAuth: CanActivateFn = async () => {
   const loginService = inject(LoginService);
   const router = inject(Router);
 
-  const isLogged = await firstValueFrom(loginService.userLoginOn);
-
-  if (isLogged) {
+  if (loginService.isLogged()) {
     return true;
   }
 

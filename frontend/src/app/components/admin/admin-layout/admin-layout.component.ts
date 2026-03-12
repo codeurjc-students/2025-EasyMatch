@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,18 +22,13 @@ export class AdminLayoutComponent {
   user = signal<User | null>(null);
 
   private loginService = inject(LoginService);
-  private userService = inject(UserService);
+  private router = inject(Router);
+
 
   ngOnInit(): void {
-    this.loadUser();
-  }
-
-  private loadUser(): void {
-    this.userService.getCurrentUser().subscribe({
-      next: (data) => this.user = signal({id: data.id, realname: data.realname, username: data.username, email: data.email, birthDate: data.birthDate, gender: data.gender, description: data.description, level: data.level,
-        stats: data.stats, levelHistory: data.levelHistory, roles: data.roles
-      } ),
-      error: (err) => console.error('Error al obtener el usuario:', err),
+    this.loginService.currentUser$.subscribe({
+      next: user => this.user.set(user),
+      error: err => console.error('Error al obtener el usuario:', err)
     });
   }
   
@@ -44,7 +39,7 @@ export class AdminLayoutComponent {
   logout() {
     this.loginService.logout().subscribe({
       next: () => {
-        window.location.href = "/login";
+        this.router.navigate(['/'])
       },
       error: err => console.error(err)
     });
@@ -54,6 +49,6 @@ export class AdminLayoutComponent {
     return `${this.apiUrl}/users/${id}/image`;
   }
   goToProfile() {
-    window.location.href = "/profile";
+    this.router.navigate(['/profile']);
   }
 }

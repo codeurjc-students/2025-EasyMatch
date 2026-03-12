@@ -8,19 +8,19 @@
   <nav class="nav-links">
     <button mat-button id="matches-btn" routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
     <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active">Clubes</button>
-    @if (isAuthenticated) {
+    @if (user()) {
       <button mat-button id="profile-btn" routerLink="/profile" routerLinkActive="active">Perfil</button>
     } 
   </nav>
 
   <div class="actions">
-    @if (isAuthenticated) {
+    @if (user()) {
       <button id="create-match-btn" mat-stroked-button color="primary" class="create-btn"  routerLink="/matches/create">
         <mat-icon>add</mat-icon>
         Crear Partido
       </button>
     }
-    @if (!isAuthenticated) {
+    @if (!user()) {
 
       <button mat-raised-button class="login-btn" routerLink="/login">
         Iniciar sesión
@@ -36,8 +36,8 @@
       <div class="user-info" [matMenuTriggerFor]="userMenu">
         <img class="avatar" [src]="getUserImage(u.id) || 'assets/default-avatar.jpg'" alt="Usuario" />
         <div class="user-text">
-          <span class="user-name">{{ u.realname }}</span>
-          <span class="user-level">Nivel {{ u.level | number:'1.0-2' }}</span>
+          <span class="user-name">{{ u?.realname }}</span>
+          <span class="user-level">Nivel {{ u?.level | number:'1.0-2' }}</span>
         </div>
         <mat-icon class="arrow-icon">expand_more</mat-icon>
       </div>

@@ -40,7 +40,7 @@ export class MyMatchesComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe({
       next: (user) => {
-        this.userService.getUserMatches(user.id).subscribe({
+        this.userService.getUserMatches(user!.id).subscribe({
           next: (data) => {
             this.matches.set(data);
             this.loading.set(false);

@@ -1,28 +1,28 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpClient, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   const router = inject(Router);
-
+  const https = inject(HttpClient);
+  if (req.headers.has('X-Skip-Interceptor')) return next(req);
   return next(req).pipe(
     catchError((err) => {
-
 	  const backendMessage =
         err?.error?.message ||
         err?.error?.error ||
         err?.error ||
         'Se produjo un conflicto.'; 
       if (err.status === 401) {
-        router.navigate(['/error'], {
-          queryParams: {
-            code: 401,
-            title: 'No autenticado',
-            message: 'Debes iniciar sesión para acceder a esta sección.'
-          }
-        });
+        return https.post('/api/v1/auth/refresh',{},{ withCredentials: true }).pipe(
+          switchMap(() => next(req)),
+          catchError(() => {
+            router.navigate(['/login']);
+            return throwError(() => err);
+          })
+        );
       }
 
       else if (err.status === 403) {

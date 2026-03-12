@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { Match } from '../../models/match.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -16,6 +16,7 @@ import { User } from '../../models/user.model';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { MatchResultDialogComponent } from '../match-result-dialog/match-result-dialog.component';
 import { LoginService } from '../../service/login.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 
 
@@ -34,7 +35,7 @@ import { LoginService } from '../../service/login.service';
     MatTooltipModule,
   ]
 })
-export class MatchComponent implements OnInit{
+export class MatchComponent{
 
   @Input() match!: Match;
   private apiUrl = environment.apiUrl;
@@ -44,26 +45,13 @@ export class MatchComponent implements OnInit{
     private service: MatchService, 
     private userService: UserService,
     private snack: MatSnackBar,
-    private loginService: LoginService
   ) {}
 
-  currentUserId: number = 0;
-  isAuthenticated = false;
+  private loginService = inject(LoginService);
+  user = toSignal(this.loginService.currentUser$, { initialValue: null });
 
-  ngOnInit(): void {
-    this.loginService.userLoginOn.subscribe(isLogged => {
-
-      this.isAuthenticated = isLogged;
-
-      if (!isLogged) return;
-
-      this.userService.getCurrentUser().subscribe((user: User) => {
-        this.currentUserId = user.id;
-      });
-
-    });
-    
-  }
+  isAuthenticated = computed(() => this.user() !== null);
+  currentUserId = computed(() => this.user()?.id ?? 0);
 
   
   getUserImage(id: number): string {

@@ -80,9 +80,9 @@ export class UserComponent implements OnInit {
     this.userService.getCurrentUser().subscribe({
       next: (data) => {
         this.user.set(data);
-        this.patchForm(data);
-        this.loadUserImage(data.id);
-        this.buildLevelChart(data);
+        this.patchForm(data!);
+        this.loadUserImage(data!.id);
+        this.buildLevelChart(data!);
         this.loading.set(false);
       },
       error: (err) => {

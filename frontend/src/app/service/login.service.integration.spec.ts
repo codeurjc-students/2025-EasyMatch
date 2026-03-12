@@ -3,14 +3,14 @@ import { HttpClientModule, provideHttpClient } from '@angular/common/http';
 import { LoginService } from './login.service';
 import { LoginRequest } from '../models/auth/login-request.model';
 import { provideRouter } from '@angular/router';
+import { User } from '../models/user.model';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 describe('LoginService', () => {
- let service: LoginService;
+  let service: LoginService;
 
   beforeEach(() => {
-
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
       providers: [
@@ -26,20 +26,19 @@ describe('LoginService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('login should return a token from real API', (done: DoneFn) => {
-
+  it('login should return a User from real API', (done: DoneFn) => {
     const loginRequest: LoginRequest = {
       username: 'pedro@emeal.com',
       password: 'pedroga4'
     };
 
     service.login(loginRequest).subscribe({
-      next: (response) => {
-
-        expect(response).toBeTruthy();
-        expect(response.status).toBe('SUCCESS');
-        expect(response.authorities).toContain('ROLE_USER');
-
+      next: (user: User | null) => {
+        expect(user).toBeTruthy(); 
+        if (user) {
+          expect(user.roles).toContain('USER');
+          expect(user.email).toBe(loginRequest.username);
+        }
         done();
       },
       error: (err) => {
@@ -47,17 +46,13 @@ describe('LoginService', () => {
         done();
       }
     });
-
   });
 
   it('logout should return AuthResponse from real API', (done: DoneFn) => {
-
     service.logout().subscribe({
       next: (response) => {
-
         expect(response).toBeTruthy();
         expect(response.status).toEqual('SUCCESS');
-
         done();
       },
       error: (err) => {
@@ -65,7 +60,6 @@ describe('LoginService', () => {
         done();
       }
     });
-
   });
 
 });

@@ -9,6 +9,7 @@ import { UserService } from '../../service/user.service';
 import { environment } from '../../../environments/environment';
 import { MatDivider } from "@angular/material/divider";
 import { LoginService } from '../../service/login.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -18,33 +19,11 @@ import { LoginService } from '../../service/login.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  private userService = inject(UserService);
-  user = signal<User | null>(null);
-  private apiUrl = environment.apiUrl;
   private loginService = inject(LoginService);
+  user = toSignal(this.loginService.currentUser$, { initialValue: null });
+  private apiUrl = environment.apiUrl;
 
-  isAuthenticated = false;
 
-  ngOnInit(): void {
-    this.loginService.userLoginOn.subscribe(value => {
-      this.isAuthenticated = value;
-
-      if (value) {
-        this.loadUser();
-      }
-    });
-  }
-
-  private loadUser(): void {
-    if (this.isAuthenticated){
-      this.userService.getCurrentUser().subscribe({
-        next: (data) => this.user = signal({id: data.id, realname: data.realname, username: data.username, email: data.email, birthDate: data.birthDate, gender: data.gender, description: data.description, level: data.level,
-          stats: data.stats, levelHistory: data.levelHistory, roles: data.roles
-        } ),
-        error: (err) => console.error('Error al obtener el usuario:', err),
-      });
-    }
-  }
 
   logout() {
     this.loginService.logout().subscribe({

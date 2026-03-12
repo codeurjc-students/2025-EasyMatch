@@ -71,11 +71,11 @@ describe('UserService', () => {
     loginService.login(userLoginRequest).subscribe({
       next: () => {
         service.getCurrentUser().subscribe({
-          next: (user: User) => {
+          next: (user: User | null) => {
             expect(user).toBeTruthy();
-            expect(user.id).toBe(2);
-            expect(user.username).toBe('pedro123');
-            expect(user.realname).toBe('Pedro Garcia');
+            expect(user!.id).toBe(2);
+            expect(user!.username).toBe('pedro123');
+            expect(user!.realname).toBe('Pedro Garcia');
             done();
           },
           error: err => {

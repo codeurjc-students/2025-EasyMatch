@@ -64,9 +64,9 @@
         </div>
       </div>
     </mat-card-content>
-    @if(isAuthenticated){
+    @if(currentUserId()){
       @if (match.state == true){
-          @if(!isUserJoined(match, currentUserId)){
+          @if(!isUserJoined(match, currentUserId())){
             <mat-card-actions align="end">
               <button mat-raised-button color="primary" class="join-button" (click)="openJoinDialog(match)">
                 Unirse
@@ -78,7 +78,7 @@
                 mat-raised-button 
                 color = "warn"
                 class="leave-button" 
-                *ngIf="isUserJoined(match, currentUserId)"
+                *ngIf="isUserJoined(match, currentUserId())"
                 (click)="openLeaveDialog(match)"
               >
                 <mat-icon>logout</mat-icon>
