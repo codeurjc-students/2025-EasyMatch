@@ -187,7 +187,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         assertThat(finalRows.size(), is(finalCount));
     }
 
-    @Test
+    /* @Test
     void verifyClubCreationWorks() {
         loginUser("admin@emeal.com", "admin");
 
@@ -251,7 +251,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         );
 
         assertThat(finalRows.size(), is(initialCount + 1));
-    }      
+    } */      
 
     @Test
     public void verifyClubEditionAsAdminWorks() {

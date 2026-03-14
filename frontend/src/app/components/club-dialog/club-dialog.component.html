@@ -52,10 +52,10 @@
 
       <div class="sports">
 
-        @for (sport of club.sports; track sport.name) {
+        @for (sport of club.sports; track sport.name; let i = $index) {
 
           <span class="sport-chip">
-            {{ sport.name }}
+            {{ sport.name }} ({{ club.numberOfCourts[i] }} pistas)
           </span>
 
         }

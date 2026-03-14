@@ -38,6 +38,7 @@ describe('MatchService', () => {
       city: 'Madrid',
       address: 'Calle Falsa 123',
       sports: [mockSport],
+      numberOfCourts: [2],
       schedule: { openingTime: '09:00', closingTime: '22:00' },
       priceRange: { minPrice: 10, maxPrice: 20, unit: '€/hora' },
     };
