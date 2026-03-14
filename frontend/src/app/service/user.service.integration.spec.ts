@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientModule, provideHttpClient } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { UserService } from './user.service';
 import { User } from '../models/user.model';
 import { LoginService } from './login.service';
 import { provideRouter } from '@angular/router';
+import { credentialsInterceptor } from '../interceptors/auth.interceptor';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 jasmine.getEnv().configure({ random: false });
@@ -30,7 +31,7 @@ describe('UserService', () => {
         UserService,
         LoginService,
         provideRouter([]),
-        provideHttpClient()
+        provideHttpClient(withInterceptors([credentialsInterceptor]))
       ]
     });
 
@@ -71,11 +72,11 @@ describe('UserService', () => {
     loginService.login(userLoginRequest).subscribe({
       next: () => {
         service.getCurrentUser().subscribe({
-          next: (user: User) => {
+          next: (user: User | null) => {
             expect(user).toBeTruthy();
-            expect(user.id).toBe(2);
-            expect(user.username).toBe('pedro123');
-            expect(user.realname).toBe('Pedro Garcia');
+            expect(user!.id).toBe(2);
+            expect(user!.username).toBe('pedro123');
+            expect(user!.realname).toBe('Pedro Garcia');
             done();
           },
           error: err => {

@@ -37,6 +37,7 @@ export class AdminClubCreateComponent implements OnInit {
   private sportService = inject(SportService);
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
 
   form!: FormGroup;
   editingId: number | null = null;
@@ -165,17 +166,17 @@ export class AdminClubCreateComponent implements OnInit {
             this.clubService.replaceClubImage(newId, this.photoFile).subscribe({
               next: () => {
                 this.snackBar.open('✅ Club creado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
-                window.location.href = '/admin/clubs';
+                this.router.navigate(['/admin/clubs']);
               },
               error: (err) => {
                 console.error('Error al subir foto tras crear club:', err);
                 this.snackBar.open('❌ Club creado, pero error subiendo foto', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
-                window.location.href = '/admin/clubs';
+                this.router.navigate(['/admin/clubs']);
               }
             });
           } else {
             this.snackBar.open('✅ Club creado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
-            window.location.href = '/admin/clubs';
+            this.router.navigate(['/admin/clubs']);
           }
         },
         error: (err) => {
@@ -193,12 +194,12 @@ export class AdminClubCreateComponent implements OnInit {
           const reader = new FileReader();
           reader.onload = () => this.photoPreview = reader.result as string;
           reader.readAsDataURL(blob);
-          setTimeout(() => window.location.href = '/admin/clubs', 800);
+          setTimeout(() => this.router.navigate(['/admin/clubs']), 800);
         },
-        error: () => window.location.href = '/admin/clubs'
+        error: () => this.router.navigate(['/admin/clubs'])
       });
     } else {
-      window.location.href = '/admin/clubs';
+      this.router.navigate(['/admin/clubs']);
     }
   }
 
@@ -214,6 +215,6 @@ export class AdminClubCreateComponent implements OnInit {
   }
 
   cancel() {
-    window.location.href = '/admin/clubs';
+    this.router.navigate(['/admin/clubs']);
   }
 }

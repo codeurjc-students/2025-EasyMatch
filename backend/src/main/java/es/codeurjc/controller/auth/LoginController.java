@@ -1,13 +1,8 @@
 package es.codeurjc.controller.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,16 +46,6 @@ public class LoginController {
     @PostMapping("/logout")
     public ResponseEntity<AuthResponse> logOut(HttpServletResponse response) {
         return ResponseEntity.ok(new AuthResponse(Status.SUCCESS, userService.logout(response)));
-    }
-    
-    @GetMapping("/status")
-    public ResponseEntity<Void> status() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()
-                || authentication instanceof AnonymousAuthenticationToken) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        return ResponseEntity.ok().build();
     }
 
 }

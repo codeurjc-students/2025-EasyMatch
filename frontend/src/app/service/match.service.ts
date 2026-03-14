@@ -60,7 +60,7 @@ export class MatchService {
     return this.http
       .get<{ content: Match[]; totalElements: number; totalPages: number; number: number }>(
         `${this.apiUrl}/matches/`,
-        { params, withCredentials: true }
+        { params}
       ).pipe(map(response => ({ ...response, content: response.content })));
 
   }
@@ -72,7 +72,7 @@ export class MatchService {
     };
 
     return this.http
-      .post<Match>(`${this.apiUrl}/matches`, payload, { withCredentials: true })
+      .post<Match>(`${this.apiUrl}/matches`, payload)
       .pipe(
         map(response => ({
           ...response,
@@ -82,23 +82,23 @@ export class MatchService {
   }
 
   joinMatch(id: number, team: string): Observable<JoinMatchResponse> {
-    return this.http.put<JoinMatchResponse>(`${this.apiUrl}/matches/${id}/users/me`, { team }, { withCredentials: true });
+    return this.http.put<JoinMatchResponse>(`${this.apiUrl}/matches/${id}/users/me`, { team });
   }
   
   leaveMatch(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/matches/${id}/users/me`, { withCredentials: true });
+    return this.http.delete(`${this.apiUrl}/matches/${id}/users/me`);
   }
 
   deleteMatch(id: number): Observable<Match> {
-      return this.http.delete<Match>(`${this.apiUrl}/matches/${id}`, { withCredentials: true });
+      return this.http.delete<Match>(`${this.apiUrl}/matches/${id}`);
   }
 
   updateMatch(editingId: number, matchData: Partial<Match>) : Observable<Match> {
-      return this.http.put<Match>(`${this.apiUrl}/matches/${editingId}`, matchData, { withCredentials: true });
+      return this.http.put<Match>(`${this.apiUrl}/matches/${editingId}`, matchData);
   }
 
   addMatchResult(matchId: number, result: MatchResult): Observable<MatchResult> {
-    return this.http.put<MatchResult>(`${this.apiUrl}/matches/${matchId}/result`, result,{ withCredentials: true });
+    return this.http.put<MatchResult>(`${this.apiUrl}/matches/${matchId}/result`, result);
   }
 
   getTeam1Players(matchId: number): Observable<User[]> {

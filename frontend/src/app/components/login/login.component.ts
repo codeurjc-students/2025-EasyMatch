@@ -10,7 +10,7 @@ import { LoginService } from '../../service/login.service';
 import { LoginRequest } from '../../models/auth/login-request.model';
 import { Router, RouterLink } from '@angular/router';
 import { ErrorService } from '../../service/error.service';
-import { AuthResponse } from '../../models/auth/auth-response.model';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -34,7 +34,12 @@ import { AuthResponse } from '../../models/auth/auth-response.model';
 export class LoginComponent {
   public loginForm: FormGroup;
 
-  constructor(private loginService: LoginService, private fb: FormBuilder, private router: Router, private errorService: ErrorService) {
+  constructor(
+    private loginService: LoginService, 
+    private fb: FormBuilder, 
+    private router: Router, 
+    private errorService: ErrorService
+  ) {
 		this.loginForm = this.fb.nonNullable.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
@@ -61,6 +66,7 @@ export class LoginComponent {
 	}
 
   onSubmit() {
+
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
@@ -72,26 +78,39 @@ export class LoginComponent {
     const loginRequest = this.getLoginRequest();
 
     this.loginService.login(loginRequest).subscribe({
-      next: (response : AuthResponse) => {
-        this.loading.set(false);
-        if (response.authorities.match('ROLE_ADMIN')){
-          this.router.navigate(['/admin']);
-        }else{
-          this.router.navigate(['/matches']);
-        }
-        
+
+      next: () => {
+        this.loginService.currentUser$.subscribe((user: User | null) => {
+
+          this.loading.set(false);
+
+          if (!user) {
+            this.router.navigate(['/matches']);
+            return;
+          }
+          if (user.roles.includes('ADMIN')) {
+            this.router.navigate(['/admin']);
+          } else {
+            this.router.navigate(['/matches']);
+          }
+        });
       },
       error: (err) => {
+
         this.loading.set(false);
+
         if (err.status === 401) {
           this.errorMessage.set('Credenciales inválidas');
         } else {
           this.errorMessage.set('Error inesperado. Inténtalo más tarde.');
         }
-        this.errorService.setError(err.status ?? 500, err.message ?? 'Error desconocido');
-        
-        this.router.navigate(['/']);
-      },
+
+        this.errorService.setError(
+          err.status ?? 500,
+          err.message ?? 'Error desconocido'
+        );
+
+      }
     });
   }
 }

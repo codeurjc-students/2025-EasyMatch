@@ -49,8 +49,8 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         WebElement logoutBtn = driver.findElement(By.className("logout-btn"));
         logoutBtn.click();
 
-        wait.until(ExpectedConditions.urlContains("/login"));
-        assertThat(driver.getCurrentUrl(), containsString("/login"));
+        wait.until(ExpectedConditions.urlContains("/"));
+        assertThat(driver.getCurrentUrl(), containsString("/matches"));
         
 
     }
@@ -348,6 +348,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
                 matchWithResult.findElement(By.className("view-result-btn"))
             )
         );
+        scrollIntoView(viewResultBtn);
         viewResultBtn.click();
 
         WebElement viewDialog = wait.until(

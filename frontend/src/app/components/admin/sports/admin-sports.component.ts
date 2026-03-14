@@ -68,7 +68,7 @@ export class AdminSportsComponent implements OnInit {
                 duration: 3000,
                 panelClass: ['success-snackbar'], 
             });
-            window.location.href = '/admin/sports';
+            this.loadSports();
           },
           error: (err) => {
             console.error('Error al eliminar deporte:', err);

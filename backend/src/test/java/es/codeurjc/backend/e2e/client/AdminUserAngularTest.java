@@ -187,7 +187,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         assertThat(finalRows.size(), is(finalCount));
     }
 
-    /*@Test
+    /* @Test
     void verifyClubCreationWorks() {
         loginUser("admin@emeal.com", "admin");
 
@@ -240,12 +240,10 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
         scrollIntoView(submitBtn);
-        clickWithJs(submitBtn);
+        submitBtn.click();
 
-        WebElement oldElement = submitBtn;
-        wait.until(ExpectedConditions.stalenessOf(oldElement));
         wait.until(ExpectedConditions.urlContains("/admin/clubs"));
-
+        
         waitForTableReady();
 
         List<WebElement> finalRows = driver.findElements(
@@ -253,7 +251,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         );
 
         assertThat(finalRows.size(), is(initialCount + 1));
-    }*/       
+    } */      
 
     @Test
     public void verifyClubEditionAsAdminWorks() {

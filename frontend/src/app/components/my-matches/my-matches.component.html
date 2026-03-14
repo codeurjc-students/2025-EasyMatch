@@ -2,12 +2,6 @@
 
 <div class="matches-section">
 
-  <div class="header">
-    <span class="found" *ngIf="matches().length > 0">
-      {{ matches().length }} encontrados
-    </span>
-  </div>
-
   <div *ngIf="loading()" class="loading">
     <mat-icon class="spin">autorenew</mat-icon>
     Cargando partidos...
@@ -17,12 +11,39 @@
     <mat-icon>event_busy</mat-icon>
     <p>No tienes partidos todavía.</p>
   </div>
+  <mat-card *ngIf="!loading() && openMatches().length > 0" class="matches-card">
+    <div *ngIf="openMatches().length > 0">
 
-  <div class="matches-grid" *ngIf="matches().length > 0">
-    <app-match
-      *ngFor="let m of matches()"
-      [match]="m">
-    </app-match>
-  </div>
+      <div class="header">
+        <h2>Partidos abiertos</h2>
+        <span class="found">{{ openMatches().length }} encontrados</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="matches-grid">
+        <app-match
+          *ngFor="let m of openMatches()"
+          [match]="m">
+        </app-match>
+      </div>
+
+    </div>
+  </mat-card>
+  <mat-card *ngIf="!loading() && closedMatches().length > 0" class="matches-card">
+    <div *ngIf="closedMatches().length > 0">
+
+      <div class="header">
+        <h2>Partidos cerrados</h2>
+        <span class="found">{{ closedMatches().length }} encontrados</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="matches-grid">
+        <app-match
+          *ngFor="let m of closedMatches()"
+          [match]="m">
+        </app-match>
+      </div>
+
+    </div>
+  </mat-card>
 
 </div>

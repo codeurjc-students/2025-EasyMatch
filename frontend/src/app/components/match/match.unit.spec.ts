@@ -37,6 +37,7 @@ describe('MatchComponent', () => {
       name: 'Club Deportivo Madrid',  
       address: 'Calle Falsa 123',
       sports: [{ name: 'Futbol', modes: [{name: "7v7", playersPerGame: 14}], scoringType: ScoringType.SCORE}],
+      numberOfCourts: [4],
       schedule: { openingTime: '09:00', closingTime: '22:00' },
       priceRange: { minPrice: 8, maxPrice: 15, unit: '€/hora' }
   }

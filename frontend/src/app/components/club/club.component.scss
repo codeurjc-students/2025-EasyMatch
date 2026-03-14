@@ -96,7 +96,7 @@
 
   mat-card-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 0.8rem 1rem 1.2rem;
     border-top: 1px solid #eee;
     background-color: #fafafa;
@@ -107,18 +107,12 @@
       font-weight: 500;
       font-size: 0.9rem;
 
-      &:first-child {
-        color: #1a73e8;
-        border-color: #1a73e8;
-      }
+      background-color: white;
+      color: #1a73e8;
+      border: 1px solid #1a73e8;
 
-      &:last-child {
-        background-color: #1a73e8;
-        color: #fff;
-
-        &:hover {
-          background-color: #1669c1;
-        }
+      &:hover {
+        background-color: #f5f9ff;
       }
     }
   }

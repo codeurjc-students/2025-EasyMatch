@@ -19,6 +19,7 @@ describe('ClubComponent', () => {
       { name: 'Fútbol', modes: [{ name: '7v7', playersPerGame: 14 }], scoringType: ScoringType.SETS },
       { name: 'Tenis', modes: [{ name: 'Individual', playersPerGame: 2 }], scoringType: ScoringType.SCORE },
     ],
+    numberOfCourts: [2, 4],
     schedule: { openingTime: '09:00', closingTime: '22:00' },
     priceRange: { minPrice: 8, maxPrice: 15, unit: '€/hora' },
   };
@@ -74,9 +75,8 @@ describe('ClubComponent', () => {
 
   it('should render buttons for availability and details', () => {
     const buttons = compiled.querySelectorAll('button');
-    expect(buttons.length).toBe(2);
-    expect(buttons[0].textContent).toContain('Disponibilidad');
-    expect(buttons[1].textContent).toContain('Ver detalles');
+    expect(buttons.length).toBe(1);
+    expect(buttons[0].textContent).toContain('Ver detalles');
   });
 
 });

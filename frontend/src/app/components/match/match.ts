@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { Match } from '../../models/match.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -15,6 +15,9 @@ import { UserService } from '../../service/user.service';
 import { User } from '../../models/user.model';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { MatchResultDialogComponent } from '../match-result-dialog/match-result-dialog.component';
+import { LoginService } from '../../service/login.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 
 
@@ -33,19 +36,24 @@ import { MatchResultDialogComponent } from '../match-result-dialog/match-result-
     MatTooltipModule,
   ]
 })
-export class MatchComponent implements OnInit{
+export class MatchComponent{
 
   @Input() match!: Match;
   private apiUrl = environment.apiUrl;
-  currentUserId: number = 0;
 
-  constructor(private dialog: MatDialog, private service: MatchService, private userService: UserService, private snack: MatSnackBar) {}
-  ngOnInit(): void {
-     this.userService.getCurrentUser().subscribe( (user: User) => {
-      this.currentUserId = user.id;
-    });
-    
-  }
+  constructor(
+    private dialog: MatDialog, 
+    private service: MatchService, 
+    private snack: MatSnackBar,
+  ) {}
+
+  private loginService = inject(LoginService);
+  private router = inject(Router);
+  @Output() refresh = new EventEmitter<void>();
+  user = toSignal(this.loginService.currentUser$, { initialValue: null });
+
+  isAuthenticated = computed(() => this.user() !== null);
+  currentUserId = computed(() => this.user()?.id ?? 0);
 
   
   getUserImage(id: number): string {
@@ -69,7 +77,7 @@ export class MatchComponent implements OnInit{
         this.service.joinMatch(this.match.id!, team).subscribe({
           next: () => {
             this.snack.open('✅ ¡Te has unido al partido!', 'Cerrar', { duration: 3000 });
-            this.reloadAfterSave();
+            this.refresh.emit();
           },
           error: (err) => {
             console.error('Error al unirse:', err);
@@ -79,11 +87,16 @@ export class MatchComponent implements OnInit{
       }
     });
   }
-  leaveMatch(matchId: number) {
+  
+  private leaveMatch(matchId: number) {
     this.service.leaveMatch(matchId).subscribe({
       next: () => {
         this.snack.open('✅ Has abandado el partido correctamente', 'Cerrar', { duration: 3000 });
-        this.reloadAfterSave();
+        this.refresh.emit();
+        if (this.router.url.startsWith(`/my-matches`)) {
+          this.reloadAfterSave();
+        }
+        
       },
       error: (err) => {
         console.error("Error al abandonar el partido:", err)
@@ -186,8 +199,14 @@ export class MatchComponent implements OnInit{
     return inTeam1 || inTeam2;
   }
 
-  private reloadAfterSave() {
-    window.location.reload();
+  private reloadAfterSave(): void {
+
+    const url = this.router.url;
+
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigateByUrl(url);
+    });
+
   }
 
 }

@@ -82,7 +82,8 @@ public class SecurityConfig {
 					.requestMatchers(HttpMethod.PUT,"/api/v1/sports/**").hasAnyRole("ADMIN")
 					.requestMatchers(HttpMethod.POST,"/api/v1/sports/**").hasAnyRole("ADMIN")
 					.requestMatchers(HttpMethod.DELETE,"/api/v1/sports/**").hasAnyRole("ADMIN")
-					.requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
+					.requestMatchers("/api/v1/auth/**").permitAll()
+					
                     // DOCUMENTATION
 					.requestMatchers("/v3/api-docs/**").permitAll()
 					.requestMatchers("/swagger-ui.html").permitAll()

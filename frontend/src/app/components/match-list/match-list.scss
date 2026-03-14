@@ -23,7 +23,7 @@
 }
 .matches-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(4, 330px);
   gap: 1.5rem;
   padding: 1.5rem 2rem;
   justify-items: center;
@@ -35,7 +35,7 @@ mat-paginator {
   display: flex;
   justify-content: center;
   background-color: #fff !important;
-  border-radius: 12pxs;
+  border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   width: fit-content;
   padding: 0.5rem 1rem;

@@ -5,7 +5,6 @@ public class AuthResponse {
 	private Status status;
 	private String message;
 	private String error;
-	private String authorities;
 	
 
 	public enum Status {
@@ -19,18 +18,11 @@ public class AuthResponse {
 		this.status = status;
 		this.message = message;
 	}
-	public AuthResponse(Status status, String message, String authorities) {
-		this.status = status;
-		this.message = message;
-		this.authorities = authorities;
-		
-	}
 
 	public AuthResponse(Status status, String message, String authorities, String error) {
 		this.status = status;
 		this.message = message;
 		this.error = error;
-		this.authorities = authorities;
 	}
 
 	public Status getStatus() {
@@ -60,16 +52,7 @@ public class AuthResponse {
 
 	@Override
 	public String toString() {
-		return "LoginResponse [status=" + status + ", message=" + message + ", error=" + error + "autorities=" + authorities + "]";
+		return "LoginResponse [status=" + status + ", message=" + message + ", error=" + error + "]";
 	}
-
-	public String getAuthorities() {
-		return authorities;
-	}
-
-	public void setAuthorities(String authorities) {
-		this.authorities = authorities;
-	}
-
 
 }

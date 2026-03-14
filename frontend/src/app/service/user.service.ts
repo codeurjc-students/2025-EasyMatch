@@ -1,6 +1,6 @@
 import { Injectable, Resource } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
 import { Match } from '../models/match.model';
@@ -14,8 +14,15 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/users/me`, { withCredentials: true });
+  getCurrentUser(options?: { headers?: Record<string, string> }): Observable<User | null> {
+    return this.http.get<User>(`${this.apiUrl}/users/me`, {
+        ...options 
+      }).pipe(
+        catchError(err => {
+          if (err.status === 500) return of(null);
+          return throwError(() => err);
+        })
+    );
   }
 
   deleteUser(id: number): Observable<User> {

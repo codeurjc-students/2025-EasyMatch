@@ -6,6 +6,7 @@ export interface Club{
     city: string;
     address: string;
     phone?: string;
+    numberOfCourts: number[];
     sports: Sport[];
     email?: string;
     web?: string;
@@ -18,6 +19,5 @@ export interface Club{
         maxPrice: number;
         unit: string;
     };
-    
 
 }
