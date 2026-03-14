@@ -1,0 +1,110 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="sport-icon">
+    {{ getSportIcon() }}
+  </mat-icon>
+
+  <div class="title-content">
+    <span class="club-name">{{ club.name }}</span>
+    <span class="club-city">{{ club.city }}</span>
+  </div>
+</h2>
+
+<mat-dialog-content>
+
+  <mat-card class="info-card">
+    <h3>Información del club</h3>
+    <div class="info-grid">
+    
+      <div class="info-block">
+        <mat-icon>place</mat-icon>
+        <div>
+          <span class="label">Dirección</span>
+          <p>{{ club.address }}</p>
+        </div>
+      </div>
+      <div class="info-block">
+        <mat-icon>schedule</mat-icon>
+        <div>
+          <span class="label">Horario</span>
+          <p>
+            {{ club.schedule.openingTime }}
+            -
+            {{ club.schedule.closingTime }}
+          </p>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <mat-icon>payments</mat-icon>
+        <div>
+          <span class="label">Precio por {{ club.priceRange.unit }}</span>
+          <p class="price">
+            {{ club.priceRange.minPrice }} - {{ club.priceRange.maxPrice }} €
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sports-section">
+
+      <h3>Deportes disponibles</h3>
+
+      <div class="sports">
+
+        @for (sport of club.sports; track sport.name) {
+
+          <span class="sport-chip">
+            {{ sport.name }}
+          </span>
+
+        }
+
+      </div>
+
+    </div>
+
+    @if (club.phone || club.email || club.web) {
+
+      <div class="contact-section">
+
+        <h3>Contacto</h3>
+
+        <div class="contact-items">
+
+          @if (club.phone) {
+            <div class="contact-item">
+              <mat-icon>phone</mat-icon>
+              <p>{{ club.phone }}</p>
+            </div>
+          }
+
+          @if (club.email) {
+            <div class="contact-item">
+              <mat-icon>mail</mat-icon>
+              <p>{{ club.email }}</p>
+            </div>
+          }
+
+          @if (club.web) {
+            <div class="contact-item">
+              <mat-icon>language</mat-icon>
+              <p><a [href]="club.web" target="_blank">{{ club.web }}</a></p>
+            </div>
+          }
+
+        </div>
+
+      </div>
+
+    }
+
+  </mat-card>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button mat-dialog-close>
+    Cerrar
+  </button>
+</mat-dialog-actions>
