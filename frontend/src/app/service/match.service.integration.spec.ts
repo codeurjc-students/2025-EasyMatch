@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { MatchService } from "./match.service";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, provideHttpClient, withInterceptors } from "@angular/common/http";
 import { Sport } from "../models/sport.model";
 import { Club } from "../models/club.model";
 import { Match } from "../models/match.model";
@@ -8,6 +8,7 @@ import { LoginService } from "./login.service";
 import { ScoringType } from "../models/scoring-type";
 import { MatchResult } from "../models/match-result.model";
 import { switchMap } from "rxjs/internal/operators/switchMap";
+import { credentialsInterceptor } from "../interceptors/auth.interceptor";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 jasmine.getEnv().configure({ random: false });
@@ -53,7 +54,7 @@ describe('MatchService', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [HttpClientModule],
-        providers: [MatchService, LoginService]
+        providers: [MatchService, LoginService, provideHttpClient(withInterceptors([credentialsInterceptor]))]
       });
 
       service = TestBed.inject(MatchService);

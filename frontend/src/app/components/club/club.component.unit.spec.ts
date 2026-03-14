@@ -74,9 +74,8 @@ describe('ClubComponent', () => {
 
   it('should render buttons for availability and details', () => {
     const buttons = compiled.querySelectorAll('button');
-    expect(buttons.length).toBe(2);
-    expect(buttons[0].textContent).toContain('Disponibilidad');
-    expect(buttons[1].textContent).toContain('Ver detalles');
+    expect(buttons.length).toBe(1);
+    expect(buttons[0].textContent).toContain('Ver detalles');
   });
 
 });

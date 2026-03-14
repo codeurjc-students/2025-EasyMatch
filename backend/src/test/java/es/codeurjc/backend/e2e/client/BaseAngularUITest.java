@@ -98,6 +98,12 @@ public abstract class BaseAngularUITest {
         driver.get("http://localhost:" + port + "/");
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+
+        WebElement loginHeaderButton = wait.until(
+            ExpectedConditions.elementToBeClickable(By.cssSelector("button.login-btn"))
+        );
+        loginHeaderButton.click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
 
         WebElement emailInput = driver.findElement(By.cssSelector("input[formcontrolname='email']"));

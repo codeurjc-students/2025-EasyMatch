@@ -22,6 +22,11 @@ class AnonymousUserE2ETest extends BaseAngularUITest {
         driver.get("http://localhost:" + port+"/");
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+
+        WebElement loginBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(By.cssSelector("button.login-btn"))
+        );
+        loginBtn.click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("form")));
 
@@ -38,6 +43,10 @@ class AnonymousUserE2ETest extends BaseAngularUITest {
         String password ="dani13";
         
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-root")));
+        WebElement loginBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(By.cssSelector("button.login-btn"))
+        );
+        loginBtn.click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-login")));
 
         WebElement registerLink = driver.findElement(By.id("register-link"));

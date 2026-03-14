@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientModule, provideHttpClient } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { LoginService } from './login.service';
 import { LoginRequest } from '../models/auth/login-request.model';
 import { provideRouter } from '@angular/router';
 import { User } from '../models/user.model';
+import { credentialsInterceptor } from '../interceptors/auth.interceptor';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
@@ -15,7 +16,10 @@ describe('LoginService', () => {
       imports: [HttpClientModule],
       providers: [
         LoginService,
-        provideRouter([])
+        provideRouter([]),
+          provideHttpClient(
+            withInterceptors([credentialsInterceptor])
+          ),
       ]
     });
 
@@ -26,28 +30,37 @@ describe('LoginService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('login should return a User from real API', (done: DoneFn) => {
+  it('login should authenticate and allow fetching current user', (done: DoneFn) => {
     const loginRequest: LoginRequest = {
       username: 'pedro@emeal.com',
       password: 'pedroga4'
     };
 
     service.login(loginRequest).subscribe({
-      next: (user: User | null) => {
-        expect(user).toBeTruthy(); 
-        if (user) {
-          expect(user.roles).toContain('USER');
-          expect(user.email).toBe(loginRequest.username);
-        }
-        done();
+      next: () => {
+
+        service.currentUser$.subscribe({
+          next: (user: User | null) => {
+
+            expect(user).toBeTruthy();
+            expect(user!.email).toBe(loginRequest.username);
+            expect(user!.roles).toContain('USER');
+
+            done();
+          },
+          error: err => {
+            fail('getCurrentUser failed: ' + err);
+            done();
+          }
+        });
+
       },
-      error: (err) => {
+      error: err => {
         fail('Login request failed: ' + err);
         done();
       }
     });
   });
-
   it('logout should return AuthResponse from real API', (done: DoneFn) => {
     service.logout().subscribe({
       next: (response) => {
