@@ -70,7 +70,7 @@ export class AdminMatchesComponent implements OnInit {
                 duration: 3000,
                 panelClass: ['success-snackbar'], 
             });
-            window.location.href = '/admin/matches';
+            this.loadMatches(this.pageIndex, this.pageSize);
           },
           error: (err) => {
             console.error('Error al eliminar partido:', err);

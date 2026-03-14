@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { User } from '../../models/user.model';
 import { UserService } from '../../service/user.service';
 import { environment } from '../../../environments/environment';
@@ -20,6 +20,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class HeaderComponent {
   private loginService = inject(LoginService);
+  private router = inject(Router);
   user = toSignal(this.loginService.currentUser$, { initialValue: null });
   private apiUrl = environment.apiUrl;
 
@@ -28,11 +29,7 @@ export class HeaderComponent {
   logout() {
     this.loginService.logout().subscribe({
       next: () => {
-
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("authorities");
-
-        window.location.href = "/matches";
+        this.router.navigate(['/matches']);
       },
       error: err => console.error(err)
     });

@@ -1,25 +1,32 @@
 import { inject } from "@angular/core";
 import { CanActivateFn, Router } from "@angular/router";
-import { firstValueFrom } from "rxjs";
+import { filter, map, switchMap, take } from "rxjs/operators";
 import { LoginService } from "../service/login.service";
 
-
-export const canActivateAuth: CanActivateFn = async () => {
+export const canActivateAuth: CanActivateFn = () => {
 
   const loginService = inject(LoginService);
   const router = inject(Router);
 
-  if (loginService.isLogged()) {
-    return true;
-  }
+  return loginService.sessionReady$.pipe(
+    filter(ready => ready),
+    take(1),
+    switchMap(() => loginService.currentUser$),
+    map(user => {
 
-  router.navigate(['/error'], {
-    queryParams: {
-      code: 401,
-      title: 'No autenticado',
-      message: 'Debes iniciar sesión para acceder a esta sección.'
-    }
-  });
+      if (user) return true;
 
-  return false;
+      router.navigate(['/error'], {
+        queryParams: {
+          code: 401,
+          title: 'No autenticado',
+          message: 'Debes iniciar sesión para acceder a esta sección.'
+        }
+      });
+
+      return false;
+
+    })
+  );
+
 };

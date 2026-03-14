@@ -15,8 +15,7 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getCurrentUser(options?: { headers?: Record<string, string> }): Observable<User | null> {
-    return this.http.get<User>(`${this.apiUrl}/users/me`, { 
-        withCredentials: true, 
+    return this.http.get<User>(`${this.apiUrl}/users/me`, {
         ...options 
       }).pipe(
         catchError(err => {

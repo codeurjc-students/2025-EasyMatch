@@ -70,7 +70,7 @@ export class AdminClubsComponent implements OnInit {
                 duration: 3000,
                 panelClass: ['success-snackbar'], 
             });
-            window.location.href = '/admin/clubs';
+            this.loadClubs(this.pageIndex, this.pageSize);
           },
           error: (err) => {
             console.error('Error al eliminar club:', err);

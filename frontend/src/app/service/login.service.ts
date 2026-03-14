@@ -18,6 +18,8 @@ export class LoginService {
   private userService = inject(UserService);
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private sessionReadySubject = new BehaviorSubject(false);
+  sessionReady$ = this.sessionReadySubject.asObservable();
   isAdmin$ = this.currentUser$.pipe(
     map(user => !!user && user.roles.includes('ADMIN'))
   );
@@ -49,7 +51,8 @@ export class LoginService {
       headers: { 'X-Skip-Interceptor': 'true' }
     }).pipe(
       catchError(() => of(null)),
-      tap(user => this.currentUserSubject.next(user))
+      tap(user => this.currentUserSubject.next(user)),
+      tap(() => this.sessionReadySubject.next(true))
     ).subscribe();
   }
 

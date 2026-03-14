@@ -19,6 +19,7 @@ import { environment } from '../../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
 import { Router } from '@angular/router';
+import { LoginService } from '../../service/login.service';
 
 @Component({
   selector: 'app-user',
@@ -43,6 +44,7 @@ import { Router } from '@angular/router';
 export class UserComponent implements OnInit {
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
+  private loginService = inject(LoginService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
@@ -77,18 +79,16 @@ export class UserComponent implements OnInit {
       level: ['', [Validators.required, Validators.min(0), Validators.max(7)]],
     });
 
-    this.userService.getCurrentUser().subscribe({
-      next: (data) => {
-        this.user.set(data);
-        this.patchForm(data!);
-        this.loadUserImage(data!.id);
-        this.buildLevelChart(data!);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Error cargando usuario:', err);
-        this.loading.set(false);
-      }
+     this.loginService.currentUser$.subscribe(user => {
+
+      if (!user) return;
+
+      this.user.set(user);
+      this.patchForm(user);
+      this.loadUserImage(user.id);
+      this.buildLevelChart(user);
+      this.loading.set(false);
+
     });
   }
 

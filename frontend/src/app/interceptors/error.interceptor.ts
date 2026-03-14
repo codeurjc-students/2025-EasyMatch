@@ -16,6 +16,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         err?.error ||
         'Se produjo un conflicto.'; 
       if (err.status === 401) {
+        console.warn('Token expirado, intentando refrescar...');
         return https.post('/api/v1/auth/refresh',{},{ withCredentials: true }).pipe(
           switchMap(() => next(req)),
           catchError(() => {

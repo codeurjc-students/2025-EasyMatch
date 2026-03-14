@@ -70,7 +70,7 @@ export class AdminUsersComponent implements OnInit {
                 duration: 3000,
                 panelClass: ['success-snackbar'], 
             });
-            window.location.href = '/admin/users';
+            this.loadUsers(this.pageIndex, this.pageSize);
           },
           error: (err) => {
             console.error('Error al eliminar cuenta:', err);
