@@ -203,7 +203,7 @@ public class MatchServiceIntegrationTest {
 
         MatchResultDTO resultDTO = new MatchResultDTO("A", "B",0,0,new ArrayList<>(List.of(6,3,7)), new ArrayList<>(List.of(4,6,5)));
 
-        matchService.addOrUpdateMatchResult(id, resultDTO);
+        matchService.updateMatchResult(id, resultDTO);
 
         MatchDTO matchWithResult = matchService.getMatch(id);
         assertThat(matchWithResult.result(), isA(MatchResultDTO.class));

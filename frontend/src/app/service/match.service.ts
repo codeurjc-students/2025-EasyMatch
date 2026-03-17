@@ -98,6 +98,10 @@ export class MatchService {
   }
 
   addMatchResult(matchId: number, result: MatchResult): Observable<MatchResult> {
+    return this.http.post<MatchResult>(`${this.apiUrl}/matches/${matchId}/result`, result);
+  }
+
+  updateMatchResult(matchId: number, result: MatchResult): Observable<MatchResult> {
     return this.http.put<MatchResult>(`${this.apiUrl}/matches/${matchId}/result`, result);
   }
 

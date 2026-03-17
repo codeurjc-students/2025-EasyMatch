@@ -181,59 +181,124 @@ public class MatchService {
  			throw new NoSuchElementException("El partido con id " + id + " no existe.");
  		}
     }
+    
+    @Transactional
+    public void applyMatchResult(Match match, MatchResult result) {
 
-    public MatchResultDTO addOrUpdateMatchResult(long id, MatchResultDTO resultData) {
-        if (matchRepository.existsById(id)) {
-            Match match = matchRepository.findById(id).orElseThrow();
-            if (!match.isFull()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT,"No se puede añadir el resultado a un partido incompleto");
-            }
-            boolean isNewResult = !match.getResult().isCompleted();
-            MatchResult result = new MatchResult();
-            if (resultData.team1Name() != null && resultData.team2Name() != null) {
-                result.setTeam1Name(resultData.team1Name());
-                result.setTeam2Name(resultData.team2Name());
-            } else {
-                result.setTeam1Name("A");
-                result.setTeam2Name("B");
-            }
-            if(match.getSport().getScoringType() == ScoringType.SCORE){ 
-                result.setTeam1Score(resultData.team1Score());
-                result.setTeam2Score(resultData.team2Score());
-                result.setTeam1GamesPerSet(new ArrayList<>());
-                result.setTeam2GamesPerSet(new ArrayList<>());
-            }else if (match.getSport().getScoringType() == ScoringType.SETS){
-                result.setTeam1Score(0);
-                result.setTeam2Score(0);
-                result.setTeam1GamesPerSet(resultData.team1GamesPerSet());
-                result.setTeam2GamesPerSet(resultData.team2GamesPerSet());
-            }
-            match.setResult(result);
-            try {
-                match.validateResult(result);
-            } catch (IllegalArgumentException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-            }
-            if (isNewResult) {
-                 match.getTeam1Players().forEach(user -> {
-                    boolean won = match.didPlayerWin(user);
-                    user.updateStats(won, false);
-                    user.applyMatchResult(won, match.getDate());
-                    userService.update(user);
-                });
-                match.getTeam2Players().forEach(user -> {
-                    boolean won = match.didPlayerWin(user);
-                    user.updateStats(won, false);
-                    user.applyMatchResult(won, match.getDate());
-                    userService.update(user);
-                });
-            }
-            matchRepository.save(match);
-            return resultData;
- 		} else {
- 			throw new NoSuchElementException("El partido con id " + id + " no existe.");
- 		}
+        if (!match.isFull()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "No se puede añadir el resultado a un partido incompleto");
+        }
+
+        match.setResult(result);
+
+        try {
+            match.validateResult(result);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        float sumLevel1 = 0.0f;
+        float sumLevel2 = 0.0f;
+
+        for (User user : match.getTeam1Players()) {
+            sumLevel1 += user.getLevel();
+        }
+
+        for (User user : match.getTeam2Players()) {
+            sumLevel2 += user.getLevel();
+        }
+
+        float avgLevel1 = sumLevel1 / match.getTeam1Players().size();
+        float avgLevel2 = sumLevel2 / match.getTeam2Players().size();
+
+        match.getTeam1Players().forEach(user -> {
+            boolean won = match.didPlayerWin(user);
+            user.updateStats(won, false);
+            user.applyMatchResult(won, match.getDate(), avgLevel1, avgLevel2);
+            userService.update(user);
+        });
+
+        match.getTeam2Players().forEach(user -> {
+            boolean won = match.didPlayerWin(user);
+            user.updateStats(won, false);
+            user.applyMatchResult(won, match.getDate(), avgLevel2, avgLevel1);
+            userService.update(user);
+        });
+
+        matchRepository.save(match);
     }
+
+    public MatchResultDTO updateMatchResult(long id, MatchResultDTO resultData) {
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("El partido con id " + id + " no existe."));
+
+        if (!match.isFull()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "No se puede añadir el resultado a un partido incompleto");
+        }
+
+        if (!match.getResult().isCompleted()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "El partido no tiene resultado previo. Usa add.");
+        }
+
+        MatchResult result = buildResult(match, resultData);
+        match.setResult(result);
+
+        try {
+            match.validateResult(result);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
+        matchRepository.save(match);
+
+        return resultData;
+    }
+
+    public MatchResultDTO addMatchResult(long id, MatchResultDTO resultData) {
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException());
+
+        MatchResult result = buildResult(match, resultData);
+        
+        if (match.getResult().isCompleted()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "El partido ya tiene resultado");
+        }
+
+        applyMatchResult(match, result);
+
+        return resultData;
+    }
+
+    private MatchResult buildResult(Match match, MatchResultDTO resultData) {
+        MatchResult result = new MatchResult();
+
+        if (resultData.team1Name() != null && resultData.team2Name() != null) {
+            result.setTeam1Name(resultData.team1Name());
+            result.setTeam2Name(resultData.team2Name());
+        } else {
+            result.setTeam1Name("A");
+            result.setTeam2Name("B");
+        }
+
+        if (match.getSport().getScoringType() == ScoringType.SCORE) {
+            result.setTeam1Score(resultData.team1Score());
+            result.setTeam2Score(resultData.team2Score());
+            result.setTeam1GamesPerSet(new ArrayList<>());
+            result.setTeam2GamesPerSet(new ArrayList<>());
+        } else if (match.getSport().getScoringType() == ScoringType.SETS) {
+            result.setTeam1Score(0);
+            result.setTeam2Score(0);
+            result.setTeam1GamesPerSet(resultData.team1GamesPerSet());
+            result.setTeam2GamesPerSet(resultData.team2GamesPerSet());
+        }
+
+        return result;
+    }
+
+    
 
     public MatchResultDTO getMatchResult(long id) {
         return getMatch(id).result() == null ? new MatchResultDTO(null, null, null, null, null, null) : getMatch(id).result();

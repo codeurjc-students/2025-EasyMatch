@@ -120,12 +120,24 @@ public class MatchRestController {
         return matchService.getMatchResult(id);
     }
 
-    @PutMapping("/{id}/result")
-    public MatchResultDTO addOrUpdateMatchResult(@PathVariable long id, @RequestBody MatchResultDTO resultData) {
-        if(matchService.getMatch(id).organizer().id() != userService.getLoggedUserDTO().id()){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo el organizador del partido puede añadir o editar el resultado");
+    @PostMapping("/{id}/result")
+    public MatchResultDTO addMatchResult(@PathVariable long id, @RequestBody MatchResultDTO resultData) {
+        if (matchService.getMatch(id).organizer().id() != userService.getLoggedUserDTO().id()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Solo el organizador del partido puede añadir el resultado");
         }
-        return matchService.addOrUpdateMatchResult(id, resultData);
+
+        return matchService.addMatchResult(id, resultData);
+    }
+
+    @PutMapping("/{id}/result")
+    public MatchResultDTO updateMatchResult(@PathVariable long id, @RequestBody MatchResultDTO resultData) {
+        if (matchService.getMatch(id).organizer().id() != userService.getLoggedUserDTO().id()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Solo el organizador del partido puede editar el resultado");
+        }
+
+        return matchService.updateMatchResult(id, resultData);
     }
 
     @GetMapping ("/{id}/team1Players")

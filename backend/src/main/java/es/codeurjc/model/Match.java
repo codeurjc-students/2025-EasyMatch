@@ -135,11 +135,11 @@ public class Match {
 	private void validateScoreResult(MatchResult result) {
 
 		if (result.getTeam1Score() == null || result.getTeam2Score() == null) {
-			throw new IllegalArgumentException("Los scores no pueden ser nulos");
+			throw new IllegalArgumentException("Los goles no pueden ser nulos");
 		}
 
 		if (result.getTeam1Score() < 0 || result.getTeam2Score() < 0) {
-			throw new IllegalArgumentException("Los scores no pueden ser negativos");
+			throw new IllegalArgumentException("Los goles no pueden ser negativos");
 		}
 	}
 
