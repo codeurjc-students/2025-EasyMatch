@@ -358,10 +358,12 @@ public class MatchServiceUnitaryTest {
         match.setId(id);
         match.setTeam1Players(new HashSet<>(Set.of(organizer)));
         match.setTeam2Players(new HashSet<>(Set.of(new User(),new User())));
+        match.setResult(new MatchResult());
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
         when(matchRepository.existsById(id)).thenReturn(true);
         when(matchRepository.findById(id)).thenReturn(optionalMatch);
+       
 
         MatchResultDTO resultDTO = new MatchResultDTO("A","B",6,4,List.of(6,7),List.of(4,5));
 

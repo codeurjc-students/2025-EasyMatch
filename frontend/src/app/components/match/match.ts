@@ -126,7 +126,7 @@ export class MatchComponent{
     });
   }
   
-  private openResultDialog(match: Match) {
+  private openResultDialog(match: Match, isEditing: boolean) {
     const dialogRef = this.dialog.open(MatchResultDialogComponent, {
       width: '500px',
       data: { match }
@@ -134,10 +134,16 @@ export class MatchComponent{
 
     dialogRef.afterClosed().subscribe(result => {
       if (!result) return;
-
-      this.service.addMatchResult(match.id!, result).subscribe({
+      const request$ = isEditing
+      ? this.service.updateMatchResult(match.id!, result)
+      : this.service.addMatchResult(match.id!, result);
+      request$.subscribe({
         next: () => {
-          this.snack.open('✅ Resultado guardado', 'Cerrar', { duration: 3000 });
+          this.snack.open(
+            isEditing ? '✅ Resultado actualizado' : '✅ Resultado guardado',
+            'Cerrar',
+            { duration: 3000 }
+          );
           this.reloadAfterSave();
         },
         error: (err) => {
@@ -157,11 +163,11 @@ export class MatchComponent{
   }
 
   addMatchResult(match: Match) {
-    this.openResultDialog(match);
+    this.openResultDialog(match, false);
   }
 
   editMatchResult(match: Match) {
-    this.openResultDialog(match);
+    this.openResultDialog(match, true);
   }
 
   viewResult(match: Match) {

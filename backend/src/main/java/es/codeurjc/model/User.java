@@ -77,12 +77,19 @@ public class User {
     public void updateStats(boolean won, boolean draw) {
         this.stats.updateStats(won, draw);
     }
+    private float calculateDeltaLevel(boolean won, float teamAvgLevel, float opponentAvgLevel) {
+        // Simple ELO-like system 
 
-    public void applyMatchResult(boolean won, LocalDateTime matchDate) {
+        double expectedResult = 1 / (1 + Math.pow(10, (opponentAvgLevel - teamAvgLevel) / 1.25));
+        float kFactor= 0.2f;
+        float actualResult = won ? 1.0f : 0.0f;
+        return kFactor * (actualResult - (float) expectedResult);
+    }
+    public void applyMatchResult(boolean won, LocalDateTime matchDate, float teamAvgLevel, float opponentAvgLevel) {
 
         float previousLevel = this.level;
 
-        float delta = won ? 0.2f : -0.15f;
+        float delta = calculateDeltaLevel(won, teamAvgLevel, opponentAvgLevel);
         this.level = clampLevel(this.level + delta);
 
         this.levelHistory.add(
