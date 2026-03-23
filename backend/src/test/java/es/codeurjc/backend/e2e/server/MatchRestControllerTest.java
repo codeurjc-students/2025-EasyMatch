@@ -245,7 +245,7 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(10)
-    public void testAddOrUpdateFullMatchResult(){
+    public void testAddFullMatchResult(){
         long matchId = 1L;
         String cookie = loginAndGetCookie("silvia@emeal.com","silvia5");
         String teamSelectedJson = """
@@ -287,7 +287,7 @@ public class MatchRestControllerTest {
             .cookie("AuthToken", cookie)
             .body(resultJson)
         .when()
-            .put("/api/v1/matches/{id}/result", matchId)
+            .post("/api/v1/matches/{id}/result", matchId)
         .then()
             .statusCode(200);
     }

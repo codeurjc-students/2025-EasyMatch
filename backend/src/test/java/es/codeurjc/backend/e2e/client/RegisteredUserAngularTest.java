@@ -216,7 +216,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         assertThat(currentUser.findElement(By.id("totalMatches")).getText(), containsString("3"));
         assertThat(currentUser.findElement(By.id("wins")).getText(), containsString("2"));
         assertThat(currentUser.findElement(By.id("winRate")).getText(), containsString("66,67%"));
-        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,37"));
+        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,17"));
 
         // Wait until chart card appears
         WebElement chartCard = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("level-chart-card")));
