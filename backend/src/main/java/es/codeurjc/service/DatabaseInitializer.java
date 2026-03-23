@@ -226,56 +226,24 @@ public class DatabaseInitializer {
         tennisMatch3.setTeam1Players(Set.of(maria));
         tennisMatch3.setTeam2Players(Set.of(pedro));
 
-        tennisMatch1.setResult(new MatchResult("Pedro Garcia", "Maria Lopez",List.of(6,4,6),List.of(3,6,2))); // Pedro wins
-        tennisMatch2.setResult(new MatchResult("Pedro Garcia", "Luis Sanchez",List.of(3,4), List.of(6,6))); // Pedro loses
-        tennisMatch3.setResult(new MatchResult("Maria Lopez", "Pedro Garcia",List.of(2,1), List.of(6,6))); // Pedro wins
-
-
         matchService.save(tennisMatch1);
         matchService.save(tennisMatch2);
         matchService.save(tennisMatch3);
 
-        for (User user : tennisMatch1.getTeam1Players()) {
-            boolean won = tennisMatch1.didPlayerWin(user);
-            user.updateStats(won, false);
-            user.applyMatchResult(won, tennisMatch1.getDate());
-            userService.update(user);
-        }
+        matchService.applyMatchResult(
+            tennisMatch1,
+            new MatchResult("Pedro Garcia", "Maria Lopez",List.of(6,4,6),List.of(3,6,2)) // Pedro wins
+        );
 
-        for (User user : tennisMatch1.getTeam2Players()) {
-            boolean won = tennisMatch1.didPlayerWin(user);
-            user.updateStats(won, false);
-            user.applyMatchResult(won, tennisMatch1.getDate());
-            userService.update(user);
-        }
+        matchService.applyMatchResult(
+            tennisMatch2,
+            new MatchResult("Pedro Garcia", "Luis Sanchez",List.of(3,4), List.of(6,6)) // Pedro loses
+        );
 
-        for (User user : tennisMatch2.getTeam1Players()) {
-            boolean won = tennisMatch2.didPlayerWin(user);
-            user.updateStats(won, false);
-            user.applyMatchResult(won, tennisMatch2.getDate());
-            userService.update(user);
-        }
-
-        for (User user : tennisMatch2.getTeam2Players()) {
-            boolean won = tennisMatch2.didPlayerWin(user);
-            user.updateStats(won, false);
-            user.applyMatchResult(won, tennisMatch2.getDate());
-            userService.update(user);
-        }
-
-        for (User user : tennisMatch3.getTeam1Players()) {
-            boolean won = tennisMatch3.didPlayerWin(user);
-            user.updateStats(won, false);
-            user.applyMatchResult(won, tennisMatch3.getDate());
-            userService.update(user);
-        }
-
-        for (User user : tennisMatch3.getTeam2Players()) {
-            boolean won = tennisMatch3.didPlayerWin(user);
-            user.updateStats(won, false);
-            user.applyMatchResult(won, tennisMatch3.getDate());
-            userService.update(user);
-        }
+        matchService.applyMatchResult(
+            tennisMatch3,
+            new MatchResult("Maria Lopez", "Pedro Garcia",List.of(2,1), List.of(6,6)) // Pedro wins
+        );
     }
     private void setUserImage(User user, String classpathResource) throws IOException {
          try {

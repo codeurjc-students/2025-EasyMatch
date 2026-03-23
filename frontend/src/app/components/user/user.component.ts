@@ -275,12 +275,12 @@ export class UserComponent implements OnInit {
 
     const series = user.levelHistory.map(h => ({
       name: new Date(h.date).toLocaleDateString(),
-      value: h.levelBefore
+      value: Math.round(h.levelBefore * 100) / 100
     }));
 
     series.push({
       name: 'Actual',
-      value: user.level
+      value: (Math.round(user.level*100))/100
     });
 
     this.levelChartData.set([

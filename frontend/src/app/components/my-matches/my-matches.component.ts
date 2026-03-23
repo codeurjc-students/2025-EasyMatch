@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, Inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchService } from '../../service/match.service';
 import { UserService } from '../../service/user.service';
@@ -8,6 +8,7 @@ import { MatchComponent } from '../match/match';
 import { MatIcon } from "@angular/material/icon";
 import { MatDivider } from "@angular/material/divider";
 import { MatCard } from "@angular/material/card";
+import { LoginService } from '../../service/login.service';
 
 @Component({
   selector: 'app-my-matches',
@@ -20,10 +21,10 @@ export class MyMatchesComponent implements OnInit {
 
   matches = signal<Match[]>([]);
   loading = signal(true);
+  private loginService = inject(LoginService);
 
-  constructor(
-    private userService: UserService
-  ) {}
+  constructor(private userService: UserService) {}
+
 
   openMatches = computed(() =>
     this.matches().filter(m =>
@@ -38,8 +39,7 @@ export class MyMatchesComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.userService.getCurrentUser().subscribe({
-      next: (user) => {
+    this.loginService.currentUser$.subscribe(user => {
         this.userService.getUserMatches(user!.id).subscribe({
           next: (data) => {
             this.matches.set(data);
@@ -50,7 +50,6 @@ export class MyMatchesComponent implements OnInit {
             this.loading.set(false);
           }
         });
-      }
     });
   }
 }

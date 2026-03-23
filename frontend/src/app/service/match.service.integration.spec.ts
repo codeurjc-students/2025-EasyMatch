@@ -175,7 +175,7 @@ describe('MatchService', () => {
     });
   });
 
-  it('addMatchReult should add result to a match when organizer is logged in', (done: DoneFn) => {
+  it('updateMatchResult should add result to a match when organizer is logged in', (done: DoneFn) => {
     const mockResult: MatchResult = {
       team1Name: "A",
       team2Name: "B",
@@ -187,7 +187,7 @@ describe('MatchService', () => {
     const matchId = 6;
 
     login().pipe(
-      switchMap(() => service.addMatchResult(matchId, mockResult))
+      switchMap(() => service.updateMatchResult(matchId, mockResult))
     ).subscribe(matchResult => {
 
       expect(matchResult).toBeTruthy();
