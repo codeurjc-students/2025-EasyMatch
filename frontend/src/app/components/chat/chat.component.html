@@ -1,0 +1,49 @@
+<app-header></app-header>
+
+<mat-card>
+
+  <h2><mat-icon>message</mat-icon>Chat del partido #{{ matchId() }}</h2>
+
+  <div class="messages">
+
+    @for (msg of messages(); track $index) {
+
+      @if (msg.message_side === 'system') {
+        <div class="system-message">
+          <span>
+            @if (msg.type === 'JOIN') { @{{msg.content}}}
+            @if (msg.type === 'LEAVE') { @{{msg.content}} }
+          </span>
+          <span class="time">{{ msg.formattedTime }}</span>
+        </div>
+      }
+
+      @if (msg.message_side !== 'system') {
+        <div
+          class="message"
+          [class.sender]="msg.message_side === 'sender'"
+          [class.receiver]="msg.message_side === 'receiver'"
+        >
+          <span class="user">@{{ msg.senderUsername }}</span>
+          <p>{{ msg.content }}</p>
+          <span class="time">{{ msg.formattedTime }}</span>
+        </div>
+      }
+
+    }
+
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="send()" class="form">
+
+    <mat-form-field class="full-width" appearance="outline">
+      <input matInput formControlName="content" placeholder="Mensaje..." />
+    </mat-form-field>
+
+    <button mat-fab type="submit">
+      <mat-icon>send</mat-icon>
+    </button>
+
+  </form>
+
+</mat-card>

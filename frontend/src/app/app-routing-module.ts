@@ -14,6 +14,8 @@ export const routes: Routes = [
 
   { path: 'admin', loadChildren: () => import('./components/admin/admin-routing').then(m => m.ADMIN_ROUTES), canActivate: [adminGuard] },
   { path: 'matches/create', loadComponent : () => import('./components/match-create/match-create.component').then(c => c.MatchCreateComponent), canActivate: [canActivateAuth] },
+  { path: 'chat/:id', loadComponent: () => import('./components/chat/chat.component').then(c => c.ChatComponent), canActivate: [canActivateAuth] },
+  { path: 'chats',loadComponent: () => import('./components/chat-list/chats.component').then(c => c.ChatsComponent), canActivate: [canActivateAuth] },
   { path: 'profile', loadComponent : () => import('./components/user/user.component').then(c => c.UserComponent), canActivate: [canActivateAuth] },
   { path: 'my-matches', loadComponent: () => import('./components/my-matches/my-matches.component').then(m => m.MyMatchesComponent), canActivate: [canActivateAuth] },
   {

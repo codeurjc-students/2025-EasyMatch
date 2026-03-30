@@ -11,8 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatchService } from '../../service/match.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { JoinMatchDialogComponent } from '../join-match-dialog/join-match-dialog.component';
-import { UserService } from '../../service/user.service';
-import { User } from '../../models/user.model';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { MatchResultDialogComponent } from '../match-result-dialog/match-result-dialog.component';
 import { LoginService } from '../../service/login.service';

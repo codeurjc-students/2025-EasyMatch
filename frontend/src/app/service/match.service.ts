@@ -38,13 +38,13 @@ export class MatchService {
     return this.http
       .get<{ content: Match[]; totalElements: number; totalPages: number; number: number }>(
         `${this.apiUrl}/matches`,
-        { params, withCredentials: true }
+        { params}
       ).pipe(map(response => ({ ...response, content: response.content })));
   }
 
 
   getMatch(id: number): Observable<Match> {
-    return this.http.get<Match>(`${this.apiUrl}/matches/${id}`,{withCredentials : true});
+    return this.http.get<Match>(`${this.apiUrl}/matches/${id}`);
   }
 
   getAllMatches(page = 0, size = 10): Observable<{
