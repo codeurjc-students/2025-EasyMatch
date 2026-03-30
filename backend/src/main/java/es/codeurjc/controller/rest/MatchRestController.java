@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import es.codeurjc.dto.ChatMessageDTO;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchResultDTO;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.model.User;
+import es.codeurjc.service.ChatMessageService;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
 
@@ -42,6 +44,9 @@ public class MatchRestController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ChatMessageService chatMessageService;
 
     @GetMapping("/")
 	public Page<MatchDTO> getMatches(Pageable pageable) {
@@ -69,9 +74,15 @@ public class MatchRestController {
         return matchService.getMatch(id);
 	}
 
+    @GetMapping("/{id}/chat")
+    public Collection<ChatMessageDTO> getMatchChat(@PathVariable long id) {
+        return chatMessageService.getMatchMessages(id);
+    }
+
     @PostMapping
     public ResponseEntity<MatchDTO> creatematch(@RequestBody MatchDTO matchDTO) {
-        matchDTO = matchService.createMatch(matchDTO);
+        UserDTO loggedUserDTO = userService.getLoggedUserDTO();
+        matchService.createMatch(matchDTO, loggedUserDTO);
         URI location = fromCurrentRequest().path("/{id}").buildAndExpand(matchDTO.id()).toUri();
         return ResponseEntity.created(location).body(matchDTO);
     }

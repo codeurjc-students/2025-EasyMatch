@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -63,6 +64,8 @@ public class Match {
 	@Embedded
     private MatchResult result;
 	
+	@OneToMany
+	private List<ChatMessage> chatMessages;
 
 	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state, int modeSelected, User organizer, double price, Sport sport, Club club) {
 		this.date = date;
@@ -325,9 +328,18 @@ public class Match {
 	}
 
 
-
 	public void setModeSelected(int modeSelected) {
 		this.modeSelected = modeSelected;
+	}
+
+
+	public List<ChatMessage> getChatMessages() {
+		return chatMessages;
+	}
+
+
+	public void setChatMessages(List<ChatMessage> chatMessages) {
+		this.chatMessages = chatMessages;
 	}
 
 

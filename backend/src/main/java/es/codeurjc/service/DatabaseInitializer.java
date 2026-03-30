@@ -15,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import es.codeurjc.model.ChatMessage;
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.MatchResult;
+import es.codeurjc.model.MessageType;
 import es.codeurjc.model.Mode;
 import es.codeurjc.model.PriceRange;
 import es.codeurjc.model.Schedule;
@@ -41,6 +43,9 @@ public class DatabaseInitializer {
 
     @Autowired
     SportService sportService;
+
+    @Autowired
+    ChatMessageService chatMessageService;
 
     @PostConstruct
     @Transactional
@@ -155,7 +160,6 @@ public class DatabaseInitializer {
         club5.setPriceRange(new PriceRange(15, 30, "€/hora"));
         setClubImage(club5, "/images/volleyball_center.jpg");
         clubService.save(club5);
-
         
         Match match1 = new Match(date1,true,false,true,0,pedro,3.49f,tennis,club1);
         Match match2 = new Match(date2,false,true,true,1,maria,8.99f, paddle,club2);
@@ -174,12 +178,58 @@ public class DatabaseInitializer {
         match5.setTeam1Players(Set.of(silvia));
         match5.setTeam2Players(new HashSet<>());
         
-
         matchService.save(match1);
         matchService.save(match2);
         matchService.save(match3);
         matchService.save(match4);
         matchService.save(match5);
+
+        ChatMessage systemMessage1 = ChatMessage.builder()
+            .content(pedro.getUsername() + " ha creado el chat")
+            .sender(pedro)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(match1)
+            .build();
+
+        chatMessageService.save(systemMessage1);
+
+        ChatMessage systemMessage2 = ChatMessage.builder()
+            .content(maria.getUsername() + " ha creado el chat")
+            .sender(maria)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(match2)
+            .build();
+        
+        chatMessageService.save(systemMessage2);
+
+        ChatMessage systemMessage3 = ChatMessage.builder()
+            .content(luis.getUsername() + " ha creado el chat")
+            .sender(luis)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(match3)
+            .build();
+        chatMessageService.save(systemMessage3);
+
+        ChatMessage systemMessage4 = ChatMessage.builder()
+            .content(juan.getUsername() + " ha creado el chat")
+            .sender(juan)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(match4)
+            .build();
+        chatMessageService.save(systemMessage4);
+
+        ChatMessage systemMessage5 = ChatMessage.builder()
+            .content(silvia.getUsername() + " ha creado el chat")
+            .sender(silvia)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(match5)
+            .build();
+        chatMessageService.save(systemMessage5);
 
         Match tennisMatch1 = new Match(
             LocalDateTime.of(2025, 9, 10, 10, 30),
@@ -229,6 +279,57 @@ public class DatabaseInitializer {
         matchService.save(tennisMatch1);
         matchService.save(tennisMatch2);
         matchService.save(tennisMatch3);
+
+        ChatMessage tennisChat1Msg1 = ChatMessage.builder()
+            .content(pedro.getUsername() + " ha creado el chat")
+            .sender(pedro)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(tennisMatch1)
+            .build();
+        ChatMessage tennisChat1Msg2 = ChatMessage.builder()
+            .content(maria.getUsername() + " se ha unido al chat")
+            .sender(maria)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(tennisMatch1)
+            .build();
+        chatMessageService.save(tennisChat1Msg1);
+        chatMessageService.save(tennisChat1Msg2);
+
+        ChatMessage tennisChat2Msg1 = ChatMessage.builder()
+            .content(pedro.getUsername() + " ha creado el chat")
+            .sender(pedro)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(tennisMatch2)
+            .build();
+        ChatMessage tennisChat2Msg2 = ChatMessage.builder()
+            .content(luis.getUsername() + " se ha unido al chat")
+            .sender(luis)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(tennisMatch2)
+            .build();
+        chatMessageService.save(tennisChat2Msg1);
+        chatMessageService.save(tennisChat2Msg2);
+
+        ChatMessage tennisChat3Msg1 = ChatMessage.builder()
+            .content(maria.getUsername() + " ha creado el chat")
+            .sender(maria)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(tennisMatch3)
+            .build();
+        ChatMessage tennisChat3Msg2 = ChatMessage.builder()
+            .content(pedro.getUsername() + " se ha unido al chat")
+            .sender(pedro)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(tennisMatch3)
+            .build();
+        chatMessageService.save(tennisChat3Msg1);
+        chatMessageService.save(tennisChat3Msg2);
 
         matchService.applyMatchResult(
             tennisMatch1,

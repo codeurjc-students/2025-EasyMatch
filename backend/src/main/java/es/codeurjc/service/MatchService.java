@@ -1,5 +1,6 @@
 package es.codeurjc.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,15 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import es.codeurjc.dto.ChatMessageMapper;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.MatchResultDTO;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
+import es.codeurjc.model.ChatMessage;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.MatchResult;
+import es.codeurjc.model.MessageType;
 import es.codeurjc.model.ScoringType;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.MatchRepository;
@@ -30,11 +35,13 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class MatchService {
 
-    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper) {
+    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper, ChatMessageService chatMessageService, ChatMessageMapper chatMessageMapper) {
         this.matchRepository = matchRepository;
         this.mapper = mapper;
         this.userService = userService;
         this.userMapper = userMapper; 
+        this.chatMessageService = chatMessageService;
+        this.chatMessageMapper = chatMessageMapper;
     }
 
     @Autowired
@@ -43,11 +50,20 @@ public class MatchService {
     @Autowired
     private UserService userService;
 
+    @Autowired 
+    private ChatMessageService chatMessageService;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @Autowired
     private MatchMapper mapper;
 
     @Autowired 
     private UserMapper userMapper;
+
+    @Autowired 
+    private ChatMessageMapper chatMessageMapper;
 
     private MatchDTO toDTO (Match Match) {
         return mapper.toDTO(Match);
@@ -104,15 +120,25 @@ public class MatchService {
         }
     }
 
-     public MatchDTO createMatch(MatchDTO matchDTO) {
+     public MatchDTO createMatch(MatchDTO matchDTO, UserDTO loggedUserDTO) {
         Match match = mapper.toDomain(matchDTO);
         match.setState(true);
 
-        User loggedUser = userMapper.toDomain(userService.getLoggedUserDTO());
+        User loggedUser = userMapper.toDomain(loggedUserDTO);
 		match.setOrganizer(loggedUser);
         match.setTeam1Players(Set.of(loggedUser));
         
  		matchRepository.save(match);
+
+        ChatMessage systemMessage = ChatMessage.builder()
+            .content(loggedUser.getUsername() + " ha creado el chat")
+            .sender(loggedUser)
+            .type(MessageType.JOIN)
+            .timestamp(LocalDateTime.now())
+            .match(match)
+            .build();
+
+        chatMessageService.save(systemMessage);
  		return toDTO(match);
     }
 
@@ -149,6 +175,22 @@ public class MatchService {
             }else{
                 throw new ResponseStatusException(HttpStatus.CONFLICT,"El partido esta lleno");
             }
+
+            ChatMessage joinMessage = ChatMessage.builder()
+                .content(loggedUser.getUsername() + " se ha unido al partido")
+                .sender(loggedUser)
+                .type(MessageType.JOIN)
+                .timestamp(LocalDateTime.now())
+                .match(match)
+                .build();
+
+            chatMessageService.save(joinMessage);
+
+            messagingTemplate.convertAndSend(
+                "/topic/match/" + match.getId(),
+                chatMessageMapper.toDTO(joinMessage)
+            );
+
 			return toDTO(match);
  		} else {
  			throw new NoSuchElementException("No existe ningun partido con el id: " + id);
@@ -165,6 +207,16 @@ public class MatchService {
         }else{
             matchRepository.save(match);
         }
+        ChatMessage leaveMessage = ChatMessage.builder()
+            .content(user.getUsername() + " ha abandonado el partido")
+            .sender(user)
+            .type(MessageType.LEAVE)
+            .timestamp(LocalDateTime.now())
+            .match(match)
+            .build();
+        
+
+        chatMessageService.save(leaveMessage);
     }
     public MatchDTO replaceMatch(long id, MatchDTO updatedMatchDTO) {
         if (matchRepository.existsById(id)) {

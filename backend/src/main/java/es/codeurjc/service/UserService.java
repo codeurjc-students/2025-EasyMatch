@@ -238,4 +238,8 @@ public class UserService {
 
 		userRepository.save(user);
 	}
+
+    public User findByUsername(String senderUsername) {
+        return userRepository.findByUsername(senderUsername).orElseThrow(() -> new NoSuchElementException("User with username " + senderUsername + " not found"));
+    }
 }
