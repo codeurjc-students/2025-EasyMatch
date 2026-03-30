@@ -18,6 +18,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -55,6 +56,7 @@ public class MatchServiceUnitaryTest {
     private UserMapper userMapper;
     private ChatMessageService chatMessageService;
     private ChatMessageMapper chatMessageMapper;
+    private SimpMessagingTemplate messagingTemplate;
     
     
     @BeforeEach
@@ -65,7 +67,8 @@ public class MatchServiceUnitaryTest {
         mapper = Mappers.getMapper(MatchMapper.class);
         chatMessageService = mock(ChatMessageService.class);
         chatMessageMapper = Mappers.getMapper(ChatMessageMapper.class);
-        matchService = new MatchService(matchRepository, mapper, userService,userMapper, chatMessageService, chatMessageMapper);
+        messagingTemplate = mock(SimpMessagingTemplate.class);
+        matchService = new MatchService(matchRepository, mapper, userService,userMapper, chatMessageService, chatMessageMapper, messagingTemplate);
     }
 
     @Test
