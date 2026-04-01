@@ -120,7 +120,7 @@ public class MatchServiceIntegrationTest {
         Club club = clubService.findById(1).orElseThrow();
         match.setClub(club);
 
-        MatchDTO createdMatch = matchService.createMatch(mapper.toDTO(match), userService.getLoggedUserDTO());
+        MatchDTO createdMatch = matchService.createMatch(mapper.toDTO(match));
 
         int numMatchesAfter = matchService.findAll().size();
         assertThat(numMatchesAfter, equalTo(numMatchesBefore + 1));

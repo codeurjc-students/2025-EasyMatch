@@ -167,7 +167,7 @@ public class MatchServiceUnitaryTest {
         when(userService.getLoggedUserDTO()).thenReturn(userDTO);
         when(matchRepository.save(match)).thenReturn(match);
         when(chatMessageService.save(chat)).thenReturn(chat);
-        MatchDTO createdMatch = matchService.createMatch(matchDTO,userService.getLoggedUserDTO());
+        MatchDTO createdMatch = matchService.createMatch(matchDTO);
         //THEN
         assertThat(createdMatch.id(), equalTo(matchDTO.id()));
         assertThat(createdMatch.organizer().id(), equalTo(userDTO.id()));

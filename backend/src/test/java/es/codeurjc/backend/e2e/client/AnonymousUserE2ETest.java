@@ -38,7 +38,7 @@ class AnonymousUserE2ETest extends BaseAngularUITest {
     @Test
     @Order(2) 
     public void verifyRegisterPageLoadsAndWorks(){
-        driver.get("http://localhost:" + port+"/");
+        driver.get("http://localhost:" + port+ "/");
         String email = "daniel@emeal.com";
         String password ="dani13";
         
@@ -82,8 +82,13 @@ class AnonymousUserE2ETest extends BaseAngularUITest {
 
         loginUser(email,password);
 
-        WebElement profileBtn = driver.findElement(By.id("profile-btn"));
-        profileBtn.click();
+        WebElement optionsMenu = wait.until(
+            ExpectedConditions.elementToBeClickable(By.className("user-info"))
+        );
+        optionsMenu.click();
+        
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("profile-btn")));
+        driver.findElement(By.className("profile-btn")).click();
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-user")));
 

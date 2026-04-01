@@ -29,6 +29,7 @@ import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.UserRepository;
 import es.codeurjc.repository.MatchRepository;
+import es.codeurjc.service.ChatMessageService;
 import es.codeurjc.service.UserService;
 
 @Tag("unit")
@@ -38,6 +39,7 @@ public class UserServiceUnitaryTest {
     private UserRepository userRepository;
     private MatchRepository matchRepository;
     private UserService userService;
+    private ChatMessageService chatMessageService;
     private UserMapper mapper;
     private PasswordEncoder passwordEncoder;
     
@@ -48,8 +50,7 @@ public class UserServiceUnitaryTest {
         matchRepository = mock(MatchRepository.class);
         mapper = Mappers.getMapper(UserMapper.class);
         passwordEncoder = mock(PasswordEncoder.class);
-        userService = new UserService(userRepository, mapper,passwordEncoder,matchRepository);
-        
+        userService = new UserService(userRepository, mapper,passwordEncoder,matchRepository,chatMessageService);     
     }
 
     @Test
