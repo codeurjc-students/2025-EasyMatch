@@ -173,6 +173,35 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
     }
 
     @Test
+    @Order(6)
+    public void verifyMessagesPageLoadsAndChatWorks(){
+        loginUser("pedro@emeal.com","pedroga4");
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("chats-btn")));
+        WebElement chatsBtn = driver.findElement(By.id("chats-btn"));
+        chatsBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-chats")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("mat-list-item")));
+        List<WebElement> chats = driver.findElements(By.cssSelector("mat-list-item"));
+        assertThat(chats.size(), greaterThan(0));
+        WebElement firstChat = chats.get(0);
+        assertThat(firstChat.findElement(By.className("title")).getText(), not(emptyString()));
+        firstChat.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-chat")));
+        WebElement messageInput = driver.findElement(By.cssSelector("input[formcontrolname='content']"));
+        messageInput.sendKeys("Mensaje de prueba");
+        WebElement sendBtn = driver.findElement(By.id("send-message-btn"));
+        wait.until(ExpectedConditions.elementToBeClickable(sendBtn));
+        sendBtn.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.className("message")));
+        List<WebElement> messages = driver.findElements(By.cssSelector(".message, .system-message"));
+        assertThat(messages.get(messages.size() - 1).getText(), containsString("Mensaje de prueba"));
+    }
+
+
+    @Test
     @Order(7)
     public void verifyProfileEditionWorks(){
         loginUser("pedro@emeal.com","pedroga4");
@@ -381,6 +410,6 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         cancelBtn.click();
 
         wait.until(ExpectedConditions.invisibilityOf(viewDialog));
-    }
+    }  
 
 }

@@ -164,7 +164,7 @@ public class MatchServiceUnitaryTest {
             .build();
         MatchDTO matchDTO = mapper.toDTO(match);
         //WHEN
-        when(userService.getLoggedUserDTO()).thenReturn(userDTO);
+        when(userService.getLoggedUser()).thenReturn(userMapper.toDomain(userDTO));
         when(matchRepository.save(match)).thenReturn(match);
         when(chatMessageService.save(chat)).thenReturn(chat);
         MatchDTO createdMatch = matchService.createMatch(matchDTO);

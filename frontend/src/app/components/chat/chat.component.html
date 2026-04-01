@@ -25,7 +25,7 @@
           [class.receiver]="msg.message_side === 'receiver'"
         >
           <span class="user">@{{ msg.senderUsername }}</span>
-          <p>{{ msg.content }}</p>
+          <p class="content">{{ msg.content }}</p>
           <span class="time">{{ msg.formattedTime }}</span>
         </div>
       }
@@ -40,7 +40,7 @@
       <input matInput formControlName="content" placeholder="Mensaje..." />
     </mat-form-field>
 
-    <button mat-fab type="submit">
+    <button mat-fab id="send-message-btn" type="submit">
       <mat-icon>send</mat-icon>
     </button>
 
