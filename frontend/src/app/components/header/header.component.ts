@@ -4,8 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router, RouterModule } from '@angular/router';
-import { User } from '../../models/user.model';
-import { UserService } from '../../service/user.service';
 import { environment } from '../../../environments/environment';
 import { MatDivider } from "@angular/material/divider";
 import { LoginService } from '../../service/login.service';

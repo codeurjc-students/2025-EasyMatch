@@ -326,6 +326,25 @@ public class MatchRestControllerTest {
             .body("message", equalTo("Player removed from team 1"));
     }
 
+    @Test
+    @Order(13)
+    public void testGetMatchMessages(){
+        long matchId = 1L;
+        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        given()
+            .contentType(ContentType.JSON)
+            .cookie("AuthToken", cookie)
+        .when()
+            .get("/api/v1/matches/{id}/messages", matchId)
+        .then()
+            .statusCode(200)
+            .body("size()", greaterThan(0))
+            .body("id", everyItem(notNullValue()))
+            .body("content", everyItem(notNullValue()))
+            .body("senderUsername", everyItem(notNullValue()))
+            .body("timestamp", everyItem(notNullValue()));
+    }
+
     private String loginAndGetCookie(String email, String password) {
         String loginJson = 
             String.format("""

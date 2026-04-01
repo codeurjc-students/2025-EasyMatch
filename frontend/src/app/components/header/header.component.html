@@ -9,7 +9,7 @@
     <button mat-button id="matches-btn" routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
     <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active">Clubes</button>
     @if (user()) {
-      <button mat-button id="profile-btn" routerLink="/profile" routerLinkActive="active">Perfil</button>
+      <button mat-button id="chats-btn" routerLink="/chats" routerLinkActive="active">Chats</button>
     } 
   </nav>
 
@@ -43,7 +43,7 @@
       </div>
 
       <mat-menu #userMenu="matMenu" panelClass="user-menu-panel">
-        <button mat-menu-item routerLink="/profile">
+        <button mat-menu-item class="profile-btn" routerLink="/profile">
           <mat-icon>person</mat-icon>
           Mi perfil
         </button>

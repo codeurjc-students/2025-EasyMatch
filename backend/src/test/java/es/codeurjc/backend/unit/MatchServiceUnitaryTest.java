@@ -18,17 +18,21 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
+import es.codeurjc.dto.ChatMessageMapper;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.MatchResultDTO;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.repository.MatchRepository;
+import es.codeurjc.service.ChatMessageService;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
+import es.codeurjc.model.ChatMessage;
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.MatchResult;
@@ -50,6 +54,9 @@ public class MatchServiceUnitaryTest {
     private MatchService matchService;
     private MatchMapper mapper;
     private UserMapper userMapper;
+    private ChatMessageService chatMessageService;
+    private ChatMessageMapper chatMessageMapper;
+    private SimpMessagingTemplate messagingTemplate;
     
     
     @BeforeEach
@@ -58,7 +65,10 @@ public class MatchServiceUnitaryTest {
         userMapper = Mappers.getMapper(UserMapper.class);
         matchRepository = mock(MatchRepository.class);
         mapper = Mappers.getMapper(MatchMapper.class);
-        matchService = new MatchService(matchRepository, mapper, userService,userMapper);
+        chatMessageService = mock(ChatMessageService.class);
+        chatMessageMapper = Mappers.getMapper(ChatMessageMapper.class);
+        messagingTemplate = mock(SimpMessagingTemplate.class);
+        matchService = new MatchService(matchRepository, mapper, userService,userMapper, chatMessageService, chatMessageMapper, messagingTemplate);
     }
 
     @Test
@@ -146,10 +156,17 @@ public class MatchServiceUnitaryTest {
         );
         
         Match match = new Match(null, true, false, true,0, null,4.00, null,null);
+        ChatMessage chat = ChatMessage.builder()
+            .match(match)
+            .sender(userMapper.toDomain(userDTO))
+            .content("Chat del partido")
+            .timestamp(LocalDateTime.now())
+            .build();
         MatchDTO matchDTO = mapper.toDTO(match);
         //WHEN
-        when(userService.getLoggedUserDTO()).thenReturn(userDTO);
+        when(userService.getLoggedUser()).thenReturn(userMapper.toDomain(userDTO));
         when(matchRepository.save(match)).thenReturn(match);
+        when(chatMessageService.save(chat)).thenReturn(chat);
         MatchDTO createdMatch = matchService.createMatch(matchDTO);
         //THEN
         assertThat(createdMatch.id(), equalTo(matchDTO.id()));

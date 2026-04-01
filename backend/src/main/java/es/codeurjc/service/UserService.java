@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import es.codeurjc.dto.ChatMessageDTO;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.UserDTO;
@@ -34,17 +35,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
-    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository) {
+    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository, ChatMessageService chatMessageService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
         this.matchRepository = matchRepository;
+        this.chatMessageService = chatMessageService;
     }
     @Autowired
 	private UserRepository userRepository;
 
     @Autowired
     private MatchRepository matchRepository;
+
+    @Autowired
+    private ChatMessageService chatMessageService;
 
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -103,6 +108,9 @@ public class UserService {
 		return savedUser;
 	}
 
+    public List<ChatMessageDTO> getUserMessages(Long userId){
+        return this.chatMessageService.getUserMessages(userId);
+    }
 
     @Transactional 
     public void delete(Long id) {
@@ -118,6 +126,7 @@ public class UserService {
 
             for (Match match : user.getOrganizedMatches()) {
                 match.setOrganizer(null);
+                match.getChatMessages().clear();
                 matchRepository.delete(match);
             }
             userRepository.deleteById(id); 
@@ -238,4 +247,10 @@ public class UserService {
 
 		userRepository.save(user);
 	}
+
+    public User findByUsername(String senderUsername) {
+        return userRepository.findByUsername(senderUsername).orElseThrow(() -> new NoSuchElementException("User with username " + senderUsername + " not found"));
+    }
+
+    
 }

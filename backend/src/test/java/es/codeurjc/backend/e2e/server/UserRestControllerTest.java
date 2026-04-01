@@ -211,6 +211,23 @@ public class UserRestControllerTest {
                 .body("email", equalTo("replaced@emeal.com"));
     }
 
+    @Test
+    public void testGetUserMessages(){
+        long userId = 2L; 
+        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        given()
+            .cookie("AuthToken", cookie)
+        .when()
+            .get("/api/v1/users/{id}/messages/", userId)
+        .then()
+            .statusCode(200)
+            .body("size()", greaterThan(0))
+            .body("id", everyItem(notNullValue()))
+            .body("content", everyItem(notNullValue()))
+            .body("sender.id", everyItem(notNullValue()))
+            .body("timestamp", everyItem(notNullValue()));
+    }
+
     private String loginAndGetCookie(String email, String password) {
         String loginJson = 
             String.format("""
@@ -233,5 +250,6 @@ public class UserRestControllerTest {
         return cookie;
     }
 
+    
 
 }

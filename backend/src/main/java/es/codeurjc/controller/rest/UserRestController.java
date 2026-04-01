@@ -5,6 +5,7 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import es.codeurjc.dto.ChatMessageDTO;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.model.User;
@@ -129,6 +131,11 @@ public class UserRestController {
                 .noContent()
                 .build();
         
+    }
+
+    @GetMapping("/{id}/messages/")
+    public Collection<ChatMessageDTO> getUserMessages(@PathVariable Long id) {
+        return userService.getUserMessages(id);
     }
     
 }

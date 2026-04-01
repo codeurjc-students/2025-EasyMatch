@@ -1,0 +1,31 @@
+<app-header></app-header>
+
+<mat-card>
+  <h2><mat-icon>message</mat-icon> Chats</h2>
+
+  @if (chats().length === 0) {
+    <p>No tienes chats todavía</p>
+  }
+
+  @if (chats().length > 0) {
+    <mat-list>
+      @for (chat of chats(); track $index) {
+        <mat-list-item (click)="openChat(chat.matchId)">
+
+        <div class="chat-item">
+          <div class="chat-header">
+            <span class="title">Chat partido #{{ chat.matchId }}</span>
+            <span class="time">{{ chat.timestamp | date:'HH:mm' }}</span>
+          </div>
+
+          <div class="chat-preview">
+            <strong>@{{chat.senderUsername}}</strong>
+            {{ chat.content }}
+          </div>
+        </div>
+
+      </mat-list-item>
+      }
+    </mat-list>
+  }
+</mat-card>
