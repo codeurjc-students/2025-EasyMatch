@@ -74,17 +74,16 @@ public class MatchRestController {
         return matchService.getMatch(id);
 	}
 
-    @GetMapping("/{id}/chat")
-    public Collection<ChatMessageDTO> getMatchChat(@PathVariable long id) {
+    @GetMapping("/{id}/messages")
+    public Collection<ChatMessageDTO> getMatchMessages(@PathVariable long id) {
         return chatMessageService.getMatchMessages(id);
     }
 
     @PostMapping
     public ResponseEntity<MatchDTO> creatematch(@RequestBody MatchDTO matchDTO) {
-        UserDTO loggedUserDTO = userService.getLoggedUserDTO();
-        matchService.createMatch(matchDTO, loggedUserDTO);
-        URI location = fromCurrentRequest().path("/{id}").buildAndExpand(matchDTO.id()).toUri();
-        return ResponseEntity.created(location).body(matchDTO);
+        MatchDTO createdMatch = matchService.createMatch(matchDTO);
+        URI location = fromCurrentRequest().path("/{id}").buildAndExpand(createdMatch.id()).toUri();
+        return ResponseEntity.created(location).body(createdMatch);
     }
 
     @PutMapping("/{id}/users/me")

@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import es.codeurjc.dto.ChatMessageDTO;
 import es.codeurjc.dto.ChatMessageMapper;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
@@ -46,7 +47,7 @@ public class MatchService {
     }
 
     @Autowired
-	private MatchRepository matchRepository;
+	private MatchRepository matchRepository;    
 
     @Autowired
     private UserService userService;
@@ -121,15 +122,12 @@ public class MatchService {
         }
     }
 
-     public MatchDTO createMatch(MatchDTO matchDTO, UserDTO loggedUserDTO) {
+     public MatchDTO createMatch(MatchDTO matchDTO) {
         Match match = mapper.toDomain(matchDTO);
         match.setState(true);
-
-        User loggedUser = userMapper.toDomain(loggedUserDTO);
+        User loggedUser = userService.getLoggedUser(); 
 		match.setOrganizer(loggedUser);
         match.setTeam1Players(Set.of(loggedUser));
-        
- 		matchRepository.save(match);
 
         ChatMessage systemMessage = ChatMessage.builder()
             .content(loggedUser.getUsername() + " ha creado el chat")
@@ -139,7 +137,8 @@ public class MatchService {
             .match(match)
             .build();
 
-        chatMessageService.save(systemMessage);
+        match.addMessage(systemMessage);
+        matchRepository.save(match);
  		return toDTO(match);
     }
 

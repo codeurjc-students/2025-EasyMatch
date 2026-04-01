@@ -1,9 +1,11 @@
 package es.codeurjc.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -64,8 +66,8 @@ public class Match {
 	@Embedded
     private MatchResult result;
 	
-	@OneToMany
-	private List<ChatMessage> chatMessages;
+	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ChatMessage> chatMessages = new ArrayList<>();
 
 	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state, int modeSelected, User organizer, double price, Sport sport, Club club) {
 		this.date = date;
@@ -93,6 +95,10 @@ public class Match {
     public void addPlayerToTeam2(User player) {
         this.team2Players.add(player);
     }
+
+	public void addMessage(ChatMessage message) {
+		this.chatMessages.add(message);
+	}
 
 	public boolean containsPlayer(User player) {
         return (team1Players != null && team1Players.contains(player))
@@ -290,9 +296,6 @@ public class Match {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	
-	
-	
 
 	public MatchResult getResult() {
 		return result;

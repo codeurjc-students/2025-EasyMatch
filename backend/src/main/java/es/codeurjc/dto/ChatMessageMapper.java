@@ -9,6 +9,7 @@ public interface ChatMessageMapper {
     
     default ChatMessageDTO toDTO(ChatMessage message) {
         return new ChatMessageDTO(
+            message.getId(),
             message.getMatch().getId(),
             message.getContent(),
             message.getSender().getUsername(),

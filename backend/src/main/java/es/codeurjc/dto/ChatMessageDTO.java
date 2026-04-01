@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import es.codeurjc.model.MessageType;
 
 public record ChatMessageDTO (
+    Long id,
     Long matchId,
     String content,
     String senderUsername,

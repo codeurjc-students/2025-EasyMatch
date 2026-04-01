@@ -9,6 +9,8 @@ import { ChatService } from '../../service/chat-message.service';
 import { HeaderComponent } from "../header/header.component";
 import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { LoginService } from '../../service/login.service';
 
 @Component({
   selector: 'app-chats',
@@ -20,16 +22,19 @@ import { MatIconModule } from '@angular/material/icon';
 export class ChatsComponent {
 
   private chatService = inject(ChatService);
+  private loginService = inject(LoginService);
   private router = inject(Router);
 
   chats = signal<ChatMessage[]>([]);
+  private user = toSignal(this.loginService.currentUser$, { initialValue: null });
+
 
   constructor() {
     this.loadChats();
   }
 
   loadChats() {
-    this.chatService.getUserChats()
+    this.chatService.getUserChats(this.user()?.id!)
       .subscribe(chats => {
         const lastMessages = this.mapToLastMessages(chats);
         this.chats.set(lastMessages);

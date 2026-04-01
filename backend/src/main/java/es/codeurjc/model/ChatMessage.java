@@ -39,9 +39,11 @@ public class ChatMessage {
     @JoinColumn(name = "match_id")
     private Match match;
 
-    public ChatMessage(MessageType type, String content, User sender) {
+    public ChatMessage(MessageType type, String content, User sender, Match match) {
         this.type = type;
         this.content = content;
         this.sender = sender;
+        this.timestamp = LocalDateTime.now();
+        this.match = match;
     }
 }
