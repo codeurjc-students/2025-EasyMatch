@@ -8,7 +8,6 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,9 +34,7 @@ public class User {
     private LocalDateTime birthDate;
     private boolean gender; // 1 male, 0 female
     private String description;
-    private float level; // from 1 to 7
-    @Embedded
-    private PlayerStats stats = new PlayerStats();
+
 
     @ManyToMany(mappedBy = "team1Players")
     private List<Match> matchesAsTeam1Player;
@@ -51,6 +48,9 @@ public class User {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_level_history", joinColumns = @JoinColumn(name = "user_id"))
     private List<LevelHistory> levelHistory = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserSportProfile> sportProfiles = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> sentMessages = new ArrayList<>();
@@ -66,7 +66,7 @@ public class User {
     }
 
     public User(String realname, String username, String email, String password, LocalDateTime birthDate,
-            boolean gender, String description, float level, String... roles) {
+            boolean gender, String description, String... roles) {
         this.realname = realname;
         this.username = username;
         this.email = email;
@@ -74,42 +74,32 @@ public class User {
         this.birthDate = birthDate;
         this.gender = gender;
         this.description = description;
-        this.level = level;
         this.roles = List.of(roles);
     }
     
-    public void updateStats(boolean won, boolean draw) {
-        this.stats.updateStats(won, draw);
-    }
-    private float calculateDeltaLevel(boolean won, float teamAvgLevel, float opponentAvgLevel) {
-        // Simple ELO-like system 
 
-        double expectedResult = 1 / (1 + Math.pow(10, (opponentAvgLevel - teamAvgLevel) / 1.25));
-        float kFactor= 0.2f;
-        float actualResult = won ? 1.0f : 0.0f;
-        return kFactor * (actualResult - (float) expectedResult);
-    }
-    public void applyMatchResult(boolean won, LocalDateTime matchDate, float teamAvgLevel, float opponentAvgLevel) {
-
-        float previousLevel = this.level;
-
-        float delta = calculateDeltaLevel(won, teamAvgLevel, opponentAvgLevel);
-        this.level = clampLevel(this.level + delta);
-
-        this.levelHistory.add(
-            new LevelHistory(
-                matchDate,
-                previousLevel,
-                this.level,
-                won
-            )
-        );
+    public UserSportProfile getProfileForSport(Sport sport) {
+        return sportProfiles.stream()
+                .filter(sl -> sl.getSport().equals(sport))
+                .findFirst()
+                .orElse(null);
     }
 
-    private float clampLevel(float level){
-        if (level < 1.0f) return 1.0f;
-        if (level > 7.0f) return 7.0f;
-        return level;
+    public void addSport(Sport sport, float initialLevel) {
+        UserSportProfile sl = new UserSportProfile(this, sport, initialLevel);
+        sportProfiles.add(sl);
+    }
+
+    public void applyMatchResult(Sport sport, boolean won, LocalDateTime date,
+                                float teamAvg, float opponentAvg) {
+
+        UserSportProfile sl = getProfileForSport(sport);
+
+        if (sl == null) {
+            throw new RuntimeException("User does not have this sport");
+        }
+
+        sl.applyMatchResult(won, false, date, teamAvg, opponentAvg);
     }
 
     public List<Match> getMatchHistory() {
@@ -181,14 +171,6 @@ public class User {
         this.description = description;
     }
 
-    public float getLevel() {
-        return level;
-    }
-
-    public void setLevel(float level) {
-        this.level = level;
-    }
-
     public Blob getImage() {
         return image;
     }
@@ -203,14 +185,6 @@ public class User {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
-    }
-
-    public PlayerStats getStats() {
-        return stats;
-    }
-
-    public void setStats(PlayerStats stats) {
-        this.stats = stats;
     }
 
     public List<Match> getMatchesAsTeam1Player() {
@@ -251,6 +225,14 @@ public class User {
 
     public void setSentMessages(List<ChatMessage> sentMessages) {
         this.sentMessages = sentMessages;
+    }
+
+    public List<UserSportProfile> getSportProfiles() {
+        return sportProfiles;
+    }
+
+    public void setSportProfiles(List<UserSportProfile> sportProfiles) {
+        this.sportProfiles = sportProfiles;
     }
     
 }

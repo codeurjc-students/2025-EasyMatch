@@ -37,7 +37,11 @@
         <img class="avatar" [src]="getUserImage(u.id) || 'assets/default-avatar.jpg'" alt="Usuario" />
         <div class="user-text">
           <span class="user-name">{{ u?.realname }}</span>
-          <span class="user-level">Nivel {{ u?.level | number:'1.0-2' }}</span>
+          @if (currentLevel() !== null) {
+            <span class="user-level">
+              Nivel {{ currentLevel() | number:'1.0-2' }}
+            </span>
+          }
         </div>
         <mat-icon class="arrow-icon">expand_more</mat-icon>
       </div>

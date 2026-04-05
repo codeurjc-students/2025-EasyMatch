@@ -16,6 +16,9 @@ import { MatchResultDialogComponent } from '../match-result-dialog/match-result-
 import { LoginService } from '../../service/login.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { UserService } from '../../service/user.service';
+import { User } from '../../models/user.model';
+import { UserSportProfile } from '../../models/user-sport-profile.model';
 
 
 
@@ -34,7 +37,7 @@ import { Router } from '@angular/router';
     MatTooltipModule,
   ]
 })
-export class MatchComponent{
+export class MatchComponent implements OnInit {
 
   @Input() match!: Match;
   private apiUrl = environment.apiUrl;
@@ -45,13 +48,20 @@ export class MatchComponent{
     private snack: MatSnackBar,
   ) {}
 
-  private loginService = inject(LoginService);
   private router = inject(Router);
+  private loginService = inject(LoginService);
+  private userService = inject(UserService);  
+  
   @Output() refresh = new EventEmitter<void>();
   user = toSignal(this.loginService.currentUser$, { initialValue: null });
+  profiles = signal<Record<string, UserSportProfile>>({});
 
   isAuthenticated = computed(() => this.user() !== null);
   currentUserId = computed(() => this.user()?.id ?? 0);
+
+  ngOnInit(): void {
+    this.loadOrganizerProfile(this.match.organizer.id);
+  }
 
   
   getUserImage(id: number): string {
@@ -62,7 +72,28 @@ export class MatchComponent{
     return (this.match.team1Players.length + this.match.team2Players.length);
   }
 
-  
+  loadOrganizerProfile(userId: number): void {
+    const key = `${userId}-${this.match.sport.id}`;
+
+    if (this.profiles()[key]) return;
+
+    this.userService.getUserSportProfile(userId, this.match.sport.id!).subscribe({
+      next: profile => {
+        this.profiles.update(p => ({
+          ...p,
+          [key]: profile
+        }));
+      },
+      error: err => {
+        console.error('Error loading sport profile', err);
+      }
+    });
+  }
+
+  get organizerProfile(): UserSportProfile | null {
+    const key = `${this.match.organizer.id}-${this.match.sport.id}`;
+    return this.profiles()[key] ?? null;
+  }
 
   openJoinDialog(match : Match) {
     const dialogRef = this.dialog.open(JoinMatchDialogComponent, {

@@ -9,14 +9,5 @@ export interface User{
     birthDate: Date | string;
     gender?: boolean;
     description: string;
-    level: number;
-    stats: {
-        totalMatches: number,
-        wins: number,
-        draws: number,
-        losses: number,
-        winRate: number
-    }
-    levelHistory : LevelHistory[];
     roles: string[];
 }

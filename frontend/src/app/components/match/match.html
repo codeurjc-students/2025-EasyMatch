@@ -55,7 +55,11 @@
           <div class="organizer-meta">
             <span class="organizer-role">Organizador</span>
             <span class="separator">·</span>
-            <span class="organizer-level">Nivel {{ match.organizer.level | number:'1.0-2' }}</span>
+            @if (organizerProfile) {
+              <span class="organizer-level">
+                Nivel {{ organizerProfile.level | number:'1.0-2' }}
+              </span>
+            }
           </div>
         </div>
 

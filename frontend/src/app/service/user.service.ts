@@ -1,9 +1,12 @@
-import { Injectable, Resource } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
 import { Match } from '../models/match.model';
+import { LevelHistory } from '../models/level-history.model';
+import { UserSportProfile } from '../models/user-sport-profile.model';
+import { Sport } from '../models/sport.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -89,5 +92,26 @@ export class UserService {
     const formData = new FormData();
     formData.append('imageFile', file);
     return this.http.put(`${this.apiUrl}/users/${id}/image`, formData, { withCredentials: true });
+  }
+
+  getUserSportHistory(userId: number, sportId: number) {
+    return this.http.get<LevelHistory[]>(
+      `${this.apiUrl}/users/${userId}/sports/${sportId}/history`,
+      { withCredentials: true }
+    );
+  }
+
+  getUserSportProfile(userId: number, sportId: number) {
+    return this.http.get<UserSportProfile>(
+      `${this.apiUrl}/users/${userId}/sports/${sportId}/profile`,
+      { withCredentials: true }
+    );
+  }
+
+  getUserSports(userId: number) {
+    return this.http.get<Sport[]>(
+      `${this.apiUrl}/users/${userId}/sports`,
+      { withCredentials: true }
+    );
   }
 }

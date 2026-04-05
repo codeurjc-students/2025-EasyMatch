@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 
 import es.codeurjc.model.User;
 
-
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 

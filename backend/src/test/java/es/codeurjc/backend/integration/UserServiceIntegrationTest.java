@@ -129,7 +129,6 @@ public class UserServiceIntegrationTest {
         assertThat(replacedUser.birthDate(), isA(LocalDateTime.class));
         assertThat(replacedUser.gender(), equalTo(true));
         assertThat(replacedUser.description(), equalTo("Me gusta el deporte"));
-        assertThat(replacedUser.level(), equalTo(3.55f));
     }
 
 

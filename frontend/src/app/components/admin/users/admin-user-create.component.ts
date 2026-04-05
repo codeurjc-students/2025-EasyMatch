@@ -71,7 +71,7 @@ export class AdminUserCreateComponent implements OnInit {
         email: u.email,
         birthDate: u.birthDate,
         gender: u.gender,
-        level: this.roundToTwoDecimals(u.level),
+        //level: this.roundToTwoDecimals(u.level),
         description: u.description,
       });
 

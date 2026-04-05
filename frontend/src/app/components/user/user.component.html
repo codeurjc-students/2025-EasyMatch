@@ -43,17 +43,31 @@
 
         <p class="description" *ngIf="u.description">{{ u.description }}</p>
 
+        <div class="sports-selector">
+          @for (sport of sports(); track sport.id) {
+            <button
+              mat-stroked-button
+              [class.active]="selectedSportId() === sport.id"
+              (click)="selectSport(sport.id!)"
+            >
+              <mat-icon class="sport-icon">
+                {{ getSportIcon(sport.name) }}
+              </mat-icon>
+              {{ sport.name }}
+            </button>
+          }
+        </div>
         <div class="stats">
           <div id="totalMatches" class="stat">
-            <h3>{{ u.stats.totalMatches }}</h3>
+            <h3>{{ totalMatches }}</h3>
             <p>Partidos</p>
           </div>
           <div id="wins" class="stat">
-            <h3>{{ u.stats.wins }}</h3>
+            <h3>{{ wins }}</h3>
             <p>Victorias</p>
           </div>
           <div id="winRate" class="stat">
-            <h3>{{ u.stats.winRate | number: '1.2-2' }}%</h3>
+            <h3>{{ winRate | number: '1.2-2' }}%</h3>
             <p>% Victorias</p>
           </div>
           <div id="maxLevel" class="stat">

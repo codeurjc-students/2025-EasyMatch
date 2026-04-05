@@ -33,19 +33,22 @@ import jakarta.transaction.Transactional;
 @Component
 public class DatabaseInitializer {
     @Autowired
-    MatchService matchService;
+    private MatchService matchService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    ClubService clubService;
+    private ClubService clubService;
 
     @Autowired
-    SportService sportService;
+    private SportService sportService;
 
     @Autowired
-    ChatMessageService chatMessageService;
+    private ChatMessageService chatMessageService;
+
+    @Autowired
+    private UserSportProfileService userSportProfileService;
 
     @PostConstruct
     @Transactional
@@ -89,27 +92,27 @@ public class DatabaseInitializer {
         Sport sport4 = new Sport("Voleibol", modesOfVolley,ScoringType.SETS);
         Sport volley = sportService.save(sport4);
 
-        User admin = new User("Admin","admin","admin@emeal.com","admin",LocalDateTime.of(1985,1,1,0,0),true,"Administrador del sistema",6.99f,"ADMIN","USER");
+        User admin = new User("Admin","admin","admin@emeal.com","admin",LocalDateTime.of(1985,1,1,0,0),true,"Administrador del sistema","ADMIN","USER");
         setUserImage(admin,"/images/default-avatar.jpg");
         userService.save(admin);
 
-        User pedro = new User("Pedro Garcia","pedro123","pedro@emeal.com","pedroga4",LocalDateTime.of(1990,5,20,0,0),true,"Apasionado del tenis",5.12f,"USER");
+        User pedro = new User("Pedro Garcia","pedro123","pedro@emeal.com","pedroga4",LocalDateTime.of(1990,5,20,0,0),true,"Apasionado del tenis", "USER");
         setUserImage(pedro,"/images/pedro.jpg");
         userService.save(pedro);
 
-        User maria = new User("Maria Lopez","maria456","maria@emeal.com","marialo3",LocalDateTime.of(1992,8,15,0,0),false,"Me encantan los partidos amistosos",4.57f,"USER");
+        User maria = new User("Maria Lopez","maria456","maria@emeal.com","marialo3",LocalDateTime.of(1992,8,15,0,0),false,"Me encantan los partidos amistosos","USER");
         setUserImage(maria,"/images/maria.jpg");
         userService.save(maria);
 
-        User juan = new User("Juan Martinez","juan789","juan@emeal.com","juanma1",LocalDateTime.of(1988,3,10,0,0),true,"Apasionado del deporte rey y competitivo",6.03f,"USER");
+        User juan = new User("Juan Martinez","juan789","juan@emeal.com","juanma1",LocalDateTime.of(1988,3,10,0,0),true,"Apasionado del deporte rey y competitivo","USER");
         setUserImage(juan,"/images/juan.jpg");
         userService.save(juan);
 
-        User luis = new User("Luis Sanchez","luis321","luis@emeal.com","saluis2",LocalDateTime.of(1995,12,5,0,0),true,"Disfruto de partidos casuales",3.51f,"USER");
+        User luis = new User("Luis Sanchez","luis321","luis@emeal.com","saluis2",LocalDateTime.of(1995,12,5,0,0),true,"Disfruto de partidos casuales","USER");
         setUserImage(luis,"/images/luis.jpg");
         userService.save(luis);
 
-        User silvia = new User("Silvia Gonzalez","silvia66","silvia@emeal.com","silvia5",LocalDateTime.of(2003,8,7,0,0),false,"Me encanta jugar mientras haya un ambiente sano",5.37f,"USER");
+        User silvia = new User("Silvia Gonzalez","silvia66","silvia@emeal.com","silvia5",LocalDateTime.of(2003,8,7,0,0),false,"Me encanta jugar mientras haya un ambiente sano","USER");
         setUserImage(silvia,"/images/silvia.jpg");
         userService.save(silvia);
 
@@ -166,6 +169,18 @@ public class DatabaseInitializer {
         Match match3 = new Match(date3,true,false,true,1,luis,6.49f,tennis,club3);
         Match match4 = new Match(date4,true,false,true,0,juan,4.49f,football,club4);
         Match match5 = new Match(date5,true,false,true,1,silvia,3.25f,volley,club5);
+
+        pedro.addSport(tennis, 5.12f);
+        maria.addSport(paddle, 4.57f);
+        luis.addSport(tennis, 6.03f);
+        juan.addSport(football, 3.51f);
+        silvia.addSport(volley, 5.37f);
+
+        userSportProfileService.save(pedro.getProfileForSport(tennis));
+        userSportProfileService.save(maria.getProfileForSport(paddle));
+        userSportProfileService.save(luis.getProfileForSport(tennis));
+        userSportProfileService.save(juan.getProfileForSport(football));
+        userSportProfileService.save(silvia.getProfileForSport(volley));
 
         match1.setTeam1Players(Set.of(match1.getOrganizer()));
         match1.setTeam2Players(new HashSet<>());
@@ -276,6 +291,9 @@ public class DatabaseInitializer {
         tennisMatch3.setTeam1Players(Set.of(maria));
         tennisMatch3.setTeam2Players(Set.of(pedro));
 
+        maria.addSport(tennisMatch1.getSport(), 4.57f);
+        luis.addSport(tennisMatch2.getSport(), 6.03f);
+
         matchService.save(tennisMatch1);
         matchService.save(tennisMatch2);
         matchService.save(tennisMatch3);
@@ -296,6 +314,7 @@ public class DatabaseInitializer {
             .build();
         chatMessageService.save(tennisChat1Msg1);
         chatMessageService.save(tennisChat1Msg2);
+
 
         ChatMessage tennisChat2Msg1 = ChatMessage.builder()
             .content(pedro.getUsername() + " ha creado el chat")

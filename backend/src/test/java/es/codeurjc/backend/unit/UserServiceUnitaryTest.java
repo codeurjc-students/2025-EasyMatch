@@ -57,9 +57,9 @@ public class UserServiceUnitaryTest {
     public void getUsersTest(){
         //GIVEN
         PageRequest pageable = PageRequest.of(0, 10);
-        User user1 = new User("Carlos López", "carlos_10", "carlos@example.com", "password123", LocalDateTime.of(1995, 3, 12, 0, 0), true, "Amante del fútbol y los torneos locales.", 4.5f, "USER");
-        User user2 = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Administradora de la plataforma.", 3.75f, "ADMIN", "USER");
-        User user3 = new User("Pedro Martín", "pedro_m", "pedro@example.com", "newuserpass", LocalDateTime.of(2000, 1, 15, 0, 0), true, "Nuevo en la aplicación, aprendiendo.", 1.0f, "USER");
+        User user1 = new User("Carlos López", "carlos_10", "carlos@example.com", "password123", LocalDateTime.of(1995, 3, 12, 0, 0), true, "Amante del fútbol y los torneos locales.", "USER");
+        User user2 = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Administradora de la plataforma.", "ADMIN", "USER");
+        User user3 = new User("Pedro Martín", "pedro_m", "pedro@example.com", "newuserpass", LocalDateTime.of(2000, 1, 15, 0, 0), true, "Nuevo en la aplicación, aprendiendo.", "USER");
         List<User> userList = List.of(user1,user2,user3);
 
 
@@ -82,7 +82,7 @@ public class UserServiceUnitaryTest {
         //GIVEN
         Random random = new Random();
         long id = random.nextLong();
-        User user = new User("Carlos López", "carlos_10", "carlos@example.com", "password123", LocalDateTime.of(1995, 3, 12, 0, 0), true, "Amante del fútbol y los torneos locales.", 4.5f, "USER");
+        User user = new User("Carlos López", "carlos_10", "carlos@example.com", "password123", LocalDateTime.of(1995, 3, 12, 0, 0), true, "Amante del fútbol y los torneos locales.", "USER");
         user.setId(id);
         Optional<User> optionalUser = Optional.of(user);
 
@@ -116,7 +116,7 @@ public class UserServiceUnitaryTest {
         //GIVEN
         Random random = new Random();
         long id = Math.abs(random.nextLong());
-        User user = new User("Pedro Martín", "pedro_m", "pedro@example.com", "newuserpass", LocalDateTime.of(2000, 1, 15, 0, 0), true, "Nuevo en la aplicación, aprendiendo.", 1.0f, "USER");
+        User user = new User("Pedro Martín", "pedro_m", "pedro@example.com", "newuserpass", LocalDateTime.of(2000, 1, 15, 0, 0), true, "Nuevo en la aplicación, aprendiendo.", "USER");
         user.setMatchesAsTeam1Player(List.of());
         user.setMatchesAsTeam2Player(List.of());
         user.setOrganizedMatches(List.of());
@@ -151,7 +151,7 @@ public class UserServiceUnitaryTest {
     @Test
     public void createUserTest() throws IOException{
         //GIVEN 
-        User originalUser = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Creadora de la plataforma.", 0.0f, "USER");
+        User originalUser = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Creadora de la plataforma.", "USER");
         UserDTO originalUserDTO = mapper.toDTO(originalUser);
         //WHEN
         when(userRepository.save(originalUser)).thenReturn(originalUser);
@@ -167,8 +167,8 @@ public class UserServiceUnitaryTest {
     public void replaceExistingUserTest(){
         //GIVEN 
         long id = 2L;
-        Optional<User> userOptional = Optional.of(new User("Jose Martinez","jose45","jose@emeal.com","joselito1", LocalDateTime.of(1978,10,8,12,0),true,"",2.53f));
-        User updatedUser = new User("Jose Lopez","jose12","jose@email.com","joseito2",LocalDateTime.now(),false, "",7.0f);
+        Optional<User> userOptional = Optional.of(new User("Jose Martinez","jose45","jose@emeal.com","joselito1", LocalDateTime.of(1978,10,8,12,0),true,""));
+        User updatedUser = new User("Jose Lopez","jose12","jose@email.com","joseito2",LocalDateTime.now(),false, "");
         updatedUser.setId(id);
         UserDTO updatedUserDTO = mapper.toDTO(updatedUser);
 
@@ -186,7 +186,6 @@ public class UserServiceUnitaryTest {
         assertThat(replacedClubDTO.birthDate(), equalTo(updatedUserDTO.birthDate()));
         assertThat(replacedClubDTO.gender(), equalTo(updatedUserDTO.gender()));
         assertThat(replacedClubDTO.description(), equalTo(updatedUserDTO.description()));
-        assertThat(replacedClubDTO.level(), equalTo(updatedUserDTO.level()));
 
         assertThat(replacedClubDTO.password(), nullValue());
 

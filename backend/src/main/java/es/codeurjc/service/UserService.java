@@ -24,10 +24,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import es.codeurjc.dto.ChatMessageDTO;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.dto.SportDTO;
+import es.codeurjc.dto.SportMapper;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
 import es.codeurjc.model.Match;
-import es.codeurjc.model.PlayerStats;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.repository.UserRepository;
@@ -60,7 +61,8 @@ public class UserService {
     @Autowired
     private MatchMapper matchMapper;
 
-    
+    @Autowired
+    private SportMapper sportMapper;
 
     public Optional<User> findById(long id) {
 		return userRepository.findById(id);
@@ -178,10 +180,6 @@ public class UserService {
 
     public UserDTO createUser(UserDTO userDTO, boolean isAdmin) throws IOException {
         User user = mapper.toDomain(userDTO);
-        if (!isAdmin) {
-            user.setLevel(0.0f);
-        }
-        user.setStats(new PlayerStats(0,0,0,0));
         user.setRoles(List.of("USER"));
         setUserImage(user,"/images/default-avatar.jpg");
         this.save(user);
@@ -227,7 +225,6 @@ public class UserService {
                 updatedUser.setPassword(user.getPassword());
             }
             updatedUser.setRoles(user.getRoles());
-            updatedUser.setStats(user.getStats());
             updatedUser.setLevelHistory(user.getLevelHistory());
             userRepository.save(updatedUser);
             return toDTO(updatedUser);
@@ -250,6 +247,13 @@ public class UserService {
 
     public User findByUsername(String senderUsername) {
         return userRepository.findByUsername(senderUsername).orElseThrow(() -> new NoSuchElementException("User with username " + senderUsername + " not found"));
+    }
+
+    public List<SportDTO> getUserSports(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User with id " + id + " not found"));
+        return user.getSportProfiles().stream()
+                .map(profile -> sportMapper.toDTO(profile.getSport()))
+                .toList();
     }
 
     
