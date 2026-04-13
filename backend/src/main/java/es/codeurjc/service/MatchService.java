@@ -37,13 +37,14 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class MatchService {
 
-    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper, ChatMessageService chatMessageService, ChatMessageMapper chatMessageMapper, SimpMessagingTemplate messagingTemplate) {
+    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper, ChatMessageService chatMessageService, ChatMessageMapper chatMessageMapper, UserSportProfileService profileService, SimpMessagingTemplate messagingTemplate) {
         this.matchRepository = matchRepository;
         this.mapper = mapper;
         this.userService = userService;
         this.userMapper = userMapper; 
         this.chatMessageService = chatMessageService;
         this.chatMessageMapper = chatMessageMapper;
+        this.profileService = profileService;
         this.messagingTemplate = messagingTemplate;
     }
 
