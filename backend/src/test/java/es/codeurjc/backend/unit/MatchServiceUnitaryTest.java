@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,12 +27,15 @@ import es.codeurjc.dto.ChatMessageMapper;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.MatchResultDTO;
+import es.codeurjc.dto.PlayerStatsDTO;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
+import es.codeurjc.dto.UserSportProfileDTO;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.service.ChatMessageService;
 import es.codeurjc.service.MatchService;
 import es.codeurjc.service.UserService;
+import es.codeurjc.service.UserSportProfileService;
 import es.codeurjc.model.ChatMessage;
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
@@ -39,6 +43,7 @@ import es.codeurjc.model.MatchResult;
 import es.codeurjc.model.Mode;
 import es.codeurjc.model.ScoringType;
 import es.codeurjc.model.User;
+import es.codeurjc.model.UserSportProfile;
 import es.codeurjc.model.Sport;
 
 import static org.hamcrest.MatcherAssert.*;
@@ -56,6 +61,7 @@ public class MatchServiceUnitaryTest {
     private UserMapper userMapper;
     private ChatMessageService chatMessageService;
     private ChatMessageMapper chatMessageMapper;
+    private UserSportProfileService profileService;
     private SimpMessagingTemplate messagingTemplate;
     
     
@@ -67,8 +73,9 @@ public class MatchServiceUnitaryTest {
         mapper = Mappers.getMapper(MatchMapper.class);
         chatMessageService = mock(ChatMessageService.class);
         chatMessageMapper = Mappers.getMapper(ChatMessageMapper.class);
+        profileService = mock(UserSportProfileService.class);
         messagingTemplate = mock(SimpMessagingTemplate.class);
-        matchService = new MatchService(matchRepository, mapper, userService,userMapper, chatMessageService, chatMessageMapper, messagingTemplate);
+        matchService = new MatchService(matchRepository, mapper, userService,userMapper, chatMessageService, chatMessageMapper, profileService, messagingTemplate);
     }
 
     @Test
@@ -142,36 +149,37 @@ public class MatchServiceUnitaryTest {
     @Test
     public void createMatchTest(){
         //GIVEN
-        UserDTO userDTO = new UserDTO(
-            1L,
+        User user = new User(
             "Pedro García",
             "pedro123",
             "pedro@emeal.com",
             "pedroga4",
             LocalDateTime.of(1995, 5, 10, 0, 0),
             true,
-            "Jugador de pádel",
-            4.5f,
-            List.of("USER")
+            "Jugador de pádel"
         );
+        user.setId(1L);
+
+        UserSportProfile profile = new UserSportProfile(user, new Sport(), 4.5f);
+        user.setSportProfiles(new ArrayList<>(List.of(profile)));
         
-        Match match = new Match(null, true, false, true,0, null,4.00, null,null);
+        Match match = new Match(null, true, false, true,0, null,4.00, new Sport(),null);
         ChatMessage chat = ChatMessage.builder()
             .match(match)
-            .sender(userMapper.toDomain(userDTO))
+            .sender(user)
             .content("Chat del partido")
             .timestamp(LocalDateTime.now())
             .build();
         MatchDTO matchDTO = mapper.toDTO(match);
         //WHEN
-        when(userService.getLoggedUser()).thenReturn(userMapper.toDomain(userDTO));
+        when(userService.getLoggedUser()).thenReturn(user);
         when(matchRepository.save(match)).thenReturn(match);
         when(chatMessageService.save(chat)).thenReturn(chat);
         MatchDTO createdMatch = matchService.createMatch(matchDTO);
         //THEN
         assertThat(createdMatch.id(), equalTo(matchDTO.id()));
-        assertThat(createdMatch.organizer().id(), equalTo(userDTO.id()));
-        assertThat(createdMatch.team1Players(), contains(userDTO));
+        assertThat(createdMatch.organizer().id(), equalTo(user.getId()));
+        assertThat(createdMatch.team1Players(), contains(userMapper.toDTO(user)));
         assertThat(createdMatch.state(), is(true));
     }
 
@@ -337,32 +345,69 @@ public class MatchServiceUnitaryTest {
     }
 
     @Test
-    public void addMatchResultToExistingMatchTest(){
-        //GIVEN
+    public void addMatchResultToExistingMatchTest() {
+        // GIVEN
         long id = 3L;
-        User organizer =  new User();
-        Sport sport = new Sport("Tenis",List.of(new Mode("Dobles",4)),ScoringType.SETS);
-        Match match = new Match(null, true, false, true,0, organizer,5.00, sport,null);
+
+        Sport sport = new Sport("Tenis", List.of(new Mode("Dobles", 4)), ScoringType.SETS);
+
+        User organizer = new User();
+        organizer.setId(1L);
+
+        User player2 = new User();
+        player2.setId(2L);
+
+        User player3 = new User();
+        player3.setId(3L);
+
+        User player4 = new User();
+        player4.setId(4L);
+
+        organizer.setSportProfiles(new ArrayList<>(List.of(new UserSportProfile(organizer, sport, 5.0f))));
+        player2.setSportProfiles(new ArrayList<>(List.of(new UserSportProfile(player2, sport, 5.0f))));
+        player3.setSportProfiles(new ArrayList<>(List.of(new UserSportProfile(player3, sport, 5.0f))));
+        player4.setSportProfiles(new ArrayList<>(List.of(new UserSportProfile(player4, sport, 5.0f))));
+
+        Match match = new Match(null, true, false, true, 0, organizer, 5.00, sport, null);
         match.setId(id);
-        match.setTeam1Players(new HashSet<>(Set.of(organizer,new User())));
-        match.setTeam2Players(new HashSet<>(Set.of(new User(),new User())));
-        match.setResult(new MatchResult());
+
+        match.setTeam1Players(new HashSet<>(Set.of(organizer, player2)));
+        match.setTeam2Players(new HashSet<>(Set.of(player3, player4)));
+
+        MatchResult existingResult = new MatchResult();
+        match.setResult(existingResult);
+
         Optional<Match> optionalMatch = Optional.of(match);
-        //WHEN
+
+        // WHEN
         when(matchRepository.existsById(id)).thenReturn(true);
         when(matchRepository.findById(id)).thenReturn(optionalMatch);
+        when(profileService.save(any(UserSportProfile.class)))
+        .thenReturn(new UserSportProfileDTO(
+            "Tenis",
+            5.0f,
+            new PlayerStatsDTO(0, 0, 0, 0, 0)
+        ));
 
-        MatchResultDTO resultDTO = new MatchResultDTO("A","B",6,4,List.of(6,7),List.of(4,5));
+        MatchResultDTO resultDTO = new MatchResultDTO(
+            "A", "B",
+            6, 4,
+            List.of(6, 7),
+            List.of(4, 5)
+        );
+
         MatchResultDTO addedResultDTO = matchService.addMatchResult(id, resultDTO);
 
-        //THEN
+        // THEN
         assertThat(addedResultDTO.team1Name(), equalTo(resultDTO.team1Name()));
         assertThat(addedResultDTO.team2Name(), equalTo(resultDTO.team2Name()));
         assertThat(addedResultDTO.team1GamesPerSet(), equalTo(resultDTO.team1GamesPerSet()));
         assertThat(addedResultDTO.team2GamesPerSet(), equalTo(resultDTO.team2GamesPerSet()));
+
         int totalPlayers = match.getTeam1Players().size() + match.getTeam2Players().size();
-        verify(userService,times(totalPlayers)).update(any(User.class));
-        verify(matchRepository,times(1)).save(any(Match.class));
+
+        verify(userService, times(totalPlayers)).update(any(User.class));
+        verify(matchRepository, times(1)).save(any(Match.class));
     }
 
     @Test

@@ -57,8 +57,7 @@ describe('UserService', () => {
     service.registerUser(mockUser).subscribe({
       next: (createdUser : User) => {
         expect(createdUser).toBeTruthy();
-        expect(createdUser.level).toBe(0.0);
-        expect(createdUser.stats.totalMatches).toBe(0);
+        expect(createdUser.roles).toContain("USER");
         done();
       },
       error: err => {

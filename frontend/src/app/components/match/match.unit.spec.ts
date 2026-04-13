@@ -3,8 +3,6 @@ import { MatchComponent } from './match';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { ScoringType } from '../../models/scoring-type';
-import { LevelHistory } from '../../models/level-history.model';
-
 
 describe('MatchComponent', () => {
   let component: MatchComponent;
@@ -19,15 +17,6 @@ describe('MatchComponent', () => {
     birthDate: new Date('1990-05-14'),
     gender: true,
     description: 'Jugador apasionado',
-    level: 5.5,
-    stats: {
-        totalMatches: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        winRate: 0
-    },
-    levelHistory: [{date: new Date('2024-01-01'), levelBefore: 5.0, levelAfter: 5.5, won: true}],
     roles: [] 
   }
 
@@ -101,7 +90,6 @@ describe('MatchComponent', () => {
     const level = compiled.querySelector('.organizer-level');
 
     expect(organizer?.textContent).toContain('Carlos López');
-    expect(level?.textContent).toContain('5.5');
   });
 
   it('should display the price formatted in euros', () => {

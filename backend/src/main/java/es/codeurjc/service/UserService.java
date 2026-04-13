@@ -226,6 +226,7 @@ public class UserService {
             }
             updatedUser.setRoles(user.getRoles());
             updatedUser.setLevelHistory(user.getLevelHistory());
+            updatedUser.setSportProfiles(user.getSportProfiles());
             userRepository.save(updatedUser);
             return toDTO(updatedUser);
  		} else {

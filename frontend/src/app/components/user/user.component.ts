@@ -86,8 +86,7 @@ export class UserComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       birthDate: ['', Validators.required],
       gender: [true, Validators.required],
-      description: [''],
-      level: ['', [Validators.required, Validators.min(0), Validators.max(7)]],
+      description: ['']
     });
 
      this.loginService.currentUser$.subscribe(user => {
@@ -111,8 +110,15 @@ export class UserComponent implements OnInit {
       next: sports => {
         this.sports.set(sports)
          if (sports.length > 0) {
-          const firstSportId = sports[0].id;
-          this.selectSport(firstSportId!);
+          const savedSportId = this.sportState.sportId();
+
+          const exists = sports.some(s => s.id === savedSportId);
+
+          if (savedSportId && exists) {
+            this.selectSport(savedSportId);
+          } else {
+            this.selectSport(sports[0].id!);
+          }
         }
       },
       error: err => {
@@ -188,7 +194,6 @@ export class UserComponent implements OnInit {
       birthDate: this.toLocalMidnightISOString(raw.birthDate),
       gender: raw.gender,
       description: raw.description,
-      level: raw.level
     };
 
     this.userService.updateUser(this.user()!.id, payload).subscribe({
@@ -271,6 +276,15 @@ export class UserComponent implements OnInit {
 
   private afterSuccessfulSave(user: User, photoOk: boolean): void {
     this.user.set(user);
+
+    // 🔥 reset controlado del estado deportivo
+    this.sportProfile.set(null);
+    this.sportHistory.set([]);
+    this.levelChartData.set([]);
+
+    // 🔥 recargar deportes (respeta sportState)
+    this.loadSports();
+
     this.editing.set(false);
     this.saving.set(false);
     this.photoFile = null;
@@ -349,6 +363,7 @@ export class UserComponent implements OnInit {
       next: profile => {
         this.sportProfile.set(profile);
         this.sportState.setSportProfile(profile);
+        this.sportState.setSportId(sportId);
         this.buildSportChart(profile);
       },
       error: err => {

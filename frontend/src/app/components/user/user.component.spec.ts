@@ -22,13 +22,7 @@ const mockUser = {
   email: 'carlos@example.com',
   birthDate: '1990-05-14T00:00:00.000Z',
   gender: true,
-  description: 'Jugador apasionado del fútbol',
-  level: 7.5,
-  stats: {
-    totalMatches: 120,
-    wins: 80,
-    winRate: 66.67
-  }
+  description: 'Jugador apasionado del fútbol'
 };
 
 class MockUserService {
