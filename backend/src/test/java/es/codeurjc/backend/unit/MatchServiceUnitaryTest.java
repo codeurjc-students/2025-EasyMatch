@@ -384,6 +384,7 @@ public class MatchServiceUnitaryTest {
         when(matchRepository.findById(id)).thenReturn(optionalMatch);
         when(profileService.save(any(UserSportProfile.class)))
         .thenReturn(new UserSportProfileDTO(
+            1L,
             "Tenis",
             5.0f,
             new PlayerStatsDTO(0, 0, 0, 0, 0)

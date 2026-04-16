@@ -1,5 +1,3 @@
-import { LevelHistory } from "./level-history.model";
-
 export interface User{
     id: number;
     realname: string;

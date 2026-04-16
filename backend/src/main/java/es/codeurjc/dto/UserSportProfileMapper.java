@@ -21,6 +21,7 @@ public class UserSportProfileMapper {
         );
 
         return new UserSportProfileDTO(
+                profile.getId(),
                 profile.getSport().getName(),
                 profile.getLevel(),
                 statsDTO

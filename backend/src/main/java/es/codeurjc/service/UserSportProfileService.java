@@ -14,11 +14,8 @@ public class UserSportProfileService {
     @Autowired
     private UserSportProfileRepository userSportProfileRepository;
 
-    @Autowired
-    private UserSportProfileMapper mapper;
-
     public UserSportProfileDTO save(UserSportProfile userSportProfile) {
         UserSportProfile savedUserSportProfile = userSportProfileRepository.save(userSportProfile);
-        return mapper.toDTO(savedUserSportProfile);
+        return UserSportProfileMapper.toDTO(savedUserSportProfile);
     }
 }

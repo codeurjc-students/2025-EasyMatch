@@ -1,4 +1,5 @@
 export interface UserSportProfile {
+    id: number;
     sportName: string;
     level: number;
     stats: {

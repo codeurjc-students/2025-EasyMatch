@@ -78,9 +78,22 @@
 
 .photo-row {
   display: flex;
+  flex-direction: column;      
   align-items: center;
-  gap: 20px;
+  gap: 12px;
   margin-bottom: 20px;
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    color: #f5f5f5;
+    align-self: left;
+
+    mat-icon {
+      color: #f5f5f5;
+    }
+  }
 }
 
 .user-photo-preview {
@@ -118,12 +131,73 @@
   }
 }
 
+.modes-container button {
+  align-self: flex-start;
+}
+
+
 .mode-row {
-  display: flex;
+  display: grid;
   align-items: center;
+  grid-template-columns: 1.5fr 1.5fr auto; 
   gap: 12px;
+
+  mat-icon{
+    color: #E57373;
+    flex-shrink: 0;
+    display: flex;
+  }
 }
 
 .mode-name, .mode-players {
   flex: 1;
+}
+
+.sport-levels-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    color: #f5f5f5;
+    align-self: left;
+
+    mat-icon {
+      color: #f5f5f5;
+    }
+  }
+}
+
+.sport-level-row {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1.5fr 1fr auto; 
+  gap: 12px;
+  mat-icon{
+    color: #E57373;
+    flex-shrink: 0;
+    display: flex;
+  }
+}
+
+.sport-levels-container button {
+  align-self: flex-start;
+}
+
+
+.upload-photo-btn {
+  margin-top: 4px;
+  background: linear-gradient(90deg, #1e88e5, #42a5f5);
+  color: white;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  mat-icon {
+    font-size: 20px;
+  }
 }

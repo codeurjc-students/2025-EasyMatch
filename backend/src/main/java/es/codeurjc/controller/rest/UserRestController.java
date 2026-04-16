@@ -174,6 +174,37 @@ public class UserRestController {
         return ResponseEntity.ok(UserSportProfileMapper.toDTO(profile));
     }
 
+    @PostMapping("/{id}/sports/{sportId}/profile")
+    public ResponseEntity<UserSportProfileDTO> addSportToUser(
+            @PathVariable Long id,
+            @PathVariable Long sportId,
+            @RequestBody UserSportProfileDTO dto) {
+
+        if (!userService.getLoggedUser().getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        UserSportProfileDTO profile = userService.addSportProfileToUser(id, sportId, dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(profile);
+    }
+
+    @PutMapping("/{id}/sports/{sportId}/profile")
+    public ResponseEntity<UserSportProfileDTO> updateSportProfile(
+            @PathVariable Long id,
+            @PathVariable Long sportId,
+            @RequestBody UserSportProfileDTO updatedProfileDTO) {
+
+        if (!userService.getLoggedUser().getRoles().contains("ADMIN") &&
+            userService.getLoggedUser().getId() != id) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        UserSportProfileDTO updated = userService.updateSportProfile(id, sportId, updatedProfileDTO);
+
+        return ResponseEntity.ok(updated);
+    }
+
     @GetMapping("/{userId}/sports/{sportId}/history")
     public List<LevelHistoryDTO> getSportHistory(
             @PathVariable Long userId,

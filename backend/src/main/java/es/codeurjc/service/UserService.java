@@ -28,8 +28,12 @@ import es.codeurjc.dto.SportDTO;
 import es.codeurjc.dto.SportMapper;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
+import es.codeurjc.dto.UserSportProfileDTO;
+import es.codeurjc.dto.UserSportProfileMapper;
 import es.codeurjc.model.Match;
+import es.codeurjc.model.Sport;
 import es.codeurjc.model.User;
+import es.codeurjc.model.UserSportProfile;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +55,12 @@ public class UserService {
 
     @Autowired
     private ChatMessageService chatMessageService;
+
+    @Autowired
+    private SportService sportService;
+
+    @Autowired
+    private UserSportProfileService userSportProfileService;
 
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -225,8 +235,8 @@ public class UserService {
                 updatedUser.setPassword(user.getPassword());
             }
             updatedUser.setRoles(user.getRoles());
-            updatedUser.setLevelHistory(user.getLevelHistory());
             updatedUser.setSportProfiles(user.getSportProfiles());
+            updatedUser.setSentMessages(user.getSentMessages());
             userRepository.save(updatedUser);
             return toDTO(updatedUser);
  		} else {
@@ -257,5 +267,50 @@ public class UserService {
                 .toList();
     }
 
+    @Transactional
+    public UserSportProfileDTO updateSportProfile(Long userId, Long sportId, UserSportProfileDTO dto) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        UserSportProfile profile = user.getSportProfiles().stream()
+                .filter(p -> p.getSport().getId() == sportId)
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+
+
+        profile.setLevel(dto.level());
+        profile.setUser(user);
+        profile.setLevelHistory(profile.getLevelHistory());
+
+        userRepository.save(user);
+        return UserSportProfileMapper.toDTO(profile);
+    }
+
+    @Transactional
+    public UserSportProfileDTO addSportProfileToUser(Long userId, Long sportId, UserSportProfileDTO dto) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        Sport sport = sportService.findById(sportId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sport not found"));
+
+        boolean exists = user.getSportProfiles().stream()
+                .anyMatch(p -> p.getSport().getId().equals(sportId));
+
+        if (exists) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Profile already exists");
+        }
+
+        UserSportProfile profile = new UserSportProfile();
+        profile.setUser(user);
+        profile.setSport(sport);
+        user.addSport(sport, dto.level());
+
+        userRepository.save(user);
+
+        return UserSportProfileMapper.toDTO(profile);
+    }
     
 }

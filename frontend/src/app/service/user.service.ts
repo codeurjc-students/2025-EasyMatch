@@ -108,10 +108,27 @@ export class UserService {
     );
   }
 
+  updateSportProfile(userId: number, sportId: number, profile: Partial<UserSportProfile>) {
+    return this.http.put(
+      `${this.apiUrl}/users/${userId}/sports/${sportId}/profile`,
+      profile,
+      { withCredentials: true }
+    );
+  }
+
+  addSportToUser(userId: number, sportId: number, profile: Partial<UserSportProfile>) {
+    return this.http.post(
+      `${this.apiUrl}/users/${userId}/sports/${sportId}/profile`,
+      profile,
+      { withCredentials: true }
+    );
+  }
+
   getUserSports(userId: number) {
     return this.http.get<Sport[]>(
       `${this.apiUrl}/users/${userId}/sports`,
       { withCredentials: true }
     );
   }
+
 }

@@ -49,12 +49,46 @@
           <textarea matInput rows="3" formControlName="description"></textarea>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>{{ editingId ? 'Nivel' : 'Nivel inicial' }}</mat-label>
-          <input matInput type="number" step="0.10"formControlName="level" />
-        </mat-form-field>
+        <div formArrayName="sportLevels" class="sport-levels-container full-width">
+
+          <h3><mat-icon>signal_cellular_alt</mat-icon>Niveles por deportes</h3>
+
+          @for (group of sportLevels.controls; let i = $index; track i) {
+            <div [formGroupName]="i" class="sport-level-row">
+
+              <mat-form-field appearance="fill">
+                <mat-label>Deporte</mat-label>
+                <mat-select formControlName="sportId" [disabled]="isEditMode">
+                  @for (s of sports; track s.id) {
+                    <mat-option [value]="s.id">
+                      {{ s.name }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Nivel</mat-label>
+                <input matInput type="number" step="0.10" formControlName="level" />
+              </mat-form-field>
+
+              @if (!isEditMode) {
+                <button mat-icon-button color="warn" type="button" (click)="removeSportLevel(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+
+            </div>
+          }
+
+          <button mat-button color="primary" class="create-btn" type="button" (click)="addSportLevel()">
+            <mat-icon>add</mat-icon> Añadir deporte
+          </button>
+
+        </div>
 
         <div class="photo-row">
+          <h3><mat-icon>photo_camera</mat-icon>Foto de perfil</h3>
           <img
             *ngIf="photoPreview; else noPhoto"
             [src]="photoPreview"
@@ -66,8 +100,15 @@
             <div class="no-photo user-photo-preview">Sin foto</div>
           </ng-template>
 
-          <button  class="create-btn" mat-stroked-button color="primary" type="button" (click)="fileInput.click()">
-            <mat-icon>upload</mat-icon> Subir foto
+          <button
+            mat-icon-button
+            color="primary"
+            class="upload-photo-btn"
+            type="button"
+            (click)="fileInput.click()"
+            aria-label="Subir foto"
+          >
+            <mat-icon>upload</mat-icon>
           </button>
 
           <input
