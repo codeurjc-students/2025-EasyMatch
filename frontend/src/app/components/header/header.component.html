@@ -6,10 +6,10 @@
 
 
   <nav class="nav-links">
-    <button mat-button id="matches-btn" routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
-    <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active">Clubes</button>
+    <button mat-button id="matches-btn" routerLink="/matches" routerLinkActive="active"> <mat-icon>groups</mat-icon> Partidos abiertos</button>
+    <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active"><mat-icon>place</mat-icon>Clubes</button>
     @if (user()) {
-      <button mat-button id="chats-btn" routerLink="/chats" routerLinkActive="active">Chats</button>
+      <button mat-button id="chats-btn" routerLink="/chats" routerLinkActive="active"><mat-icon>message</mat-icon> Chats</button>
     } 
   </nav>
 
