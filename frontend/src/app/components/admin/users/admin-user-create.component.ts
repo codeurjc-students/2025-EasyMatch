@@ -119,11 +119,13 @@ export class AdminUserCreateComponent implements OnInit {
             this.userService.getUserSportProfile(id, s.id!).subscribe({
               next: (profile) => {
                 this.originalProfiles.set(profile.id, profile.level);
-                this.sportLevels.push(this.createSportLevelGroup({
+                
+                const group = this.createSportLevelGroup({
                   profileId: profile.id,
                   sportId: s.id,
-                  level: this.roundToTwoDecimals(profile.level)
-                }));
+                  level: this.roundToTwoDecimals(profile.level),
+                });
+                this.sportLevels.push(group);
               }
             });
           });
@@ -284,5 +286,30 @@ export class AdminUserCreateComponent implements OnInit {
 
   private getOriginalLevel(profileId: number): number | null {
     return this.originalProfiles.get(profileId) ?? null;
+  }
+
+  getSelectedSportIds(): number[] {
+    return this.sportLevels.controls
+      .map(c => c.get('sportId')?.value)
+      .filter(v => v !== null && v !== undefined && v !== '');
+  }
+
+  isBackendProfile(i: number): boolean {
+    return !!this.sportLevels.at(i).get('profileId')?.value;
+  }
+
+  isSportDisabled(sportId: number, i: number): boolean {
+
+    const control = this.sportLevels.at(i);
+    const isBackend = !!control.get('profileId')?.value;
+
+    const selected = this.getSelectedSportIds();
+    const currentValue = control.get('sportId')?.value;
+
+    if (isBackend) {
+      return true;
+    }
+
+    return selected.includes(sportId) && currentValue !== sportId;
   }
 }

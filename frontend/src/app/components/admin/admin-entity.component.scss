@@ -102,9 +102,18 @@ mat-paginator {
   }
 
   .mode-name, .sport-name {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 600;
     font-size: 0.75rem;
     margin: 0;
+    mat-icon {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   .mode-players {
@@ -115,28 +124,26 @@ mat-paginator {
 
 .sport-item {
 
-  
   &[data-sport="tenis"]{
-    background: #E8F5E9;
-    color: #1B5E20;
+    background: #eef2f6;
+    color: #2C3E50;
   }
 
-
   &[data-sport="padel"] {
-    background: #e3f2fd; 
+    background: #eaf1f9;
     color: #1e88e5;
   }
 
   &[data-sport="voleibol"],
-  &[data-sport="volley"] {
-    background: #e8f0fe; 
-    color: #1565c0;
+  &[data-sport="volley"] {   
+    background: #eef2f7;
+    color: #355fa8;
   }
 
   &[data-sport="futbol"],
-  &[data-sport="fútbol"] {
-    background: #fdecea;
-    color: #c62828;
+  &[data-sport="fútbol"] { 
+    background: #e8edf6;
+    color: #1e40af;;
   }
 }
 
@@ -231,3 +238,67 @@ mat-paginator {
   background: #2C3E50;
   color: #ffffff;
 }
+
+
+.levels-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 100%;
+}
+
+.level-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+
+  background: #e9eef5;
+  color: #2C3E50;
+
+  border: 1px solid rgba(44, 62, 80, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  transition: all 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: #dde6f3;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  mat-icon {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.level-item[data-sport="tenis"] {
+  background: #eef2f6;
+  color: #2C3E50;
+}
+
+.level-item[data-sport="padel"] {
+  background: #eaf1f9;
+  color: #1e88e5;
+}
+
+.level-item[data-sport="voleibol"],
+.level-item[data-sport="volley"] {
+  background: #edf2f7;
+  color: #355fa8;
+}
+
+.level-item[data-sport="futbol"],
+.level-item[data-sport="fútbol"] {
+  background: #e8edf6;
+  color: #1e40af;
+}
+

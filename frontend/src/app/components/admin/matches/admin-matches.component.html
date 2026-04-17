@@ -55,7 +55,19 @@
     <td mat-cell *matCellDef="let m">
       <ul class="sports-list">
         <li class="sport-item" [attr.data-sport]="m.sport.name?.toLowerCase()">
-          <span class="sport-name">{{ m.sport.name }}</span>
+          
+          <span class="sport-name">
+            <mat-icon>
+                @switch (m.sport.name?.toLowerCase()) {
+                  @case ('futbol') { sports_soccer }
+                  @case ('fútbol') { sports_soccer }
+                  @case ('tenis') { sports_tennis }
+                  @case ('padel') { sports_tennis }
+                  @case ('voleibol') { sports_volleyball }
+                  @case ('volley') { sports_volleyball }
+                  @default { fitness_center }
+                }
+              </mat-icon>{{ m.sport.name }}</span>
         </li>
       </ul>
     </td>

@@ -58,7 +58,8 @@ export class AdminClubCreateComponent implements OnInit {
       closingTime: ['', Validators.required],
       minPrice: ['', [Validators.required, Validators.min(0)]],
       maxPrice: ['', [Validators.required, Validators.min(0)]],
-      sports: [[], Validators.required] 
+      sports: [[], Validators.required],
+      numberOfCourts: this.fb.array([])
     });
     this.sportService.getSports().subscribe({
       next: (data) => this.sports = data,
@@ -69,6 +70,9 @@ export class AdminClubCreateComponent implements OnInit {
         this.editingId = +params['id'];
         this.loadClub(+params['id']);
       }
+    });
+    this.form.get('sports')?.valueChanges.subscribe((sportsIds: number[]) => {
+      this.updateCourtsControls(sportsIds);
     });
   };
 
@@ -91,7 +95,8 @@ export class AdminClubCreateComponent implements OnInit {
           closingTime: c.schedule.closingTime,
           minPrice: c.priceRange.minPrice,
           maxPrice: c.priceRange.maxPrice,
-          sports: sportIds
+          sports: sportIds,
+          numberOfCourts: c.numberOfCourts
         });
         this.clubService.getClubImage(id).subscribe({
           next: (blob: Blob) => {
@@ -120,11 +125,11 @@ export class AdminClubCreateComponent implements OnInit {
       address: f.address,
       web: f.web,
       sports: f.sports.map((id: number) => ({ id })),
+      numberOfCourts: f.numberOfCourts,
       schedule: {
         openingTime: f.openingTime,
         closingTime: f.closingTime
       },
-
       priceRange: {
         minPrice: f.minPrice,
         maxPrice: f.maxPrice,
@@ -214,7 +219,31 @@ export class AdminClubCreateComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  get courtsArray() {
+    return this.form.get('numberOfCourts') as any;
+  }
+
+  getSportNameByIndex(i: number): string {
+    const sportId = this.form.get('sports')?.value?.[i];
+    return this.sports.find(s => s.id === sportId)?.name ?? '';
+  }
+
+  updateCourtsControls(sportsIds: number[]) {
+    const courtsArray = this.courtsArray;
+
+    while (courtsArray.length > sportsIds.length) {
+      courtsArray.removeAt(courtsArray.length - 1);
+    }
+
+    sportsIds.forEach((_, index) => {
+      if (!courtsArray.at(index)) {
+        courtsArray.push(this.fb.control(0));
+      }
+    });
+  }
+
   cancel() {
     this.router.navigate(['/admin/clubs']);
   }
+
 }

@@ -10,6 +10,12 @@ import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UserSportProfile } from '../../../models/user-sport-profile.model';
+import { forkJoin, map, of, switchMap } from 'rxjs';
+
+type UserWithProfiles = User & {
+  profiles?: UserSportProfile[];
+};
 
 @Component({
   standalone: true,
@@ -18,7 +24,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['.././admin-entity.component.scss'],
   imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator],
 })
+
+
 export class AdminUsersComponent implements OnInit {
+  
 
   private userService = inject(UserService);
   private router = inject(Router);
@@ -27,6 +36,7 @@ export class AdminUsersComponent implements OnInit {
   totalElements = signal(0);
   pageSize = 10;
   pageIndex = 0;
+  sportProfiles: UserSportProfile[] | undefined;
 
   users: User[] = [];
   displayedColumns = ['id', 'realname', 'username','gender', 'email', 'level','description', 'actions'];
@@ -35,11 +45,32 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers(this.pageIndex, this.pageSize);
   }
 
-  loadUsers(page : number, size: number): void {
-    this.userService.getAllUsers(page,size).subscribe((data) => {
-      this.users = data.content;
-      this.pageIndex = data.number;
-      this.totalElements.set(data.totalElements);
+  loadUsers(page: number, size: number): void {
+    this.userService.getAllUsers(page, size).subscribe((data) => {
+
+      const users = data.content;
+
+      const requests = users.map(u =>
+        this.userService.getUserSports(u.id!).pipe(
+          // Para cada deporte → obtener profile
+          switchMap(sports => {
+            if (!sports.length) return of([]);
+
+            return forkJoin(
+              sports.map(s =>
+                this.userService.getUserSportProfile(u.id!, s.id!)
+              )
+            );
+          }),
+          map((profiles: any) => ({ ...u, profiles }))
+        )
+      );
+
+      forkJoin(requests).subscribe((usersWithProfiles: UserWithProfiles[]) => {
+        this.users = usersWithProfiles;
+        this.pageIndex = data.number;
+        this.totalElements.set(data.totalElements);
+      });
     });
   }
 

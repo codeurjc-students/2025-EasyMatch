@@ -68,6 +68,27 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+
+        <div formArrayName="numberOfCourts">
+
+          <div *ngFor="let control of courtsArray.controls; let i = index" class="court-item">
+
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>
+                Nº pistas para {{ getSportNameByIndex(i)}}
+              </mat-label>
+
+              <input
+                matInput
+                type="number"
+                min="0"
+                [formControlName]="i"
+              />
+            </mat-form-field>
+
+          </div>
+
+      </div>
         
         <div class="photo-row">
           <img

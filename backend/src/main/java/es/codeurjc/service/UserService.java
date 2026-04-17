@@ -60,9 +60,6 @@ public class UserService {
     private SportService sportService;
 
     @Autowired
-    private UserSportProfileService userSportProfileService;
-
-    @Autowired
 	private PasswordEncoder passwordEncoder;
 
     @Autowired

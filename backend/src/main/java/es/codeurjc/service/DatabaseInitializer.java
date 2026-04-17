@@ -292,7 +292,6 @@ public class DatabaseInitializer {
         tennisMatch3.setTeam2Players(Set.of(pedro));
 
         maria.addSport(tennisMatch1.getSport(), 4.57f);
-        luis.addSport(tennisMatch2.getSport(), 6.03f);
 
         matchService.save(tennisMatch1);
         matchService.save(tennisMatch2);

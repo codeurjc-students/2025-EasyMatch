@@ -58,9 +58,9 @@
 
               <mat-form-field appearance="fill">
                 <mat-label>Deporte</mat-label>
-                <mat-select formControlName="sportId" [disabled]="isEditMode">
+                <mat-select formControlName="sportId">
                   @for (s of sports; track s.id) {
-                    <mat-option [value]="s.id">
+                    <mat-option [value]="s.id" [disabled]="isSportDisabled(s.id!, i)">
                       {{ s.name }}
                     </mat-option>
                   }
