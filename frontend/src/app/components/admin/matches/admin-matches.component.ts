@@ -10,13 +10,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatchService } from '../../../service/match.service';
 import { Match } from '../../../models/match.model';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   standalone: true,
   selector: 'app-admin-matches',
   templateUrl: './admin-matches.component.html',
   styleUrls: ['.././admin-entity.component.scss'],
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator, RouterModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator, RouterModule,MatTooltipModule],
 })
 export class AdminMatchesComponent implements OnInit {
 

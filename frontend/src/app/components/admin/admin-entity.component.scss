@@ -122,28 +122,19 @@ mat-paginator {
   }
 }
 
-.sport-item {
+.sport-icon-only {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #2C3E50;
+  transition: transform 0.2s ease;
+  justify-content: center;
+  align-items: center;
+  cursor: help;
 
-  &[data-sport="tenis"]{
-    background: #eef2f6;
+  &:hover {
+    transform: scale(1.15);
     color: #2C3E50;
-  }
-
-  &[data-sport="padel"] {
-    background: #eaf1f9;
-    color: #1e88e5;
-  }
-
-  &[data-sport="voleibol"],
-  &[data-sport="volley"] {   
-    background: #eef2f7;
-    color: #355fa8;
-  }
-
-  &[data-sport="futbol"],
-  &[data-sport="fútbol"] { 
-    background: #e8edf6;
-    color: #1e40af;;
   }
 }
 
@@ -280,25 +271,95 @@ mat-paginator {
   }
 }
 
-.level-item[data-sport="tenis"] {
-  background: #eef2f6;
+.message-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  color: #fff;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+  }
+
+  mat-icon {
+    font-size: 14px;
+  }
+
+  &[data-type="JOIN"] {
+    background: linear-gradient(90deg, #1e88e5, #42a5f5);
+  }
+
+  &[data-type="CHAT"] {
+    background: linear-gradient(90deg, #2C3E50, #4b6584);
+  }
+
+  &[data-type="LEAVE"] {
+    background: linear-gradient(90deg, #ef5350, #e57373);
+  }
+}
+
+.admin-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  
   color: #2C3E50;
-}
+  background-color: #e9eef5;
+  padding: 4px 10px 4px 8px;
+  border-radius: 30px;
+  
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  
+  border: 1px solid #bbdefb;
+  transition: all 0.2s ease;
+  
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #2C3E50;
+  }
 
-.level-item[data-sport="padel"] {
-  background: #eaf1f9;
-  color: #1e88e5;
-}
+  span {
+    color: #2C3E50;
+  }
 
-.level-item[data-sport="voleibol"],
-.level-item[data-sport="volley"] {
-  background: #edf2f7;
-  color: #355fa8;
+  &:hover {
+    background-color: #2C3E50;
+    
+    color: #ffffff !important;
+    border-color: #2C3E50;
+    box-shadow: 0 2px 4px rgba(30, 136, 229, 0.3);
+    
+    mat-icon {
+      color: #ffffff !important;
+    }
+    
+    span {
+      color: #ffffff !important;
+    }
+  }
+  
+  .admin-table tr:hover & {
+    background-color: #ffffff;
+    border-color: #90caf9;
+    
+    span, mat-icon {
+      color: #2C3E50 !important;
+    }
+  }
 }
-
-.level-item[data-sport="futbol"],
-.level-item[data-sport="fútbol"] {
-  background: #e8edf6;
-  color: #1e40af;
-}
-
