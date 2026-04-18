@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -240,6 +240,15 @@ export class AdminClubCreateComponent implements OnInit {
         courtsArray.push(this.fb.control(0));
       }
     });
+  }
+
+  getSportName(sportId: number): string {
+    return this.sports.find(s => s.id === sportId)?.name ?? '';
+  }
+
+  getCourtControl(index: number) {
+    const courtsArray = this.courtsArray;
+    return courtsArray.at(index) as FormControl;
   }
 
   cancel() {

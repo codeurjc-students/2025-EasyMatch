@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserSportProfile } from '../../../models/user-sport-profile.model';
 import { forkJoin, map, of, switchMap } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 type UserWithProfiles = User & {
   profiles?: UserSportProfile[];
@@ -22,7 +23,7 @@ type UserWithProfiles = User & {
   selector: 'app-admin-users',
   templateUrl: './admin-users.component.html',
   styleUrls: ['.././admin-entity.component.scss'],
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator, MatTooltipModule],
 })
 
 

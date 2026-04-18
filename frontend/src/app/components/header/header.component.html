@@ -57,6 +57,13 @@
           Mis partidos
         </button>
 
+        @if (isAdmin()) {
+          <button mat-menu-item (click)="goToAdminPanel()">
+            <mat-icon>admin_panel_settings</mat-icon>
+            Panel de administración
+          </button>
+        }
+
         <button mat-menu-item routerLink="/settings">
           <mat-icon>settings</mat-icon>
           Ajustes

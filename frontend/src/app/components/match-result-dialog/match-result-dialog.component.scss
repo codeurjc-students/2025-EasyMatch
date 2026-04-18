@@ -1,70 +1,153 @@
+:host {
+  display: block;
+}
+
 .dialog-title {
   padding: 20px 24px;
-  font-size: 22px;
-  font-weight: 600;
+
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid #eee;
+
+  font-size: 1.25rem;
+  font-weight: 600;
+
+  color: #2C3E50;
+
+  background: #ffffff;
+  border-bottom: 1px solid #eef1f4;
+
+  mat-icon {
+    color: #1e88e5;
+  }
 }
 
 .teams-card {
-  padding: 1rem;
-}
+  padding: 1.5rem;
+  background: #ffffff;
 
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.06),
+    0 2px 4px rgba(0,0,0,0.04);
+
+  border: 1px solid #e3e6ea;
+}
 
 .result-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+
   text-align: center;
-  border-radius: 10px;
-  overflow: hidden;
 
-  th{
-    color: #3f51b5;
+  th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    color: #6b7280;
+    font-weight: 600;
   }
-  th, td {
+
+  td {
+    background: #f8f9fb;
     padding: 10px;
-    border-bottom: 1px solid #5c5c5c;
-    border-left: 1px solid #5c5c5c;
-    border-right: 1px solid #5c5c5c;
+
+    border: none;
   }
 
+  tbody tr {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border-radius: 8px;
+  }
 
   .team-label {
-    font-weight: bold;
+    font-weight: 600;
     text-align: left;
     padding-left: 12px;
-    color: #3f51b5;
+
+    color: #2C3E50;
+    background: #eef2f7;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
   }
 
-  tbody tr:last-child td {
-    border-bottom: none;
+  td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
-}
-
-.team-label {
-  font-weight: 600;
-  text-align: left;
 }
 
 .score-input,
 .set-input {
   width: 60px;
+  height: 36px;
+
   text-align: center;
   font-weight: 600;
+
+  border-radius: 8px;
+  border: 1px solid #dbe2ea;
+
+  background: #ffffff;
+
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #1e88e5;
+    box-shadow: 0 0 0 2px rgba(30,136,229,0.15);
+  }
+}
+
+.score-text,
+.set-text {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #2C3E50;
+}
+
+mat-dialog-actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e3e6ea;
+
+  display: flex;
+  gap: 0.5rem;
 }
 
 .confirm-btn {
-  background: #1e88e5 !important;
+  background: linear-gradient(90deg, #1e88e5, #42a5f5) !important;
   color: white !important;
+
+  border-radius: 8px;
+  padding: 0 16px;
+
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(30,136,229,0.3);
+  }
 }
 
 .error-message {
-  margin-top: 0.5rem;
+  margin-top: 1rem;
+
   display: flex;
   align-items: center;
   gap: 6px;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  background: #fdecea;
   color: #d32f2f;
-  font-size: 0.85rem;
+
+  font-size: 0.8rem;
+
+  mat-icon {
+    font-size: 18px;
+  }
 }

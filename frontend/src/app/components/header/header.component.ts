@@ -26,6 +26,7 @@ export class HeaderComponent {
   private router = inject(Router);
   user = toSignal(this.loginService.currentUser$, { initialValue: null });
   currentLevel = this.sportState.level;
+  isAdmin = toSignal(this.loginService.isAdmin$, { initialValue: false });
 
   logout() {
     this.loginService.logout().subscribe({
@@ -59,5 +60,9 @@ export class HeaderComponent {
       default:
         return 'sports';
     }
+  }
+
+  goToAdminPanel(): void {
+    this.router.navigate(['/admin']);
   }
 }

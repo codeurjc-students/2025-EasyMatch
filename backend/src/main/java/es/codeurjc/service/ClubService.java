@@ -63,6 +63,7 @@ public class ClubService {
     public Club save(Club club) {
         return clubRepository.save(club);
     }
+    
     public void delete(long id) {
         Optional<Club> clubOptional = clubRepository.findById(id);
         if (clubOptional.isPresent()) {

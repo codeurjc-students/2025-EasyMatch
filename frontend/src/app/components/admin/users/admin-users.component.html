@@ -41,8 +41,8 @@
         <div class="levels-container">
 
           @for (p of u.profiles; track p.id) {
-            <div class="level-item" [attr.data-sport]="p.sportName.toLowerCase()">
-              <mat-icon>
+            <div class="level-item">
+              <mat-icon  [matTooltip]="p.sportName">
                 @switch (p.sportName.toLowerCase()) {
                   @case ('futbol') { sports_soccer }
                   @case ('fútbol') { sports_soccer }

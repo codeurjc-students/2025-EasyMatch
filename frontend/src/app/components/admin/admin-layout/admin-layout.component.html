@@ -17,19 +17,25 @@
       </a>
 
       <a routerLink="/admin/matches" routerLinkActive="active">
-        <mat-icon>sports_soccer</mat-icon>
+        <mat-icon>emoji_events</mat-icon>
         Partidos
       </a>
 
       <a routerLink="/admin/clubs" routerLinkActive="active">
-        <mat-icon>stadium</mat-icon>
+        <mat-icon>place</mat-icon>
         Clubes
       </a>
 
+      <a routerLink="/admin/messages" routerLinkActive="active">
+        <mat-icon>messages</mat-icon>
+        Mensajes
+      </a>
+
       <a routerLink="/admin/sports" routerLinkActive="active">
-        <mat-icon>emoji_events</mat-icon>
+        <mat-icon>fitness_center</mat-icon>
         Deportes
       </a>
+      
     </nav>
   </aside>
 
@@ -43,7 +49,7 @@
 
       <mat-menu #menu="matMenu" class="admin-menu">
         <button mat-menu-item (click)="goToProfile()">
-          <mat-icon>person</mat-icon> Perfil
+          <mat-icon>person</mat-icon> Mi perfil usuario
         </button>
         <button mat-menu-item (click)="logout()" class="logout-btn">
           <mat-icon color="warn">logout</mat-icon> Cerrar sesión
