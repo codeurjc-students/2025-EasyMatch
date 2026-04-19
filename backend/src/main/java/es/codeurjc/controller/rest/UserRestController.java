@@ -180,10 +180,6 @@ public class UserRestController {
             @PathVariable Long sportId,
             @RequestBody UserSportProfileDTO dto) {
 
-        if (!userService.getLoggedUser().getRoles().contains("ADMIN")) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-
         UserSportProfileDTO profile = userService.addSportProfileToUser(id, sportId, dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(profile);

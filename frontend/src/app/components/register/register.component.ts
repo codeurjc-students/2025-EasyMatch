@@ -62,19 +62,24 @@ export class RegisterComponent implements OnInit {
     if (this.registerForm.invalid) return;
 
     this.loading = true;
-
+    
+    const raw = this.registerForm.value;
     const userData = {
-      ...this.registerForm.value,
-      gender: this.registerForm.value.gender === 'true',
+      ...raw,
+      birthDate: this.toLocalMidnightISOString(raw.birthDate),
+      gender: raw.gender === 'true',
     };
 
     this.userService.registerUser(userData).subscribe({
-      next: () => {
+      next: (user) => {
         this.snackBar.open('✅ Cuenta creada correctamente', 'Cerrar', {
           duration: 3000,
-          panelClass: ['success-snackbar'], 
+          panelClass: ['success-snackbar'],
         });
-        setTimeout(() => this.router.navigate(['/login']), 1000);
+
+        this.router.navigate(['/register/sports'], {
+          state: { userId: user.id }
+        });
       },
       error: (err) => {
         console.error('Error en el registro:', err);
@@ -89,5 +94,14 @@ export class RegisterComponent implements OnInit {
   }
   goToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  private toLocalMidnightISOString(date: Date): string {
+    const localDate = new Date(date);
+    localDate.setHours(0, 0, 0, 0);
+
+    return new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    ).toISOString();
   }
 }

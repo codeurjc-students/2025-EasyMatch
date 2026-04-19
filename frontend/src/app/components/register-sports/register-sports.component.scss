@@ -1,0 +1,111 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+              url('/assets/register_bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3rem;
+  padding: 1rem;
+
+  .register-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 2rem;
+
+    border-radius: 1rem;
+    background-color: #11131a;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+
+    h2 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+
+      color: #f5f5f5;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .sports-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    
+    .sport-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 14px 16px;
+      min-height: 64px;
+
+      border-radius: 12px;
+      background: #141926;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+
+    .sport-row:hover {
+      background: #1f2430;
+      border-color: rgba(30,136,229,0.3);
+    }
+
+    .sport-name {
+      color: #ffffff;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+
+    mat-form-field .mat-mdc-select-value-text {
+      color: #ffffff;
+    }
+
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .primary-btn {
+      background-color: #1e88e5 !important;
+      color: #fff !important;
+      font-weight: 500;
+      padding: 0.6rem 1.5rem;
+
+      transition: background-color 0.3s ease;
+    }
+
+    .primary-btn:hover {
+      background-color: #42a5f5 !important;
+    }
+  }
+}
+
+
+::ng-deep .mat-mdc-option:hover {
+  background: rgba(30,136,229,0.2) !important;
+}
+
+
