@@ -53,7 +53,6 @@ export class AdminUsersComponent implements OnInit {
 
       const requests = users.map(u =>
         this.userService.getUserSports(u.id!).pipe(
-          // Para cada deporte → obtener profile
           switchMap(sports => {
             if (!sports.length) return of([]);
 

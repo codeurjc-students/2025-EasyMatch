@@ -73,8 +73,9 @@ export class UserComponent implements OnInit {
   sportProfile = signal<UserSportProfile | null>(null);
   sportHistory = signal<LevelHistory[]>([]);
   sports = signal<Sport[]>([]);
-
+  
   private apiUrl = environment.apiUrl;
+  private sportsLoaded = false;
   form!: FormGroup;
 
 
@@ -93,6 +94,7 @@ export class UserComponent implements OnInit {
 
       if (!user) return;
 
+      this.sportsLoaded = false;
       this.user.set(user);
       this.patchForm(user);
       this.loadUserImage(user.id);
@@ -106,9 +108,18 @@ export class UserComponent implements OnInit {
     const user = this.user();
     if (!user) return;
 
+    if (this.sportsLoaded) return;
+
+    this.sportsLoaded = true;
+
     this.userService.getUserSports(user.id).subscribe({
       next: sports => {
-        this.sports.set(sports)
+        this.sports.set(
+          sports.filter((s, i, arr) =>
+            arr.findIndex(x => x.id === s.id) === i
+          )
+        );
+
          if (sports.length > 0) {
           const savedSportId = this.sportState.sportId();
 
@@ -126,6 +137,7 @@ export class UserComponent implements OnInit {
         this.sports.set([]);
       }
     });
+    
   }
 
 
@@ -275,14 +287,15 @@ export class UserComponent implements OnInit {
   }
 
   private afterSuccessfulSave(user: User, photoOk: boolean): void {
+
+    this.loginService.setCurrentUser(user);
+
     this.user.set(user);
 
-    // 🔥 reset controlado del estado deportivo
     this.sportProfile.set(null);
     this.sportHistory.set([]);
     this.levelChartData.set([]);
 
-    // 🔥 recargar deportes (respeta sportState)
     this.loadSports();
 
     this.editing.set(false);
@@ -345,6 +358,7 @@ export class UserComponent implements OnInit {
   }
 
   selectSport(sportId: number | null): void {
+    if (this.selectedSportId() === sportId) return;
     this.selectedSportId.set(sportId);
 
     const user = this.user();

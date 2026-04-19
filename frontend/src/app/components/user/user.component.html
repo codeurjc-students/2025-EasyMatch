@@ -33,7 +33,7 @@
         <h2>{{ u.realname }}</h2>
         <p class="username">@{{ u.username }}</p>
         <p class="birthdate">
-          Nacido en {{ u.birthDate | date: 'MMMM yyyy' }}
+           Nacid{{ u.gender ? 'o' : 'a' }} en {{ u.birthDate | date: 'MMMM yyyy' }}
         </p>
 
         <div class="user-meta">
