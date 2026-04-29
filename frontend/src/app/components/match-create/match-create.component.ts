@@ -10,6 +10,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { MatchService } from '../../service/match.service';
@@ -64,7 +65,10 @@ export class MatchCreateComponent implements OnInit {
       time: ['', Validators.required],
       type: [true, Validators.required], 
       isPrivate: [false, Validators.required]
-    });
+    },{ 
+      validators: this.futureDateTimeValidator() 
+    }
+    );
     this.loadClubs();
     this.matchForm.get('club')?.valueChanges.subscribe((selectedClub: Club | null) => {
       if (selectedClub && selectedClub.sports) {
@@ -103,7 +107,20 @@ export class MatchCreateComponent implements OnInit {
 
 
   onSubmit(): void {
-    if (this.matchForm.invalid) return;
+    if (this.matchForm.invalid) {
+      if (this.matchForm.hasError('invalidFutureDate')) {
+        this.snackBar.open(
+          '❌ La fecha y hora deben ser posteriores al momento actual',
+          'Cerrar',
+          {
+            duration: 4000,
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
+
+      return;
+    }
 
     const { date, time, ...rest } = this.matchForm.value;
 
@@ -138,5 +155,27 @@ export class MatchCreateComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/matches']);
+  }
+
+  private futureDateTimeValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const date = control.get('date')?.value;
+      const time = control.get('time')?.value;
+
+      if (!date || !time) {
+        return null;
+      }
+
+      const [hours, minutes] = time.split(':').map(Number);
+
+      const selectedDateTime = new Date(date);
+      selectedDateTime.setHours(hours, minutes, 0, 0);
+
+      const now = new Date();
+
+      return selectedDateTime <= now
+        ? { invalidFutureDate: true }
+        : null;
+    };
   }
 }
