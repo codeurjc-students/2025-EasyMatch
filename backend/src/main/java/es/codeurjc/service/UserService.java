@@ -40,12 +40,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
-    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository, ChatMessageService chatMessageService) {
+    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository, ChatMessageService chatMessageService, SportService sportService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
         this.matchRepository = matchRepository;
         this.chatMessageService = chatMessageService;
+        this.sportService = sportService;
     }
     @Autowired
 	private UserRepository userRepository;
@@ -90,7 +91,7 @@ public class UserService {
 
 
 	public UserDTO getUser(long id) {
-		return toDTO(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuario no encontrado")));
+		return toDTO(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found")));
 	}
 
     public boolean exist(long id) {
@@ -176,17 +177,20 @@ public class UserService {
 	}
 
     public Resource getUserImage(long id) throws SQLException{
-		User user = userRepository.findById(id).orElseThrow();
+	User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not exist."));
 
 		if (user.getImage() != null) {
 			return new InputStreamResource(user.getImage().getBinaryStream());
 		} else {
-			throw new NoSuchElementException();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not have an image.");
 		}
     }
 
     public UserDTO createUser(UserDTO userDTO, boolean isAdmin) throws IOException {
         User user = mapper.toDomain(userDTO);
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
+        }
         user.setRoles(List.of("USER"));
         setUserImage(user,"/images/default-avatar.jpg");
         this.save(user);
@@ -237,7 +241,7 @@ public class UserService {
             userRepository.save(updatedUser);
             return toDTO(updatedUser);
  		} else {
- 			throw new NoSuchElementException("User with id " + id + " does not exist.");
+ 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not exist.");
  		}
     }
 
@@ -245,7 +249,7 @@ public class UserService {
 		User user = userRepository.findById(id).orElseThrow();
 
 		if(user.getImage() == null){
-			throw new NoSuchElementException();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not have an image.");
 		}
 
 		user.setImage(BlobProxy.generateProxy(inputStream, size));

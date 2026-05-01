@@ -23,8 +23,10 @@ import es.codeurjc.repository.UserRepository;
 @Service
 public class ChatMessageService {
 
-    public ChatMessageService(ChatMessageRepository chatMessageRepository, ChatMessageMapper chatMessageMapper) {
+    public ChatMessageService(ChatMessageRepository chatMessageRepository, ChatMessageMapper chatMessageMapper, MatchRepository matchRepository, UserRepository userRepository) {
         this.chatMessageRepository = chatMessageRepository;
+        this.matchRepository = matchRepository;
+        this.userRepository = userRepository;
         this.mapper = chatMessageMapper;
     }
     
@@ -72,11 +74,11 @@ public class ChatMessageService {
     public ChatMessageDTO getChatMessage(Long id) {
         return mapper.toDTO(
             chatMessageRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat message with id " + id + " not found"))
         );
     }
 
-     public ChatMessageDTO replacechatMessage(long id, ChatMessageDTO updatedchatMessageDTO) {
+    public ChatMessageDTO replacechatMessage(long id, ChatMessageDTO updatedchatMessageDTO) {
         if (chatMessageRepository.existsById(id)) {
             ChatMessage updatedchatMessage = mapper.toDomain(updatedchatMessageDTO);
             Match match = matchRepository.findById(updatedchatMessageDTO.matchId())
@@ -92,7 +94,7 @@ public class ChatMessageService {
             chatMessageRepository.save(updatedchatMessage);
             return mapper.toDTO(updatedchatMessage);
  		} else {
- 			throw new NoSuchElementException("chatMessage with id " + id + " does not exist.");
+ 			throw new NoSuchElementException("Message with id " + id + " does not exist.");
  		}
     }
 

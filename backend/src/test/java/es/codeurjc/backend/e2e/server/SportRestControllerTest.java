@@ -34,19 +34,27 @@ public class SportRestControllerTest {
 
     @LocalServerPort
     private int port;
+
+    private static final String BASE_URL = "http://localhost";
+    private static final String LOGIN_ENDPOINT = "/api/v1/auth/login";
+    private static final String SPORTS_ENDPOINT = "/api/v1/sports";
+    private static final String USER_EMAIL = "pedro@emeal.com";
+    private static final String USER_PASSWORD = "pedroga4";
+    private static final String ADMIN_EMAIL = "admin@emeal.com";
+    private static final String ADMIN_PASSWORD = "admin";
     
     @BeforeEach
         public void setUp() {
         RestAssured.port = port;
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = BASE_URL;
     }
     
     @Test
     @Order(1)
-    public void testGetSports() {
+    public void getSportsShouldReturnSports() {
         given()
         .when()
-            .get("/api/v1/sports/")
+            .get(SPORTS_ENDPOINT + "/")
         .then()
             .statusCode(200)
             .body("$", not(empty()))
@@ -56,11 +64,11 @@ public class SportRestControllerTest {
 
     @Test
     @Order(2)
-    public void testGetSportById() {
+    public void getSportByIdShouldReturnSport() {
         long id = 1L;
         given()
         .when()
-            .get("/api/v1/sports/{id}", id)
+            .get(SPORTS_ENDPOINT + "/{id}", id)
         .then()
             .statusCode(200)
             .body("id", equalTo(1))
@@ -69,7 +77,7 @@ public class SportRestControllerTest {
 
     @Test
     @Order(3)
-    public void testCreateSport() {
+    public void createSportShouldSucceed() {
 
         String cookie = loginAndGetCookie("admin@emeal.com","admin");
         assertThat(cookie, notNullValue());
@@ -87,7 +95,7 @@ public class SportRestControllerTest {
             .contentType(ContentType.JSON)
             .body(newSportJson)
         .when()
-            .post("/api/v1/sports/")
+            .post(SPORTS_ENDPOINT + "/")
         .then()
             .statusCode(201)
             .body("id", notNullValue())
@@ -96,7 +104,7 @@ public class SportRestControllerTest {
 
     @Test
     @Order(4)
-    public void testReplaceSport() {
+    public void replaceSportShouldSucceed() {
 
         String cookie = loginAndGetCookie("admin@emeal.com","admin");
         assertThat(cookie, notNullValue());
@@ -117,7 +125,7 @@ public class SportRestControllerTest {
             .contentType(ContentType.JSON)
             .body(updatedSportJson)
         .when()
-            .put("/api/v1/sports/{id}", idToEdit)
+            .put(SPORTS_ENDPOINT + "/{id}", idToEdit)
         .then()
             .statusCode(200)
             .body("id", equalTo(1))
@@ -126,7 +134,7 @@ public class SportRestControllerTest {
 
     @Test
     @Order(5)
-    public void testDeleteSport() {
+    public void deleteSportShouldSucceed() {
 
         String cookie = loginAndGetCookie("admin@emeal.com","admin");
         assertThat(cookie, notNullValue());
@@ -144,7 +152,7 @@ public class SportRestControllerTest {
             .contentType(ContentType.JSON)
             .body(newSportJson)
         .when()
-            .post("/api/v1/sports/")
+            .post(SPORTS_ENDPOINT + "/")
         .then()
             .statusCode(201)
             .extract().response();
@@ -154,7 +162,7 @@ public class SportRestControllerTest {
         given()
             .cookie("AuthToken",cookie)
         .when()
-            .delete("/api/v1/sports/{createdId}", createdId)
+            .delete(SPORTS_ENDPOINT + "/{createdId}", createdId)
         .then()
             .statusCode(200)
             .body("name", equalTo("TemporalSport"));
@@ -162,7 +170,7 @@ public class SportRestControllerTest {
 
     @Test
     @Order(6)
-    public void testDeleteNonExistingSport() {
+    public void deleteNonExistingSportShouldFail() {
         long nonExistingId = 9999L;
 
         String cookie = loginAndGetCookie("admin@emeal.com","admin");
@@ -171,7 +179,7 @@ public class SportRestControllerTest {
         given()
             .cookie("AuthToken",cookie)
         .when()
-            .delete("/api/v1/sports/{id}", nonExistingId)
+            .delete(SPORTS_ENDPOINT + "/{id}", nonExistingId)
         .then()
             .statusCode(404) 
             .body("message", equalTo("Deporte no encontrado"));
@@ -190,7 +198,7 @@ public class SportRestControllerTest {
             .contentType(ContentType.JSON)
             .body(loginJson)
         .when()
-            .post("/api/v1/auth/login")
+            .post(LOGIN_ENDPOINT)
         .then()
             .extract()
             .response();

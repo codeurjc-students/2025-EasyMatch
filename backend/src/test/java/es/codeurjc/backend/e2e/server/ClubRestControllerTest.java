@@ -25,19 +25,25 @@ public class ClubRestControllerTest {
 
     @LocalServerPort
     private int port;
-    
+
+    private static final String BASE_URL = "http://localhost";
+    private static final String LOGIN_ENDPOINT = "/api/v1/auth/login";
+    private static final String CLUBS_ENDPOINT = "/api/v1/clubs";
+    private static final String ADMIN_EMAIL = "admin@emeal.com";
+    private static final String ADMIN_PASSWORD = "admin";
+
     @BeforeEach
         public void setUp() {
         RestAssured.port = port;
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = BASE_URL;
     }
 
     @Test
     @Order(1)
-    public void testGetClubs() {
+    public void getClubsShouldReturnClubs() {
         given()
         .when()
-            .get("/api/v1/clubs/")
+            .get(CLUBS_ENDPOINT + "/")
         .then().statusCode(200)
             .body("content", not(empty()))
             .body("totalElements", greaterThan(0))
@@ -46,10 +52,10 @@ public class ClubRestControllerTest {
 
     @Test
     @Order(2)
-    public void testGetFilteredCLubs(){
+    public void getFilteredClubsShouldReturnFilteredClubs(){
         given()
         .when()
-            .get("/api/v1/clubs?search=pro&city=Valencia&sport=padel")
+            .get(CLUBS_ENDPOINT + "?search=pro&city=Valencia&sport=padel")
         .then()
             .statusCode(200)
             .body("content.size()",greaterThan(0))
@@ -61,11 +67,11 @@ public class ClubRestControllerTest {
 
     @Test
     @Order(3)
-    public void testGetClubById() {
+    public void getClubByIdShouldReturnClub() {
         long id = 3L;
         given()
         .when()
-            .get("/api/v1/clubs/{id}", id)
+            .get(CLUBS_ENDPOINT + "/{id}", id)
         .then()
             .statusCode(200)
             .body("id", equalTo(Math.toIntExact(id)))
@@ -74,11 +80,11 @@ public class ClubRestControllerTest {
 
     @Test
     @Order(4)
-    public void testGetClubImage(){
+    public void getClubImageShouldReturnImage(){
         long id = 2L;
         given()
         .when()
-            .get("/api/v1/clubs/{id}/image", id)
+            .get(CLUBS_ENDPOINT + "/{id}/image", id)
         .then()
             .statusCode(200)
             .header("Content-Type", equalTo("image/jpeg"));
@@ -86,9 +92,9 @@ public class ClubRestControllerTest {
 
     @Test
     @Order(5)
-    public void testCreateClub() {
+    public void createClubShouldSucceed() {
 
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
 
         String newClubJson = """
             {
@@ -115,7 +121,7 @@ public class ClubRestControllerTest {
             .contentType(ContentType.JSON)
             .body(newClubJson)
         .when()
-            .post("/api/v1/clubs/")
+            .post(CLUBS_ENDPOINT + "/")
         .then()
             .statusCode(201)
             .body("name", equalTo("Club Selenium Test"))
@@ -126,9 +132,9 @@ public class ClubRestControllerTest {
 
     @Test
     @Order(6)
-    public void testReplaceClub() {
+    public void replaceClubShouldSucceed() {
 
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
 
         long clubIdToEdit = 1L;
 
@@ -157,7 +163,7 @@ public class ClubRestControllerTest {
             .contentType(ContentType.JSON)
             .body(updatedClubJson)
         .when()
-            .put("/api/v1/clubs/{id}", clubIdToEdit)
+            .put(CLUBS_ENDPOINT + "/{id}", clubIdToEdit)
         .then()
             .statusCode(200)
             .body("id", equalTo((int) clubIdToEdit))
@@ -168,23 +174,23 @@ public class ClubRestControllerTest {
 
     @Test
     @Order(7)
-    public void testDeleteClub() {
+    public void deleteClubShouldSucceed() {
 
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
 
         long clubIdToDelete = 5L;
 
         given()
             .cookie("AuthToken", cookie)
         .when()
-            .delete("/api/v1/clubs/{id}", clubIdToDelete)
+            .delete(CLUBS_ENDPOINT + "/{id}", clubIdToDelete)
         .then()
             .statusCode(200)
             .body("id", equalTo((int) clubIdToDelete));
 
         given()
         .when()
-            .get("/api/v1/clubs/{id}", clubIdToDelete)
+            .get(CLUBS_ENDPOINT + "/{id}", clubIdToDelete)
         .then()
             .statusCode(404);
     }
@@ -202,7 +208,7 @@ public class ClubRestControllerTest {
             .contentType(ContentType.JSON)
             .body(loginJson)
         .when()
-            .post("/api/v1/auth/login")
+            .post(LOGIN_ENDPOINT)
         .then()
             .extract()
             .response();

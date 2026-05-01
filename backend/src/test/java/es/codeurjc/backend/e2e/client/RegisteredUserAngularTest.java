@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.junit.jupiter.api.Order;
@@ -255,7 +257,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         assertThat(currentUser.findElement(By.id("totalMatches")).getText(), containsString("3"));
         assertThat(currentUser.findElement(By.id("wins")).getText(), containsString("2"));
         assertThat(currentUser.findElement(By.id("winRate")).getText(), containsString("66,67%"));
-        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,17"));
+        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,19"));
 
         // Wait until chart card appears
         WebElement chartCard = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("level-chart-card")));
@@ -310,7 +312,10 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         priceInput.sendKeys("20");
 
         WebElement dateInput = driver.findElement(By.cssSelector("input[formcontrolname='date']"));
-        dateInput.sendKeys("11/15/2025");
+        LocalDate futureDate = LocalDate.now().plusDays(10);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedDate = futureDate.format(formatter);
+        dateInput.sendKeys(formattedDate);
 
         WebElement timeInput = driver.findElement(By.cssSelector("input[formcontrolname='time']"));
         timeInput.sendKeys("18:30");
@@ -388,7 +393,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
             )
         );
         scrollIntoView(viewResultBtn);
-        viewResultBtn.click();
+        clickWithJs(viewResultBtn);
 
         WebElement viewDialog = wait.until(
             ExpectedConditions.visibilityOfElementLocated(

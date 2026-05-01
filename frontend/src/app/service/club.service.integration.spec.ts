@@ -1,8 +1,9 @@
 import { TestBed } from "@angular/core/testing";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, provideHttpClient, withInterceptors } from "@angular/common/http";
 import { ClubService } from "./club.service";
 import { LoginService } from "./login.service";
 import { Club } from "../models/club.model";
+import { credentialsInterceptor } from "../interceptors/auth.interceptor";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 
@@ -18,7 +19,7 @@ describe('ClubService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
-      providers: [ClubService],
+      providers: [ClubService,provideHttpClient(withInterceptors([credentialsInterceptor]))],
     });
     service = TestBed.inject(ClubService);
     loginService = TestBed.inject(LoginService);

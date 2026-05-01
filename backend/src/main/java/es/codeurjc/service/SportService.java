@@ -99,7 +99,7 @@ public class SportService {
             sportRepository.save(updatedSport);
             return mapper.toDTO(updatedSport);
  		} else {
- 			throw new NoSuchElementException();
+ 			throw new NoSuchElementException("Deporte con id " + id + " no encontrado");
  		}
     }
 }

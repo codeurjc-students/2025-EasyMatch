@@ -31,18 +31,26 @@ public class ChatRestController {
 
     @GetMapping
 	public Page<ChatMessageDTO> getMessages(Pageable pageable) {
+        if(!userService.getLoggedUser().getRoles().contains("ADMIN") ){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo el admin puede acceder a todos los mensajes");
+        }
         return chatMessageService.getMessages(pageable);
 	}
 
     @GetMapping("/{id}")
-    public ChatMessageDTO getChatMessage(@PathVariable Long id) {
-        return chatMessageService.getChatMessage(id);
+    public ChatMessageDTO getMessage(@PathVariable Long id) {
+        ChatMessageDTO chatMessage = chatMessageService.getChatMessage(id);
+        if (chatMessage.senderUsername().equals(userService.getLoggedUser().getUsername()) || userService.getLoggedUser().getRoles().contains("ADMIN")) {
+            return chatMessage;
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para acceder a este mensaje");
+        }
     }
 
     @PutMapping("/{id}")
     public ChatMessageDTO replacechatMessage(@PathVariable long id, @RequestBody ChatMessageDTO updatedchatMessageDTO) {
         if(!userService.getLoggedUser().getRoles().contains("ADMIN") ){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo el admin puede editar un chatMessage");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo el admin puede editar un mensaje");
         }
         return chatMessageService.replacechatMessage(id, updatedchatMessageDTO);
     }
@@ -50,7 +58,7 @@ public class ChatRestController {
     @DeleteMapping("/{id}")
     public ChatMessageDTO deletechatMessage(@PathVariable long id) {
         if(!userService.getLoggedUser().getRoles().contains("ADMIN") ){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo el admin puede eliminar un chatMessage");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo el admin puede eliminar un mensaje");
         }
         ChatMessageDTO deletedMessage = chatMessageService.getChatMessage(id);
         chatMessageService.delete(id);

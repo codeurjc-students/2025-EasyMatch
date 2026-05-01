@@ -22,42 +22,66 @@ import io.restassured.response.Response;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @ActiveProfiles("test")
 public class ChatRestControllerTest {
+    
     @LocalServerPort
     private int port;
-    
+
+    private static final String BASE_URL = "http://localhost";
+    private static final String LOGIN_ENDPOINT = "/api/v1/auth/login";
+    private static final String MESSAGES_ENDPOINT = "/api/v1/messages";
+    private static final String USER_EMAIL = "pedro@emeal.com";
+    private static final String USER_PASSWORD = "pedroga4";
+    private static final String ADMIN_EMAIL = "admin@emeal.com";
+    private static final String ADMIN_PASSWORD = "admin";   
+
     @BeforeEach
         public void setUp() {
         RestAssured.port = port;
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = BASE_URL;
     }
 
     @Test
-    public void testGetChatMessages(){
+    public void getChatMessagesAsRegularUserShouldReturnForbidden(){
 
-        String cookie = loginAndGetCookie("pedro@emeal.com", "pedroga4");
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
         assertNotNull(cookie);
 
         given()
             .cookie("AuthToken", cookie)
         .when()
-            .get("/api/v1/messages/")
+            .get(MESSAGES_ENDPOINT)
+        .then()
+            .statusCode(403)
+            .body("message", equalTo("Solo el admin puede acceder a todos los mensajes")); 
+    }
+
+    @Test
+    public void getChatMessagesAsAdminShouldReturnMessages(){
+
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
+        assertNotNull(cookie);
+
+        given()
+            .cookie("AuthToken", cookie)
+        .when()
+            .get(MESSAGES_ENDPOINT)
         .then()
             .statusCode(200)
             .body("size()", greaterThanOrEqualTo(0)); 
     }
 
     @Test
-    public void testGetChatMessageById(){
+    public void getChatMessageByIdShouldReturnMessage(){
         
         long id = 1L;
 
-        String cookie = loginAndGetCookie("pedro@emeal.com", "pedroga4");
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
         assertNotNull(cookie);
 
         given()
             .cookie("AuthToken", cookie)
         .when()
-            .get("/api/v1/messages/{id}", id)
+            .get(MESSAGES_ENDPOINT + "/{id}", id)
         .then()
             .statusCode(200)
             .body("id", equalTo((int) id))
@@ -66,6 +90,38 @@ public class ChatRestControllerTest {
             .body("senderUsername", notNullValue())
             .body("matchId", notNullValue());
 
+    }
+
+    @Test
+    public void getChatMessageByIdShouldReturnNotFoundForNonExistingMessage(){
+        
+        long id = 999L;
+
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
+        assertNotNull(cookie);
+
+        given()
+            .cookie("AuthToken", cookie)
+        .when()
+            .get(MESSAGES_ENDPOINT + "/{id}", id)
+        .then()
+            .statusCode(404);
+    }
+
+    @Test
+    public void getChatMessageByIdShouldReturnForbiddenForUnauthorizedUser(){
+        
+        long id = 5L;
+
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
+        assertNotNull(cookie);
+
+        given()
+            .cookie("AuthToken", cookie)
+        .when()
+            .get(MESSAGES_ENDPOINT + "/{id}", id)
+        .then()
+            .statusCode(403);
     }
 
     private String loginAndGetCookie(String email, String password) {
@@ -81,7 +137,7 @@ public class ChatRestControllerTest {
             .contentType(ContentType.JSON)
             .body(loginJson)
         .when()
-            .post("/api/v1/auth/login")
+            .post(LOGIN_ENDPOINT)
         .then()
             .extract()
             .response();

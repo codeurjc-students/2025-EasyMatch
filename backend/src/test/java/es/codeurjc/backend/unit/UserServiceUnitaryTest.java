@@ -6,13 +6,14 @@ import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,16 +21,21 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
+import es.codeurjc.dto.UserSportProfileDTO;
+import es.codeurjc.model.ScoringType;
+import es.codeurjc.model.Sport;
 import es.codeurjc.model.User;
 import es.codeurjc.repository.UserRepository;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.service.ChatMessageService;
+import es.codeurjc.service.SportService;
 import es.codeurjc.service.UserService;
 
 @Tag("unit")
@@ -39,28 +45,105 @@ public class UserServiceUnitaryTest {
     private UserRepository userRepository;
     private MatchRepository matchRepository;
     private UserService userService;
+    private SportService sportService;
     private ChatMessageService chatMessageService;
     private UserMapper mapper;
     private PasswordEncoder passwordEncoder;
+
+    private Long defaultUserId;
+    private Long defaultSportId;
+
+    private User defaultUser;
+    private User secondUser;
+    private User adminUser;
+
+    private Sport defaultSport;
     
     
     @BeforeEach
     public void setUp() {
         userRepository = mock(UserRepository.class);
         matchRepository = mock(MatchRepository.class);
+        sportService = mock(SportService.class);
         mapper = Mappers.getMapper(UserMapper.class);
         passwordEncoder = mock(PasswordEncoder.class);
-        userService = new UserService(userRepository, mapper,passwordEncoder,matchRepository,chatMessageService);     
+        userService = new UserService(userRepository, mapper,passwordEncoder,matchRepository,chatMessageService, sportService);
+        
+        //GIVEN
+        defaultUserId = 1L;
+        defaultSportId = 1L;
+
+        defaultUser = new User(
+                "Carlos López",
+                "carlos_10",
+                "carlos@example.com",
+                "password123",
+                LocalDateTime.of(1995, 3, 12, 0, 0),
+                true,
+                "Amante del fútbol y los torneos locales.",
+                "USER"
+        );
+        defaultUser.setId(defaultUserId);
+        defaultUser.setMatchesAsTeam1Player(List.of());
+        defaultUser.setMatchesAsTeam2Player(List.of());
+        defaultUser.setOrganizedMatches(List.of());
+
+        secondUser = new User(
+                "Pedro Martín",
+                "pedro_m",
+                "pedro@example.com",
+                "newuserpass",
+                LocalDateTime.of(2000, 1, 15, 0, 0),
+                true,
+                "Nuevo en la aplicación, aprendiendo.",
+                "USER"
+        );
+        secondUser.setId(2L);
+
+        adminUser = new User(
+                "Laura Gómez",
+                "laura_admin",
+                "laura@example.com",
+                "adminPass!",
+                LocalDateTime.of(1988, 7, 23, 0, 0),
+                false,
+                "Administradora de la plataforma.",
+                "ADMIN",
+                "USER"
+        );
+        adminUser.setId(3L);
+
+        defaultSport = new Sport(
+                "Fútbol",
+                List.of(),
+                ScoringType.SCORE
+        );
+        defaultSport.setId(defaultSportId);
+    }
+
+    private User createBaseUser() {
+        User user = new User(
+                "Carlos López",
+                "carlos_10",
+                "carlos@example.com",
+                "password123",
+                LocalDateTime.of(1995, 3, 12, 0, 0),
+                true,
+                "Usuario base",
+                "USER"
+        );
+        user.setId(defaultUserId);
+        user.setMatchesAsTeam1Player(List.of());
+        user.setMatchesAsTeam2Player(List.of());
+        user.setOrganizedMatches(List.of());
+        return user;
     }
 
     @Test
-    public void getUsersTest(){
+    public void getUsersShouldReturnPageOfUserDTOs(){
         //GIVEN
         PageRequest pageable = PageRequest.of(0, 10);
-        User user1 = new User("Carlos López", "carlos_10", "carlos@example.com", "password123", LocalDateTime.of(1995, 3, 12, 0, 0), true, "Amante del fútbol y los torneos locales.", "USER");
-        User user2 = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Administradora de la plataforma.", "ADMIN", "USER");
-        User user3 = new User("Pedro Martín", "pedro_m", "pedro@example.com", "newuserpass", LocalDateTime.of(2000, 1, 15, 0, 0), true, "Nuevo en la aplicación, aprendiendo.", "USER");
-        List<User> userList = List.of(user1,user2,user3);
+        List<User> userList = List.of(createBaseUser(), secondUser, adminUser);
 
 
         Page<User> userPage = new PageImpl<>(userList,pageable,userList.size());
@@ -78,25 +161,21 @@ public class UserServiceUnitaryTest {
     }
 
     @Test
-    public void getExistingUserByIdTest(){
+    public void getExistingUserByIdShouldReturnCorrectUserDTO(){
         //GIVEN
-        Random random = new Random();
-        long id = random.nextLong();
-        User user = new User("Carlos López", "carlos_10", "carlos@example.com", "password123", LocalDateTime.of(1995, 3, 12, 0, 0), true, "Amante del fútbol y los torneos locales.", "USER");
-        user.setId(id);
-        Optional<User> optionalUser = Optional.of(user);
+        Optional<User> optionalUser = Optional.of(defaultUser);
 
         //WHEN
-        when(userRepository.findById(id)).thenReturn(optionalUser);
-        UserDTO result = userService.getUser(id);
-        UserDTO expected = mapper.toDTO(user);
+        when(userRepository.findById(defaultUserId)).thenReturn(optionalUser);
+        UserDTO result = userService.getUser(defaultUserId);
+        UserDTO expected = mapper.toDTO(defaultUser);
 
         //THEN
         assertThat(result, equalTo(expected));
     }
 
     @Test
-    public void getNonExistingUserByIdTest(){
+    public void getNonExistingUserByIdShouldThrowException404(){
         //GIVEN
         Random random = new Random();
         long id = random.nextLong();
@@ -108,31 +187,27 @@ public class UserServiceUnitaryTest {
             userService.getUser(id);
         });
         //THEN
-        assertThat(ex.getReason(), equalTo("Usuario no encontrado"));
+        assertThat(ex.getReason(), equalTo("User not found"));
     }
 
     @Test
-    public void deleteExistingUserTest(){
+    public void deleteExistingUserShouldSucceed(){
         //GIVEN
-        Random random = new Random();
-        long id = Math.abs(random.nextLong());
-        User user = new User("Pedro Martín", "pedro_m", "pedro@example.com", "newuserpass", LocalDateTime.of(2000, 1, 15, 0, 0), true, "Nuevo en la aplicación, aprendiendo.", "USER");
-        user.setMatchesAsTeam1Player(List.of());
-        user.setMatchesAsTeam2Player(List.of());
-        user.setOrganizedMatches(List.of());
-        user.setId(id);
-        Optional<User> optionalUser = Optional.of(user);
+        defaultUser.setMatchesAsTeam1Player(List.of());
+        defaultUser.setMatchesAsTeam2Player(List.of());
+        defaultUser.setOrganizedMatches(List.of());
+        Optional<User> optionalUser = Optional.of(defaultUser);
 
         //WHEN
-        when(userRepository.findById(id)).thenReturn(optionalUser);
-        userService.delete(id);
+        when(userRepository.findById(defaultUserId)).thenReturn(optionalUser);
+        userService.delete(defaultUserId);
 
         //THEN
-        verify(userRepository, times(1)).deleteById(id);
+        verify(userRepository, times(1)).deleteById(defaultUserId);
     }
 
     @Test
-    public void deleteNonExistingUserTest(){
+    public void deleteNonExistingUserShouldThrowException404(){
         //GIVEN
         Random random = new Random();
         long id = random.nextLong();
@@ -149,37 +224,35 @@ public class UserServiceUnitaryTest {
     }
 
     @Test
-    public void createUserTest() throws IOException{
+    public void createUserShouldSucceed() throws IOException{
         //GIVEN 
-        User originalUser = new User("Laura Gómez", "laura_admin", "laura@example.com", "adminPass!", LocalDateTime.of(1988, 7, 23, 0, 0), false, "Creadora de la plataforma.", "USER");
-        UserDTO originalUserDTO = mapper.toDTO(originalUser);
+        UserDTO originalUserDTO = mapper.toDTO(adminUser);
         //WHEN
-        when(userRepository.save(originalUser)).thenReturn(originalUser);
+        when(userRepository.save(adminUser)).thenReturn(adminUser);
         when(passwordEncoder.encode("adminPass!")).thenReturn("encoded_pass");
         UserDTO createdUser = userService.createUser(originalUserDTO,false);
         
         //GIVEN
         assertThat(createdUser.password(), equalTo("encoded_pass"));
-        assertThat(createdUser.realname(), equalTo(originalUser.getRealname()));
+        assertThat(createdUser.realname(), equalTo(adminUser.getRealname()));
     }
 
     @Test
-    public void replaceExistingUserTest(){
+    public void replaceExistingUserShouldSucceed(){
         //GIVEN 
-        long id = 2L;
-        Optional<User> userOptional = Optional.of(new User("Jose Martinez","jose45","jose@emeal.com","joselito1", LocalDateTime.of(1978,10,8,12,0),true,""));
+        Optional<User> userOptional = Optional.of(defaultUser);
         User updatedUser = new User("Jose Lopez","jose12","jose@email.com","joseito2",LocalDateTime.now(),false, "");
-        updatedUser.setId(id);
+        updatedUser.setId(defaultUserId);
         UserDTO updatedUserDTO = mapper.toDTO(updatedUser);
 
         //WHEN
-        when(userRepository.existsById(id)).thenReturn(true);
-        when(userRepository.findById(id)).thenReturn(userOptional);
-        UserDTO replacedClubDTO = userService.replaceUser(id, updatedUserDTO);
+        when(userRepository.existsById(defaultUserId)).thenReturn(true);
+        when(userRepository.findById(defaultUserId)).thenReturn(userOptional);
+        UserDTO replacedClubDTO = userService.replaceUser(defaultUserId, updatedUserDTO);
 
         //THEN
         
-        assertThat(replacedClubDTO.id(), equalTo(id));
+        assertThat(replacedClubDTO.id(), equalTo(defaultUserId));
         assertThat(replacedClubDTO.realname(), equalTo(updatedUserDTO.realname()));
         assertThat(replacedClubDTO.username(), equalTo(updatedUserDTO.username()));
         assertThat(replacedClubDTO.email(), equalTo(updatedUserDTO.email()));
@@ -193,22 +266,100 @@ public class UserServiceUnitaryTest {
     }
 
     @Test
-    public void replaceNonExistingUserTest(){
+    public void replaceNonExistingUserShouldThrowException404(){
         //GIVEN
         long id = 8L;
         Optional<User> emptyUser = Optional.empty();
-        User updatedUser =  new User();
-        UserDTO updatedUserDTO = mapper.toDTO(updatedUser);
+        UserDTO updatedUserDTO = mapper.toDTO(new User());
 
         //WHEN
         when(userRepository.findById(id)).thenReturn(emptyUser);
 
         //THEN
-        NoSuchElementException ex = assertThrows(NoSuchElementException.class, ()->  userService.replaceUser(id, updatedUserDTO));
-        assertThat(ex.getMessage(),equalTo("User with id " + id + " does not exist."));
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, ()->  userService.replaceUser(id, updatedUserDTO));
+        assertThat(HttpStatus.NOT_FOUND, equalTo(ex.getStatusCode()));
+        assertThat(ex.getReason(), equalTo("User with id " + id + " does not exist."));
 
     }
 
+    @Test
+    public void createUserImageShouldSucceed() throws IOException {
 
+        //WHEN
+        when(userRepository.findById(defaultUserId)).thenReturn(Optional.of(defaultUser));
+        userService.createUserImage(defaultUserId, new ByteArrayInputStream(new byte[0]), 512);
 
+        //THEN
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    public void replaceUserImageShouldSucceed() throws IOException {
+        //GIVEN
+        User user = createBaseUser();
+        user.setImage(BlobProxy.generateProxy(new ByteArrayInputStream(new byte[0]), 512));
+
+        //WHEN
+        when(userRepository.findById(defaultUserId)).thenReturn(Optional.of(user));
+        userService.replaceUserImage(defaultUserId, new ByteArrayInputStream(new byte[0]), 1024);
+
+        //THEN
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    public void getUserImageNonExistingUserShouldThrowException404() {
+        //GIVEN
+        long id = 5L;
+        Optional<User> emptyUser = Optional.empty();
+
+        //WHEN
+        when(userRepository.findById(id)).thenReturn(emptyUser);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
+            userService.getUserImage(id);
+        });
+        //THEN
+        assertThat(ex.getReason(), equalTo("User with id " + id + " does not exist."));
+    }
+
+    @Test
+    public void addUserSportProfileNonExistingUserShouldThrowException404() {
+        //GIVEN
+        long id = 6L;
+        Optional<User> emptyUser = Optional.empty();
+
+        //WHEN
+        when(userRepository.findById(id)).thenReturn(emptyUser);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
+            userService.addSportProfileToUser(id, 1L, new UserSportProfileDTO(null, null, id, null));
+        });
+        //THEN
+        assertThat(ex.getReason(), equalTo("User not found"));
+    }
+
+    @Test 
+    public void addUserSportProfileNonExistingSportShouldThrowException404() {
+        //WHEN
+        when(userRepository.findById(defaultUserId)).thenReturn(Optional.of(defaultUser));
+        when(sportService.findById(defaultSportId)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> {
+            userService.addSportProfileToUser(defaultUserId, defaultSportId, new UserSportProfileDTO(1L, null, defaultUserId, null));
+        });
+
+        //THEN
+        assertThat(ex.getReason(), equalTo("Sport not found"));
+        assertThat(ex.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void addUserSportProfileShouldSucceed() {
+        //WHEN
+        when(userRepository.findById(defaultUserId)).thenReturn(Optional.of(defaultUser));
+        when(sportService.findById(defaultSportId)).thenReturn(Optional.of(defaultSport));
+        userService.addSportProfileToUser(defaultUserId, defaultSportId, new UserSportProfileDTO(1L, defaultSport.getName(), defaultUserId, null));
+
+        //THEN
+        verify(userRepository, times(1)).save(any(User.class));
+    }
 }

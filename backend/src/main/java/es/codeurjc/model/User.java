@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,7 +28,10 @@ public class User {
 
     private String realname;
     private String username;
+    
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String password;
     private LocalDateTime birthDate;
     private boolean gender; // 1 male, 0 female

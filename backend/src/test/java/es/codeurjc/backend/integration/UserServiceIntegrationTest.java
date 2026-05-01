@@ -42,56 +42,81 @@ public class UserServiceIntegrationTest {
     @Autowired
     private UserMapper mapper;
 
+    private static final Long EXISTING_USER_ID = 2L;
+    private static final Long REPLACE_USER_ID = 3L;
+    private static final Long DELETE_USER_ID = 4L;
+
+    private int getTotalUsers() {
+        return userService.findAll().size();
+    }
+
+    private User createBaseUser() {
+        User user = new User();
+        user.setRealname("New User");
+        user.setUsername("new_user");
+        user.setEmail("user@emeal.com");
+        user.setPassword("user@emeal.com");
+        user.setBirthDate(LocalDateTime.of(2002, 6, 5, 0, 0));
+        user.setGender(true);
+        return user;
+    }
+
+    private UserDTO createUpdatedUserDTO(Long id) {
+        return new UserDTO(
+                id,
+                "Jorge Sanchez",
+                "jorge67",
+                "jorge@emeal.com",
+                "jorge2",
+                LocalDateTime.of(2000, 1, 1, 0, 0),
+                true,
+                "Me gusta el deporte",
+                3.55f,
+                List.of("USER")
+        );
+    }
+
     @Test
     @Order(1)
-    public void getUsersIntegrationTest() {
-        int numUsers = userService.findAll().size();
+    public void getUsersShouldReturnPageOfUsers() {
+        int numUsers = getTotalUsers();
         Page<UserDTO> pageUsers = userService.getUsers(Pageable.ofSize(numUsers));
         assertThat(pageUsers.getTotalElements(), equalTo(Integer.toUnsignedLong(numUsers)));
     }
 
     @Test
     @Order(2)
-    public void getUserByIdIntegrationTest() {
-        long id = 2L;
-        UserDTO userDTO = userService.getUser(id);
-        assertThat(userDTO.id(), equalTo(id));
+    public void getUserByIdShouldReturnUserDTO() {
+        UserDTO userDTO = userService.getUser(EXISTING_USER_ID);
+        assertThat(userDTO.id(), equalTo(EXISTING_USER_ID));
         assertThat(userDTO.realname(), equalTo("Pedro Garcia"));
     }
+
     @Test
     @Order(3)
-    public void deleteNonExistingUserIntegrationTest() {
-        int numUsers = userService.findAll().size();
+    public void deleteNonExistingUserShouldThrowIllegalArgumentException() {
+        int numUsers = getTotalUsers();
         long id = numUsers + 1;
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {userService.delete(id);});
         assertThat(ex.getMessage(), equalTo("User with id " + id + " does not exist."));
-        
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     @Order(4)
-    public void testDeleteExistingUserIntegrationTest() {
-        int numUsers = userService.findAll().size();
-        long id = 4L;
-        userService.delete(id);
+    public void deleteExistingUserShouldRemoveUser() {
+        int numUsers = getTotalUsers();
+        userService.delete(DELETE_USER_ID);
         Collection<User> users = userService.findAll();
         assertThat(users.size(), equalTo(numUsers - 1));
-        assertFalse(userService.exist(id));
+        assertFalse(userService.exist(DELETE_USER_ID));
     }
 
     @Test
     @Order(5)
-    public void createUserIntegrationTest() throws IOException {
-        int numUsers = userService.findAll().size();
-        User newUser = new User();
-
-        newUser.setRealname("New User");
-        newUser.setUsername("new_user");
-        newUser.setEmail("user@emeal.com");
-        newUser.setPassword("user@emeal.com");
-        newUser.setBirthDate(LocalDateTime.of(2002,6,5,0,0));
-        newUser.setGender(true);
+    public void createUserShouldReturnSavedUser() throws IOException {
+        int numUsers = getTotalUsers();
+        User newUser = createBaseUser();
 
         UserDTO newUserDTO = mapper.toDTO(newUser); 
         UserDTO savedUser = userService.createUser(newUserDTO,false);
@@ -106,23 +131,9 @@ public class UserServiceIntegrationTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     @Order(6)
-    public void replaceUserIntegrationTest(){
-        Long id = 3L;
-        UserDTO updatedUserDTO = new UserDTO(
-            id,
-            "Jorge Sanchez",
-            "jorge67",
-            "jorge@emeal.com",
-            "jorge2",
-            LocalDateTime.of(2000, 1, 1, 0, 0),
-            true,
-            "Me gusta el deporte",
-            3.55f,
-            List.of("USER")
-
-        );
-        UserDTO replacedUser = userService.replaceUser(id, updatedUserDTO);
-        assertThat(replacedUser.id(), equalTo(id));
+    public void replaceUserShouldUpdateUser() {
+        UserDTO replacedUser = userService.replaceUser(REPLACE_USER_ID, createUpdatedUserDTO(REPLACE_USER_ID));
+        assertThat(replacedUser.id(), equalTo(REPLACE_USER_ID));
         assertThat(replacedUser.realname(), equalTo("Jorge Sanchez"));
         assertThat(replacedUser.username(), equalTo("jorge67"));
         assertThat(replacedUser.email(), equalTo("jorge@emeal.com"));

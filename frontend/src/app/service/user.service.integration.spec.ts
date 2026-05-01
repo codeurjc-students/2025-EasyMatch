@@ -48,7 +48,7 @@ describe('UserService', () => {
       realname: 'Juan',
       username: 'juanito24',
       password: 'juan3',
-      email: 'juan@emeal.com',
+      email: 'juan2@emeal.com',
       birthDate: new Date('1992-08-15T00:00:00'),
       gender: true,
       description: 'Soy Juan',
@@ -91,24 +91,47 @@ describe('UserService', () => {
     });
   });
 
-  it('deleteUser should delete the authenticated user', (done) => {
-    const testUserId = 2;
+  it('deleteUser should delete the authenticated user', (done: DoneFn) => {
+    const mockUser: Partial<User> = {
+      realname: 'Delete Test',
+      username: 'deleteuser123',
+      password: 'test123',
+      email: 'deleteuser123@emeal.com',
+      birthDate: new Date(),
+      gender: true,
+      description: 'User for self delete test'
+    };
 
-    loginService.login(userLoginRequest).subscribe({
-      next: () => {
-        service.deleteUser(testUserId).subscribe({
-          next: (user: User) => {
-            expect(user.id).toBe(2);
-            done();
+    service.registerUser(mockUser).subscribe({
+      next: (createdUser: User) => {
+
+        const loginRequest = {
+          username: mockUser.email!,
+          password: mockUser.password!
+        };
+
+        loginService.login(loginRequest).subscribe({
+          next: () => {
+            service.deleteUser(createdUser.id!).subscribe({
+              next: (deletedUser: User) => {
+                expect(deletedUser).toBeTruthy();
+                expect(deletedUser.id).toBe(createdUser.id);
+                done();
+              },
+              error: err => {
+                fail(`deleteUser failed: ${err.message}`);
+                done();
+              }
+            });
           },
           error: err => {
-            fail(`deleteUser failed : ${err.message}`);
+            fail(`login failed: ${err.message}`);
             done();
           }
         });
       },
       error: err => {
-        fail(`login failed : ${err.message}`);
+        fail(`registerUser failed: ${err.message}`);
         done();
       }
     });
@@ -213,7 +236,149 @@ describe('UserService', () => {
     });
   });
 
+  it('getUserMatches should return user matches', (done: DoneFn) => {
+    const userId = 2;
 
-  
+    loginService.login(userLoginRequest).subscribe({
+      next: () => {
+        service.getUserMatches(userId).subscribe({
+          next: (matches) => {
+            expect(matches).toBeTruthy();
+            expect(Array.isArray(matches)).toBeTrue();
+            done();
+          },
+          error: err => {
+            fail(`getUserMatches failed: ${err.message}`);
+            done();
+          }
+        });
+      },
+      error: err => {
+        fail(`login failed: ${err.message}`);
+        done();
+      }
+    });
+  });
+
+  it('getAllUsers should return paginated users', (done: DoneFn) => {
+    loginService.login(adminLoginRequest).subscribe({
+      next: () => {
+        service.getAllUsers(0, 10, 'id,asc').subscribe({
+          next: (response) => {
+            expect(response).toBeTruthy();
+            expect(response.content).toBeTruthy();
+            expect(Array.isArray(response.content)).toBeTrue();
+            expect(response.totalElements).toBeGreaterThanOrEqual(0);
+            done();
+          },
+          error: err => {
+            fail(`getAllUsers failed: ${err.message}`);
+            done();
+          }
+        });
+      },
+      error: err => {
+        fail(`admin login failed: ${err.message}`);
+        done();
+      }
+    });
+  });
+
+  it('getUserById should return a user by id', (done: DoneFn) => {
+    const userId = 2;
+
+    loginService.login(adminLoginRequest).subscribe({
+      next: () => {
+        service.getUserById(userId).subscribe({
+          next: (user) => {
+            expect(user).toBeTruthy();
+            expect(user.id).toBe(userId);
+            done();
+          },
+          error: err => {
+            fail(`getUserById failed: ${err.message}`);
+            done();
+          }
+        });
+      },
+      error: err => {
+        fail(`admin login failed: ${err.message}`);
+        done();
+      }
+    });
+  });
+
+  it('getUserSports should return user sports', (done: DoneFn) => {
+    const userId = 2;
+
+    loginService.login(userLoginRequest).subscribe({
+      next: () => {
+        service.getUserSports(userId).subscribe({
+          next: (sports) => {
+            expect(sports).toBeTruthy();
+            expect(Array.isArray(sports)).toBeTrue();
+            done();
+          },
+          error: err => {
+            fail(`getUserSports failed: ${err.message}`);
+            done();
+          }
+        });
+      },
+      error: err => {
+        fail(`login failed: ${err.message}`);
+        done();
+      }
+    });
+  });
+
+  it('getUserSportProfile should return sport profile', (done: DoneFn) => {
+    const userId = 2;
+    const sportId = 1;
+
+    loginService.login(userLoginRequest).subscribe({
+      next: () => {
+        service.getUserSportProfile(userId, sportId).subscribe({
+          next: (profile) => {
+            expect(profile).toBeTruthy();
+            done();
+          },
+          error: err => {
+            fail(`getUserSportProfile failed: ${err.message}`);
+            done();
+          }
+        });
+      },
+      error: err => {
+        fail(`login failed: ${err.message}`);
+        done();
+      }
+    });
+  });
+
+  it('getUserSportHistory should return sport level history', (done: DoneFn) => {
+    const userId = 2;
+    const sportId = 1;
+
+    loginService.login(userLoginRequest).subscribe({
+      next: () => {
+        service.getUserSportHistory(userId, sportId).subscribe({
+          next: (history) => {
+            expect(history).toBeTruthy();
+            expect(Array.isArray(history)).toBeTrue();
+            done();
+          },
+          error: err => {
+            fail(`getUserSportHistory failed: ${err.message}`);
+            done();
+          }
+        });
+      },
+      error: err => {
+        fail(`login failed: ${err.message}`);
+        done();
+      }
+    });
+  });
 
 });

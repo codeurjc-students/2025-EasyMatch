@@ -27,19 +27,28 @@ public class MatchRestControllerTest {
     
     @LocalServerPort
     private int port;
+
+    private static final String BASE_URL = "http://localhost";
+    private static final String LOGIN_ENDPOINT = "/api/v1/auth/login";
+    private static final String LOGOUT_ENDPOINT = "/api/v1/auth/logout";
+    private static final String MATCHES_ENDPOINT = "/api/v1/matches";
+    private static final String USER_EMAIL = "pedro@emeal.com";
+    private static final String USER_PASSWORD = "pedroga4";
+    private static final String ADMIN_EMAIL = "admin@emeal.com";
+    private static final String ADMIN_PASSWORD = "admin";
     
     @BeforeEach
         public void setUp() {
         RestAssured.port = port;
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = BASE_URL;
     }
 
     @Test
     @Order(1)
-    public void testGetMatches() {
+    public void getMatchesShouldReturnMatches() {
         given()
         .when()
-            .get("/api/v1/matches/")
+            .get(MATCHES_ENDPOINT + "/")
         .then()
             .statusCode(200)
             .body("content", not(empty()))
@@ -49,10 +58,10 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(2)
-    public void testGetFilteredMatches(){
+    public void getFilteredMatchesShouldReturnFilteredMatches(){
         given()
         .when()
-            .get("/api/v1/matches?search=tennis&sport=tenis&timeRange=morning&includeFriendlies=true")
+            .get(MATCHES_ENDPOINT + "?search=tennis&sport=tenis&timeRange=morning&includeFriendlies=true")
         .then()
             .statusCode(200)
             .body("content.sport.name", everyItem(equalTo("Tenis")))
@@ -63,11 +72,11 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(3)
-    public void testGetMatchById() {
+    public void getMatchByIdShouldReturnMatch() {
         long id = 1L;
         given()
         .when()
-            .get("/api/v1/matches/{id}", id)
+            .get(MATCHES_ENDPOINT + "/{id}", id)
         .then()
             .statusCode(200)
             .body("id", equalTo(Math.toIntExact(id)))
@@ -76,8 +85,8 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(4)
-    public void testCreateMatch(){
-        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+    public void createMatchShouldSucceed(){
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
 
         String newMatchJson = """
             {
@@ -111,7 +120,7 @@ public class MatchRestControllerTest {
             .cookie("AuthToken", cookie)
             .body(newMatchJson)
         .when()
-            .post("/api/v1/matches")
+            .post(MATCHES_ENDPOINT)
         .then()
             .statusCode(201)
             .body("state", equalTo(true))
@@ -122,9 +131,9 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(5)
-    public void testJoinMatch(){
+    public void joinMatchShouldSucceed(){
         long id = 4L;
-        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
 
         String teamSelectedJson = """
             {
@@ -136,7 +145,7 @@ public class MatchRestControllerTest {
             .cookie("AuthToken", cookie)
             .body(teamSelectedJson)
         .when()
-            .put("/api/v1/matches/{id}/users/me", id)
+            .put(MATCHES_ENDPOINT + "/{id}/users/me", id)
         .then()
             .statusCode(200)
             .body("status",equalTo("SUCCESS"))
@@ -145,23 +154,23 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(6)
-    public void testLeaveMatch(){
+    public void leaveMatchShouldSucceed(){
         long id = 4L;
-        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
 
         given()
             .contentType(ContentType.JSON)
             .cookie("AuthToken", cookie)
         .when()
-            .delete("/api/v1/matches/{id}/users/me", id)
+            .delete(MATCHES_ENDPOINT + "/{id}/users/me", id)
         .then()
             .statusCode(200);
     }
 
     @Test
     @Order(7)
-    public void testReplaceMatch() {
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+    public void replaceMatchShouldSucceed() {
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         long matchId = 1L; 
 
         String updatedMatchJson = """
@@ -187,7 +196,7 @@ public class MatchRestControllerTest {
             .cookie("AuthToken", cookie)
             .body(updatedMatchJson)
         .when()
-            .put("/api/v1/matches/{id}", matchId)
+            .put(MATCHES_ENDPOINT + "/{id}", matchId)
         .then()
             .statusCode(200)
             .body("id", equalTo((int) matchId))
@@ -200,30 +209,30 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(8)
-    public void testDeleteMatchAsAdmin() {
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+    public void deleteMatchAsAdminShouldSucceed() {
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         long matchIdToDelete = 3L; 
 
         given()
             .cookie("AuthToken", cookie)
         .when()
-            .delete("/api/v1/matches/{id}", matchIdToDelete)
+            .delete(MATCHES_ENDPOINT + "/{id}", matchIdToDelete)
         .then()
             .statusCode(200)
             .body("id", equalTo((int) matchIdToDelete));
 
         given()
         .when()
-            .get("/api/v1/matches/{id}", matchIdToDelete)
+            .get(MATCHES_ENDPOINT + "/{id}", matchIdToDelete)
         .then()
             .statusCode(404);
     }
 
     @Test
     @Order(9)
-    public void testAddOrUpdateIncompleteMatchResult(){
+    public void updateMatchResultShouldFail(){
         long matchId = 1L;
-        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
         String resultJson = """
             {
                 "team1Name": "A",
@@ -237,7 +246,7 @@ public class MatchRestControllerTest {
             .cookie("AuthToken", cookie)
             .body(resultJson)
         .when()
-            .put("/api/v1/matches/{id}/result", matchId)
+            .put(MATCHES_ENDPOINT + "/{id}/result", matchId)
         .then()
             .statusCode(409)
             .body("message", equalTo("No se puede añadir el resultado a un partido incompleto"));
@@ -245,7 +254,7 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(10)
-    public void testAddFullMatchResult(){
+    public void updateFullMatchResultShouldSucceed(){
         long matchId = 1L;
         String cookie = loginAndGetCookie("silvia@emeal.com","silvia5");
         String teamSelectedJson = """
@@ -258,7 +267,7 @@ public class MatchRestControllerTest {
             .cookie("AuthToken", cookie)
             .body(teamSelectedJson)
         .when()
-            .put("/api/v1/matches/{id}/users/me", matchId)
+            .put(MATCHES_ENDPOINT + "/{id}/users/me", matchId)
         .then()
             .statusCode(200)
             .body("status",equalTo("SUCCESS"))
@@ -267,12 +276,12 @@ public class MatchRestControllerTest {
         given()
             .contentType(ContentType.JSON)
             .cookie("AuthToken", cookie)
-        .post("/api/v1/auth/logout")
+        .post(LOGOUT_ENDPOINT)
                 .then()
                 .body("status", equalTo("SUCCESS"))
                 .body("message", equalTo("logout successfully"));   
 
-        cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        cookie = loginAndGetCookie(USER_EMAIL,USER_PASSWORD);
         
         String resultJson = """
             {
@@ -287,22 +296,22 @@ public class MatchRestControllerTest {
             .cookie("AuthToken", cookie)
             .body(resultJson)
         .when()
-            .post("/api/v1/matches/{id}/result", matchId)
+            .post(MATCHES_ENDPOINT + "/{id}/result", matchId)
         .then()
             .statusCode(200);
     }
 
     @Test
     @Order(11)
-    public void testAddPlayerToMatchAsAdmin(){
+    public void addPlayerToMatchAsAdminShouldSucceed(){
         long matchId = 2L;
         long playerId = 6L;
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         given()
             .contentType(ContentType.JSON)
             .cookie("AuthToken", cookie)
         .when()
-            .post("/api/v1/matches/{matchId}/team1Players/{playerId}", matchId,playerId)
+            .post(MATCHES_ENDPOINT + "/{matchId}/team1Players/{playerId}", matchId,playerId)
         .then()
             .statusCode(200)
             .body("status", equalTo("SUCCESS"))
@@ -311,15 +320,15 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(12)
-    public void testRemovePlayerFromMatchAsAdmin(){
+    public void removePlayerFromMatchAsAdminShouldSucceed(){
         long matchId = 2L;
         long playerId = 6L;
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         given()
             .contentType(ContentType.JSON)
             .cookie("AuthToken", cookie)
         .when()
-            .delete("/api/v1/matches/{matchId}/team1Players/{playerId}", matchId,playerId)
+            .delete(MATCHES_ENDPOINT + "/{matchId}/team1Players/{playerId}", matchId,playerId)
         .then()
             .statusCode(200)
             .body("status", equalTo("SUCCESS"))
@@ -328,14 +337,14 @@ public class MatchRestControllerTest {
 
     @Test
     @Order(13)
-    public void testGetMatchMessages(){
+    public void getMatchMessagesShouldSucceed(){
         long matchId = 1L;
-        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        String cookie = loginAndGetCookie(USER_EMAIL,USER_PASSWORD);
         given()
             .contentType(ContentType.JSON)
             .cookie("AuthToken", cookie)
         .when()
-            .get("/api/v1/matches/{id}/messages", matchId)
+            .get(MATCHES_ENDPOINT + "/{id}/messages", matchId)
         .then()
             .statusCode(200)
             .body("size()", greaterThan(0))
@@ -358,7 +367,7 @@ public class MatchRestControllerTest {
             .contentType(ContentType.JSON)
             .body(loginJson)
         .when()
-            .post("/api/v1/auth/login")
+            .post(LOGIN_ENDPOINT)
         .then()
             .extract()
             .response();

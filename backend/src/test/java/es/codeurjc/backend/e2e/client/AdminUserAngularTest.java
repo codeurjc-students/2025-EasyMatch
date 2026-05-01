@@ -4,6 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         String[] menuItems = {
                 "/admin/users",
                 "/admin/matches",
+                "/admin/messages",
                 "/admin/clubs",
                 "/admin/sports"
         };
@@ -43,7 +46,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         List<WebElement> headers = driver.findElements(By.cssSelector("table.admin-table th"));
 
         String[] expectedColumns = {
-                "ID", "Nombre", "Username", "Sexo", "Email", "Nivel", "Descripción", "Acciones"
+                "ID", "Nombre", "Username", "Sexo", "Email", "Niveles", "Descripción", "Acciones"
         };
         for (String column : expectedColumns) {
             boolean match = headers.stream().anyMatch(h -> h.getText().trim().equals(column));
@@ -98,7 +101,21 @@ class AdminUserAngularTest extends BaseAngularUITest {
         WebElement descriptionInput = driver.findElement(By.cssSelector("textarea[formcontrolname='description']"));
         descriptionInput.sendKeys("Usuario creado por Selenium");
 
-        WebElement levelInput = driver.findElement(By.cssSelector("input[formcontrolname='level']"));
+        WebElement sportSelect = wait.until(ExpectedConditions.elementToBeClickable(
+                By.cssSelector("mat-select[formcontrolname='sportId']"))
+        );
+        scrollIntoView(sportSelect);
+        sportSelect.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+
+        // Select first available sport
+        driver.findElements(By.cssSelector("mat-option")).get(0).click();
+
+        WebElement levelInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("input[formcontrolname='level']"))
+        );
+        levelInput.clear();
         levelInput.sendKeys("6.66");
 
         WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
@@ -388,7 +405,10 @@ class AdminUserAngularTest extends BaseAngularUITest {
         driver.findElement(By.cssSelector("input[formcontrolname='price']")).sendKeys("12.50");
 
         WebElement dateInput = driver.findElement(By.cssSelector("input[formcontrolname='date']"));
-        dateInput.sendKeys("04/12/2025");
+        LocalDate futureDate = LocalDate.now().plusDays(10);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedDate = futureDate.format(formatter);
+        dateInput.sendKeys(formattedDate);
 
         WebElement timeInput = driver.findElement(By.cssSelector("input[formcontrolname='time']"));
         timeInput.sendKeys("18:30");

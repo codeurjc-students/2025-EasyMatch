@@ -38,19 +38,49 @@ public class ClubServiceUnitaryTest {
     private ClubService clubService;
     private ClubMapper mapper;
 
+    private Long defaultClubId;
+
+    private Club defaultClub;
+    private Club updatedClub;
+
+    private ClubDTO updatedClubDTO;
+
     @BeforeEach
     public void setUp() {
         clubRepository = mock(ClubRepository.class);
         mapper = Mappers.getMapper(ClubMapper.class);
         clubService = new ClubService(clubRepository, mapper);
+
+        defaultClubId = 1L;
+
+        defaultClub = new Club(
+                "Club Deportivo",
+                "Madrid",
+                "Calle Falsa 123",
+                "912345678",
+                "clubdeportivo@emeal.com",
+                "www.clubdeportivo.com"
+        );
+        defaultClub.setId(defaultClubId);
+
+        updatedClub = new Club(
+                "Club Social",
+                "Barcelona",
+                "Calle Falsa 456",
+                "987654321",
+                "clubsocial@emeal.com",
+                "www.clubsocial.com"
+        );
+        updatedClub.setId(defaultClubId);
+
+        updatedClubDTO = mapper.toDTO(updatedClub);
     }
 
     @Test
-    public void getClubsTest(){
+    public void getClubsShouldReturnCorrectPage(){
         //GIVEN
         PageRequest pageable = PageRequest.of(0, 10);
-        Club club1 = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-        List<Club> clubsList = List.of(club1);
+        List<Club> clubsList = List.of(defaultClub);
         Page<Club> clubPage = new PageImpl<>(clubsList,pageable,clubsList.size());
 
         //WHEN
@@ -64,93 +94,76 @@ public class ClubServiceUnitaryTest {
     }
 
     @Test
-    public void getClubByIdTest(){
+    public void getClubByIdShouldReturnCorrectClub(){
         //GIVEN
-        long id = 1L;
-        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-        club.setId(id);
-        Optional<Club> optionalClub = Optional.of(club);
+        Optional<Club> optionalClub = Optional.of(defaultClub);
         //WHEN
-        when(clubRepository.findById(id)).thenReturn(optionalClub);
-        ClubDTO result = clubService.getClub(id);
-        ClubDTO expected = mapper.toDTO(club);
+        when(clubRepository.findById(defaultClubId)).thenReturn(optionalClub);
+        ClubDTO result = clubService.getClub(defaultClubId);
+        ClubDTO expected = mapper.toDTO(defaultClub);
         //THEN
         assertThat(result, equalTo(expected));
     }
 
     @Test
-    public void deleteExistingClubTest(){
+    public void deleteExistingClubShouldSucceed(){
         //GIVEN
-        long id = 1L;
-        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-        club.setId(id);
-        Optional<Club> optionalClub = Optional.of(club);
+        Optional<Club> optionalClub = Optional.of(defaultClub);
 
         //WHEN
-        when(clubRepository.findById(id)).thenReturn(optionalClub);
-        clubService.delete(id);
+        when(clubRepository.findById(defaultClubId)).thenReturn(optionalClub);
+        clubService.delete(defaultClubId);
 
         //THEN
-        verify(clubRepository,times(1)).deleteById(id);
+        verify(clubRepository,times(1)).deleteById(defaultClubId);
     }
 
     @Test
-    public void deleteNonExistingClubTest(){
+    public void deleteNonExistingClubShouldThrowException(){
         //GIVEN
-        long id = 5L;
         Optional<Club> emptyClub = Optional.empty();
 
         //WHEN
-        when(clubRepository.findById(id)).thenReturn(emptyClub);
+        when(clubRepository.findById(defaultClubId + 1)).thenReturn(emptyClub);
 
         //THEN
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, ()-> clubService.delete(id));
-        assertThat(ex.getMessage(),equalTo("Club with id " + id + " does not exist."));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, ()-> clubService.delete(defaultClubId + 1));
+        assertThat(ex.getMessage(),equalTo("Club with id " + (defaultClubId + 1) + " does not exist."));
 
     }
 
     @Test
-    public void saveClubTest(){
-        //GIVEN
-        Club club = new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com");
-
+    public void saveClubShouldSucceed(){
         //WHEN
-        when(clubRepository.save(club)).thenReturn(club);
-        Club savedClub = clubService.save(club);
+        when(clubRepository.save(defaultClub)).thenReturn(defaultClub);
+        Club savedClub = clubService.save(defaultClub);
 
         //THEN
-        assertThat(savedClub, equalTo(club));
+        assertThat(savedClub, equalTo(defaultClub));
     }
     @Test
-    public void replaceNonExistingClubTest(){
+    public void replaceNonExistingClubShouldThrowException(){
         //GIVEN
-        long id = 9L;
         Optional<Club> emptyClub = Optional.empty();
-        Club updatedClub =  new Club();
-        ClubDTO updatedClubDTO = mapper.toDTO(updatedClub);
 
         //WHEN
-        when(clubRepository.findById(id)).thenReturn(emptyClub);
+        when(clubRepository.findById(defaultClubId + 1)).thenReturn(emptyClub);
 
         //THEN
-        NoSuchElementException ex = assertThrows(NoSuchElementException.class, ()->  clubService.replaceClub(id, updatedClubDTO));
-        assertThat(ex.getMessage(),equalTo("Club with id " + id + " does not exist."));
+        NoSuchElementException ex = assertThrows(NoSuchElementException.class, ()->  clubService.replaceClub(defaultClubId + 1, updatedClubDTO));
+        assertThat(ex.getMessage(),equalTo("Club with id " + (defaultClubId + 1) + " does not exist."));
 
     }
 
     @Test
-    public void replaceExistingClubTest(){
+    public void replaceExistingClubShouldSucceed(){
         //GIVEN
-        long id = 1L;
-        Optional<Club> clubOptional = Optional.of(new Club("Club Deportivo","Madrid","Calle Falsa 123","912345678","clubdeportivo@emeal.com","www.clubdeportivo.com"));
-        Club updatedClub = new Club("Club Social","Barcelona","Calle Falsa 456","987654321","clubsocial@emeal.com","www.clubsocial.com");
-        updatedClub.setId(id);
-        ClubDTO updatedClubDTO = mapper.toDTO(updatedClub);
+        Optional<Club> clubOptional = Optional.of(defaultClub);
 
         //WHEN
-        when(clubRepository.existsById(id)).thenReturn(true);
-        when(clubRepository.findById(id)).thenReturn(clubOptional);
-        ClubDTO replacedClubDTO = clubService.replaceClub(id, updatedClubDTO);
+        when(clubRepository.existsById(defaultClubId)).thenReturn(true);
+        when(clubRepository.findById(defaultClubId)).thenReturn(clubOptional);
+        ClubDTO replacedClubDTO = clubService.replaceClub(defaultClubId, updatedClubDTO);
 
         //THEN
         assertThat(updatedClubDTO, equalTo(replacedClubDTO));
