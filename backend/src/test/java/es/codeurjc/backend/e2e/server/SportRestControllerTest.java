@@ -38,8 +38,6 @@ public class SportRestControllerTest {
     private static final String BASE_URL = "http://localhost";
     private static final String LOGIN_ENDPOINT = "/api/v1/auth/login";
     private static final String SPORTS_ENDPOINT = "/api/v1/sports";
-    private static final String USER_EMAIL = "pedro@emeal.com";
-    private static final String USER_PASSWORD = "pedroga4";
     private static final String ADMIN_EMAIL = "admin@emeal.com";
     private static final String ADMIN_PASSWORD = "admin";
     
@@ -79,7 +77,7 @@ public class SportRestControllerTest {
     @Order(3)
     public void createSportShouldSucceed() {
 
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         assertThat(cookie, notNullValue());
 
         String newSportJson = """
@@ -106,7 +104,7 @@ public class SportRestControllerTest {
     @Order(4)
     public void replaceSportShouldSucceed() {
 
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         assertThat(cookie, notNullValue());
 
         long idToEdit = 1L;
@@ -136,7 +134,7 @@ public class SportRestControllerTest {
     @Order(5)
     public void deleteSportShouldSucceed() {
 
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         assertThat(cookie, notNullValue());
 
         String newSportJson = """
@@ -173,7 +171,7 @@ public class SportRestControllerTest {
     public void deleteNonExistingSportShouldFail() {
         long nonExistingId = 9999L;
 
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         assertThat(cookie, notNullValue());
 
         given()

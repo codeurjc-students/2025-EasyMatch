@@ -186,7 +186,7 @@ public class UserRestControllerTest {
 
     @Test
     @Order(7)
-    public void replaceUserAsRegularUserShouldSucceed(){
+    public void replaceUserAsRegularUserWithEmailAlreadyRegisteredShouldReturn409(){
 
         String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
         assertThat(cookie, notNullValue());
@@ -209,14 +209,44 @@ public class UserRestControllerTest {
         .when()
                 .put(USERS_ENDPOINT + "/{id}", userId)
         .then()
+                .statusCode(409)
+                .body("message", equalTo("El email ya está registrado"));
+    }
+
+    @Test
+    @Order(8)
+    public void replaceUserAsRegularUserWithDifferentEmailShouldSucceed(){
+
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
+        assertThat(cookie, notNullValue());
+        long userId = 2L; 
+        String replaceJson = """
+            {
+                "realname": "Usuario Reemplazado",
+                "username": "userReplaced",
+                "email": "usuario@emeal.com",
+                "password": "newPass123",
+                "birthDate": "1999-09-09T00:00:00Z",
+                "gender": false,
+                "description": "Usuario modificado con PUT"
+            }
+        """;
+        given()
+                .contentType(ContentType.JSON)
+                .cookie("AuthToken", cookie)
+                .body(replaceJson)
+        .when()
+                .put(USERS_ENDPOINT + "/{id}", userId)
+        .then()
                 .statusCode(200)
                 .body("id", equalTo((int) userId))
                 .body("realname", equalTo("Usuario Reemplazado"))
                 .body("username", equalTo("userReplaced"))
-                .body("email", equalTo("replaced@emeal.com"));
+                .body("email", equalTo("usuario@emeal.com"));
     }
 
     @Test
+    @Order(9)
     public void getUserMessagesShouldReturnMessages(){
         long userId = 2L; 
         String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);

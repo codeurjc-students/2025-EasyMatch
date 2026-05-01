@@ -227,6 +227,9 @@ public class UserService {
         if (userRepository.existsById(id)) {
 			User user = userRepository.findById(id).orElseThrow();
             User updatedUser = mapper.toDomain(updatedUserDTO);
+            if (userRepository.existsByEmail(updatedUser.getEmail()) && !user.getEmail().equals(updatedUser.getEmail())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
+            }
             updatedUser.setId(id);
             updatedUser.setImage(user.getImage());
             if(!updatedUser.getPassword().isEmpty() && !updatedUser.getPassword().equals(user.getPassword())){
