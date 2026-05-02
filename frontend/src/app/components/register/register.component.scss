@@ -127,6 +127,20 @@
   }
 }
 
+.birthdate-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+
+  .mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+}
 
 ::ng-deep .mat-mdc-radio-button .mdc-label {
   color: #cccccc !important;

@@ -33,8 +33,36 @@
   </ng-container>
 
   <ng-container matColumnDef="level">
-    <th mat-header-cell *matHeaderCellDef>Nivel</th>
-    <td mat-cell *matCellDef="let u">{{ u.level | number: '1.2-2'}}</td>
+    <th mat-header-cell *matHeaderCellDef>Niveles</th>
+
+    <td mat-cell *matCellDef="let u">
+
+      @if (u.profiles?.length) {
+        <div class="levels-container">
+
+          @for (p of u.profiles; track p.id) {
+            <div class="level-item">
+              <mat-icon  [matTooltip]="p.sportName">
+                @switch (p.sportName.toLowerCase()) {
+                  @case ('futbol') { sports_soccer }
+                  @case ('fútbol') { sports_soccer }
+                  @case ('tenis') { sports_tennis }
+                  @case ('padel') { sports_tennis }
+                  @case ('voleibol') { sports_volleyball }
+                  @case ('volley') { sports_volleyball }
+                  @default { fitness_center }
+                }
+              </mat-icon>
+              {{ p.level | number: '1.1-2' }}
+            </div>
+          }
+
+        </div>
+      } @else {
+        <span>-</span>
+      }
+
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="description">

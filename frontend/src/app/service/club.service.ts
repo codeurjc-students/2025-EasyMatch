@@ -52,6 +52,7 @@ export class ClubService {
   createClub(payload: Partial<Club>): Observable<Club> {
       return this.http.post<Club>(`${this.apiUrl}/clubs/`, payload,{ withCredentials : true });
   }
+  
   updateClub(editingId: number, payload: Partial<Club>): Observable<Club> {
       return this.http.put<Club>(`${this.apiUrl}/clubs/${editingId}`, payload,{ withCredentials : true });
   }

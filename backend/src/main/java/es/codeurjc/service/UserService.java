@@ -24,23 +24,29 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import es.codeurjc.dto.ChatMessageDTO;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
+import es.codeurjc.dto.SportDTO;
+import es.codeurjc.dto.SportMapper;
 import es.codeurjc.dto.UserDTO;
 import es.codeurjc.dto.UserMapper;
+import es.codeurjc.dto.UserSportProfileDTO;
+import es.codeurjc.dto.UserSportProfileMapper;
 import es.codeurjc.model.Match;
-import es.codeurjc.model.PlayerStats;
+import es.codeurjc.model.Sport;
 import es.codeurjc.model.User;
+import es.codeurjc.model.UserSportProfile;
 import es.codeurjc.repository.MatchRepository;
 import es.codeurjc.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
-    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository, ChatMessageService chatMessageService) {
+    public UserService(UserRepository userRepository, UserMapper mapper, PasswordEncoder passwordEncoder, MatchRepository matchRepository, ChatMessageService chatMessageService, SportService sportService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
         this.matchRepository = matchRepository;
         this.chatMessageService = chatMessageService;
+        this.sportService = sportService;
     }
     @Autowired
 	private UserRepository userRepository;
@@ -52,6 +58,9 @@ public class UserService {
     private ChatMessageService chatMessageService;
 
     @Autowired
+    private SportService sportService;
+
+    @Autowired
 	private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -60,7 +69,8 @@ public class UserService {
     @Autowired
     private MatchMapper matchMapper;
 
-    
+    @Autowired
+    private SportMapper sportMapper;
 
     public Optional<User> findById(long id) {
 		return userRepository.findById(id);
@@ -81,7 +91,7 @@ public class UserService {
 
 
 	public UserDTO getUser(long id) {
-		return toDTO(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuario no encontrado")));
+		return toDTO(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found")));
 	}
 
     public boolean exist(long id) {
@@ -167,21 +177,20 @@ public class UserService {
 	}
 
     public Resource getUserImage(long id) throws SQLException{
-		User user = userRepository.findById(id).orElseThrow();
+	User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not exist."));
 
 		if (user.getImage() != null) {
 			return new InputStreamResource(user.getImage().getBinaryStream());
 		} else {
-			throw new NoSuchElementException();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not have an image.");
 		}
     }
 
     public UserDTO createUser(UserDTO userDTO, boolean isAdmin) throws IOException {
         User user = mapper.toDomain(userDTO);
-        if (!isAdmin) {
-            user.setLevel(0.0f);
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
         }
-        user.setStats(new PlayerStats(0,0,0,0));
         user.setRoles(List.of("USER"));
         setUserImage(user,"/images/default-avatar.jpg");
         this.save(user);
@@ -218,6 +227,9 @@ public class UserService {
         if (userRepository.existsById(id)) {
 			User user = userRepository.findById(id).orElseThrow();
             User updatedUser = mapper.toDomain(updatedUserDTO);
+            if (userRepository.existsByEmail(updatedUser.getEmail()) && !user.getEmail().equals(updatedUser.getEmail())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
+            }
             updatedUser.setId(id);
             updatedUser.setImage(user.getImage());
             if(!updatedUser.getPassword().isEmpty() && !updatedUser.getPassword().equals(user.getPassword())){
@@ -227,12 +239,12 @@ public class UserService {
                 updatedUser.setPassword(user.getPassword());
             }
             updatedUser.setRoles(user.getRoles());
-            updatedUser.setStats(user.getStats());
-            updatedUser.setLevelHistory(user.getLevelHistory());
+            updatedUser.setSportProfiles(user.getSportProfiles());
+            updatedUser.setSentMessages(user.getSentMessages());
             userRepository.save(updatedUser);
             return toDTO(updatedUser);
  		} else {
- 			throw new NoSuchElementException("User with id " + id + " does not exist.");
+ 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not exist.");
  		}
     }
 
@@ -240,7 +252,7 @@ public class UserService {
 		User user = userRepository.findById(id).orElseThrow();
 
 		if(user.getImage() == null){
-			throw new NoSuchElementException();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not have an image.");
 		}
 
 		user.setImage(BlobProxy.generateProxy(inputStream, size));
@@ -252,5 +264,57 @@ public class UserService {
         return userRepository.findByUsername(senderUsername).orElseThrow(() -> new NoSuchElementException("User with username " + senderUsername + " not found"));
     }
 
+    public List<SportDTO> getUserSports(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User with id " + id + " not found"));
+        return user.getSportProfiles().stream()
+                .map(profile -> sportMapper.toDTO(profile.getSport()))
+                .toList();
+    }
+
+    @Transactional
+    public UserSportProfileDTO updateSportProfile(Long userId, Long sportId, UserSportProfileDTO dto) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        UserSportProfile profile = user.getSportProfiles().stream()
+                .filter(p -> p.getSport().getId() == sportId)
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+
+
+        profile.setLevel(dto.level());
+        profile.setUser(user);
+        profile.setLevelHistory(profile.getLevelHistory());
+
+        userRepository.save(user);
+        return UserSportProfileMapper.toDTO(profile);
+    }
+
+    @Transactional
+    public UserSportProfileDTO addSportProfileToUser(Long userId, Long sportId, UserSportProfileDTO dto) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        Sport sport = sportService.findById(sportId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sport not found"));
+
+        boolean exists = user.getSportProfiles().stream()
+                .anyMatch(p -> p.getSport().getId().equals(sportId));
+
+        if (exists) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Profile already exists");
+        }
+
+        UserSportProfile profile = new UserSportProfile();
+        profile.setUser(user);
+        profile.setSport(sport);
+        user.addSport(sport, dto.level());
+
+        userRepository.save(user);
+
+        return UserSportProfileMapper.toDTO(profile);
+    }
     
 }

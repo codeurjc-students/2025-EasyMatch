@@ -1,0 +1,41 @@
+<div class="admin-form-container">
+  <mat-card class="admin-form-card">
+
+    <h2>
+      <mat-icon>edit</mat-icon>
+      Editar mensaje
+    </h2>
+
+    @if (!loading()) {
+
+      <form [formGroup]="form" (ngSubmit)="save()">
+
+        <div class="info-chips">
+          <span class="chip"><mat-icon>person</mat-icon> {{ originalMessage.senderUsername }}</span>
+          <span class="chip"><mat-icon>emoji_events</mat-icon> {{ originalMessage.matchId }}</span>
+          <span class="chip"><mat-icon>calendar_today</mat-icon> {{ originalMessage.timestamp | date:'dd/MM/yyyy' }}</span>
+          <span class="chip"><mat-icon>schedule</mat-icon> {{ originalMessage.timestamp | date:'HH:mm' }}</span>
+        </div>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Mensaje</mat-label>
+          <textarea matInput formControlName="content" rows="4"></textarea>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-stroked-button type="button" class="go-back-btn" (click)="cancel()">
+            <mat-icon>arrow_back</mat-icon>
+            Volver
+          </button>
+          <button mat-flat-button color="primary" class="create-btn" type="submit" >
+            <mat-icon>check</mat-icon>
+            Guardar
+          </button>
+        </div>
+
+      </form>
+
+    }
+
+  </mat-card>
+</div>

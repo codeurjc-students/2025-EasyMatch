@@ -236,4 +236,37 @@
   
 }
 
+.sports-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.2rem;
 
+  button {
+    text-transform: none;
+  }
+}
+
+.sports-selector {
+  button {
+    position: relative;
+    overflow: hidden;
+    text-transform: none;
+  }
+
+  button::after {
+    content: '';
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    bottom: 3px;
+    height: 2px;
+    background-color: transparent;
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+  }
+
+  button.active::after {
+    background-color: #005CBB;
+  }
+}

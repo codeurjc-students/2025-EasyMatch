@@ -44,6 +44,11 @@
       <input matInput type="time" formControlName="time" placeholder="Selecciona hora" />
     </mat-form-field>
 
+    <mat-error class="date-error" *ngIf="matchForm.hasError('invalidFutureDate') && matchForm.get('time')?.touched">
+      <mat-icon>warning</mat-icon>
+      La fecha y hora deben ser posteriores a la actual
+    </mat-error>
+
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Tipo de partido</mat-label>
       <mat-select formControlName="type">

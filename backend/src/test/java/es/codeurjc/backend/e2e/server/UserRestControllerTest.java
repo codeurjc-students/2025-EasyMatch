@@ -30,18 +30,26 @@ public class UserRestControllerTest {
     @LocalServerPort
     private int port;
     
+    private static final String BASE_URL = "http://localhost";
+    private static final String LOGIN_ENDPOINT = "/api/v1/auth/login";
+    private static final String USERS_ENDPOINT = "/api/v1/users";
+    private static final String USER_EMAIL = "pedro@emeal.com";
+    private static final String USER_PASSWORD = "pedroga4";
+    private static final String ADMIN_EMAIL = "admin@emeal.com";
+    private static final String ADMIN_PASSWORD = "admin";
+
     @BeforeEach
         public void setUp() {
         RestAssured.port = port;
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = BASE_URL;
     }
 
     @Test
     @Order(1)
-    public void testGetUsers(){
+    public void getUsersShouldReturnUsers(){
         given()
         .when()
-            .get("/api/v1/users/")
+            .get(USERS_ENDPOINT + "/")
         .then()
             .statusCode(200)
             .body("content", not(empty()))
@@ -51,11 +59,11 @@ public class UserRestControllerTest {
 
     @Test
     @Order(2)
-    public void testGetUserById(){
+    public void getUserByIdShouldReturnUser(){
         long id = 3L;
         given().
         when()
-            .get("/api/v1/users/{id}", id)
+            .get(USERS_ENDPOINT + "/{id}", id)
         .then()
             .statusCode(200)
             .body("id", equalTo(Math.toIntExact(id)))
@@ -64,11 +72,11 @@ public class UserRestControllerTest {
 
     @Test
     @Order(3)
-    public void testGetUserImage(){
+    public void getUserImageShouldReturnImage(){
         long id = 1L;
         given()
         .when()
-            .get("/api/v1/users/{id}/image", id)
+            .get(USERS_ENDPOINT + "/{id}/image", id)
         .then()
             .statusCode(200)
             .header("Content-Type", equalTo("image/jpeg"));
@@ -76,14 +84,14 @@ public class UserRestControllerTest {
 
     @Test
     @Order(4)
-    public void testDeleteUser(){
+    public void deleteUserShouldSucceed(){
         long id = 4L;
         String cookie = loginAndGetCookie("juan@emeal.com", "juanma1");
 
         given()
             .cookie("AuthToken", cookie)
         .when()
-            .delete("/api/v1/users/{id}", id)
+            .delete(USERS_ENDPOINT + "/{id}", id)
         .then()
             .statusCode(200)
             .body("id", equalTo(Math.toIntExact(id)))
@@ -92,7 +100,7 @@ public class UserRestControllerTest {
 
     @Test
     @Order(5)
-    public void testCreateUser(){
+    public void createUserShouldSucceed(){
         String newUserJson = """
             {
                 "realname": "Daniel Perez",
@@ -108,20 +116,19 @@ public class UserRestControllerTest {
             .contentType(ContentType.JSON)
             .body(newUserJson)
         .when()
-            .post("/api/v1/users/")
+            .post(USERS_ENDPOINT + "/")
         .then()
             .statusCode(201)
-            .body("level",equalTo(0.0f))
             .body("realname",equalTo("Daniel Perez"))
-            .body("stats.totalMatches", equalTo(0));
+            .body("roles", hasItem("USER"));
 
     }
 
     @Test
     @Order(6)
-    public void testReplaceUserAsAdmin(){
+    public void replaceUserAsAdminShouldSucceed(){
 
-        String cookie = loginAndGetCookie("admin@emeal.com","admin");
+        String cookie = loginAndGetCookie(ADMIN_EMAIL, ADMIN_PASSWORD);
         assertThat(cookie, notNullValue());
 
         String editedUserJson = """
@@ -141,7 +148,7 @@ public class UserRestControllerTest {
                 .cookie("AuthToken", cookie)
                 .body(editedUserJson)
         .when()
-                .post("/api/v1/users/")
+                .post(USERS_ENDPOINT + "/")
         .then()
                 .statusCode(201)
                 .extract()
@@ -158,8 +165,7 @@ public class UserRestControllerTest {
                 "password": "newPass123",
                 "birthDate": "1999-09-09T00:00:00Z",
                 "gender": false,
-                "description": "Usuario modificado con PUT",
-                "level": 6.5
+                "description": "Usuario modificado con PUT"
             }
         """;
 
@@ -168,7 +174,7 @@ public class UserRestControllerTest {
                 .cookie("AuthToken", cookie)
                 .body(replaceJson)
         .when()
-                .put("/api/v1/users/{id}", editedId)
+                .put(USERS_ENDPOINT + "/{id}", editedId)
         .then()
                 .statusCode(200)
                 .body("id", equalTo((int) editedId))
@@ -180,9 +186,9 @@ public class UserRestControllerTest {
 
     @Test
     @Order(7)
-    public void testReplaceUserAsRegularUser(){
+    public void replaceUserAsRegularUserWithEmailAlreadyRegisteredShouldReturn409(){
 
-        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
         assertThat(cookie, notNullValue());
         long userId = 2L; 
         String replaceJson = """
@@ -193,8 +199,7 @@ public class UserRestControllerTest {
                 "password": "newPass123",
                 "birthDate": "1999-09-09T00:00:00Z",
                 "gender": false,
-                "description": "Usuario modificado con PUT",
-                "level": 6.5
+                "description": "Usuario modificado con PUT"
             }
         """;
         given()
@@ -202,23 +207,53 @@ public class UserRestControllerTest {
                 .cookie("AuthToken", cookie)
                 .body(replaceJson)
         .when()
-                .put("/api/v1/users/{id}", userId)
+                .put(USERS_ENDPOINT + "/{id}", userId)
+        .then()
+                .statusCode(409)
+                .body("message", equalTo("El email ya está registrado"));
+    }
+
+    @Test
+    @Order(8)
+    public void replaceUserAsRegularUserWithDifferentEmailShouldSucceed(){
+
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
+        assertThat(cookie, notNullValue());
+        long userId = 2L; 
+        String replaceJson = """
+            {
+                "realname": "Usuario Reemplazado",
+                "username": "userReplaced",
+                "email": "usuario@emeal.com",
+                "password": "newPass123",
+                "birthDate": "1999-09-09T00:00:00Z",
+                "gender": false,
+                "description": "Usuario modificado con PUT"
+            }
+        """;
+        given()
+                .contentType(ContentType.JSON)
+                .cookie("AuthToken", cookie)
+                .body(replaceJson)
+        .when()
+                .put(USERS_ENDPOINT + "/{id}", userId)
         .then()
                 .statusCode(200)
                 .body("id", equalTo((int) userId))
                 .body("realname", equalTo("Usuario Reemplazado"))
                 .body("username", equalTo("userReplaced"))
-                .body("email", equalTo("replaced@emeal.com"));
+                .body("email", equalTo("usuario@emeal.com"));
     }
 
     @Test
-    public void testGetUserMessages(){
+    @Order(9)
+    public void getUserMessagesShouldReturnMessages(){
         long userId = 2L; 
-        String cookie = loginAndGetCookie("pedro@emeal.com","pedroga4");
+        String cookie = loginAndGetCookie(USER_EMAIL, USER_PASSWORD);
         given()
             .cookie("AuthToken", cookie)
         .when()
-            .get("/api/v1/users/{id}/messages/", userId)
+            .get(USERS_ENDPOINT + "/{id}/messages/", userId)
         .then()
             .statusCode(200)
             .body("size()", greaterThan(0))
@@ -241,7 +276,7 @@ public class UserRestControllerTest {
             .contentType(ContentType.JSON)
             .body(loginJson)
         .when()
-            .post("/api/v1/auth/login")
+            .post(LOGIN_ENDPOINT)
         .then()
             .extract()
             .response();

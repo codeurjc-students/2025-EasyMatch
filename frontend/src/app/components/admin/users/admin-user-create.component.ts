@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +11,8 @@ import { UserService } from '../../../service/user.service';
 import { User } from '../../../models/user.model';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Sport } from '../../../models/sport.model';
+import { SportService } from '../../../service/sport.service';
 
 @Component({
   selector: 'app-admin-user-create',
@@ -32,15 +34,22 @@ export class AdminUserCreateComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
+  private sportService = inject(SportService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
+  private originalProfiles = new Map<number, number>();
   form!: FormGroup;
   editingId: number | null = null;
+  isEditMode = false;
   photoFile: File | null = null;
   photoPreview: string | null = null;
+  sports: Sport[] = [];
+  
 
-
+  get sportLevels(): FormArray {
+    return this.form.get('sportLevels') as FormArray;
+  }
   
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -51,30 +60,79 @@ export class AdminUserCreateComponent implements OnInit {
       birthDate: ['', Validators.required],
       gender: [true, Validators.required],
       description: [''],
-      level: ['', [Validators.required, Validators.min(0), Validators.max(7)]],
+      sportLevels: this.fb.array([])
     });
+
+    this.sportService.getSports().subscribe({
+      next: (sports) => this.sports = sports
+    });
+
     this.route.queryParams.subscribe(params => {
       if (params['id']) {
         this.editingId = +params['id'];
-        this.loadUser(+params['id']);
+        this.isEditMode = true;
+        this.loadUser(this.editingId);
+      } else {
+        this.addSportLevel();
       }
     });
   };
 
-  
-  loadUser(id: number) {
-  this.userService.getUserById(id).subscribe({
-    next: (u: User) => {
-      this.form.patchValue({
-        realname: u.realname,
-        username: u.username,
-        email: u.email,
-        birthDate: u.birthDate,
-        gender: u.gender,
-        level: this.roundToTwoDecimals(u.level),
-        description: u.description,
-      });
+  private createSportLevelGroup(data?: any): FormGroup {
+    return this.fb.group({
+      profileId: [data?.profileId ?? null],
+      sportId: [data?.sportId ?? '', Validators.required],
+      level: [
+        data?.level ?? '',
+        [Validators.required, Validators.min(0), Validators.max(7)]
+      ]
+    });
+  }
 
+  addSportLevel(): void {
+    this.sportLevels.push(this.createSportLevelGroup());
+  }
+
+  
+  removeSportLevel(index: number): void {
+    if (this.isEditMode) return;
+    this.sportLevels.removeAt(index);
+  }
+
+  loadUser(id: number) {
+    this.userService.getUserById(id).subscribe({
+      next: (u: User) => {
+        this.form.patchValue({
+          realname: u.realname,
+          username: u.username,
+          email: u.email,
+          birthDate: u.birthDate,
+          gender: u.gender,
+          description: u.description,
+        });
+      
+      this.userService.getUserSports(id).subscribe({
+        next: (sports) => {
+          this.sportLevels.clear();
+
+          sports.forEach(s => {
+            this.userService.getUserSportProfile(id, s.id!).subscribe({
+              next: (profile) => {
+                this.originalProfiles.set(profile.id, profile.level);
+                
+                const group = this.createSportLevelGroup({
+                  profileId: profile.id,
+                  sportId: s.id,
+                  level: this.roundToTwoDecimals(profile.level),
+                });
+                this.sportLevels.push(group);
+              }
+            });
+          });
+
+          if (!sports.length) this.addSportLevel();
+        }
+      });
       
       this.userService.getUserImage(id).subscribe({
         next: (blob: Blob) => {
@@ -98,13 +156,13 @@ export class AdminUserCreateComponent implements OnInit {
 
     const payload = {
       ...raw,
-      level: this.roundToTwoDecimals(raw.level),
       birthDate: this.toLocalMidnightISOString(raw.birthDate)
     };
 
     if (this.editingId) {
       this.userService.updateUser(this.editingId, payload).subscribe({
         next: (user : User) => {
+          this.syncSportProfiles(user.id); 
           if (this.photoFile) {
             this.userService.replaceUserImage(user.id, this.photoFile).subscribe({
               next: () => {
@@ -130,7 +188,8 @@ export class AdminUserCreateComponent implements OnInit {
 
     } else {
       this.userService.registerUser(payload).subscribe({
-        next: (created: any) => {
+        next: (created: User) => {
+          this.syncSportProfiles(created.id); 
           const newId = created?.id;
           if (this.photoFile && newId) {
             this.userService.replaceUserImage(newId, this.photoFile).subscribe({
@@ -172,6 +231,30 @@ export class AdminUserCreateComponent implements OnInit {
       this.router.navigate(['/admin/users']);
     }
   }
+
+  private syncSportProfiles(userId: number): void {
+    const profiles = this.form.getRawValue().sportLevels;
+
+    profiles.forEach((p: any) => {
+
+      if (this.isEditMode && p.profileId && p.level === this.getOriginalLevel(p.profileId)) {
+        return;
+      }
+
+      const payload = {
+        level: this.roundToTwoDecimals(p.level)
+      };
+
+      const request$ = p.profileId
+        ? this.userService.updateSportProfile(userId, p.sportId, payload)
+        : this.userService.addSportToUser(userId, p.sportId, payload);
+
+      request$.subscribe({
+        next: (res) => console.log('PROFILE OK', res),
+        error: (err) => console.error('PROFILE ERROR', err)
+      });
+    });
+  }
   
   onPhotoSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
@@ -199,5 +282,34 @@ export class AdminUserCreateComponent implements OnInit {
 
   private roundToTwoDecimals(value: number): number {
     return Math.round(value * 100) / 100;
+  }
+
+  private getOriginalLevel(profileId: number): number | null {
+    return this.originalProfiles.get(profileId) ?? null;
+  }
+
+  getSelectedSportIds(): number[] {
+    return this.sportLevels.controls
+      .map(c => c.get('sportId')?.value)
+      .filter(v => v !== null && v !== undefined && v !== '');
+  }
+
+  isBackendProfile(i: number): boolean {
+    return !!this.sportLevels.at(i).get('profileId')?.value;
+  }
+
+  isSportDisabled(sportId: number, i: number): boolean {
+
+    const control = this.sportLevels.at(i);
+    const isBackend = !!control.get('profileId')?.value;
+
+    const selected = this.getSelectedSportIds();
+    const currentValue = control.get('sportId')?.value;
+
+    if (isBackend) {
+      return true;
+    }
+
+    return selected.includes(sportId) && currentValue !== sportId;
   }
 }

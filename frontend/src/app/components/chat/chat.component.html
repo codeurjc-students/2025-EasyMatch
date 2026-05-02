@@ -1,11 +1,18 @@
 <app-header></app-header>
 
 <mat-card>
+  
+  <div class="chat-context">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
 
-  <h2><mat-icon>message</mat-icon>Chat del partido #{{ matchId() }}</h2>
+    <span class="breadcrumb">
+      Chats / <strong>#{{ matchId() }}</strong>
+    </span>
+  </div>
 
   <div class="messages">
-
     @for (msg of messages(); track $index) {
 
       @if (msg.message_side === 'system') {
@@ -18,7 +25,13 @@
         </div>
       }
 
-      @if (msg.message_side !== 'system') {
+      @else if (msg.type === 'DATE_SEPARATOR') {
+        <div class="date-separator">
+          {{ msg.label }}
+        </div>
+      }
+
+      @else {
         <div
           class="message"
           [class.sender]="msg.message_side === 'sender'"

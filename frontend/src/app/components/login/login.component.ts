@@ -49,7 +49,7 @@ export class LoginComponent {
   hide = signal(true);
   loading = signal(false);
   errorMessage = signal<string | null>(null);
-
+  
 
   togglePasswordVisibility() {
     this.hide.set(!this.hide());
@@ -78,7 +78,6 @@ export class LoginComponent {
     const loginRequest = this.getLoginRequest();
 
     this.loginService.login(loginRequest).subscribe({
-
       next: () => {
         this.loginService.currentUser$.subscribe((user: User | null) => {
 
@@ -102,12 +101,12 @@ export class LoginComponent {
         if (err.status === 401) {
           this.errorMessage.set('Credenciales inválidas');
         } else {
-          this.errorMessage.set('Error inesperado. Inténtalo más tarde.');
+          this.errorMessage.set(err?.error?.message || 'Error inesperado');
         }
 
         this.errorService.setError(
           err.status ?? 500,
-          err.message ?? 'Error desconocido'
+          err?.error?.message ?? err?.error ?? 'Error desconocido'
         );
 
       }

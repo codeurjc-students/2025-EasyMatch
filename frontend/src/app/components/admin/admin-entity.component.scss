@@ -83,12 +83,12 @@ mat-paginator {
 }
 
 .mode-item, .sport-item {
-  background: #e9eef5;      // azul gris muy suave (más acorde a tu web)
-  color: #2C3E50;           // azul oscuro corporativo
-  border-radius: 6px;       // ligeramente menos redondeado
-  padding: 4px 8px;         // menos espacio
-  font-size: 0.75rem;       // texto más pequeño
-  display: inline-flex;     // más compacto que flex column
+  background: #e9eef5;
+  color: #2C3E50;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
 
@@ -102,9 +102,18 @@ mat-paginator {
   }
 
   .mode-name, .sport-name {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 600;
     font-size: 0.75rem;
     margin: 0;
+    mat-icon {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   .mode-players {
@@ -113,30 +122,19 @@ mat-paginator {
   }
 }
 
-.sport-item {
+.sport-icon-only {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #2C3E50;
+  transition: transform 0.2s ease;
+  justify-content: center;
+  align-items: center;
+  cursor: help;
 
-  
-  &[data-sport="tenis"]{
-    background: #E8F5E9;
-    color: #1B5E20;
-  }
-
-
-  &[data-sport="padel"] {
-    background: #e3f2fd; 
-    color: #1e88e5;
-  }
-
-  &[data-sport="voleibol"],
-  &[data-sport="volley"] {
-    background: #e8f0fe; 
-    color: #1565c0;
-  }
-
-  &[data-sport="futbol"],
-  &[data-sport="fútbol"] {
-    background: #fdecea;
-    color: #c62828;
+  &:hover {
+    transform: scale(1.15);
+    color: #2C3E50;
   }
 }
 
@@ -230,4 +228,138 @@ mat-paginator {
 .admin-header button:hover {
   background: #2C3E50;
   color: #ffffff;
+}
+
+
+.levels-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 100%;
+}
+
+.level-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+
+  background: #e9eef5;
+  color: #2C3E50;
+
+  border: 1px solid rgba(44, 62, 80, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  transition: all 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: #dde6f3;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  mat-icon {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.message-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  color: #fff;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+  }
+
+  mat-icon {
+    font-size: 14px;
+  }
+
+  &[data-type="JOIN"] {
+    background: linear-gradient(90deg, #1e88e5, #42a5f5);
+  }
+
+  &[data-type="CHAT"] {
+    background: linear-gradient(90deg, #2C3E50, #4b6584);
+  }
+
+  &[data-type="LEAVE"] {
+    background: linear-gradient(90deg, #ef5350, #e57373);
+  }
+}
+
+.admin-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  
+  color: #2C3E50;
+  background-color: #e9eef5;
+  padding: 4px 10px 4px 8px;
+  border-radius: 30px;
+  
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  
+  border: 1px solid #bbdefb;
+  transition: all 0.2s ease;
+  
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #2C3E50;
+  }
+
+  span {
+    color: #2C3E50;
+  }
+
+  &:hover {
+    background-color: #2C3E50;
+    
+    color: #ffffff !important;
+    border-color: #2C3E50;
+    box-shadow: 0 2px 4px rgba(30, 136, 229, 0.3);
+    
+    mat-icon {
+      color: #ffffff !important;
+    }
+    
+    span {
+      color: #ffffff !important;
+    }
+  }
+  
+  .admin-table tr:hover & {
+    background-color: #ffffff;
+    border-color: #90caf9;
+    
+    span, mat-icon {
+      color: #2C3E50 !important;
+    }
+  }
 }

@@ -1,0 +1,46 @@
+<div class="register-container">
+  <mat-card class="register-card">
+
+    <h2>¿Qué deportes practicas?</h2>
+
+    <p class="subtitle">
+      Indica cuántas veces a la semana practicas cada deporte
+    </p>
+
+    <div class="sports-list">
+
+      @for (s of sports; track s.id; let i = $index) {
+
+        <div class="sport-row">
+
+          <span class="sport-name">{{ s.name }}</span>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Frecuencia / semana</mat-label>
+
+            <mat-select
+              [value]="sportsControls[i]?.frequency"
+              (selectionChange)="updateFrequency(i, $event.value)"
+            >
+              <mat-option [value]="0">No practico</mat-option>
+              <mat-option [value]="1">1 vez</mat-option>
+              <mat-option [value]="2">2-3 veces</mat-option>
+              <mat-option [value]="4">4-5 veces</mat-option>
+              <mat-option [value]="6">Diario</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+
+      }
+
+    </div>
+
+    <div class="actions">
+      <button mat-flat-button class="primary-btn" color="primary" (click)="save()">
+        Finalizar
+      </button>
+    </div>
+
+  </mat-card>
+</div>

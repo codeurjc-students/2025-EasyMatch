@@ -10,7 +10,6 @@ export const adminGuard: CanActivateFn = () => {
 
   return loginService.sessionReady$.pipe(
 
-    // Esperar a que restoreSession termine
     filter(ready => ready),
     take(1),
 

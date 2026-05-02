@@ -14,6 +14,7 @@ export class SportService {
   getSport(id: number) {
     return this.http.get<Sport>(`${this.apiUrl}/sports/${id}`, { withCredentials: true });
   }
+  
   getSports(): Observable<Sport[]> {
     return this.http.get<Sport[]>(`${this.apiUrl}/sports/`, { withCredentials: true });
   }

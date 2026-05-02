@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
 import { ChatService } from '../../service/chat-message.service';
-import { ChatMessage } from '../../models/chat-message.model';
+import { Location } from '@angular/common';
 import { LoginService } from '../../service/login.service';
 import { HeaderComponent } from "../header/header.component";
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -40,6 +40,7 @@ export class ChatComponent implements OnInit {
   private chatService = inject(ChatService);
   private loginService = inject(LoginService);
   private fb = inject(FormBuilder);
+  private location = inject(Location);
 
   matchId = signal<number>(Number(this.route.snapshot.paramMap.get('id')));
 
@@ -52,22 +53,36 @@ export class ChatComponent implements OnInit {
   });
 
   private formatTime(date: string): string {
-  const d = new Date(date);
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
+    const d = new Date(date);
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
 
-ngOnInit(): void {
-  const matchId = this.matchId();
+  ngOnInit(): void {
+    const matchId = this.matchId();
 
-  this.chatService.joinMatchChat(matchId);
+    this.chatService.joinMatchChat(matchId);
 
-  this.chatService.getMessages().subscribe(messages => {
-    const currentUser = this.user()?.username;
+    this.chatService.getMessages().subscribe(messages => {
+      const currentUser = this.user()?.username;
 
-      const mapped: ChatMessage[] = messages.map(msg => {
+      let lastDate: string | null = null;
+
+      const mapped: any[] = [];
+
+      messages.forEach(msg => {
+        const msgDate = this.formatDateSeparator(msg.timestamp);
+
+        if (msgDate !== lastDate) {
+          mapped.push({
+            type: 'DATE_SEPARATOR',
+            label: msgDate
+          });
+          lastDate = msgDate;
+        }
+
         const isSystem = msg.type === 'JOIN' || msg.type === 'LEAVE';
 
-        return {
+        mapped.push({
           ...msg,
           formattedTime: this.formatTime(msg.timestamp),
           message_side: isSystem
@@ -75,7 +90,7 @@ ngOnInit(): void {
             : msg.senderUsername === currentUser
               ? 'sender'
               : 'receiver'
-        };
+        });
       });
 
       this.messages.set(mapped);
@@ -97,5 +112,31 @@ ngOnInit(): void {
     });
 
     this.form.reset();
+  }
+
+
+  // Returns date label in letters (Today, yestesday,...)
+  private formatDateSeparator(date: string): string {
+    const d = new Date(date);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const isSameDay = (a: Date, b: Date) =>
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+
+    if (isSameDay(d, today)) return 'Hoy';
+    if (isSameDay(d, yesterday)) return 'Ayer';
+
+    return d.toLocaleDateString([], {
+      day: 'numeric',
+      month: 'long'
+    });
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

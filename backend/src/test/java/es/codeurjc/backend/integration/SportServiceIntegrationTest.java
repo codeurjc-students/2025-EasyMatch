@@ -42,20 +42,35 @@ public class SportServiceIntegrationTest {
     @Autowired
     private SportMapper mapper;
 
+    private static final long DEFAULT_SPORT_ID = 1L;
+    private static final long SPORT_TO_DELETE_ID = 5L;
+
+    private int getTotalSports() {
+        return sportService.findAll().size();
+    }
+
+    private Sport createBaseSport() {
+        Sport sport = new Sport();
+        sport.setName("Rugby");
+        Mode mode = new Mode("Union", 30);
+        sport.setModes(List.of(mode));
+        sport.setScoringType(ScoringType.SCORE);
+        return sport;
+    }
+
     @Test
     @Order(1)
-    public void getSportsTest(){
-        int numSports = sportService.findAll().size();
+    public void getSportsShouldReturnCollectionOfSports(){
+        int numSports = getTotalSports();
         Collection<SportDTO> sports = sportService.getSports();
         assertThat(sports.size(), equalTo(numSports));
     }
 
     @Test
     @Order(2)
-    public void getSportByIdTest(){
-        long id = 1L;
-        SportDTO sportDTO = sportService.getSport(id);
-        assertThat(sportDTO.id(), equalTo(id));
+    public void getSportByIdShouldReturnSportDTO(){
+        SportDTO sportDTO = sportService.getSport(DEFAULT_SPORT_ID);
+        assertThat(sportDTO.id(), equalTo(DEFAULT_SPORT_ID));
         assertThat(sportDTO.name(), equalTo("Tenis"));
         assertThat(sportDTO.modes(), isA(List.class));
         assertThat(sportDTO.scoringType(), equalTo(ScoringType.SETS));
@@ -63,8 +78,8 @@ public class SportServiceIntegrationTest {
 
     @Test
     @Order(3)
-    public void deleteNonExistingMatchTest(){
-        long numSports = sportService.findAll().size();
+    public void deleteNonExistingMatchShouldThrowIllegalArgumentException(){
+        long numSports = getTotalSports();
         long id = numSports + 1;
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, ()-> sportService.delete(id));
         assertThat(ex.getMessage(),equalTo("Sport with id " + id + " does not exist."));
@@ -74,18 +89,14 @@ public class SportServiceIntegrationTest {
     @Order(4)
     @Commit
     @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
-    public void createMatchTest(){
-        int numSportsBefore = sportService.findAll().size();
+    public void createMatchShouldCreateNewMatch(){
+        int numSportsBefore = getTotalSports();
 
-        Sport sport = new Sport();
-        sport.setName("Rugby");
-        Mode mode = new Mode("Union", 30);
-        sport.setModes(List.of(mode));
-        sport.setScoringType(ScoringType.SCORE);
+        Sport sport = createBaseSport();
         SportDTO sportDTO = mapper.toDTO(sport);
         SportDTO createdSport = sportService.createSport(sportDTO);
 
-        int numSportsAfter = sportService.findAll().size();
+        int numSportsAfter = getTotalSports();
         assertThat(numSportsAfter, equalTo(numSportsBefore + 1));
         assertThat(sportService.exist(createdSport.id()), equalTo(true));
     }
@@ -94,12 +105,11 @@ public class SportServiceIntegrationTest {
     @Test
     @Order(5)
     @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
-    public void deleteExistingMatchTest(){
-        long id = 5L;
-        int numSports = sportService.findAll().size();
-        sportService.delete(id);
+    public void deleteExistingMatchShouldDeleteMatch(){
+        int numSports = getTotalSports();
+        sportService.delete(SPORT_TO_DELETE_ID);
         List<Sport> sports = sportService.findAll();
-        assertThat(sportService.exist(id), equalTo(false));
+        assertThat(sportService.exist(SPORT_TO_DELETE_ID), equalTo(false));
         assertThat(sports.size(), equalTo(numSports - 1));
     } 
 

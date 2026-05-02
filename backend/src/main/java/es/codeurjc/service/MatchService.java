@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import es.codeurjc.dto.ChatMessageDTO;
 import es.codeurjc.dto.ChatMessageMapper;
 import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
@@ -27,8 +26,11 @@ import es.codeurjc.model.ChatMessage;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.MatchResult;
 import es.codeurjc.model.MessageType;
+import es.codeurjc.model.PlayerStats;
 import es.codeurjc.model.ScoringType;
+import es.codeurjc.model.Sport;
 import es.codeurjc.model.User;
+import es.codeurjc.model.UserSportProfile;
 import es.codeurjc.repository.MatchRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,14 +38,25 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class MatchService {
 
-    public MatchService(MatchRepository matchRepository, MatchMapper mapper, UserService userService, UserMapper userMapper, ChatMessageService chatMessageService, ChatMessageMapper chatMessageMapper, SimpMessagingTemplate messagingTemplate) {
-        this.matchRepository = matchRepository;
-        this.mapper = mapper;
-        this.userService = userService;
-        this.userMapper = userMapper; 
-        this.chatMessageService = chatMessageService;
-        this.chatMessageMapper = chatMessageMapper;
-        this.messagingTemplate = messagingTemplate;
+    public MatchService(
+        MatchRepository matchRepository, 
+        MatchMapper mapper, 
+        UserService userService, 
+        UserMapper userMapper, 
+        ChatMessageService chatMessageService, 
+        ChatMessageMapper chatMessageMapper, 
+        UserSportProfileService profileService, 
+        SimpMessagingTemplate messagingTemplate,
+        SportService sportService) {
+            this.matchRepository = matchRepository;
+            this.mapper = mapper;
+            this.userService = userService;
+            this.userMapper = userMapper; 
+            this.chatMessageService = chatMessageService;
+            this.chatMessageMapper = chatMessageMapper;
+            this.profileService = profileService;
+            this.messagingTemplate = messagingTemplate;
+            this.sportService = sportService;
     }
 
     @Autowired
@@ -52,8 +65,14 @@ public class MatchService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserSportProfileService profileService;
+
     @Autowired 
     private ChatMessageService chatMessageService;
+
+    @Autowired 
+    private SportService sportService;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -129,6 +148,13 @@ public class MatchService {
 		match.setOrganizer(loggedUser);
         match.setTeam1Players(Set.of(loggedUser));
 
+        Sport sport = sportService.findById(matchDTO.sport().id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        UserSportProfile levelForSport = loggedUser.getProfileForSport(sport);
+        if (levelForSport == null) {
+            loggedUser.addSport(match.getSport(), 1.0f);
+            loggedUser.getProfileForSport(match.getSport()).setStats(new PlayerStats(0,0,0,0));
+        }
+
         ChatMessage systemMessage = ChatMessage.builder()
             .content(loggedUser.getUsername() + " ha creado el chat")
             .sender(loggedUser)
@@ -146,6 +172,7 @@ public class MatchService {
         if (matchRepository.existsById(id)) {
 			Match match = matchRepository.findById(id).orElseThrow();
 			User loggedUser = userService.getLoggedUser();
+
             int playersPerGame = match.getSport().getModes().get(match.getModeSelected()).getPlayersPerGame();
             
             if (!team.equalsIgnoreCase("A") && !team.equalsIgnoreCase("B")) { 
@@ -174,6 +201,12 @@ public class MatchService {
                 matchRepository.save(match);
             }else{
                 throw new ResponseStatusException(HttpStatus.CONFLICT,"El partido esta lleno");
+            }
+            
+            UserSportProfile levelForSport = loggedUser.getProfileForSport(match.getSport());
+            if (levelForSport == null) {
+                loggedUser.addSport(match.getSport(), 1.0f);
+                loggedUser.getProfileForSport(match.getSport()).setStats(new PlayerStats(0,0,0,0));
             }
 
             ChatMessage joinMessage = ChatMessage.builder()
@@ -207,16 +240,16 @@ public class MatchService {
         }else{
             matchRepository.save(match);
         }
-        ChatMessage leaveMessage = ChatMessage.builder()
-            .content(user.getUsername() + " ha abandonado el partido")
-            .sender(user)
-            .type(MessageType.LEAVE)
-            .timestamp(LocalDateTime.now())
-            .match(match)
-            .build();
-        
-
-        chatMessageService.save(leaveMessage);
+        if (user.getId() != match.getOrganizer().getId()){
+            ChatMessage leaveMessage = ChatMessage.builder()
+                .content(user.getUsername() + " ha abandonado el partido")
+                .sender(user)
+                .type(MessageType.LEAVE)
+                .timestamp(LocalDateTime.now())
+                .match(match)
+                .build();
+            chatMessageService.save(leaveMessage);
+        }
     }
     public MatchDTO replaceMatch(long id, MatchDTO updatedMatchDTO) {
         if (matchRepository.existsById(id)) {
@@ -249,34 +282,35 @@ public class MatchService {
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        float sumLevel1 = 0.0f;
-        float sumLevel2 = 0.0f;
+        if (match.getType()){
+             float sumLevel1 = 0.0f;
+            float sumLevel2 = 0.0f;
 
-        for (User user : match.getTeam1Players()) {
-            sumLevel1 += user.getLevel();
+            for (User user : match.getTeam1Players()) {
+                sumLevel1 += user.getProfileForSport(match.getSport()).getLevel();
+            }
+
+            for (User user : match.getTeam2Players()) {
+                sumLevel2 += user.getProfileForSport(match.getSport()).getLevel();
+            }
+
+            float avgLevel1 = sumLevel1 / match.getTeam1Players().size();
+            float avgLevel2 = sumLevel2 / match.getTeam2Players().size();
+
+            match.getTeam1Players().forEach(user -> {
+                boolean won = match.didPlayerWin(user);
+                user.applyMatchResult(match.getSport(), won, match.getDate(), avgLevel1, avgLevel2);
+                profileService.save(user.getProfileForSport(match.getSport()));
+                userService.update(user);
+            });
+
+            match.getTeam2Players().forEach(user -> {
+                boolean won = match.didPlayerWin(user);
+                user.applyMatchResult(match.getSport(),won, match.getDate(), avgLevel2, avgLevel1);
+                profileService.save(user.getProfileForSport(match.getSport()));
+                userService.update(user);
+            });
         }
-
-        for (User user : match.getTeam2Players()) {
-            sumLevel2 += user.getLevel();
-        }
-
-        float avgLevel1 = sumLevel1 / match.getTeam1Players().size();
-        float avgLevel2 = sumLevel2 / match.getTeam2Players().size();
-
-        match.getTeam1Players().forEach(user -> {
-            boolean won = match.didPlayerWin(user);
-            user.updateStats(won, false);
-            user.applyMatchResult(won, match.getDate(), avgLevel1, avgLevel2);
-            userService.update(user);
-        });
-
-        match.getTeam2Players().forEach(user -> {
-            boolean won = match.didPlayerWin(user);
-            user.updateStats(won, false);
-            user.applyMatchResult(won, match.getDate(), avgLevel2, avgLevel1);
-            userService.update(user);
-        });
-
         matchRepository.save(match);
     }
 

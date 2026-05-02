@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="dialog-title">
-  <mat-icon color="primary">emoji_events</mat-icon>
+  <mat-icon color="primary">assignment</mat-icon>
   Resultado del partido
 </h2>
 
@@ -106,10 +106,12 @@
         </tbody>
       </table>
     }
-    <div class="error-message" *ngIf="errorMessage()">
-      <mat-icon color="warn">error</mat-icon>
-      {{ errorMessage() }}
-    </div>
+     @if (errorMessage()) {
+      <div class="error-box">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
   </mat-card>
 
 </mat-dialog-content>

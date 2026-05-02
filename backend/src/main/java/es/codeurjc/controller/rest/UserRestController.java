@@ -30,9 +30,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import es.codeurjc.dto.ChatMessageDTO;
+import es.codeurjc.dto.LevelHistoryDTO;
 import es.codeurjc.dto.MatchDTO;
+import es.codeurjc.dto.SportDTO;
 import es.codeurjc.dto.UserDTO;
+import es.codeurjc.dto.UserSportProfileDTO;
+import es.codeurjc.dto.UserSportProfileMapper;
+import es.codeurjc.model.Sport;
 import es.codeurjc.model.User;
+import es.codeurjc.model.UserSportProfile;
+import es.codeurjc.service.SportService;
 import es.codeurjc.service.UserService;
 
 @RestController
@@ -42,6 +49,9 @@ public class UserRestController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SportService sportService;
 
 
     @GetMapping("/")
@@ -137,5 +147,81 @@ public class UserRestController {
     public Collection<ChatMessageDTO> getUserMessages(@PathVariable Long id) {
         return userService.getUserMessages(id);
     }
+
+    @GetMapping("/{id}/sports")
+    public List<SportDTO> getUserSports(@PathVariable Long id) {
+        return userService.getUserSports(id);
+    }
+
+    @GetMapping("/{id}/sports/{sportId}/profile")
+    public ResponseEntity<UserSportProfileDTO> getSportProfile(
+            @PathVariable Long id,
+            @PathVariable Long sportId) {
+
+        User user = userService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Sport sport = sportService.findById(sportId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        UserSportProfile profile = user.getProfileForSport(sport);
+
+        if (profile == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "User has no profile for this sport");
+        }
+
+        return ResponseEntity.ok(UserSportProfileMapper.toDTO(profile));
+    }
+
+    @PostMapping("/{id}/sports/{sportId}/profile")
+    public ResponseEntity<UserSportProfileDTO> addSportToUser(
+            @PathVariable Long id,
+            @PathVariable Long sportId,
+            @RequestBody UserSportProfileDTO dto) {
+
+        UserSportProfileDTO profile = userService.addSportProfileToUser(id, sportId, dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(profile);
+    }
+
+    @PutMapping("/{id}/sports/{sportId}/profile")
+    public ResponseEntity<UserSportProfileDTO> updateSportProfile(
+            @PathVariable Long id,
+            @PathVariable Long sportId,
+            @RequestBody UserSportProfileDTO updatedProfileDTO) {
+
+        if (!userService.getLoggedUser().getRoles().contains("ADMIN") &&
+            userService.getLoggedUser().getId() != id) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        UserSportProfileDTO updated = userService.updateSportProfile(id, sportId, updatedProfileDTO);
+
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/{userId}/sports/{sportId}/history")
+    public List<LevelHistoryDTO> getSportHistory(
+            @PathVariable Long userId,
+            @PathVariable Long sportId) {
+
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Sport sport = sportService.findById(sportId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        UserSportProfile profile = user.getProfileForSport(sport);
+
+        if (profile == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return profile.getLevelHistory().stream()
+                .map(lh -> new LevelHistoryDTO(lh.getDate(), lh.getLevelBefore(), lh.getLevelAfter(), lh.isWon()))
+                .toList();
+    }
     
 }
+

@@ -4,6 +4,11 @@
  "secure": false, 
  "changeOrigin": false,
  "logLevel": "debug"
- 
  }
+ ,
+  "/ws": {
+    "target": "https://localhost:8443",
+    "ws": true,
+    "secure": false
+  }
 }

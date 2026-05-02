@@ -63,6 +63,7 @@ public class ClubService {
     public Club save(Club club) {
         return clubRepository.save(club);
     }
+    
     public void delete(long id) {
         Optional<Club> clubOptional = clubRepository.findById(id);
         if (clubOptional.isPresent()) {
@@ -120,7 +121,7 @@ public class ClubService {
             Club updatedClub = mapper.toDomain(updatedClubDTO);
             updatedClub.setId(id);
             updatedClub.setImage(club.getImage());
-            updatedClub.setNumberOfCourts(club.getNumberOfCourts());
+            updatedClub.setNumberOfCourts(updatedClubDTO.numberOfCourts());
             clubRepository.save(updatedClub);
             return toDTO(updatedClub);
  		} else {

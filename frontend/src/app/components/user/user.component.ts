@@ -20,6 +20,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
 import { Router } from '@angular/router';
 import { LoginService } from '../../service/login.service';
+import { UserSportProfile } from '../../models/user-sport-profile.model';
+import { LevelHistory } from '../../models/level-history.model';
+import { Sport } from '../../models/sport.model';
+import { GlobalSportState } from '../../global-sport-state';
+
 
 @Component({
   selector: 'app-user',
@@ -42,12 +47,14 @@ import { LoginService } from '../../service/login.service';
   styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit {
+
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
   private loginService = inject(LoginService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
-  private router = inject(Router);
+  private router = inject(Router);  
+  private sportState = inject(GlobalSportState);
 
   user = signal<User | null>(null);
   loading = signal(true);
@@ -62,8 +69,13 @@ export class UserComponent implements OnInit {
     group: ScaleType.Ordinal,
     domain: ['#005CBB']
   };
-
+  selectedSportId = signal<number | null>(null);
+  sportProfile = signal<UserSportProfile | null>(null);
+  sportHistory = signal<LevelHistory[]>([]);
+  sports = signal<Sport[]>([]);
+  
   private apiUrl = environment.apiUrl;
+  private sportsLoaded = false;
   form!: FormGroup;
 
 
@@ -75,22 +87,60 @@ export class UserComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       birthDate: ['', Validators.required],
       gender: [true, Validators.required],
-      description: [''],
-      level: ['', [Validators.required, Validators.min(0), Validators.max(7)]],
+      description: ['']
     });
 
      this.loginService.currentUser$.subscribe(user => {
 
       if (!user) return;
 
+      this.sportsLoaded = false;
       this.user.set(user);
       this.patchForm(user);
       this.loadUserImage(user.id);
-      this.buildLevelChart(user);
+      this.loadSports();
       this.loading.set(false);
 
     });
   }
+
+  loadSports(): void {
+    const user = this.user();
+    if (!user) return;
+
+    if (this.sportsLoaded) return;
+
+    this.sportsLoaded = true;
+
+    this.userService.getUserSports(user.id).subscribe({
+      next: sports => {
+        this.sports.set(
+          sports.filter((s, i, arr) =>
+            arr.findIndex(x => x.id === s.id) === i
+          )
+        );
+
+         if (sports.length > 0) {
+          const savedSportId = this.sportState.sportId();
+
+          const exists = sports.some(s => s.id === savedSportId);
+
+          if (savedSportId && exists) {
+            this.selectSport(savedSportId);
+          } else {
+            this.selectSport(sports[0].id!);
+          }
+        }
+      },
+      error: err => {
+        console.error('Error loading sports', err);
+        this.sports.set([]);
+      }
+    });
+    
+  }
+
+
 
   loadUserImage(id: number): void {
     this.userService.getUserImage(id).subscribe({
@@ -123,8 +173,7 @@ export class UserComponent implements OnInit {
       email: user.email,
       birthDate: user.birthDate,
       gender: user.gender,
-      description: user.description ?? '',
-      level: user.level
+      description: user.description ?? ''
     });
   }
 
@@ -157,7 +206,6 @@ export class UserComponent implements OnInit {
       birthDate: this.toLocalMidnightISOString(raw.birthDate),
       gender: raw.gender,
       description: raw.description,
-      level: raw.level
     };
 
     this.userService.updateUser(this.user()!.id, payload).subscribe({
@@ -229,8 +277,8 @@ export class UserComponent implements OnInit {
     const u = this.user();
     if(!u) return 0;
 
-    let maxLevel = u.level;
-    for(const entry of u.levelHistory ?? []){
+    let maxLevel = this.sportProfile()?.level ?? 0;
+    for(const entry of this.sportHistory() ?? []){
       if (entry.levelBefore > maxLevel ){
         maxLevel = entry.levelBefore;
       }
@@ -239,7 +287,17 @@ export class UserComponent implements OnInit {
   }
 
   private afterSuccessfulSave(user: User, photoOk: boolean): void {
+
+    this.loginService.setCurrentUser(user);
+
     this.user.set(user);
+
+    this.sportProfile.set(null);
+    this.sportHistory.set([]);
+    this.levelChartData.set([]);
+
+    this.loadSports();
+
     this.editing.set(false);
     this.saving.set(false);
     this.photoFile = null;
@@ -267,28 +325,102 @@ export class UserComponent implements OnInit {
   }
 
   
-  private buildLevelChart(user: User): void {
-    if (!user.levelHistory?.length) {
-      this.levelChartData.set([]);
+  private buildSportChart(profile: UserSportProfile): void {
+    this.userService.getUserSportHistory(this.user()!.id, this.selectedSportId()!).subscribe({
+      next: history => {
+        if (!history?.length) {
+          this.levelChartData.set([]);
+          return;
+        }
+      
+        const series = history.map(h => ({
+          name: new Date(h.date).toLocaleDateString(),
+          value: Math.round(h.levelBefore * 100) / 100
+        }));
+        series.push({
+          name: 'Actual',
+          value: (Math.round(profile.level*100))/100
+        });
+        this.levelChartData.set([
+          {
+            name: 'Nivel',
+            series
+          }
+        ]);
+        this.sportHistory.set(history);
+      },
+      error: err => {
+        console.error('Error loading sport history', err);
+        this.levelChartData.set([]);
+      }
+    });
+
+  }
+
+  selectSport(sportId: number | null): void {
+    if (this.selectedSportId() === sportId) return;
+    this.selectedSportId.set(sportId);
+
+    const user = this.user();
+    if (!user) return;
+
+    this.sportProfile.set(null);
+    this.sportHistory.set([]);
+    this.levelChartData.set([]);
+
+    if (sportId === null) {
+      this.sportProfile.set(null);
       return;
     }
 
-    const series = user.levelHistory.map(h => ({
-      name: new Date(h.date).toLocaleDateString(),
-      value: Math.round(h.levelBefore * 100) / 100
-    }));
-
-    series.push({
-      name: 'Actual',
-      value: (Math.round(user.level*100))/100
-    });
-
-    this.levelChartData.set([
-      {
-        name: 'Nivel',
-        series
+    this.userService.getUserSportProfile(user.id, sportId).subscribe({
+      next: profile => {
+        this.sportProfile.set(profile);
+        this.sportState.setSportProfile(profile);
+        this.sportState.setSportId(sportId);
+        this.buildSportChart(profile);
+      },
+      error: err => {
+        console.error('Error loading sport profile', err);
       }
-    ]);
+    });
+  }
+
+  get currentLevel(): number {
+    return this.sportProfile()?.level ?? 0;
+  }
+
+  get totalMatches(): number { 
+    return this.sportProfile()?.stats.totalMatches ?? 0;
+  }
+
+  get wins(): number {
+    return this.sportProfile()?.stats.wins ?? 0;
+  }
+
+  get losses(): number {
+    return this.sportProfile()?.stats.losses ?? 0;
+  }
+
+  get winRate(): number {
+    return this.sportProfile()?.stats.winRate ?? 0;
+  }
+
+  getSportIcon(sportName: string): string {
+    switch (sportName.toLowerCase()) {
+      case 'futbol':
+        return 'sports_soccer';
+      case 'baloncesto':
+        return 'sports_basketball';
+      case 'tenis':
+        return 'sports_tennis';
+      case 'padel':
+        return 'sports_tennis';
+      case 'voleibol':
+        return 'sports_volleyball';
+      default:
+        return 'sports';
+    }
   }
 
 }

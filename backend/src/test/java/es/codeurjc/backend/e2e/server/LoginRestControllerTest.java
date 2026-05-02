@@ -29,7 +29,7 @@ public class LoginRestControllerTest {
     }
 
     @Test 
-    public void testUserLoginValidCredentials(){
+    public void userLoginWithValidCredentialsShouldSucceed(){
         String loginJson = """
             {
                 "username": "pedro@emeal.com",
@@ -50,7 +50,7 @@ public class LoginRestControllerTest {
 
     
     @Test 
-    public void testUserLogout(){
+    public void userLogoutShouldSucceed(){
         given().when().post("/api/v1/auth/logout")
                 .then()
                 .body("status", equalTo("SUCCESS"))

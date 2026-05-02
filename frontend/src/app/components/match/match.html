@@ -15,7 +15,14 @@
 
       <mat-card-title class="sport-title">{{ match.sport.name }}</mat-card-title>
       <mat-card-subtitle class="match-date">{{ match.date | date:'dd/MM/yyyy, HH:mm' }}</mat-card-subtitle>
-      <span class="match-status" [ngClass]="match.state ? 'open' : 'closed'"></span>
+      
+      <span 
+        class="match-state-pill"
+        [ngClass]="match.state ? 'open' : 'closed'"
+      >
+        <mat-icon class="state-icon">{{ match.state ? 'lock_open' : 'lock' }}</mat-icon>{{ match.state ? 'Abierto' : 'Cerrado' }}
+      </span>
+
     </mat-card-header>
 
     <mat-card-content>
@@ -55,7 +62,11 @@
           <div class="organizer-meta">
             <span class="organizer-role">Organizador</span>
             <span class="separator">·</span>
-            <span class="organizer-level">Nivel {{ match.organizer.level | number:'1.0-2' }}</span>
+            @if (organizerProfile) {
+              <span class="organizer-level">
+                Nivel {{ organizerProfile.level | number:'1.0-2' }}
+              </span>
+            }
           </div>
         </div>
 

@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, withInterceptors } from '@angular/common/http';
 import { SportService } from './sport.service';
 import { LoginService } from './login.service';
 import { Sport } from '../models/sport.model';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { ScoringType } from '../models/scoring-type';
+import { credentialsInterceptor } from '../interceptors/auth.interceptor';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 jasmine.getEnv().configure({ random: false });
@@ -27,7 +28,7 @@ describe('SportService', () => {
         SportService,
         LoginService,
         provideRouter([]),
-        provideHttpClient()
+        provideHttpClient(withInterceptors([credentialsInterceptor]))
       ]
     });
 

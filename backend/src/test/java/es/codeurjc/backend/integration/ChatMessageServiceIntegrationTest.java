@@ -47,14 +47,14 @@ public class ChatMessageServiceIntegrationTest {
     private MatchMapper matchMapper;
 
     @Test
-    public void getUserChatsIntegrationTest(){
+    public void getUserChatsShouldReturnMessagesWhereUserIsSender(){
         Long userId = 2L;
         List<ChatMessageDTO> userChats = chatMessageService.getUserMessages(userId);
         assertThat(userChats, is(not(empty())));
     }
 
     @Test 
-    public void getMatchMessagesIntegrationTest(){
+    public void getMatchMessagesShouldReturnMessagesRelatedToMatch(){
         Long matchId = 1L;
         List<ChatMessageDTO> matchMessages = chatMessageService.getMatchMessages(matchId);
         assertThat(matchMessages.size(), is(greaterThan(0)));
@@ -62,7 +62,7 @@ public class ChatMessageServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
-    public void saveChatMessageIntegrationTest(){
+    public void saveChatMessageShouldSucceed(){
         User user = userService.getLoggedUser();
         MatchDTO matchDTO = matchService.getMatch(1L);
         ChatMessage newMessage = new ChatMessage(MessageType.CHAT,"Hey!", user, matchMapper.toDomain(matchDTO));

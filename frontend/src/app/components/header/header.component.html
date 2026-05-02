@@ -6,10 +6,10 @@
 
 
   <nav class="nav-links">
-    <button mat-button id="matches-btn" routerLink="/matches" routerLinkActive="active">Partidos abiertos</button>
-    <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active">Clubes</button>
+    <button mat-button id="matches-btn" routerLink="/matches" routerLinkActive="active"> <mat-icon>groups</mat-icon> Partidos abiertos</button>
+    <button mat-button id="clubs-btn" routerLink="/clubs" routerLinkActive="active"><mat-icon>place</mat-icon>Clubes</button>
     @if (user()) {
-      <button mat-button id="chats-btn" routerLink="/chats" routerLinkActive="active">Chats</button>
+      <button mat-button id="chats-btn" routerLink="/chats" routerLinkActive="active"><mat-icon>message</mat-icon> Chats</button>
     } 
   </nav>
 
@@ -37,7 +37,11 @@
         <img class="avatar" [src]="getUserImage(u.id) || 'assets/default-avatar.jpg'" alt="Usuario" />
         <div class="user-text">
           <span class="user-name">{{ u?.realname }}</span>
-          <span class="user-level">Nivel {{ u?.level | number:'1.0-2' }}</span>
+          @if (currentLevel() !== null) {
+            <span class="user-level">
+              Nivel {{ currentLevel() | number:'1.0-2' }}
+            </span>
+          }
         </div>
         <mat-icon class="arrow-icon">expand_more</mat-icon>
       </div>
@@ -52,6 +56,13 @@
           <mat-icon>emoji_events</mat-icon>
           Mis partidos
         </button>
+
+        @if (isAdmin()) {
+          <button mat-menu-item (click)="goToAdminPanel()">
+            <mat-icon>admin_panel_settings</mat-icon>
+            Panel de administración
+          </button>
+        }
 
         <button mat-menu-item routerLink="/settings">
           <mat-icon>settings</mat-icon>

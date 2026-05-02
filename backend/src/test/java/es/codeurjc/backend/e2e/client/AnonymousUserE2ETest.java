@@ -3,6 +3,8 @@ package es.codeurjc.backend.e2e.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -76,6 +78,31 @@ class AnonymousUserE2ETest extends BaseAngularUITest {
         WebElement submitButton = driver.findElement(By.cssSelector("button[type='submit']"));
         wait.until(ExpectedConditions.elementToBeClickable(submitButton));
         submitButton.click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-register-sports")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".register-card")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("mat-select")));
+
+        List<WebElement> sportSelects = driver.findElements(By.cssSelector("mat-select"));
+
+        // Select frequency of first sport practice
+        if (!sportSelects.isEmpty()) {
+            WebElement firstSportSelect = sportSelects.get(0);
+
+            wait.until(ExpectedConditions.elementToBeClickable(firstSportSelect));
+            firstSportSelect.click();
+
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+
+            // We choose the third option (index 2)
+            driver.findElements(By.cssSelector("mat-option"))
+                    .get(2)
+                    .click();
+        }
+
+        WebElement finishButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".primary-btn")));
+        scrollIntoView(finishButton);
+        finishButton.click();
 
         wait.until(ExpectedConditions.urlContains("/login"));
         assertThat(driver.getCurrentUrl(), containsString("/login"));

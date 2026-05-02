@@ -9,6 +9,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'matches', pathMatch: 'full' },
   { path: 'login', loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) },
   { path: 'register', loadComponent : () => import('./components/register/register.component').then(c => c.RegisterComponent)},
+  { path: 'register/sports', loadComponent : () => import('./components/register-sports/register-sports.component').then(c => c.RegisterSportsComponent)},
   { path: 'matches', loadComponent: () => import('./components/match-list/match-list').then(m => m.MatchListComponent)},
   { path: 'clubs', loadComponent: () => import('./components/club-list/club-list.component').then(m => m.ClubListComponent)},
 

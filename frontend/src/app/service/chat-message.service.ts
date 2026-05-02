@@ -5,6 +5,7 @@ import { BehaviorSubject, map } from 'rxjs';
 import { Client } from '@stomp/stompjs';
 import { ChatMessage } from '../models/chat-message.model';
 import SockJS from 'sockjs-client';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -15,14 +16,16 @@ export class ChatService {
   private currentMatchId: number | null = null;
   isConnected = signal(false);
   private isConnecting = false;
+  private webSocketUrl = environment.webSocketUrl;
 
   constructor() {
     this.initConnectionSocket();
   }
 
   private initConnectionSocket() {
+
     this.stompClient = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+      webSocketFactory: () =>  new SockJS(`${this.webSocketUrl}`),
       reconnectDelay: 5000
     });
 

@@ -13,6 +13,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -52,29 +53,47 @@ export class RegisterComponent implements OnInit {
         username: ['', [Validators.required, Validators.minLength(3)]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
-        birthDate: ['', Validators.required],
+        birthDate: ['', [ Validators.required, this.minimumAgeValidator(16)]],
         gender: ['true', Validators.required],
         description: ['']
     });
   }
 
   onSubmit(): void {
-    if (this.registerForm.invalid) return;
+     if (this.registerForm.invalid) {
+      if (this.registerForm.get('birthDate')?.hasError('minimumAge')) {
+        this.snackBar.open(
+          '❌ Debes tener al menos 16 años para registrarte',
+          'Cerrar',
+          {
+            duration: 4000,
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
+
+      return;
+     }
 
     this.loading = true;
-
+    
+    const raw = this.registerForm.value;
     const userData = {
-      ...this.registerForm.value,
-      gender: this.registerForm.value.gender === 'true',
+      ...raw,
+      birthDate: this.toLocalMidnightISOString(raw.birthDate),
+      gender: raw.gender === 'true',
     };
 
     this.userService.registerUser(userData).subscribe({
-      next: () => {
+      next: (user) => {
         this.snackBar.open('✅ Cuenta creada correctamente', 'Cerrar', {
           duration: 3000,
-          panelClass: ['success-snackbar'], 
+          panelClass: ['success-snackbar'],
         });
-        setTimeout(() => this.router.navigate(['/login']), 1000);
+
+        this.router.navigate(['/register/sports'], {
+          state: { userId: user.id }
+        });
       },
       error: (err) => {
         console.error('Error en el registro:', err);
@@ -90,4 +109,40 @@ export class RegisterComponent implements OnInit {
   goToLogin(): void {
     this.router.navigate(['/login']);
   }
-}
+
+  private toLocalMidnightISOString(date: Date): string {
+    const localDate = new Date(date);
+    localDate.setHours(0, 0, 0, 0);
+
+    return new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    ).toISOString();
+  }
+
+  private minimumAgeValidator(minAge: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const birthDate = control.value;
+
+      if (!birthDate) {
+        return null;
+      }
+
+      const today = new Date();
+      const birth = new Date(birthDate);
+
+      let age = today.getFullYear() - birth.getFullYear();
+      const monthDifference = today.getMonth() - birth.getMonth();
+
+      if (
+        monthDifference < 0 ||
+        (monthDifference === 0 && today.getDate() < birth.getDate())
+      ) {
+        age--;
+      }
+
+      return age < minAge
+        ? { minimumAge: true }
+        : null;
+    };
+  }
+  }

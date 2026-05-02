@@ -32,8 +32,7 @@ export class LoginService {
   public login(loginRequest: LoginRequest): Observable<User | null> {
     return this.https.post<AuthResponse>(
       `${this.apiUrl}/auth/login`,
-      loginRequest,
-      { withCredentials: true }
+      loginRequest
     ).pipe(
 
       switchMap(() => this.userService.getCurrentUser().pipe(
@@ -47,9 +46,10 @@ export class LoginService {
   }
 
   restoreSession(): void {
-    this.userService.getCurrentUser({
-      headers: { 'X-Skip-Interceptor': 'true' }
-    }).pipe(
+    this.https.post('/api/v1/auth/refresh', {}, { withCredentials: true }).pipe(
+      switchMap(() => this.userService.getCurrentUser({
+        headers: { 'X-Skip-Interceptor': 'true' }
+      })),
       catchError(() => of(null)),
       tap(user => this.currentUserSubject.next(user)),
       tap(() => this.sessionReadySubject.next(true))
@@ -70,19 +70,22 @@ export class LoginService {
     return this.currentUserSubject.value;
   }
 
+  setCurrentUser(user: User | null): void {
+    this.currentUserSubject.next(user);
+  }
+
   isLogged(): boolean {
     return this.currentUserSubject.value !== null;
   }
 
   private handleError(error: HttpErrorResponse) {
-
     if (error.status === 0) {
-      console.error('Error conexión', error.error);
+    console.error('Error conexión', error.error);
     } else {
       console.error('Backend error', error);
     }
 
-    return throwError(() => new Error('Algo falló.'));
+    return throwError(() => error);
 
   }
 

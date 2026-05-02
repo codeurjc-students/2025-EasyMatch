@@ -160,3 +160,40 @@ button[mat-fab] {
 input[matInput] {
   padding: 0 8px;
 }
+
+.date-separator {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: #e5e7eb;
+  }
+
+  &::before {
+    left: 0;
+  }
+
+  &::after {
+    right: 0;
+  }
+}
+
+.chat-context {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  opacity: 0.75;
+  margin-bottom: 8px;
+}

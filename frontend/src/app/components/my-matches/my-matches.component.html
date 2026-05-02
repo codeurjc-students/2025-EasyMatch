@@ -2,48 +2,55 @@
 
 <div class="matches-section">
 
-  <div *ngIf="loading()" class="loading">
-    <mat-icon class="spin">autorenew</mat-icon>
-    Cargando partidos...
-  </div>
+   @if (loading()) {
+    <div class="status-container">
+      <mat-icon class="spin">autorenew</mat-icon>
+      <span>Cargando partidos...</span>
+    </div>
+  }
 
-  <div *ngIf="!loading() && matches().length === 0" class="empty">
-    <mat-icon>event_busy</mat-icon>
-    <p>No tienes partidos todavía.</p>
-  </div>
-  <mat-card *ngIf="!loading() && openMatches().length > 0" class="matches-card">
-    <div *ngIf="openMatches().length > 0">
-
-      <div class="header">
-        <h2>Partidos abiertos</h2>
-        <span class="found">{{ openMatches().length }} encontrados</span>
+   @if (!loading() && !error() && matches().length === 0) {
+    <div class="status-container empty-state">
+      <mat-icon>sports_tennis</mat-icon>
+      <h3>No tienes partidos aún</h3>
+      <p>Únete a un partido para empezar a jugar.</p>
+    </div>
+  }
+  
+  @if (openMatches().length > 0) {
+    <section class="matches-category">
+      <div class="category-header">
+        <div class="title-wrapper">
+          <h2>Partidos Abiertos</h2>
+          <span class="badge">{{ openMatches().length }}</span>
+        </div>
+        <p class="subtitle">Encuentros en los que participas</p>
       </div>
       <mat-divider></mat-divider>
       <div class="matches-grid">
-        <app-match
-          *ngFor="let m of openMatches()"
-          [match]="m">
-        </app-match>
+        @for (match of openMatches(); track match.id) {
+          <app-match [match]="match"></app-match>
+        }
       </div>
+    </section>
+  }
 
-    </div>
-  </mat-card>
-  <mat-card *ngIf="!loading() && closedMatches().length > 0" class="matches-card">
-    <div *ngIf="closedMatches().length > 0">
-
-      <div class="header">
-        <h2>Partidos cerrados</h2>
-        <span class="found">{{ closedMatches().length }} encontrados</span>
+  @if (closedMatches().length > 0) {
+    <section class="matches-category">
+      <div class="category-header">
+        <div class="title-wrapper">
+          <h2>Partidos Cerrados</h2>
+          <span class="badge secondary">{{ closedMatches().length }}</span>
+        </div>
+        <p class="subtitle">Encuentros finalizados</p>
       </div>
       <mat-divider></mat-divider>
       <div class="matches-grid">
-        <app-match
-          *ngFor="let m of closedMatches()"
-          [match]="m">
-        </app-match>
+        @for (match of closedMatches(); track match.id) {
+          <app-match [match]="match"></app-match>
+        }
       </div>
-
-    </div>
-  </mat-card>
+    </section>
+  }
 
 </div>

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +31,6 @@ import es.codeurjc.dto.MatchDTO;
 import es.codeurjc.dto.MatchMapper;
 import es.codeurjc.dto.MatchResultDTO;
 import es.codeurjc.dto.SportDTO;
-import es.codeurjc.dto.UserDTO;
 import es.codeurjc.model.Club;
 import es.codeurjc.model.Match;
 import es.codeurjc.model.Sport;
@@ -65,11 +65,87 @@ public class MatchServiceIntegrationTest {
     @Autowired
     private UserService userService;
 
+    private static final long DEFAULT_MATCH_ID = 1L;
+    private static final long MATCH_TO_DELETE_ID = 3L;
+    private static final long MATCH_TO_JOIN_ID = 4L;
+    private static final long MATCH_TO_REPLACE_ID = 5L;
+    private static final long MATCH_WITH_RESULT_ID = 6L;
+
+    private static final long DEFAULT_CLUB_ID = 1L;
+    private static final long SECOND_CLUB_ID = 2L;
+
+    private static final long DEFAULT_SPORT_ID = 1L;
+    private static final long DEFAULT_USER_ID = 2L;
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
+    private Sport defaultSport;
+    private Club defaultClub;
+    private ClubDTO secondClubDTO;
+
+    private int getTotalMatches() {
+        return matchService.findAll().size();
+    }
+
+    private Match createBaseMatch() {
+        Match match = new Match();
+        match.setDate(LocalDateTime.now().plusDays(10));
+        match.setType(true);
+        match.setIsPrivate(false);
+        match.setPrice(15.0f);
+        match.setSport(defaultSport);
+        match.setClub(defaultClub);
+        return match;
+    }
+
+    private MatchDTO createUpdatedMatchDTO(Long id) {
+        MatchDTO currentMatch = matchService.getMatch(id);
+
+        BasicClubDTO club = new BasicClubDTO(
+            secondClubDTO.id(),
+            secondClubDTO.name(),
+            secondClubDTO.city()
+        );
+
+        return new MatchDTO(
+            id,
+            LocalDateTime.of(2025, 12, 25, 12, 0),
+            true,
+            false,
+            true,
+            0,
+            currentMatch.organizer(),
+            5.49f,
+            secondClubDTO.sports().get(0),
+            club,
+            currentMatch.team1Players(),
+            currentMatch.team2Players()
+        );
+    }
+
+    private MatchResultDTO createDefaultResult() {
+        return new MatchResultDTO(
+            "A",
+            "B",
+            0,
+            0,
+            new ArrayList<>(List.of(6,3,7)),
+            new ArrayList<>(List.of(4,6,5))
+        );
+    }
+
+    @BeforeEach
+    public void setUp() {
+        defaultSport = sportService.findById(DEFAULT_SPORT_ID).orElseThrow();
+        defaultClub = clubService.findById(DEFAULT_CLUB_ID).orElseThrow();
+        secondClubDTO = clubService.getClub(SECOND_CLUB_ID);
+    }
+
     @Test
     @Order(1)
     public void getMatchesTest(){
-        int numMatches = matchService.findAll().size();
-        PageRequest pageable = PageRequest.of(0, 10);
+        int numMatches = getTotalMatches();
+        PageRequest pageable = PageRequest.of(0, DEFAULT_PAGE_SIZE);
         Page<MatchDTO> pageOfMatches = matchService.getMatches(pageable);
         assertThat(pageOfMatches.getNumberOfElements(), equalTo(numMatches));
     }
@@ -77,30 +153,29 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(2)
     public void getMatchByIdTest(){
-        long id = 1L;
-        MatchDTO matchDTO = matchService.getMatch(id);
-        assertThat(matchDTO.id(), equalTo(id));
+        MatchDTO matchDTO = matchService.getMatch(DEFAULT_MATCH_ID);
+        assertThat(matchDTO.id(), equalTo(DEFAULT_MATCH_ID));
         assertThat(matchDTO.club().name(), equalTo("Tennis Club Elite"));
     }
 
     @Test
     @Order(3)
     public void deleteNonExistingMatchTest(){
-        long numMatches = matchService.findAll().size();
+        long numMatches = getTotalMatches();
         long id = numMatches + 1;
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, ()-> matchService.delete(id));
         assertThat(ex.getMessage(),equalTo("Match with id " + id + " does not exist."));
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    
     @Test
     @Order(4)
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void deleteExistingMatchTest(){
-        long id = 3L;
-        int numMatches = matchService.findAll().size();
-        matchService.delete(id);
+        int numMatches = getTotalMatches();
+        matchService.delete(MATCH_TO_DELETE_ID);
         List<Match> matches = matchService.findAll();
-        assertThat(matchService.exist(id), equalTo(false));
+        assertThat(matchService.exist(MATCH_TO_DELETE_ID), equalTo(false));
         assertThat(matches.size(), equalTo(numMatches - 1));
     } 
 
@@ -108,21 +183,13 @@ public class MatchServiceIntegrationTest {
     @Order(5)
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
     public void createMatchTest(){
-        int numMatchesBefore = matchService.findAll().size();
+        int numMatchesBefore = getTotalMatches();
 
-        Match match = new Match();
-        match.setDate(java.time.LocalDateTime.now().plusDays(10));
-        match.setType(true);
-        match.setIsPrivate(false);
-        match.setPrice(15.0f);
-        Sport sport = sportService.findById(1).orElseThrow();
-        match.setSport(sport);
-        Club club = clubService.findById(1).orElseThrow();
-        match.setClub(club);
+        Match match = createBaseMatch();
 
         MatchDTO createdMatch = matchService.createMatch(mapper.toDTO(match));
 
-        int numMatchesAfter = matchService.findAll().size();
+        int numMatchesAfter = getTotalMatches();
         assertThat(numMatchesAfter, equalTo(numMatchesBefore + 1));
         assertThat(matchService.exist(createdMatch.id()), equalTo(true));
     }
@@ -131,12 +198,11 @@ public class MatchServiceIntegrationTest {
     @Order(6)
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
     public void joinAndLeaveMatchTest(){
-        long id = 4L;
         String selectedTeam = "B";
-        MatchDTO match = matchService.getMatch(id);
+        MatchDTO match = matchService.getMatch(MATCH_TO_JOIN_ID);
         User loggedUser = userService.getLoggedUser();
         int teamSizeBefore = match.team2Players().size();
-        MatchDTO joinedMatchDTO = matchService.joinMatch(id, selectedTeam);
+        MatchDTO joinedMatchDTO = matchService.joinMatch(MATCH_TO_JOIN_ID, selectedTeam);
 
         int teamSizeAfter = joinedMatchDTO.team2Players().size();
         
@@ -144,42 +210,21 @@ public class MatchServiceIntegrationTest {
 
         
         teamSizeBefore = teamSizeAfter;
-        matchService.leaveMatch(id, loggedUser);
-        MatchDTO matchLeftDTO = matchService.getMatch(id);
+        matchService.leaveMatch(MATCH_TO_JOIN_ID, loggedUser);
+        MatchDTO matchLeftDTO = matchService.getMatch(MATCH_TO_JOIN_ID);
 
         assertThat(matchLeftDTO.team2Players().size(),equalTo(teamSizeBefore - 1));
 
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test 
     @Order(7)
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void replaceMatchTest(){
-        long id = 5L;
-        MatchDTO match = matchService.getMatch(id);
-        ClubDTO clubDTO = clubService.getClub(2L);
-        BasicClubDTO club = new BasicClubDTO(clubDTO.id(),clubDTO.name(),clubDTO.city());
-        BasicUserDTO organizer = match.organizer();
-        SportDTO sport = clubDTO.sports().get(0);
-        Set<UserDTO> team1Players = match.team1Players();
-        Set<UserDTO> team2Players = match.team2Players();
-        MatchDTO upadatedMatchDTO = new MatchDTO(
-            id, 
-            LocalDateTime.of(2025,12,25,12,0), 
-            true, 
-            false, 
-            true, 
-            0,
-            organizer, 
-            5.49f, 
-            sport, 
-            club, 
-            team1Players, 
-            team2Players
-        );
+        MatchDTO updatedMatchDTO = createUpdatedMatchDTO(MATCH_TO_REPLACE_ID);
 
-        MatchDTO replacedMatch = matchService.replaceMatch(id, upadatedMatchDTO);
-        assertThat(replacedMatch.id(), equalTo(id));
+        MatchDTO replacedMatch = matchService.replaceMatch(MATCH_TO_REPLACE_ID, updatedMatchDTO);
+        assertThat(replacedMatch.id(), equalTo(MATCH_TO_REPLACE_ID));
         assertThat(replacedMatch.type(), equalTo(true));
         assertThat(replacedMatch.isPrivate(), equalTo(false));
         assertThat(replacedMatch.state(), equalTo(true));
@@ -195,36 +240,29 @@ public class MatchServiceIntegrationTest {
     @Order(8)
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
     public void updateMatchResultTest(){
-        long id = 6L;
-        MatchDTO match = matchService.getMatch(id);
-        User loggedUser = userService.getLoggedUser();
-        int historySizeBefore = loggedUser.getLevelHistory().size();
+        MatchDTO match = matchService.getMatch(MATCH_WITH_RESULT_ID);
+        
         assertThat(match.state(), equalTo(false));
 
-        MatchResultDTO resultDTO = new MatchResultDTO("A", "B",0,0,new ArrayList<>(List.of(6,3,7)), new ArrayList<>(List.of(4,6,5)));
+        MatchResultDTO resultDTO = createDefaultResult();
 
-        matchService.updateMatchResult(id, resultDTO);
+        matchService.updateMatchResult(MATCH_WITH_RESULT_ID, resultDTO);
 
-        MatchDTO matchWithResult = matchService.getMatch(id);
+        MatchDTO matchWithResult = matchService.getMatch(MATCH_WITH_RESULT_ID);
         assertThat(matchWithResult.result(), isA(MatchResultDTO.class));
         assertThat(matchWithResult.result().team1GamesPerSet(), equalTo(List.of(6,3,7)));
         assertThat(matchWithResult.result().team2GamesPerSet(), equalTo(List.of(4,6,5)));
         assertThat(matchWithResult.state(), equalTo(false));
-        
-        int historySizeAfter = loggedUser.getLevelHistory().size();
-        assertThat(historySizeAfter, equalTo(historySizeBefore));
     }
 
     @Test
     @Order(9)
     @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
     public void addPlayerToMatchAsAdminTest(){
-        long matchId = 4L;
-        long userId = 2L;
-        MatchDTO match = matchService.getMatch(matchId);
+        MatchDTO match = matchService.getMatch(MATCH_TO_JOIN_ID);
         int teamSizeBefore = match.team1Players().size();
-        matchService.addPlayerToTeam1(matchId, userId);
-        MatchDTO matchAfter = matchService.getMatch(matchId);
+        matchService.addPlayerToTeam1(MATCH_TO_JOIN_ID, DEFAULT_USER_ID);
+        MatchDTO matchAfter = matchService.getMatch(MATCH_TO_JOIN_ID);
         int teamSizeAfter = matchAfter.team1Players().size();
         assertThat(teamSizeAfter, equalTo(teamSizeBefore + 1));
     }
@@ -233,17 +271,15 @@ public class MatchServiceIntegrationTest {
     @Order(10)
     @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
     public void removePlayerFromMatchAsAdminTest(){
-        long matchId = 4L;
-        long userId = 2L;
-        MatchDTO matchInitial = matchService.getMatch(matchId);
+        MatchDTO matchInitial = matchService.getMatch(MATCH_TO_JOIN_ID);
         assertFalse(matchInitial.team1Players().isEmpty());
-        matchService.addPlayerToTeam1(matchId, userId);
+        matchService.addPlayerToTeam1(MATCH_TO_JOIN_ID, DEFAULT_USER_ID);
 
-        MatchDTO match = matchService.getMatch(matchId);
+        MatchDTO match = matchService.getMatch(MATCH_TO_JOIN_ID);
         int teamSizeBefore = match.team1Players().size();
-        matchService.removePlayerFromTeam1(matchId, userId);
+        matchService.removePlayerFromTeam1(MATCH_TO_JOIN_ID, DEFAULT_USER_ID);
 
-        MatchDTO matchAfter = matchService.getMatch(matchId);
+        MatchDTO matchAfter = matchService.getMatch(MATCH_TO_JOIN_ID);
         int teamSizeAfter = matchAfter.team1Players().size();
         assertThat(teamSizeAfter, equalTo(teamSizeBefore - 1));
     }
