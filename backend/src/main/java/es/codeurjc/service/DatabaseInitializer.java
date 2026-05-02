@@ -170,12 +170,14 @@ public class DatabaseInitializer {
         Match match4 = new Match(date4,true,false,true,0,juan,4.49f,football,club4);
         Match match5 = new Match(date5,true,false,true,1,silvia,3.25f,volley,club5);
 
+        admin.addSport(tennis, 7.00f);
         pedro.addSport(tennis, 5.12f);
         maria.addSport(paddle, 4.57f);
         luis.addSport(tennis, 6.03f);
         juan.addSport(football, 3.51f);
         silvia.addSport(volley, 5.37f);
-
+        
+        userSportProfileService.save(admin.getProfileForSport(tennis));
         userSportProfileService.save(pedro.getProfileForSport(tennis));
         userSportProfileService.save(maria.getProfileForSport(paddle));
         userSportProfileService.save(luis.getProfileForSport(tennis));

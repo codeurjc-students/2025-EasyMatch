@@ -3,6 +3,7 @@ package es.codeurjc.backend.e2e.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.isNotNull;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -765,6 +766,105 @@ class AdminUserAngularTest extends BaseAngularUITest {
         assertThat(finalRows.size(), is(initialCount - 1));
     }
 
+    @Test
+    public void verifyMessageRemovalAsAdminWorks() {
+        loginUser("admin@emeal.com", "admin");
+        goToAdminMessagesPage();
+
+        waitForTableReady();
+
+        WebElement lastPageButton = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("button.mat-mdc-paginator-navigation-last")
+                )
+        );
+
+        scrollIntoView(lastPageButton);
+        lastPageButton.click();
+
+        waitForAngularToFinish();
+
+        List<WebElement> initialRows = driver.findElements(
+                By.cssSelector("table.admin-table tr.mat-mdc-row")
+        );
+
+        int initialCount = initialRows.size();
+
+        WebElement rowToDelete = initialRows.getLast();
+
+        WebElement deleteBtn = rowToDelete.findElement(
+                By.cssSelector("button .delete-icon")
+        );
+
+        scrollIntoView(deleteBtn);
+        deleteBtn.click();
+
+        WebElement confirmBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.xpath(
+                                "//button[.//span[contains(text(),'Eliminar cuenta')] or contains(.,'Eliminar')]"
+                        )
+                )
+        );
+
+        scrollIntoView(confirmBtn);
+        confirmBtn.click();
+
+        wait.until(ExpectedConditions.stalenessOf(rowToDelete));
+
+        waitForAngularToFinish();
+
+        List<WebElement> finalRows = driver.findElements(
+                By.cssSelector("table.admin-table tr.mat-mdc-row")
+        );
+
+        if (initialCount == 1) {
+                assertThat(finalRows.size(), is(0));
+        } else {
+                assertThat(finalRows.size(), is(initialCount - 1));
+        }
+    }
+
+    @Test
+    public void verifyMessageEditionAsAdminWorks() {
+        loginUser("admin@emeal.com", "admin");
+        goToAdminMessagesPage();
+
+        waitForTableReady();
+        WebElement firstRow = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("table.admin-table tr.mat-mdc-row")
+                )
+        );
+        List<WebElement> cells = firstRow.findElements(By.cssSelector("td"));
+        String originalContent = cells.get(1).getText();
+        assertThat(originalContent, not(""));
+        WebElement editBtn = firstRow.findElement(
+                By.xpath(".//button[.//mat-icon[contains(text(),'edit')]]")
+        );
+        scrollIntoView(editBtn);
+        editBtn.click();
+        waitForPageReload();
+        WebElement contentInput = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector("textarea[formcontrolname='content']")
+                )
+        );
+        contentInput.clear();
+        String newContent = "Mensaje editado por Selenium";
+        contentInput.sendKeys(newContent);
+        WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
+        scrollIntoView(submitBtn);
+        submitBtn.click();
+        waitForTableReady();
+        WebElement updatedRow = driver.findElement(By.xpath(
+                "//td[contains(text(),'" + newContent + "')]"
+        ));
+        assertThat(updatedRow.isDisplayed(), is(true));
+    }
+
+        
+
     private void waitForTableReady() {
         waitForPageReload();
 
@@ -803,6 +903,17 @@ class AdminUserAngularTest extends BaseAngularUITest {
                 )
         );
         sportsBtn.click();
+
+        waitForTableReady();
+    }
+
+    private void goToAdminMessagesPage() {
+        WebElement messagesBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("a[routerlink='/admin/messages']")
+                )
+        );
+        messagesBtn.click();
 
         waitForTableReady();
     }
