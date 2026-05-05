@@ -42,28 +42,28 @@ export class ClubService {
 
 
   getClub(id: number): Observable<Club> {
-    return this.http.get<Club>(`${this.apiUrl}/clubs/${id}`,{withCredentials : true});
+    return this.http.get<Club>(`${this.apiUrl}/clubs/${id}`);
   }
 
   deleteClub(id: number): Observable<Club> {
-      return this.http.delete<Club>(`${this.apiUrl}/clubs/${id}`,{withCredentials : true});
+      return this.http.delete<Club>(`${this.apiUrl}/clubs/${id}`);
   }
 
   createClub(payload: Partial<Club>): Observable<Club> {
-      return this.http.post<Club>(`${this.apiUrl}/clubs/`, payload,{ withCredentials : true });
+      return this.http.post<Club>(`${this.apiUrl}/clubs/`, payload);
   }
   
   updateClub(editingId: number, payload: Partial<Club>): Observable<Club> {
-      return this.http.put<Club>(`${this.apiUrl}/clubs/${editingId}`, payload,{ withCredentials : true });
+      return this.http.put<Club>(`${this.apiUrl}/clubs/${editingId}`, payload);
   }
 
   getClubImage(id: number): Observable<Blob>{
-    return this.http.get(`${this.apiUrl}/clubs/${id}/image`, { responseType: 'blob', withCredentials: true }); 
+    return this.http.get(`${this.apiUrl}/clubs/${id}/image`, { responseType: 'blob'}); 
   }
 
   replaceClubImage(id: number, file: File) {
     const formData = new FormData();
     formData.append('imageFile', file);
-    return this.http.put(`${this.apiUrl}/clubs/${id}/image`, formData, { withCredentials: true });
+    return this.http.put(`${this.apiUrl}/clubs/${id}/image`, formData);
   }
 }

@@ -7,6 +7,7 @@ import {
 import { MessageService } from './message.service';
 import { environment } from '../../environments/environment';
 import { ChatMessage } from '../models/chat-message.model';
+import { provideRouter } from '@angular/router';
 
 describe('MessageService Integration Test', () => {
   let service: MessageService;
@@ -23,7 +24,7 @@ describe('MessageService Integration Test', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [MessageService]
+      providers: [MessageService, provideRouter([])]
     });
 
     service = TestBed.inject(MessageService);
@@ -31,7 +32,7 @@ describe('MessageService Integration Test', () => {
   });
 
   afterEach(() => {
-    // Verifica que no queden requests pendientes
+
     httpMock.verify();
   });
 
@@ -45,7 +46,6 @@ describe('MessageService Integration Test', () => {
     );
 
     expect(req.request.method).toBe('GET');
-    expect(req.request.withCredentials).toBeTrue();
 
     req.flush(mockMessage);
   });
@@ -64,8 +64,11 @@ describe('MessageService Integration Test', () => {
       expect(response.content[0]).toEqual(mockMessage);
     });
 
-    const req = httpMock.expectOne(
-      `${environment.apiUrl}/messages?page=0&size=10&sort=id,asc`
+    const req = httpMock.expectOne(req =>
+      req.url === `${environment.apiUrl}/messages` &&
+      req.params.get('page') === '0' &&
+      req.params.get('size') === '10' &&
+      req.params.get('sort') === 'id,asc'
     );
 
     expect(req.request.method).toBe('GET');
@@ -92,7 +95,6 @@ describe('MessageService Integration Test', () => {
     );
 
     expect(req.request.method).toBe('PUT');
-    expect(req.request.withCredentials).toBeTrue();
     expect(req.request.body).toEqual(payload);
 
     req.flush(updatedMessage);
@@ -108,7 +110,6 @@ describe('MessageService Integration Test', () => {
     );
 
     expect(req.request.method).toBe('DELETE');
-    expect(req.request.withCredentials).toBeTrue();
 
     req.flush(mockMessage);
   });

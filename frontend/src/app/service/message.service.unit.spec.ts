@@ -48,8 +48,7 @@ describe('MessageService', () => {
 
     service.getMessage(1).subscribe(message => {
       expect(httpClientMock.get).toHaveBeenCalledWith(
-        `${environment.apiUrl}/messages/1`,
-        { withCredentials: true }
+        `${environment.apiUrl}/messages/1`
       );
 
       expect(message).toEqual(mockMessage);
@@ -90,8 +89,7 @@ describe('MessageService', () => {
     service.updatechatMessage(1, payload).subscribe(message => {
       expect(httpClientMock.put).toHaveBeenCalledWith(
         `${environment.apiUrl}/messages/1`,
-        payload,
-        { withCredentials: true }
+        payload
       );
 
       expect(message.content).toBe('Mensaje actualizado');
@@ -103,8 +101,7 @@ describe('MessageService', () => {
 
     service.deleteMessage(1).subscribe(message => {
       expect(httpClientMock.delete).toHaveBeenCalledWith(
-        `${environment.apiUrl}/messages/1`,
-        { withCredentials: true }
+        `${environment.apiUrl}/messages/1`
       );
 
       expect(message).toEqual(mockMessage);

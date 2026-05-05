@@ -90,9 +90,7 @@ export class ChatService {
   }
 
   private loadMessages(matchId: number) {
-    this.http.get<ChatMessage[]>(`/api/v1/matches/${matchId}/messages`, {
-      withCredentials: true
-    })
+    this.http.get<ChatMessage[]>(`/api/v1/matches/${matchId}/messages`)
     .pipe(
       map(res => res.map(m => ({
         matchId: m.matchId,
@@ -109,11 +107,7 @@ export class ChatService {
   }
 
   getUserChats(userId: number) {
-    
-    return this.http.get<ChatMessage[]>(
-      `/api/v1/users/${userId}/messages/`,
-      { withCredentials: true }
-    );
+    return this.http.get<ChatMessage[]>(`/api/v1/users/${userId}/messages/`);
   }
 
 }

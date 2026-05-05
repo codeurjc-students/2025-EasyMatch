@@ -29,7 +29,7 @@ export class UserService {
   }
 
   deleteUser(id: number): Observable<User> {
-    return this.http.delete<User>(`${this.apiUrl}/users/${id}`,{withCredentials : true});
+    return this.http.delete<User>(`${this.apiUrl}/users/${id}`);
   }
 
   registerUser(userData: Partial<User>): Observable<User> {
@@ -46,9 +46,7 @@ export class UserService {
   }
 
   getUserMatches(userId: number): Observable<Match[]> {
-    return this.http.get<Match[]>(`${this.apiUrl}/users/${userId}/matches/`, {
-      withCredentials: true
-    });
+    return this.http.get<Match[]>(`${this.apiUrl}/users/${userId}/matches/`);
   }
 
   getAllUsers(page = 0, 
@@ -71,63 +69,57 @@ export class UserService {
       totalElements: number;
       totalPages: number;
       number: number;
-    }>(`${this.apiUrl}/users/`, { params, withCredentials: true }).pipe(
+    }>(`${this.apiUrl}/users/`, { params }).pipe(
       map(response => ({ ...response, content: response.content }))
     );
   }
 
   getUserImage(id: number): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/users/${id}/image`, { responseType: 'blob', withCredentials: true });
+    return this.http.get(`${this.apiUrl}/users/${id}/image`, { responseType: 'blob'});
   }
 
   updateUser(editingId: number, payload: Partial<User>) : Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/users/${editingId}`, payload, { withCredentials: true });
+    return this.http.put<User>(`${this.apiUrl}/users/${editingId}`, payload);
   }
 
   getUserById(id: number) : Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/users/${id}`, { withCredentials: true });
+    return this.http.get<User>(`${this.apiUrl}/users/${id}`);
   }
 
   replaceUserImage(id: number, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('imageFile', file);
-    return this.http.put(`${this.apiUrl}/users/${id}/image`, formData, { withCredentials: true });
+    return this.http.put(`${this.apiUrl}/users/${id}/image`, formData);
   }
 
   getUserSportHistory(userId: number, sportId: number) {
     return this.http.get<LevelHistory[]>(
-      `${this.apiUrl}/users/${userId}/sports/${sportId}/history`,
-      { withCredentials: true }
-    );
+      `${this.apiUrl}/users/${userId}/sports/${sportId}/history`);
   }
 
   getUserSportProfile(userId: number, sportId: number) {
     return this.http.get<UserSportProfile>(
-      `${this.apiUrl}/users/${userId}/sports/${sportId}/profile`,
-      { withCredentials: true }
+      `${this.apiUrl}/users/${userId}/sports/${sportId}/profile`
     );
   }
 
   updateSportProfile(userId: number, sportId: number, profile: Partial<UserSportProfile>) {
     return this.http.put(
       `${this.apiUrl}/users/${userId}/sports/${sportId}/profile`,
-      profile,
-      { withCredentials: true }
+      profile
     );
   }
 
   addSportToUser(userId: number, sportId: number, profile: Partial<UserSportProfile>) {
     return this.http.post(
       `${this.apiUrl}/users/${userId}/sports/${sportId}/profile`,
-      profile,
-      { withCredentials: true }
+      profile
     );
   }
 
   getUserSports(userId: number) {
     return this.http.get<Sport[]>(
-      `${this.apiUrl}/users/${userId}/sports`,
-      { withCredentials: true }
+      `${this.apiUrl}/users/${userId}/sports`
     );
   }
 

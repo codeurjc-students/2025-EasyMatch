@@ -34,15 +34,15 @@ export class MessageService {
   }
 
   getMessage(id: number): Observable<ChatMessage> {
-      return this.http.get<ChatMessage>(`${this.apiUrl}/messages/${id}`,{ withCredentials : true});
+      return this.http.get<ChatMessage>(`${this.apiUrl}/messages/${id}`);
     }
 
   deleteMessage(id: number): Observable<ChatMessage> {
-    return this.http.delete<ChatMessage>(`${this.apiUrl}/messages/${id}`,{ withCredentials : true});
+    return this.http.delete<ChatMessage>(`${this.apiUrl}/messages/${id}`);
   }
   
   updatechatMessage(editingId: number, payload: Partial<ChatMessage>): Observable<ChatMessage> {
-    return this.http.put<ChatMessage>(`${this.apiUrl}/messages/${editingId}`, payload,{ withCredentials : true });
+    return this.http.put<ChatMessage>(`${this.apiUrl}/messages/${editingId}`, payload);
   }
 
 }
