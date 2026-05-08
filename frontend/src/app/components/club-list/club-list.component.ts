@@ -36,16 +36,29 @@ export class ClubListComponent implements OnInit {
   constructor(private clubService: ClubService) {}
 
   ngOnInit(): void {
-    this.loadClubs();
+    this.loadClubs(true);
   }
 
-  loadClubs(page = 0, size = this.pageSize): void {
+  hasMore(): boolean {
+    return this.clubs().length < this.totalElements();
+  }
+
+  loadClubs(reset = false): void {
     this.loading.set(true);
-    this.clubService.getClubs(page, size, 'date,asc', this.filters()).subscribe({
+
+    if (reset) {
+      this.pageIndex = 0;
+      this.clubs.set([]);
+    }
+
+    this.clubService.getClubs(this.pageIndex, this.pageSize, 'date,asc', this.filters()).subscribe({
       next: (response) => {
-        this.clubs.set(response.content);
         this.totalElements.set(response.totalElements);
-        this.pageIndex = response.number;
+        this.clubs.update(prev => [
+          ...prev,
+          ...response.content
+        ]);
+        this.pageIndex = response.number + 1;
         this.loading.set(false);
       },
       error: (err) => {
@@ -55,15 +68,14 @@ export class ClubListComponent implements OnInit {
     });
   }
 
-  onPageChange(event: PageEvent): void {
-    this.pageSize = event.pageSize;
-    this.pageIndex = event.pageIndex;
-    this.loadClubs(this.pageIndex, this.pageSize);
-  }
 
   onFiltersChanged(filters: { search?: string; sport?: string; city?: string }): void {
     this.filters.set(filters);
     this.pageIndex = 0;
-    this.loadClubs(0, this.pageSize);
+    this.loadClubs(true);
+  }
+
+  loadMore(): void {
+    this.loadClubs();
   }
 }

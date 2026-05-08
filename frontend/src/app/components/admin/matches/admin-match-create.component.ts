@@ -58,6 +58,7 @@ export class AdminMatchCreateComponent implements OnInit {
       price: [null, [Validators.required, Validators.min(0)]],
       date: [null, Validators.required],
       time: ['', Validators.required],
+      duration: [60, Validators.required],
       type: [true, Validators.required], 
       isPrivate: [false, Validators.required],
     });
@@ -117,6 +118,7 @@ export class AdminMatchCreateComponent implements OnInit {
             this.form.patchValue({
                 date: dateTime,
                 time: timeString,
+                duration: m.duration,
                 type: m.type,
                 isPrivate: m.isPrivate,
                 price: m.price,

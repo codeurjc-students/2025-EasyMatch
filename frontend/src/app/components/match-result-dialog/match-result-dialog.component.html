@@ -73,7 +73,7 @@
                     matInput
                     type="number"
                     class="set-input"
-                    min="0" max="7"
+                    min="0" [attr.max]="setMaxPoints()"
                     [value]="s"
                     (input)="updateSet('A', $index, $any($event.target).valueAsNumber)"
                   />
@@ -92,7 +92,7 @@
                   <input
                     matInput
                     type="number"
-                    min="0" max="7"
+                    min="0" [attr.max]="setMaxPoints()"
                     class="set-input"
                     [value]="s"
                     (input)="updateSet('B', $index, $any($event.target).valueAsNumber)"
@@ -107,7 +107,7 @@
       </table>
     }
      @if (errorMessage()) {
-      <div class="error-box">
+      <div class="error-message">
         <mat-icon>error_outline</mat-icon>
         <span>{{ errorMessage() }}</span>
       </div>

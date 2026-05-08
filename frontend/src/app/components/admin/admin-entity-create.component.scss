@@ -230,3 +230,14 @@
 .full-width {
   width: 100%;
 }
+
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.form-grid .full-row {
+  grid-column: 1 / -1;
+}

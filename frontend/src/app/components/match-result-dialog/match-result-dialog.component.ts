@@ -44,6 +44,12 @@ export class MatchResultDialogComponent {
     () => this.data.match.sport.scoringType === ScoringType.SETS
   );
 
+  isVolleyball = computed(
+    () => this.data.match.sport.name?.toUpperCase() === 'VOLEIBOL'
+  );
+
+  setMaxPoints = computed(() => (this.isVolleyball() ? 30 : 7));
+
   team1Score = signal<number>(this.data.match.result?.team1Score ?? 0);
   team2Score = signal<number>(this.data.match.result?.team2Score ?? 0);
   errorMessage = signal<string | null>(null);
@@ -79,11 +85,18 @@ export class MatchResultDialogComponent {
     if (this.isSets()) {
       let team1Sets = [...this.team1Sets()];
       let team2Sets = [...this.team2Sets()];
-      const isValid = team1Sets.every(v => v >= 0 && v <= 7)
-        && team2Sets.every(v => v >= 0 && v <= 7);
+
+      const max = this.setMaxPoints();
+      
+      const isValid = team1Sets.every(v => v >= 0 && v <= max)
+        && team2Sets.every(v => v >= 0 && v <= max);
 
       if (!isValid) {
-        this.errorMessage.set('Los juegos por set deben estar entre 0 y 7');
+        this.errorMessage.set(
+          this.isVolleyball()
+          ? 'Los puntos por set deben estar entre 0 y '+ max
+          : 'Los juegos por set deben estar entre 0 y ' + max
+        );
         return;
       }
 

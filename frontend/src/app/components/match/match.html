@@ -27,7 +27,7 @@
 
     <mat-card-content>
       <div class="match-info">
-        <div class="match-row">
+        <div class="match-row full-width">
           <mat-icon color="primary">place</mat-icon>
           <span class="match-city">{{match.club.name}}, {{ match.club.city || 'Por confirmar' }}</span>
         </div>
@@ -36,6 +36,12 @@
           <mat-icon color="primary">group</mat-icon>
           <span id="number-players">{{ getTotalPlayers()}}/{{ match.sport.modes[match.modeSelected].playersPerGame }} jugadores</span>
         </div>
+
+        <div class="match-row">
+          <mat-icon color="primary">schedule</mat-icon>
+          <span>{{ match.duration }} min</span>
+        </div>
+
 
         <div class="match-row">
           <mat-icon color="primary">lock</mat-icon>

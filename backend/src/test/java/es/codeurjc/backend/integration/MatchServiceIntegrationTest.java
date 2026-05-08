@@ -93,6 +93,8 @@ public class MatchServiceIntegrationTest {
         match.setType(true);
         match.setIsPrivate(false);
         match.setPrice(15.0f);
+        match.setModeSelected(0);
+        match.setDuration(120);
         match.setSport(defaultSport);
         match.setClub(defaultClub);
         return match;
@@ -114,6 +116,7 @@ public class MatchServiceIntegrationTest {
             false,
             true,
             0,
+            120,
             currentMatch.organizer(),
             5.49f,
             secondClubDTO.sports().get(0),

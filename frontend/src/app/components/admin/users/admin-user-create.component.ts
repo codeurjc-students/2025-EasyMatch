@@ -1,11 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../service/user.service';
 import { User } from '../../../models/user.model';
@@ -13,6 +13,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Sport } from '../../../models/sport.model';
 import { SportService } from '../../../service/sport.service';
+import { Subject } from 'rxjs/internal/Subject';
+import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 
 @Component({
   selector: 'app-admin-user-create',
@@ -30,7 +32,7 @@ import { SportService } from '../../../service/sport.service';
   templateUrl: './admin-user-create.component.html',
   styleUrls: ['.././admin-entity-create.component.scss']
 })
-export class AdminUserCreateComponent implements OnInit {
+export class AdminUserCreateComponent implements OnInit,OnDestroy {
 
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
@@ -38,7 +40,10 @@ export class AdminUserCreateComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
+  private location = inject(Location);
   private originalProfiles = new Map<number, number>();
+  private destroy$ = new Subject<void>();
+
   form!: FormGroup;
   editingId: number | null = null;
   isEditMode = false;
@@ -77,6 +82,12 @@ export class AdminUserCreateComponent implements OnInit {
       }
     });
   };
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.snackBar.dismiss();
+  }
 
   private createSportLevelGroup(data?: any): FormGroup {
     return this.fb.group({
@@ -160,31 +171,34 @@ export class AdminUserCreateComponent implements OnInit {
     };
 
     if (this.editingId) {
-      this.userService.updateUser(this.editingId, payload).subscribe({
-        next: (user : User) => {
-          this.syncSportProfiles(user.id); 
-          if (this.photoFile) {
-            this.userService.replaceUserImage(user.id, this.photoFile).subscribe({
-              next: () => {
-                this.snackBar.open('✅ Usuario editado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
-                this.reloadAfterSave();
-              },
-              error: (err) => {
-                console.error('Error al subir foto:', err);
-                this.snackBar.open('❌ Usuario guardado pero error subiendo la foto', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
-                this.reloadAfterSave();
-              }
-            });
-          } else {
-            this.snackBar.open('✅ Usuario editado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
-            this.reloadAfterSave();
+      this.userService.updateUser(this.editingId, payload)
+      .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (user : User) => {
+            this.syncSportProfiles(user.id); 
+            if (this.photoFile) {
+              this.userService.replaceUserImage(user.id, this.photoFile).subscribe({
+                next: () => {
+                  this.snackBar.open('✅ Usuario editado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
+                  this.reloadAfterSave();
+                },
+                error: (err) => {
+                  console.error('Error al subir foto:', err);
+                  this.snackBar.open('❌ Usuario guardado pero error subiendo la foto', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
+                  this.reloadAfterSave();
+                }
+              });
+            } else {
+              this.snackBar.open('✅ Usuario editado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
+              this.reloadAfterSave();
+            }
+          },
+          error: (err) => {
+            console.error('Error al actualizar usuario:', err);
+            this.snackBar.open('❌ Error al editar usuario', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
           }
-        },
-        error: (err) => {
-          console.error('Error al actualizar usuario:', err);
-          this.snackBar.open('❌ Error al editar usuario', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
         }
-      });
+      );
 
     } else {
       this.userService.registerUser(payload).subscribe({
@@ -277,7 +291,7 @@ export class AdminUserCreateComponent implements OnInit {
   }
   
   cancel() {
-    this.router.navigate(['/admin/users']);
+    this.location.back();
   }
 
   private roundToTwoDecimals(value: number): number {

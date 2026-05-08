@@ -2,21 +2,34 @@
 <app-club-filter (filtersChanged)="onFiltersChanged($event)"></app-club-filter>
 <section class="clubs-section">
   <div class="header">
-    <span class="found">{{ clubs().length}} encontrados</span>
+    <span class="found">{{ totalElements()}} encontrados</span>
   </div>
 
   
   <section class="clubs-grid">
     @for (club of clubs(); track club.id) {
-      <app-club [club]="club"></app-club>
+      <app-club [club]="club" (refresh)="loadClubs(true)"></app-club>
     }
   </section>
 
-  <mat-paginator
-    [length]="totalElements()"
-    [pageSize]="pageSize"
-    [pageIndex]="pageIndex"
-    aria-label="Selector de página"
-    (page)="onPageChange($event)">
-  </mat-paginator>
+  @if (hasMore()) {
+    <div class="load-more">
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="loadMore()"
+        [disabled]="loading()">
+
+        @if (!loading()) {
+          Cargar más
+        } @else {
+          <mat-spinner diameter="20"></mat-spinner>
+        }
+
+      </button>
+
+    </div>
+  }
+  
 </section>

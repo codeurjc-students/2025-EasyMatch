@@ -64,9 +64,13 @@ export class MatchCreateComponent implements OnInit {
       date: [null, Validators.required],
       time: ['', Validators.required],
       type: [true, Validators.required], 
-      isPrivate: [false, Validators.required]
+      isPrivate: [false, Validators.required],
+      duration: [60, Validators.required],
     },{ 
-      validators: this.futureDateTimeValidator() 
+      validators: [
+       this.futureDateTimeValidator(),
+       this.clubScheduleValidator()
+      ]
     }
     );
     this.loadClubs();
@@ -176,6 +180,44 @@ export class MatchCreateComponent implements OnInit {
       return selectedDateTime <= now
         ? { invalidFutureDate: true }
         : null;
+    };
+  }
+  private clubScheduleValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const club: Club = control.get('club')?.value;
+      const date = control.get('date')?.value;
+      const time = control.get('time')?.value;
+      const duration = control.get('duration')?.value;
+
+      if (!club || !date || !time || !club.schedule.openingTime || !club.schedule.closingTime) {
+        return null;
+      }
+
+      const [hours, minutes] = time.split(':').map(Number);
+      const selected = new Date(date);
+      selected.setHours(hours, minutes, 0, 0);
+
+      const [openH, openM] = club.schedule.openingTime.split(':').map(Number);
+      const [closeH, closeM] = club.schedule.closingTime.split(':').map(Number);
+
+      const selectedMinutes = hours * 60 + minutes;
+      const endMinutes = selectedMinutes + duration;
+      const openMinutes = openH * 60 + openM;
+      const closeMinutes = closeH * 60 + closeM;
+
+      const clubNotOpenYet = selectedMinutes < openMinutes;
+      const clubClosesBeforeEnd = endMinutes > closeMinutes;
+      const matchStartsAfterClosing = selectedMinutes >= closeMinutes;
+
+      if (clubNotOpenYet){
+        return { clubNotOpenYet: true };
+      }else if (matchStartsAfterClosing) {
+        return { matchStartsAfterClosing: true };
+      }else if (clubClosesBeforeEnd) {
+        return { clubClosesBeforeEnd: true };
+      } else {
+        return null;
+      }
     };
   }
 }

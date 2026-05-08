@@ -3,7 +3,6 @@ import { MatchService } from '../../service/match.service';
 import { Match } from '../../models/match.model';
 import { MatchComponent } from '../match/match';
 import { CommonModule } from '@angular/common';
-import { MatPaginator, PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 import { HeaderComponent } from "../header/header.component";
 import { MatchFilterComponent } from "../match-filter/match-filter.component";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -13,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   selector: 'app-match-list',
   templateUrl:'match-list.html',
   styleUrls: ['./match-list.scss'],
-  imports: [MatchComponent, CommonModule, MatPaginator, HeaderComponent, MatchFilterComponent, MatProgressSpinnerModule],
+  imports: [MatchComponent, CommonModule, HeaderComponent, MatchFilterComponent, MatProgressSpinnerModule],
   standalone: true,
 })
 export class MatchListComponent implements OnInit {
@@ -25,27 +24,39 @@ export class MatchListComponent implements OnInit {
 
   filters = signal<{ search?: string; sport?: string; timeRange?: string, includeFriendlies?: boolean }>({});
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private matchService: MatchService) {}
 
   ngOnInit(): void {
-    this.loadMatches();
+    this.loadMatches(true);
+  }
+
+  hasMore(): boolean {
+    return this.matches().length < this.totalElements();
   }
 
   onFiltersChanged(filters: { search?: string; sport?: string; timeRange?: string, includeFriendlies: boolean }): void {
     this.filters.set(filters);
     this.pageIndex = 0;
-    this.loadMatches(0, this.pageSize);
+    this.loadMatches(true);
   }
 
-  loadMatches(page: number = 0, size: number = this.pageSize): void {
+  loadMatches(reset = false): void {
     this.loading.set(true);
-    this.matchService.getMatches(page, size,'date,asc', this.filters()).subscribe({
+
+    if (reset) {
+      this.pageIndex = 0;
+      this.matches.set([]);
+    }
+
+    this.matchService.getMatches(this.pageIndex, this.pageSize, 'date,asc', this.filters()).subscribe({
       next: (response) => {
-        this.matches.set(response.content);
         this.totalElements.set(response.totalElements);
-        this.pageIndex = response.number;
+        this.matches.update(prev => [
+          ...prev,
+          ...response.content
+        ]);
+        this.pageIndex = response.number + 1;
         this.loading.set(false);
       },
       error: (err) => {
@@ -55,10 +66,8 @@ export class MatchListComponent implements OnInit {
     });
   }
 
-  onPageChange(event: PageEvent): void {
-    this.pageSize = event.pageSize;
-    this.pageIndex = event.pageIndex;
-    this.loadMatches(this.pageIndex, this.pageSize);
+  loadMore(): void {
+    this.loadMatches();
   }
 
   

@@ -10,6 +10,7 @@ export interface Match {
   isPrivate: boolean;
   state: boolean;
   modeSelected: number;
+  duration: number;
   organizer: User;
   sport: Sport;
   price: number;

@@ -9,7 +9,7 @@
 
       <div class="form-grid">
 
-        <mat-form-field appearance="fill" class="full-width">
+        <mat-form-field appearance="fill" class="full-row">
             <mat-label>Club</mat-label>
             <mat-select formControlName="club">
                 <mat-option *ngFor="let c of clubs" [value]="c">{{ c.name }}, {{ c.city}}</mat-option>
@@ -49,6 +49,16 @@
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Hora</mat-label>
             <input matInput type="time" formControlName="time" placeholder="Selecciona hora" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Duración</mat-label>
+            <mat-select formControlName="duration">
+                <mat-option [value]="45">45 min</mat-option>
+                <mat-option [value]="60">60 min</mat-option>
+                <mat-option [value]="90">90 min</mat-option>
+                <mat-option [value]="120">120 min</mat-option>
+            </mat-select>
         </mat-form-field>
         
         <mat-form-field appearance="fill" class="full-width">
