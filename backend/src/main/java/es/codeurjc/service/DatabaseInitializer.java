@@ -327,7 +327,7 @@ public class DatabaseInitializer {
             "Toledo",
             "Calle del Roble, 14",
             "684274302",
-            "elroble@emeal.com",
+            "elroble@outlook.com",
             "www.elrobleclub.com"
         );
         club7.setSports(List.of(football, tennis));
@@ -395,13 +395,7 @@ public class DatabaseInitializer {
         club11.setNumberOfCourts(List.of(5, 2));
         club11.setSchedule(new Schedule("08:00", "22:30"));
         club11.setPriceRange(new PriceRange(20, 32, "€/hora"));
-
         setClubImage(club11, "/images/lavega.jpg");
-
-        clubService.save(club11);
-
-        setClubImage(club11, "/images/padel_pro_center.jpg");
-
         clubService.save(club11);
         
         Match match1 = new Match(date1,true,false,true,0,120,pedro,3.49f,tennis,club1);

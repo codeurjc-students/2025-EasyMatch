@@ -1,6 +1,7 @@
 package es.codeurjc.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -86,8 +88,15 @@ public class MatchService {
     @Autowired 
     private ChatMessageMapper chatMessageMapper;
 
+    @Value("${spring.profiles.active:dev}")
+    private String profile;
+
     private MatchDTO toDTO (Match Match) {
         return mapper.toDTO(Match);
+    }
+
+    private boolean isProductionDatabase() {
+        return profile.contains("prod");
     }
 
     public Optional<Match> findById(long id) {
@@ -113,16 +122,45 @@ public class MatchService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MatchDTO> getFilteredMatches( Pageable pageable, String search, String sport, Boolean includeFriendlies, String timeRange) {
+    public Page<MatchDTO> getFilteredMatches(
+            Pageable pageable,
+            String search,
+            String sport,
+            Boolean includeFriendlies,
+            String timeRange) {
+
         if (includeFriendlies == null) {
             includeFriendlies = true;
         }
-        return matchRepository.findFilteredMatches(pageable,
-            search != null ? "%" + search.toLowerCase() + "%" : null, 
-            sport != null ? sport.toLowerCase() : null, 
-            includeFriendlies, 
-            timeRange != null ? timeRange.toLowerCase() : null, true)
-            .map(this::toDTO);
+
+        String timezone = ZoneId.systemDefault().getId();
+
+        boolean isProd = isProductionDatabase();
+
+        Page<Match> result;
+
+        if (isProd) {
+            result = matchRepository.findFilteredMatchesWithTimezone(
+                pageable,
+                search != null ? "%" + search.toLowerCase() + "%" : null,
+                sport != null ? sport.toLowerCase() : null,
+                includeFriendlies,
+                timeRange != null ? timeRange.toLowerCase() : null,
+                true,
+                timezone
+            );
+        } else {
+            result = matchRepository.findFilteredMatchesH2(
+                pageable,
+                search != null ? "%" + search.toLowerCase() + "%" : null,
+                sport != null ? sport.toLowerCase() : null,
+                includeFriendlies,
+                timeRange != null ? timeRange.toLowerCase() : null,
+                true
+            );
+        }
+
+        return result.map(this::toDTO);
     }
 
     public boolean exist(long id) {
@@ -151,12 +189,12 @@ public class MatchService {
         Sport sport = sportService.findById(matchDTO.sport().id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         UserSportProfile levelForSport = loggedUser.getProfileForSport(sport);
         if (levelForSport == null) {
-            loggedUser.addSport(match.getSport(), 1.0f);
+            loggedUser.addSport(match.getSport(), 3.0f);
             loggedUser.getProfileForSport(match.getSport()).setStats(new PlayerStats(0,0,0,0));
         }
 
         ChatMessage systemMessage = ChatMessage.builder()
-            .content(loggedUser.getUsername() + " ha creado el chat")
+            .content(loggedUser.getUsername() + " ha creado el partido")
             .sender(loggedUser)
             .type(MessageType.JOIN)
             .timestamp(LocalDateTime.now())
@@ -205,7 +243,7 @@ public class MatchService {
             
             UserSportProfile levelForSport = loggedUser.getProfileForSport(match.getSport());
             if (levelForSport == null) {
-                loggedUser.addSport(match.getSport(), 1.0f);
+                loggedUser.addSport(match.getSport(), 3.0f);
                 loggedUser.getProfileForSport(match.getSport()).setStats(new PlayerStats(0,0,0,0));
             }
 
@@ -325,7 +363,7 @@ public class MatchService {
 
         if (!match.getResult().isCompleted()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "El partido no tiene resultado previo. Usa add.");
+                    "El partido no tiene resultado previo");
         }
 
         MatchResult result = buildResult(match, resultData);
