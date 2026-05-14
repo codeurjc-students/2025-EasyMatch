@@ -639,7 +639,7 @@ public class DatabaseInitializer {
         );
 
         Match volleyMatch1 = new Match(
-            LocalDateTime.of(2026, 7, 15, 18, 30),
+            LocalDateTime.of(2025, 10, 15, 18, 30),
             true,
             false,
             false,
@@ -652,7 +652,7 @@ public class DatabaseInitializer {
         );
 
         Match volleyMatch2 = new Match(
-            LocalDateTime.of(2026, 7, 19, 17, 0),
+            LocalDateTime.of(2025, 10, 19, 17, 0),
             true,
             false,
             false,

@@ -7,6 +7,7 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class LevelHistory {
 
+    private Long matchId;
     private LocalDateTime date;
     private float levelBefore;
     private float levelAfter;
@@ -16,7 +17,8 @@ public class LevelHistory {
         // JPA
     }
 
-    public LevelHistory(LocalDateTime date, float levelBefore, float levelAfter, boolean won) {
+    public LevelHistory(Long matchId, LocalDateTime date, float levelBefore, float levelAfter, boolean won) {
+        this.matchId = matchId;
         this.date = date;
         this.levelBefore = levelBefore;
         this.levelAfter = levelAfter;
@@ -38,4 +40,29 @@ public class LevelHistory {
     public boolean isWon() {
         return won;
     }
+
+    public Long getMatchId() {
+        return matchId;
+    }
+
+    public void setMatchId(Long matchId) {
+        this.matchId = matchId;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public void setLevelBefore(float levelBefore) {
+        this.levelBefore = levelBefore;
+    }
+
+    public void setLevelAfter(float levelAfter) {
+        this.levelAfter = levelAfter;
+    }
+
+    public void setWon(boolean won) {
+        this.won = won;
+    }
+    
 }

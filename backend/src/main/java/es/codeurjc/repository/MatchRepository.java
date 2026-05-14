@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import es.codeurjc.model.Match;
+import es.codeurjc.model.Sport;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long>{
@@ -67,6 +68,8 @@ public interface MatchRepository extends JpaRepository<Match, Long>{
     );
 
      List<Match> findByTeam1PlayersIdOrTeam2PlayersId(Long id, Long id2);
+     
+     List<Match> findBySportAndTypeTrueOrderByDateAsc(Sport sport);
 
      boolean existsBySportId(Long id);
 
