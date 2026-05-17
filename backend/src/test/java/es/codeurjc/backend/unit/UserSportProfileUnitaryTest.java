@@ -48,7 +48,7 @@ public class UserSportProfileUnitaryTest {
     void verifyLevelIncreasesWhenWinningAgainstStrongerOpponent() {
         float initialLevel = tennisLevel.getLevel();
 
-        tennisLevel.applyMatchResult(true, false, LocalDateTime.now(), 3.5f, 5.5f);
+        tennisLevel.applyMatchResult(1L,true, false, LocalDateTime.now(), 3.5f, 5.5f);
 
         // Level increase calculation:
         // 1 / 1 + 10 ^ ((5.5 - 3.5) / 1.25 ) = 0.0245 
@@ -64,7 +64,7 @@ public class UserSportProfileUnitaryTest {
     void verifyLevelIncreasesSlightlyWhenWinningAgainstWeakerOpponent() {
         float initialLevel = tennisLevel.getLevel();
 
-        tennisLevel.applyMatchResult(true, false, LocalDateTime.now(), 5.5f, 3.5f);
+        tennisLevel.applyMatchResult(1L, true, false, LocalDateTime.now(), 5.5f, 3.5f);
 
         // Level increase calculation:
         // 1 / 1 + 10 ^ ((3.5 - 5.5) / 1.25 ) = 0.9755 
@@ -80,7 +80,7 @@ public class UserSportProfileUnitaryTest {
     void verifyLevelDecreasesWhenLosing() {
         float initialLevel = tennisLevel.getLevel();
 
-        tennisLevel.applyMatchResult(false, false, LocalDateTime.now(), 4.0f, 4.0f);
+        tennisLevel.applyMatchResult(1L,false, false, LocalDateTime.now(), 4.0f, 4.0f);
 
         // Level decrease calculation:
         // 1 / 1 + 10 ^ ((4.0 - 4.0) / 1.25 ) = 0.5 
@@ -94,7 +94,7 @@ public class UserSportProfileUnitaryTest {
     @Test
     void verifyClampLevelToMinimum() {
         tennisLevel.setLevel(1.0f);
-        tennisLevel.applyMatchResult(false, false, LocalDateTime.now(), 1.0f, 7.0f);
+        tennisLevel.applyMatchResult(1L,false, false, LocalDateTime.now(), 1.0f, 7.0f);
 
         assertEquals(1.0f, tennisLevel.getLevel());
     }
@@ -102,7 +102,7 @@ public class UserSportProfileUnitaryTest {
     @Test
     void verifyClampLevelToMaximum() {
         tennisLevel.setLevel(7.0f);
-        tennisLevel.applyMatchResult(true, false, LocalDateTime.now(), 7.0f, 1.0f);
+        tennisLevel.applyMatchResult(1L,true, false, LocalDateTime.now(), 7.0f, 1.0f);
 
         assertEquals(7.0f, tennisLevel.getLevel());
     }
@@ -111,7 +111,7 @@ public class UserSportProfileUnitaryTest {
     void verifyEntryIsAddedToLevelHistory() {
         int initialSize = tennisLevel.getLevelHistory().size();
 
-        tennisLevel.applyMatchResult(true, false, LocalDateTime.now(), 4.0f, 4.0f);
+        tennisLevel.applyMatchResult(1L, true, false, LocalDateTime.now(), 4.0f, 4.0f);
 
         assertEquals(initialSize + 1, tennisLevel.getLevelHistory().size());
     }
@@ -121,7 +121,7 @@ public class UserSportProfileUnitaryTest {
         LocalDateTime date = LocalDateTime.now();
         float previousLevel = tennisLevel.getLevel();
 
-        tennisLevel.applyMatchResult(true, false, date, 4.0f, 4.0f);
+        tennisLevel.applyMatchResult(1L, true, false, date, 4.0f, 4.0f);
 
         LevelHistory entry = tennisLevel.getLevelHistory().get(0);
 

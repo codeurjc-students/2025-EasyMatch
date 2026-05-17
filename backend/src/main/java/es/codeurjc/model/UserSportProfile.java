@@ -48,7 +48,7 @@ public class UserSportProfile {
         this.level = level;
     }
 
-    public void applyMatchResult(boolean won, boolean draw, LocalDateTime matchDate, float teamAvgLevel, float opponentAvgLevel) {
+    public void applyMatchResult(Long id, boolean won, boolean draw, LocalDateTime matchDate, float teamAvgLevel, float opponentAvgLevel) {
 
         float previousLevel = this.level;
 
@@ -58,7 +58,7 @@ public class UserSportProfile {
         this.stats.updateStats(won, draw);
 
         this.levelHistory.add(
-            new LevelHistory(matchDate, previousLevel, this.level, won)
+            new LevelHistory(id,matchDate, previousLevel, this.level, won)
         );
     }
 
@@ -74,6 +74,16 @@ public class UserSportProfile {
         if (level > 7.0f) return 7.0f;
         return level;
     }
+
+    
+    public void resetToInitial() {
+        if(levelHistory.size() > 0){
+            this.level = levelHistory.getFirst().getLevelBefore();
+        }  
+        this.stats = new PlayerStats();   
+        this.levelHistory.clear();
+    }
+
 
     public Long getId() {
         return id;

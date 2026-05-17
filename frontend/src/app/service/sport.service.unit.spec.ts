@@ -55,7 +55,6 @@ describe('SportService', () => {
     service.getSport(1).subscribe(sport => {
       expect(httpClientMock.get).toHaveBeenCalledWith(
         `${environment.apiUrl}/sports/1`,
-        { withCredentials: true }
       );
 
       expect(sport).toEqual(mockSport);
@@ -69,8 +68,7 @@ describe('SportService', () => {
 
     service.getSports().subscribe(sports => {
       expect(httpClientMock.get).toHaveBeenCalledWith(
-        `${environment.apiUrl}/sports/`,
-        { withCredentials: true }
+        `${environment.apiUrl}/sports/`
       );
 
       expect(sports.length).toBe(1);
@@ -100,8 +98,7 @@ describe('SportService', () => {
     service.createSport(payload).subscribe(sport => {
       expect(httpClientMock.post).toHaveBeenCalledWith(
         `${environment.apiUrl}/sports/`,
-        payload,
-        { withCredentials: true }
+        payload
       );
 
       expect(sport).toEqual(createdSport);
@@ -126,8 +123,7 @@ describe('SportService', () => {
     service.updateSport(1, updatedSport).subscribe(sport => {
       expect(httpClientMock.put).toHaveBeenCalledWith(
         `${environment.apiUrl}/sports/1`,
-        updatedSport,
-        { withCredentials: true }
+        updatedSport
       );
 
       expect(sport.name).toBe('Pádel');
@@ -139,8 +135,7 @@ describe('SportService', () => {
 
     service.delete(1).subscribe(sport => {
       expect(httpClientMock.delete).toHaveBeenCalledWith(
-        `${environment.apiUrl}/sports/1`,
-        { withCredentials: true }
+        `${environment.apiUrl}/sports/1`
       );
 
       expect(sport).toEqual(mockSport);

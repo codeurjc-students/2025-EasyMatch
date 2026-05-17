@@ -204,7 +204,13 @@
     margin-top: 1rem;
     margin-right: 1rem;
   }
-  .level-chart {
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
     h2 {
       display: inline-flex;
       align-items: center;
@@ -212,18 +218,32 @@
       margin-bottom: 2.5rem;
       margin-left: 2rem;
       font-weight: 600;
-      .mat-icon{
-        color:#005CBB;
-        alignment-baseline: center;
-      } 
+
+      .mat-icon {
+        color: #005CBB;
+      }
     }
+
+    .chart-range-select {
+      width: 200px;
+
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+  }
+  .chart-container {
+    width: 100%;
+    height: 420px;
+    overflow: hidden;
 
     ngx-charts-line-chart {
       display: block;
-      height: 100px;
-      width: 100px;
+      width: 100%;
+      height: 100%;
     }
   }
+
   .level-chart {
     .no-data-text {
       margin-top: 0.1rem;

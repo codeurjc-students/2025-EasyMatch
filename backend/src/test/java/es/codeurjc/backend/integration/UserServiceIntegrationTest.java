@@ -66,7 +66,7 @@ public class UserServiceIntegrationTest {
                 id,
                 "Jorge Sanchez",
                 "jorge67",
-                "jorge@emeal.com",
+                "jorgesanchez@emeal.com",
                 "jorge2",
                 LocalDateTime.of(2000, 1, 1, 0, 0),
                 true,
@@ -78,7 +78,7 @@ public class UserServiceIntegrationTest {
 
     @Test
     @Order(1)
-    public void getUsersShouldReturnPageOfUsers() {
+    public void getUsersShouldReturnPageOfUsersDTOs() {
         int numUsers = getTotalUsers();
         Page<UserDTO> pageUsers = userService.getUsers(Pageable.ofSize(numUsers));
         assertThat(pageUsers.getTotalElements(), equalTo(Integer.toUnsignedLong(numUsers)));
@@ -136,7 +136,7 @@ public class UserServiceIntegrationTest {
         assertThat(replacedUser.id(), equalTo(REPLACE_USER_ID));
         assertThat(replacedUser.realname(), equalTo("Jorge Sanchez"));
         assertThat(replacedUser.username(), equalTo("jorge67"));
-        assertThat(replacedUser.email(), equalTo("jorge@emeal.com"));
+        assertThat(replacedUser.email(), equalTo("jorgesanchez@emeal.com"));
         assertThat(replacedUser.birthDate(), isA(LocalDateTime.class));
         assertThat(replacedUser.gender(), equalTo(true));
         assertThat(replacedUser.description(), equalTo("Me gusta el deporte"));

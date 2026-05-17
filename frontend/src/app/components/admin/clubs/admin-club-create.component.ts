@@ -1,11 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,6 +13,8 @@ import { ClubService } from '../../../service/club.service';
 import { Club } from '../../../models/club.model';
 import { SportService } from '../../../service/sport.service';
 import { Sport } from '../../../models/sport.model';
+import { Subject } from 'rxjs/internal/Subject';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-admin-club-create',
@@ -30,7 +32,7 @@ import { Sport } from '../../../models/sport.model';
   templateUrl: './admin-club-create.component.html',
   styleUrls: ['.././admin-entity-create.component.scss']
 })
-export class AdminClubCreateComponent implements OnInit {
+export class AdminClubCreateComponent implements OnInit, OnDestroy {
 
   private fb = inject(FormBuilder);
   private clubService = inject(ClubService);
@@ -38,6 +40,8 @@ export class AdminClubCreateComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private location = inject(Location);
+  private destroy$ = new Subject<void>();
 
   form!: FormGroup;
   editingId: number | null = null;
@@ -45,6 +49,7 @@ export class AdminClubCreateComponent implements OnInit {
   photoPreview: string | null = null;
   sports: Sport[] = [];
   originalSportIds: number[] = [];
+  
   
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -77,6 +82,13 @@ export class AdminClubCreateComponent implements OnInit {
   };
 
   
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.snackBar.dismiss();
+  }
+
+
   loadClub(id: number) {
     
     this.clubService.getClub(id).subscribe({
@@ -138,30 +150,33 @@ export class AdminClubCreateComponent implements OnInit {
     };
 
     if (this.editingId) {
-      this.clubService.updateClub(this.editingId, payload).subscribe({
-        next: (club : Club) => {
-          if (this.photoFile) {
-            this.clubService.replaceClubImage(club.id, this.photoFile).subscribe({
-              next: () => {
+      this.clubService.updateClub(this.editingId, payload)
+        .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (club : Club) => {
+              if (this.photoFile) {
+                this.clubService.replaceClubImage(club.id, this.photoFile).subscribe({
+                  next: () => {
+                    this.snackBar.open('✅ Club editado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
+                    this.reloadAfterSave();
+                  },
+                  error: (err) => {
+                    console.error('Error al subir foto:', err);
+                    this.snackBar.open('❌ Club guardado pero error subiendo la foto', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
+                    this.reloadAfterSave();
+                  }
+                });
+              } else {
                 this.snackBar.open('✅ Club editado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
                 this.reloadAfterSave();
-              },
-              error: (err) => {
-                console.error('Error al subir foto:', err);
-                this.snackBar.open('❌ Club guardado pero error subiendo la foto', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
-                this.reloadAfterSave();
               }
-            });
-          } else {
-            this.snackBar.open('✅ Club editado correctamente', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
-            this.reloadAfterSave();
+            },
+            error: (err) => {
+              console.error('Error al actualizar club:', err);
+              this.snackBar.open('❌ Error al editar club', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
+            }
           }
-        },
-        error: (err) => {
-          console.error('Error al actualizar club:', err);
-          this.snackBar.open('❌ Error al editar club', 'Cerrar', { duration: 4000, panelClass: ['error-snackbar'] });
-        }
-      });
+        );
 
     } else {
       this.clubService.createClub(payload).subscribe({
@@ -252,7 +267,7 @@ export class AdminClubCreateComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['/admin/clubs']);
+    this.location.back();
   }
 
 }

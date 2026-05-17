@@ -3,10 +3,8 @@ package es.codeurjc.backend.e2e.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isNotNull;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -63,12 +61,21 @@ class AdminUserAngularTest extends BaseAngularUITest {
     public void verifyUserCreationAsAdminWorks() {
         loginUser("admin@emeal.com", "admin");
 
-        waitForTableReady();
+        WebElement lastPageButton = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("button.mat-mdc-paginator-navigation-last")
+                )
+        );
+
+        scrollIntoView(lastPageButton);
+        lastPageButton.click();
 
         List<WebElement> initialRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
         int initialCount = initialRows.size();
+
+        waitForTableReady();
 
         WebElement btnCreate = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".new-entity-btn")));
         scrollIntoView(btnCreate);
@@ -125,11 +132,22 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         waitForTableReady();
 
+        if(initialCount % 10 == 0){
+                lastPageButton = wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                By.cssSelector("button.mat-mdc-paginator-navigation-last")
+                        )
+                );
+                scrollIntoView(lastPageButton);
+                lastPageButton.click();
+                waitForTableReady();
+        }
+
         List<WebElement> finalRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
 
-        assertThat(finalRows.size(), is(initialCount + 1));
+        assertThat(finalRows.size(), is((initialCount % 10) + 1));
     }
 
     @Test
@@ -178,31 +196,56 @@ class AdminUserAngularTest extends BaseAngularUITest {
     public void verifyUserDeletionAsAdminWorks() {
         loginUser("admin@emeal.com", "admin");
 
+        WebElement lastPageButton = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("button.mat-mdc-paginator-navigation-last")
+                )
+        );
+
+        scrollIntoView(lastPageButton);
+        lastPageButton.click();
+
+        waitForTableReady();
+
         List<WebElement> initialRows = wait.until(
                 ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("table.admin-table tr.mat-mdc-row"), 0)
         );
         int initialCount = initialRows.size();
 
-        WebElement deleteBtn = initialRows.get(1).findElement(By.cssSelector("button .delete-icon"));
+
+        WebElement rowToDelete = initialRows.getLast();
+
+        WebElement deleteBtn = rowToDelete.findElement(By.cssSelector("button .delete-icon"));
         scrollIntoView(deleteBtn);
         deleteBtn.click();
 
         WebElement confirmBtn = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[.//span[contains(text(), 'Eliminar cuenta')]]")
         ));
-        WebElement element = deleteBtn;
-        scrollIntoView(deleteBtn);
+
+        //WebElement element = rowToDelete;
+        scrollIntoView(confirmBtn);
         confirmBtn.click();
 
-        wait.until(ExpectedConditions.stalenessOf(element));
+        //wait.until(ExpectedConditions.stalenessOf(element));
 
         waitForPageReload();
+
+        if(initialCount % 10 == 1){
+                lastPageButton = wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                By.cssSelector("button.mat-mdc-paginator-navigation-previous")
+                        )
+                );
+                scrollIntoView(lastPageButton);
+                lastPageButton.click();
+                waitForTableReady();
+        }
 
         List<WebElement> finalRows = wait.until(
                 ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("table.admin-table tr.mat-mdc-row"), 0)
         );
-        int finalCount = initialCount - 1;
-        assertThat(finalRows.size(), is(finalCount));
+        assertThat(finalRows.size() % 10, is(initialCount - 1));
     }
 
     /* @Test
@@ -321,7 +364,16 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         goToAdminClubsPage();
 
-        waitForAngularToFinish();
+        WebElement lastPageButton = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("button.mat-mdc-paginator-navigation-last")
+                )
+        );
+
+        scrollIntoView(lastPageButton);
+        lastPageButton.click();
+
+        waitForTableReady();
 
         List<WebElement> initialRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
@@ -346,11 +398,22 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         waitForPageReload();
 
+        if(initialCount % 10 == 1){
+                lastPageButton = wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                By.cssSelector("button.mat-mdc-paginator-navigation-previous")
+                        )
+                );
+                scrollIntoView(lastPageButton);
+                lastPageButton.click();
+                waitForTableReady();
+        }
+
         List<WebElement> finalRows = wait.until(
                 ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("table.admin-table tr.mat-mdc-row"), 0)
         );
 
-        assertThat(finalRows.size(), is(initialCount - 1));
+        assertThat(finalRows.size() % 10, is(initialCount - 1));
     }
 
     @Test
@@ -360,12 +423,21 @@ class AdminUserAngularTest extends BaseAngularUITest {
         
         goToAdminMatchesPage();
 
-        waitForAngularToFinish();
+        WebElement lastPageButton = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("button.mat-mdc-paginator-navigation-last")
+                )
+        );
+
+        scrollIntoView(lastPageButton);
+        lastPageButton.click();
 
         List<WebElement> initialRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
         int initialCount = initialRows.size();
+
+        waitForTableReady();
 
         WebElement btnCreate = wait.until(
                 ExpectedConditions.elementToBeClickable(
@@ -407,12 +479,16 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         WebElement dateInput = driver.findElement(By.cssSelector("input[formcontrolname='date']"));
         LocalDate futureDate = LocalDate.now().plusDays(10);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String formattedDate = futureDate.format(formatter);
+        String formattedDate = futureDate.toString();
         dateInput.sendKeys(formattedDate);
 
         WebElement timeInput = driver.findElement(By.cssSelector("input[formcontrolname='time']"));
         timeInput.sendKeys("18:30");
+
+        WebElement durationSelector = driver.findElement(By.cssSelector("mat-select[formcontrolname='duration']"));
+        durationSelector.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElements(By.cssSelector("mat-option")).get(2).click();
 
         WebElement typeSelect = driver.findElement(By.cssSelector("mat-select[formcontrolname='type']"));
         typeSelect.click();
@@ -431,11 +507,22 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         waitForTableReady();
 
+        if(initialCount % 10 == 0){
+                lastPageButton = wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                By.cssSelector("button.mat-mdc-paginator-navigation-last")
+                        )
+                );
+                scrollIntoView(lastPageButton);
+                lastPageButton.click();
+                waitForTableReady();
+        }
+
         List<WebElement> finalRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
 
-        assertThat(finalRows.size(), is(initialCount + 1));
+        assertThat(finalRows.size(), is((initialCount % 10) + 1));
     }
 
     @Test
@@ -482,7 +569,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
                 )
         );
 
-        String updatedPrice = updatedRow.findElements(By.cssSelector("td")).get(5).getText();
+        String updatedPrice = updatedRow.findElements(By.cssSelector("td")).get(6).getText();
         assertThat(updatedPrice, containsString("99,99"));
     }
 
@@ -493,18 +580,30 @@ class AdminUserAngularTest extends BaseAngularUITest {
 
         goToAdminMatchesPage();
 
-        waitForAngularToFinish();
+        
+        WebElement lastPageButton = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("button.mat-mdc-paginator-navigation-last")
+                )
+        );
+
+        scrollIntoView(lastPageButton);
+        lastPageButton.click();
+
+        waitForTableReady();
 
         List<WebElement> initialRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
         int initialCount = initialRows.size();
 
-        WebElement deleteBtn = initialRows.getLast().findElement(By.cssSelector("button .delete-icon"));
+        WebElement rowToDelete = initialRows.getLast();
+
+        WebElement deleteBtn = rowToDelete.findElement(By.cssSelector("button .delete-icon"));
         scrollIntoView(deleteBtn);
         deleteBtn.click();
 
-        WebElement oldElement = deleteBtn;
+        //WebElement oldElement = rowToDelete;
 
         WebElement confirmBtn = wait.until(
                 ExpectedConditions.elementToBeClickable(
@@ -514,15 +613,26 @@ class AdminUserAngularTest extends BaseAngularUITest {
         scrollIntoView(confirmBtn);
         confirmBtn.click();
 
-        wait.until(ExpectedConditions.stalenessOf(oldElement));
+        //wait.until(ExpectedConditions.stalenessOf(oldElement));
 
-        waitForTableReady();
+        waitForPageReload();
+
+        if(initialCount % 10 == 1){
+                lastPageButton = wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                By.cssSelector("button.mat-mdc-paginator-navigation-previous")
+                        )
+                );
+                scrollIntoView(lastPageButton);
+                lastPageButton.click();
+                waitForTableReady();
+        }
 
         List<WebElement> finalRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
 
-        assertThat(finalRows.size(), is(initialCount - 1));
+        assertThat(finalRows.size() % 10, is(initialCount - 1));
     }
 
     @Test
@@ -771,8 +881,6 @@ class AdminUserAngularTest extends BaseAngularUITest {
         loginUser("admin@emeal.com", "admin");
         goToAdminMessagesPage();
 
-        waitForTableReady();
-
         WebElement lastPageButton = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.cssSelector("button.mat-mdc-paginator-navigation-last")
@@ -782,7 +890,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         scrollIntoView(lastPageButton);
         lastPageButton.click();
 
-        waitForAngularToFinish();
+        waitForTableReady();
 
         List<WebElement> initialRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")

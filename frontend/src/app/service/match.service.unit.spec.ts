@@ -27,7 +27,7 @@ describe("MatchService", () => {
     state: true,
     modeSelected: 0,
     price: 10,
-
+    duration: 120,
     organizer: {
       id: 1,
       username: "organizer",

@@ -116,8 +116,7 @@ describe('UserService', () => {
 
     service.deleteUser(1).subscribe(user => {
       expect(httpClientMock.delete).toHaveBeenCalledWith(
-        `${environment.apiUrl}/users/1`,
-        { withCredentials: true }
+        `${environment.apiUrl}/users/1`
       );
 
       expect(user).toEqual(mockUser);
@@ -137,8 +136,7 @@ describe('UserService', () => {
     service.updateUser(1, payload).subscribe(user => {
       expect(httpClientMock.put).toHaveBeenCalledWith(
         `${environment.apiUrl}/users/1`,
-        payload,
-        { withCredentials: true }
+        payload
       );
 
       expect(user.username).toBe('updatedUser');
@@ -150,8 +148,7 @@ describe('UserService', () => {
 
     service.getUserById(1).subscribe(user => {
       expect(httpClientMock.get).toHaveBeenCalledWith(
-        `${environment.apiUrl}/users/1`,
-        { withCredentials: true }
+        `${environment.apiUrl}/users/1`
       );
 
       expect(user).toEqual(mockUser);

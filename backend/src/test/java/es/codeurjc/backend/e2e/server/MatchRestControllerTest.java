@@ -61,7 +61,7 @@ public class MatchRestControllerTest {
     public void getFilteredMatchesShouldReturnFilteredMatches(){
         given()
         .when()
-            .get(MATCHES_ENDPOINT + "?search=tennis&sport=tenis&timeRange=morning&includeFriendlies=true")
+            .get(MATCHES_ENDPOINT + "?search=tennis&sport=tenis&timeRange=evening&includeFriendlies=true")
         .then()
             .statusCode(200)
             .body("content.sport.name", everyItem(equalTo("Tenis")))

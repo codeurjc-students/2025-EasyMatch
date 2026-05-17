@@ -141,6 +141,7 @@ public class MatchServiceUnitaryTest {
                 false,
                 true,
                 0,
+                120,
                 organizer,
                 5.00,
                 defaultSport,
@@ -158,10 +159,10 @@ public class MatchServiceUnitaryTest {
         //GIVEN
         PageRequest pageable = PageRequest.of(0, 10);
 
-        Match match1 = new Match(null, false, true, false,0, new User(),3.50, new Sport(),null);
-        Match match2 = new Match(null, true, true, false,0,new User(),2.75, new Sport(),null);
-        Match match3 = new Match(null, false, false, true,0, new User(),9.95, new Sport(),null);
-        Match match4 = new Match(null, true, false, true,0, new User(),2.50, new Sport(),null);
+        Match match1 = new Match(null, false, true, false,0, 120, new User(),3.50, new Sport(),null);
+        Match match2 = new Match(null, true, true, false,0, 120, new User(),2.75, new Sport(),null);
+        Match match3 = new Match(null, false, false, true,0, 120, new User(),9.95, new Sport(),null);
+        Match match4 = new Match(null, true, false, true,0, 120, new User(),2.50, new Sport(),null);
 
         List<Match> matchList = List.of(match1,match2,match3,match4);
 
@@ -179,13 +180,12 @@ public class MatchServiceUnitaryTest {
     @Test
     public void getMatchByIdShouldReturnCorrectMatch(){
         //GIVEN
-        long id = 1;
         Match match = createBaseMatch(organizer);
-        match.setId(id);
+        match.setId(defaultMatchId);
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
-        when(matchRepository.findById(id)).thenReturn(optionalMatch);
-        MatchDTO result = matchService.getMatch(id);
+        when(matchRepository.findById(defaultMatchId)).thenReturn(optionalMatch);
+        MatchDTO result = matchService.getMatch(defaultMatchId);
         MatchDTO expected = mapper.toDTO(match);
         //THEN
         assertThat(result, equalTo(expected));
@@ -194,15 +194,14 @@ public class MatchServiceUnitaryTest {
     @Test
     public void deleteExistingMatchShouldSucceed(){
         //GIVEN
-        long id = 1;
         Match match = createBaseMatch(organizer);
-        match.setId(id);
+        match.setId(defaultMatchId);
         Optional<Match> optionalMatch = Optional.of(match);
         //WHEN
-        when(matchRepository.findById(id)).thenReturn(optionalMatch);
-        matchService.delete(id);
+        when(matchRepository.findById(defaultMatchId)).thenReturn(optionalMatch);
+        matchService.delete(defaultMatchId);
         //THEN
-        verify(matchRepository,times(1)).deleteById(id);
+        verify(matchRepository,times(1)).deleteById(defaultMatchId);
     }
 
     @Test
@@ -269,12 +268,11 @@ public class MatchServiceUnitaryTest {
 
     @Test
     public void joinNonExistingMatchShouldThrowException(){
-        long id = 1L;
-        when(matchRepository.existsById(id)).thenReturn(false);
+        when(matchRepository.existsById(defaultMatchId)).thenReturn(false);
         NoSuchElementException ex = assertThrows(NoSuchElementException.class, () ->{
-            matchService.joinMatch(id, "D");
+            matchService.joinMatch(defaultMatchId, "D");
         });
-        assertThat(ex.getMessage(), equalTo("No existe ningun partido con el id: " + id));
+        assertThat(ex.getMessage(), equalTo("No existe ningun partido con el id: " + defaultMatchId));
     }
 
     @Test

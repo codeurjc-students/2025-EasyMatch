@@ -34,7 +34,7 @@ describe('ClubService', () => {
       expect(response).toBeTruthy();
       expect(Array.isArray(response.content)).toBeTrue();
       expect(response.content.length).toBeGreaterThan(0);
-      expect(response.totalElements).toBe(5);
+      expect(response.totalElements).toBe(11);
       done();
     });
   });

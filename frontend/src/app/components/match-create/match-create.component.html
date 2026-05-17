@@ -48,6 +48,31 @@
       <mat-icon>warning</mat-icon>
       La fecha y hora deben ser posteriores a la actual
     </mat-error>
+    <mat-form-field appearance="outline" class="form-field">
+
+    <mat-label>Duración</mat-label>
+      <mat-select formControlName="duration">
+        <mat-option [value]="45">45 minutos</mat-option>
+        <mat-option [value]="60">60 minutos</mat-option>
+        <mat-option [value]="90">90 minutos</mat-option>
+        <mat-option [value]="120">120 minutos</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-error class="date-error" *ngIf="matchForm.hasError('clubNotOpenYet')">
+      <mat-icon>warning</mat-icon>
+      El club aún no está abierto. Abre a las {{ matchForm.get('club')?.value?.schedule.openingTime }}
+    </mat-error>
+
+    <mat-error class="date-error" *ngIf="matchForm.hasError('clubClosesBeforeEnd')">
+      <mat-icon>warning</mat-icon>
+      El partido finalizaría después del cierre del club a las {{ matchForm.get('club')?.value?.schedule.closingTime }}
+    </mat-error>
+
+    <mat-error class="date-error" *ngIf="matchForm.hasError('matchStartsAfterClosing')">
+      <mat-icon>warning</mat-icon>
+      El partido empezaría después del cierre del club a las {{ matchForm.get('club')?.value?.schedule.closingTime }}
+    </mat-error>
 
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Tipo de partido</mat-label>

@@ -75,7 +75,7 @@ public class ClubRestControllerTest {
         .then()
             .statusCode(200)
             .body("id", equalTo(Math.toIntExact(id)))
-            .body("name", equalTo("Tennis & Padel Hub"));
+            .body("name", equalTo("Club Tenis y Pádel Bético"));
     }
 
     @Test

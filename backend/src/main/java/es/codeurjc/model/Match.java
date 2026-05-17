@@ -31,7 +31,8 @@ public class Match {
     private Boolean type; // competitive 1, friendly 0
     private Boolean isPrivate; // private 1, public 0
     private Boolean state; // open 1, closed 0
-	private int modeSelected; 
+	private int modeSelected;
+	private int duration; // Duration in minutes 
 
 	@ManyToOne
 	@JoinColumn(name = "organizer_id")
@@ -69,12 +70,13 @@ public class Match {
 	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ChatMessage> chatMessages = new ArrayList<>();
 
-	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state, int modeSelected, User organizer, double price, Sport sport, Club club) {
+	public Match(LocalDateTime date, boolean type, boolean isPrivate, boolean state, int modeSelected, int duration, User organizer, double price, Sport sport, Club club) {
 		this.date = date;
 		this.type = type;
 		this.isPrivate = isPrivate;
 		this.state = state;
 		this.modeSelected = modeSelected;
+		this.duration = duration;
 		this.organizer = organizer;
 		this.price = price;
 		this.sport = sport;
@@ -154,47 +156,120 @@ public class Match {
 
 	private void validateSetsResult(MatchResult result) {
 
+		String sportName = this.getSport().getName().toLowerCase();
+
+		if (sportName.equals("voleibol")) {
+			validateVolleyball(result);
+		} else if (sportName.equals("tenis") || sportName.equals("padel")) {
+			validateRacketSports(result);
+		} else {
+			throw new IllegalArgumentException("Deporte no soportado: " + sportName);
+		}
+	}
+
+	private void validateRacketSports(MatchResult result) {
+
 		List<Integer> team1Sets = result.getTeam1GamesPerSet();
 		List<Integer> team2Sets = result.getTeam2GamesPerSet();
 
-		if (team1Sets == null || team2Sets == null) {
-			throw new IllegalArgumentException("Los sets no pueden ser nulos");
-		}
+		validateCommon(team1Sets, team2Sets);
 
-		if (team1Sets.size() != team2Sets.size()) {
-			throw new IllegalArgumentException("El número de sets debe coincidir");
-		}
-
-		if (team1Sets.isEmpty()) {
-			throw new IllegalArgumentException("Debe haber al menos un set");
-		}
+		int setsWon1 = 0;
+    	int setsWon2 = 0;
 
 		for (int i = 0; i < team1Sets.size(); i++) {
+
 			int s1 = team1Sets.get(i);
 			int s2 = team2Sets.get(i);
 
 			if (s1 < 0 || s2 < 0) {
-				throw new IllegalArgumentException("Los juegos por set no pueden ser negativos");
+				throw new IllegalArgumentException("Los juegos no pueden ser negativos");
 			}
 
 			if (s1 > 7 || s2 > 7) {
-				throw new IllegalArgumentException("Los juegos por set no pueden ser mayores a 7");
-			}
-
-			if (s1 == 6 && s2 > 4 || s2 == 6 && s1 > 4) {
-				throw new IllegalArgumentException("Un set se gana al llegar a 6 juegos con una diferencia de al menos 2 juegos");
-			}
-			if (s1 == 7 && s2 != 6 && s2 != 5 || s2 == 7 && s1 != 6 && s1 != 5) {
-				throw new IllegalArgumentException("Un set se puede ganar al llegar a 7 juegos si el otro equipo tiene 5 o 6 juegos");
-			}
-
-			if (s1 != 6 && s1 != 7 && s2 != 6 && s2 != 7) {
-				throw new IllegalArgumentException("Un set se gana al llegar a 6 juegos con una diferencia de al menos 2 juegos, o al llegar a 7 juegos si el otro equipo tiene 5 o 6 juegos");
+				throw new IllegalArgumentException("Un set no puede superar 7 juegos");
 			}
 
 			if (s1 == s2) {
 				throw new IllegalArgumentException("No puede haber empate en un set");
 			}
+
+			if (s1 > s2) {
+				setsWon1++;
+			} else {
+				setsWon2++;
+			}
+
+			boolean normalSet = (Math.max(s1, s2) == 6 && Math.abs(s1 - s2) >= 2);
+			boolean tieBreak = (Math.max(s1, s2) == 7 && (Math.min(s1, s2) >= 5));
+
+			if (!normalSet && !tieBreak) {
+				throw new IllegalArgumentException("Resultado inválido para tenis/pádel");
+			}
+		}
+
+		if (setsWon1 < 2 && setsWon2 < 2) {
+			throw new IllegalArgumentException("El partido debe ser al mejor de 3 sets y no hay empate");
+		}
+	}
+
+	private void validateVolleyball(MatchResult result) {
+
+		List<Integer> team1Sets = result.getTeam1GamesPerSet();
+		List<Integer> team2Sets = result.getTeam2GamesPerSet();
+
+		validateCommon(team1Sets, team2Sets);
+
+		int setsWon1 = 0;
+    	int setsWon2 = 0;
+
+		for (int i = 0; i < team1Sets.size(); i++) {
+
+			int s1 = team1Sets.get(i);
+			int s2 = team2Sets.get(i);
+
+			if (s1 < 0 || s2 < 0) {
+				throw new IllegalArgumentException("Los puntos no pueden ser negativos");
+			}
+
+			int target = 25;
+
+			if (s1 < target && s2 < target) {
+				throw new IllegalArgumentException("El set no llega al mínimo de puntos");
+			}
+
+			if (Math.abs(s1 - s2) < 2) {
+				throw new IllegalArgumentException("Debe haber diferencia mínima de 2 puntos");
+			}
+
+			if (s1 == s2) {
+				throw new IllegalArgumentException("No puede haber empate en un set");
+			}
+
+			if (s1 > s2) {
+				setsWon1++;
+			} else {
+				setsWon2++;
+			}
+		}
+
+		if (setsWon1 < 2 && setsWon2 < 2) {
+			throw new IllegalArgumentException("El partido debe ser al mejor de 3 sets y no hay empate");
+		}
+	}
+
+	private void validateCommon(List<Integer> t1, List<Integer> t2) {
+
+		if (t1 == null || t2 == null) {
+			throw new IllegalArgumentException("Los sets no pueden ser nulos");
+		}
+
+		if (t1.size() != t2.size()) {
+			throw new IllegalArgumentException("El número de sets debe coincidir");
+		}
+
+		if (t1.isEmpty()) {
+			throw new IllegalArgumentException("Debe haber al menos un set");
 		}
 	}
 
@@ -345,6 +420,15 @@ public class Match {
 		this.chatMessages = chatMessages;
 	}
 
+
+	public int getDuration() {
+		return duration;
+	}
+
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
 
 	@Override
 	public String toString() {

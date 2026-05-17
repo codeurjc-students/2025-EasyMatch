@@ -88,7 +88,7 @@ public class User {
         sportProfiles.add(sl);
     }
 
-    public void applyMatchResult(Sport sport, boolean won, LocalDateTime date,
+    public void applyMatchResult(Long id, Sport sport, boolean won, LocalDateTime date,
                                 float teamAvg, float opponentAvg) {
 
         UserSportProfile sl = getProfileForSport(sport);
@@ -97,7 +97,7 @@ public class User {
             throw new RuntimeException("User does not have this sport");
         }
 
-        sl.applyMatchResult(won, false, date, teamAvg, opponentAvg);
+        sl.applyMatchResult(id, won, false, date, teamAvg, opponentAvg);
     }
 
     public List<Match> getMatchHistory() {

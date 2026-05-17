@@ -30,7 +30,7 @@ export class AdminMatchesComponent implements OnInit {
   pageIndex = 0;
 
   matches: Match[] = [];
-  displayedColumns = ['id', 'date', 'type', 'privacy', 'state', 'price', 'club', 'sport','organizer', 'players', 'actions',];
+  displayedColumns = ['id', 'date', 'duration', 'type', 'privacy', 'state', 'price', 'club', 'sport','organizer', 'players', 'actions',];
 
   ngOnInit(): void {
     this.loadMatches(this.pageIndex, this.pageSize);

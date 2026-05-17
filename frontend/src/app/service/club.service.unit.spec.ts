@@ -59,8 +59,7 @@ describe('ClubService', () => {
 
     service.getClub(1).subscribe(club => {
       expect(httpClientMock.get).toHaveBeenCalledWith(
-        `${environment.apiUrl}/clubs/1`,
-        { withCredentials: true }
+        `${environment.apiUrl}/clubs/1`
       );
 
       expect(club).toEqual(mockClub);
@@ -116,8 +115,7 @@ describe('ClubService', () => {
     service.createClub(payload).subscribe(club => {
       expect(httpClientMock.post).toHaveBeenCalledWith(
         `${environment.apiUrl}/clubs/`,
-        payload,
-        { withCredentials: true }
+        payload
       );
 
       expect(club).toEqual(createdClub);
@@ -139,8 +137,7 @@ describe('ClubService', () => {
     service.updateClub(1, payload).subscribe(club => {
       expect(httpClientMock.put).toHaveBeenCalledWith(
         `${environment.apiUrl}/clubs/1`,
-        payload,
-        { withCredentials: true }
+        payload
       );
 
       expect(club.name).toBe('Club Actualizado');
@@ -152,8 +149,7 @@ describe('ClubService', () => {
 
     service.deleteClub(1).subscribe(club => {
       expect(httpClientMock.delete).toHaveBeenCalledWith(
-        `${environment.apiUrl}/clubs/1`,
-        { withCredentials: true }
+        `${environment.apiUrl}/clubs/1`
       );
 
       expect(club).toEqual(mockClub);
@@ -171,8 +167,7 @@ describe('ClubService', () => {
       expect(httpClientMock.get).toHaveBeenCalledWith(
         `${environment.apiUrl}/clubs/1/image`,
         {
-          responseType: 'blob',
-          withCredentials: true
+          responseType: 'blob'
         }
       );
 

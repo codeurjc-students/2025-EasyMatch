@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ClubService } from '../../../service/club.service';
@@ -16,7 +17,7 @@ import { Club } from '../../../models/club.model';
   selector: 'app-admin-clubs',
   templateUrl: './admin-clubs.component.html',
   styleUrls: ['.././admin-entity.component.scss'],
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatPaginator, MatTooltipModule],
 })
 export class AdminClubsComponent implements OnInit {
 
