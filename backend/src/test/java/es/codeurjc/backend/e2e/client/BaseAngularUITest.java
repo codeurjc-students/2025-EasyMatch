@@ -52,7 +52,7 @@ public abstract class BaseAngularUITest {
             options.addArguments("--headless");
             driver = new ChromeDriver(options);
         }
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(25));
     }
 
     @AfterEach

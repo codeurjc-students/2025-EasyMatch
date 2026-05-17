@@ -69,7 +69,7 @@ public class MatchServiceIntegrationTest {
     private static final long MATCH_TO_DELETE_ID = 3L;
     private static final long MATCH_TO_JOIN_ID = 4L;
     private static final long MATCH_TO_REPLACE_ID = 5L;
-    private static final long MATCH_WITH_RESULT_ID = 6L;
+    private static final long MATCH_WITH_RESULT_ID = 13L;
 
     private static final long DEFAULT_CLUB_ID = 1L;
     private static final long SECOND_CLUB_ID = 2L;
@@ -146,16 +146,16 @@ public class MatchServiceIntegrationTest {
 
     @Test
     @Order(1)
-    public void getMatchesTest(){
+    public void getMatchesShouldReturnPageOfMatchesDTOs(){
         int numMatches = getTotalMatches();
         PageRequest pageable = PageRequest.of(0, DEFAULT_PAGE_SIZE);
         Page<MatchDTO> pageOfMatches = matchService.getMatches(pageable);
-        assertThat(pageOfMatches.getNumberOfElements(), equalTo(numMatches));
+        assertThat((int) pageOfMatches.getTotalElements(), equalTo(numMatches));
     }
 
     @Test
     @Order(2)
-    public void getMatchByIdTest(){
+    public void getMatchByIdShouldReturnMatchDTO(){
         MatchDTO matchDTO = matchService.getMatch(DEFAULT_MATCH_ID);
         assertThat(matchDTO.id(), equalTo(DEFAULT_MATCH_ID));
         assertThat(matchDTO.club().name(), equalTo("Tennis Club Elite"));
@@ -163,7 +163,7 @@ public class MatchServiceIntegrationTest {
 
     @Test
     @Order(3)
-    public void deleteNonExistingMatchTest(){
+    public void deleteNonExistingMatchShouldThrowIllegalArgumentException(){
         long numMatches = getTotalMatches();
         long id = numMatches + 1;
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, ()-> matchService.delete(id));
@@ -174,7 +174,7 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(4)
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void deleteExistingMatchTest(){
+    public void deleteExistingMatchShouldRemoveMatch(){
         int numMatches = getTotalMatches();
         matchService.delete(MATCH_TO_DELETE_ID);
         List<Match> matches = matchService.findAll();
@@ -185,7 +185,7 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(5)
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
-    public void createMatchTest(){
+    public void createMatchShouldReturnSavedMatch(){
         int numMatchesBefore = getTotalMatches();
 
         Match match = createBaseMatch();
@@ -200,7 +200,7 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(6)
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
-    public void joinAndLeaveMatchTest(){
+    public void joinAndLeaveMatchAsRegularUserShouldSucceed(){
         String selectedTeam = "B";
         MatchDTO match = matchService.getMatch(MATCH_TO_JOIN_ID);
         User loggedUser = userService.getLoggedUser();
@@ -223,7 +223,7 @@ public class MatchServiceIntegrationTest {
     @Test 
     @Order(7)
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void replaceMatchTest(){
+    public void replaceMatchShouldReturnReplacedMatchDTO(){
         MatchDTO updatedMatchDTO = createUpdatedMatchDTO(MATCH_TO_REPLACE_ID);
 
         MatchDTO replacedMatch = matchService.replaceMatch(MATCH_TO_REPLACE_ID, updatedMatchDTO);
@@ -242,7 +242,7 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(8)
     @WithMockUser(username = "pedro@emeal.com", roles = {"USER"})
-    public void updateMatchResultTest(){
+    public void updateMatchResultWithValidResultShouldUpdateResult(){
         MatchDTO match = matchService.getMatch(MATCH_WITH_RESULT_ID);
         
         assertThat(match.state(), equalTo(false));
@@ -261,7 +261,7 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(9)
     @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
-    public void addPlayerToMatchAsAdminTest(){
+    public void addPlayerToIncompleteTeamAsAdminShouldAddPlayerToTeam(){
         MatchDTO match = matchService.getMatch(MATCH_TO_JOIN_ID);
         int teamSizeBefore = match.team1Players().size();
         matchService.addPlayerToTeam1(MATCH_TO_JOIN_ID, DEFAULT_USER_ID);
@@ -273,7 +273,7 @@ public class MatchServiceIntegrationTest {
     @Test
     @Order(10)
     @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
-    public void removePlayerFromMatchAsAdminTest(){
+    public void removePlayerFromTeamAsAdminShouldRemovePlayerFromTeam(){
         MatchDTO matchInitial = matchService.getMatch(MATCH_TO_JOIN_ID);
         assertFalse(matchInitial.team1Players().isEmpty());
         matchService.addPlayerToTeam1(MATCH_TO_JOIN_ID, DEFAULT_USER_ID);

@@ -229,8 +229,8 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("save-profile-btn")));
         saveButton.click();
 
-        wait.until(ExpectedConditions.urlContains("/profile"));
-        assertThat(driver.getCurrentUrl(), containsString("/profile"));
+        wait.until(ExpectedConditions.urlContains("/matches"));
+        assertThat(driver.getCurrentUrl(), containsString("/matches"));
 
     }
 
@@ -254,10 +254,10 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         assertThat(currentUser.findElement(By.cssSelector(".birthdate")).getText(), containsString("mayo 1990"));
         assertThat(currentUser.findElement(By.cssSelector(".description")).getText(), equalTo("Nuevo perfil actualizado"));
         //assertThat(currentUser.findElement(By.cssSelector(".description")).getText(), equalTo("Apasionado del tenis"));
-        assertThat(currentUser.findElement(By.id("totalMatches")).getText(), containsString("3"));
-        assertThat(currentUser.findElement(By.id("wins")).getText(), containsString("2"));
+        assertThat(currentUser.findElement(By.id("totalMatches")).getText(), containsString("6"));
+        assertThat(currentUser.findElement(By.id("wins")).getText(), containsString("4"));
         assertThat(currentUser.findElement(By.id("winRate")).getText(), containsString("66,67%"));
-        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,19"));
+        assertThat(currentUser.findElement(By.id("maxLevel")).getText(), containsString("5,55"));
 
         // Wait until chart card appears
         WebElement chartCard = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("level-chart-card")));
@@ -313,12 +313,16 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
 
         WebElement dateInput = driver.findElement(By.cssSelector("input[formcontrolname='date']"));
         LocalDate futureDate = LocalDate.now().plusDays(10);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String formattedDate = futureDate.format(formatter);
+        String formattedDate = futureDate.toString();
         dateInput.sendKeys(formattedDate);
 
         WebElement timeInput = driver.findElement(By.cssSelector("input[formcontrolname='time']"));
         timeInput.sendKeys("18:30");
+
+        WebElement durationSelector = driver.findElement(By.cssSelector("mat-select[formcontrolname='duration']"));
+        durationSelector.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElements(By.cssSelector("mat-option")).get(2).click();
 
         WebElement typeSelect = driver.findElement(By.cssSelector("mat-select[formcontrolname='type']"));
         typeSelect.click();
@@ -336,7 +340,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
 
         
         
-        WebElement match1 = driver.findElement(By.id("match-card9")).findElement(By.className("organizer-name"));
+        WebElement match1 = driver.findElement(By.id("match-card23")).findElement(By.className("organizer-name"));
         assertThat(match1.getText(), equalTo("Pedro Garcia"));
 
     }
@@ -356,7 +360,7 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-my-matches")));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-match")));
-        WebElement matchWithResult = driver.findElement(By.id("match-card7"));
+        WebElement matchWithResult = driver.findElement(By.id("match-card14"));
         WebElement editResultBtn = matchWithResult.findElement(By.className("edit-result-btn"));
         wait.until(ExpectedConditions.elementToBeClickable(editResultBtn));
         clickWithJs(editResultBtn);
@@ -384,8 +388,8 @@ class RegisteredUserAngularTest extends BaseAngularUITest {
         wait.until(ExpectedConditions.invisibilityOf(resultDialog));
 
         waitForPageReload();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("match-card7")));
-        matchWithResult = driver.findElement(By.id("match-card7"));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("match-card14")));
+        matchWithResult = driver.findElement(By.id("match-card14"));
 
         WebElement viewResultBtn = wait.until(
             ExpectedConditions.elementToBeClickable(

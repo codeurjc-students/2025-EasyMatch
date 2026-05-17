@@ -185,7 +185,7 @@ describe('MatchService', () => {
       team1GamesPerSet: [6,6],
       team2GamesPerSet: [2,1]
     };
-    const matchId = 6;
+    const matchId = 13;
 
     login().pipe(
       switchMap(() => service.updateMatchResult(matchId, mockResult))

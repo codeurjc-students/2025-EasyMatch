@@ -80,11 +80,11 @@ public class ClubServiceIntegrationTest {
     }
     @Test
     @Order(1)
-    public void getClubsIntegrationTest(){
+    public void getClubsShouldReturnPageOfClubsDTOs(){
         int numClubs = clubService.findAll().size();
         PageRequest pageable = PageRequest.of(0, DEFAULT_PAGE_SIZE);
         Page<ClubDTO> pageOfClubs = clubService.getClubs(pageable);
-        assertThat(pageOfClubs.getNumberOfElements(), equalTo(numClubs));
+        assertThat((int) pageOfClubs.getTotalElements(), equalTo(numClubs));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class ClubServiceIntegrationTest {
 
     @Test 
     @Order(4)
-    public void saveClubIntegrationTest(){
+    public void saveClubShouldReturnSavedClub(){
         int numClubsBefore = getTotalClubs();
 
         Club club = createBaseClub();
@@ -126,7 +126,7 @@ public class ClubServiceIntegrationTest {
     @Test 
     @Order(5)
     @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
-    public void replaceClubIntegrationTest(){
+    public void replaceClubAsAdminShouldReturnUpdatedClubDTO(){
         ClubDTO updatedDTO = createUpdatedClubDTO(CLUB_TO_UPDATE_ID);
 
         ClubDTO replacedClub = clubService.replaceClub(CLUB_TO_UPDATE_ID, updatedDTO);
@@ -148,7 +148,7 @@ public class ClubServiceIntegrationTest {
     @Test
     @Order(6)
     @WithMockUser(username = "admin@emeal.com", roles = {"ADMIN"})
-    public void deleteExistingClubIntegrationTest(){
+    public void deleteExistingClubAsAdminShouldDeleteClub(){
         int numClubs = getTotalClubs();
         clubService.delete(CLUB_TO_DELETE_ID);
         List<Club> clubs = clubService.findAll();
