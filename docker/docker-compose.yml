@@ -2,7 +2,7 @@ services:
   web:
     image: dmunozm5/easymatch:latest
     ports:
-      - 8443:8443
+      - "443:8443"
     environment:
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
