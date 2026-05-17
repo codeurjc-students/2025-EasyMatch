@@ -70,12 +70,12 @@ class AdminUserAngularTest extends BaseAngularUITest {
         scrollIntoView(lastPageButton);
         lastPageButton.click();
 
+        waitForTableReady();
+
         List<WebElement> initialRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
         int initialCount = initialRows.size();
-
-        waitForTableReady();
 
         WebElement btnCreate = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".new-entity-btn")));
         scrollIntoView(btnCreate);
@@ -212,18 +212,20 @@ class AdminUserAngularTest extends BaseAngularUITest {
         );
         int initialCount = initialRows.size();
 
-        WebElement deleteBtn = initialRows.getLast().findElement(By.cssSelector("button .delete-icon"));
+        WebElement rowToDelete = initialRows.getLast();
+
+        WebElement deleteBtn = rowToDelete.findElement(By.cssSelector("button .delete-icon"));
         scrollIntoView(deleteBtn);
         deleteBtn.click();
 
         WebElement confirmBtn = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[.//span[contains(text(), 'Eliminar cuenta')]]")
         ));
-        WebElement element = deleteBtn;
+        //WebElement element = rowToDelete;
         scrollIntoView(deleteBtn);
         confirmBtn.click();
 
-        wait.until(ExpectedConditions.stalenessOf(element));
+        //wait.until(ExpectedConditions.stalenessOf(element));
 
         waitForPageReload();
 
@@ -594,11 +596,13 @@ class AdminUserAngularTest extends BaseAngularUITest {
         );
         int initialCount = initialRows.size();
 
-        WebElement deleteBtn = initialRows.getLast().findElement(By.cssSelector("button .delete-icon"));
+        WebElement rowToDelete = initialRows.getLast();
+
+        WebElement deleteBtn = rowToDelete.findElement(By.cssSelector("button .delete-icon"));
         scrollIntoView(deleteBtn);
         deleteBtn.click();
 
-        WebElement oldElement = deleteBtn;
+        //WebElement oldElement = rowToDelete;
 
         WebElement confirmBtn = wait.until(
                 ExpectedConditions.elementToBeClickable(
@@ -608,9 +612,9 @@ class AdminUserAngularTest extends BaseAngularUITest {
         scrollIntoView(confirmBtn);
         confirmBtn.click();
 
-        wait.until(ExpectedConditions.stalenessOf(oldElement));
+        //wait.until(ExpectedConditions.stalenessOf(oldElement));
 
-        waitForTableReady();
+        waitForPageReload();
 
         if(initialCount % 10 == 1){
                 lastPageButton = wait.until(
