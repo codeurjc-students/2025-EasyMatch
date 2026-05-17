@@ -130,7 +130,7 @@ export class ChatComponent implements OnInit {
     if (isSameDay(d, today)) return 'Hoy';
     if (isSameDay(d, yesterday)) return 'Ayer';
 
-    return d.toLocaleDateString([], {
+    return d.toLocaleDateString('es-ES', {
       day: 'numeric',
       month: 'long'
     });

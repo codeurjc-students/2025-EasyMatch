@@ -8,7 +8,7 @@
 
   @if (chats().length > 0) {
     <mat-list>
-      @for (chat of chats(); track $index) {
+      @for (chat of visibleChats(); track $index) {
         <mat-list-item (click)="openChat(chat.matchId)">
 
         <div class="chat-item">
@@ -26,5 +26,20 @@
       </mat-list-item>
       }
     </mat-list>
+    @if (hasMoreChats()) {
+
+      <div class="load-more">
+
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="loadMore()"
+        >
+          Cargar más
+        </button>
+
+      </div>
+
+    }
   }
 </mat-card>

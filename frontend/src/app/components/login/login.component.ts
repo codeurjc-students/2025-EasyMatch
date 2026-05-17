@@ -100,6 +100,7 @@ export class LoginComponent {
 
         if (err.status === 401) {
           this.errorMessage.set('Credenciales inválidas');
+          this.loginForm.get('password')?.setValue('');
         } else {
           this.errorMessage.set(err?.error?.message || 'Error inesperado');
         }

@@ -24,10 +24,11 @@ export class ChatsComponent {
   private chatService = inject(ChatService);
   private loginService = inject(LoginService);
   private router = inject(Router);
-
-  chats = signal<ChatMessage[]>([]);
   private user = toSignal(this.loginService.currentUser$, { initialValue: null });
 
+  chats = signal<ChatMessage[]>([]);
+  visibleChats = signal<ChatMessage[]>([]);
+  visibleCount = signal(5);
 
   constructor() {
     this.loadChats();
@@ -38,6 +39,7 @@ export class ChatsComponent {
       .subscribe(chats => {
         const lastMessages = this.mapToLastMessages(chats);
         this.chats.set(lastMessages);
+        this.updateVisibleChats();
     });
   }
 
@@ -59,5 +61,24 @@ export class ChatsComponent {
 
     return Array.from(map.values())
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  }
+
+  // Updates visible chats list according to current limit
+  private updateVisibleChats(): void {
+    this.visibleChats.set(
+      this.chats().slice(0, this.visibleCount())
+    );
+  }
+
+  // Loads 5 more chats
+  loadMore(): void {
+    this.visibleCount.update(value => value + 5);
+
+    this.updateVisibleChats();
+  }
+
+  // Indicates if there are more chats to be shown
+  hasMoreChats(): boolean {
+    return this.visibleChats().length < this.chats().length;
   }
 }

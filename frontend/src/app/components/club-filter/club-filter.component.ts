@@ -11,6 +11,7 @@ import { Club } from '../../models/club.model';
 import { Sport } from '../../models/sport.model';
 import { ClubService } from '../../service/club.service';
 import { SportService } from '../../service/sport.service';
+import { startWith } from 'rxjs';
 
 @Component({
   selector: 'app-club-filter',
@@ -28,11 +29,18 @@ import { SportService } from '../../service/sport.service';
   styleUrls: ['./club-filter.component.scss']
 })
 export class ClubFilterComponent implements OnInit{
-  @Output() filtersChanged = new EventEmitter<{ search?: string; sport?: string; city?: string }>();
+
+  @Output() filtersChanged = new EventEmitter<{ 
+    search?: string; 
+    sport?: string; 
+    city?: string 
+  }>();
+
   filterForm!: FormGroup;
   clubs: Club[] = [];
   sports: Sport[] = [];
   cities: string[] = [];
+
   loadingClubs = true;
   loadingSports = true;
 
@@ -41,21 +49,35 @@ export class ClubFilterComponent implements OnInit{
     
   }
   ngOnInit(): void {
+
     this.filterForm = this.fb.group({
       search: [''],
       sport: [''],
       city: ['']
     });
+    
     this.loadClubs();
     this.loadSports();
+
+    this.filterForm.get('sport')?.valueChanges
+      .pipe(startWith(''))
+      .subscribe((selectedSport: string) => {
+        this.updateCities(selectedSport);
+      });
   }
 
   loadClubs(): void {
     this.clubService.getClubs().subscribe({
       next: (data: any) => {
-        this.clubs = data.content ?? data;
-        this.cities = Array.from(
-            new Set(this.clubs.map((club) => club.city))); 
+
+        const clubs = data as { content?: Club[] } | Club[];
+
+        this.clubs = Array.isArray(clubs)
+          ? clubs
+          : (clubs.content ?? []);
+        
+        this.updateCities();
+            
         this.loadingClubs = false;
       },
       error: (err) => {
@@ -77,8 +99,30 @@ export class ClubFilterComponent implements OnInit{
       }
     });
   }
+  updateCities(selectedSport?: string): void {
+
+    const filteredClubs = selectedSport
+      ? this.clubs.filter((club) =>
+          club.sports?.some(
+            (sport) => sport.name === selectedSport
+          )
+        )
+      : this.clubs;
+
+    this.cities = Array.from(
+      new Set(filteredClubs.map((club) => club.city))
+    );
+
+    const currentCity = this.filterForm.get('city')?.value;
+
+    if (currentCity && !this.cities.includes(currentCity)) {
+      this.filterForm.get('city')?.setValue('');
+    }
+  }
 
   onFilter(): void {
     this.filtersChanged.emit(this.filterForm.value);
   }
+
+  
 }

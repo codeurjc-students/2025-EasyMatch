@@ -413,8 +413,11 @@ public class DatabaseInitializer {
 
         admin.addSport(tennis, 7.00f);
         pedro.addSport(tennis, 5.12f);
-        maria.addSport(paddle, 4.57f);
         luis.addSport(tennis, 6.03f);
+        maria.addSport(paddle, 4.57f);
+        pedro.addSport(paddle, 4.91f);
+        luis.addSport(paddle, 5.34f);
+        admin.addSport(paddle, 7.00f);
         juan.addSport(football, 3.51f);
         carlos.addSport(football, 4.32f);
         silvia.addSport(volley, 5.37f);
@@ -424,8 +427,11 @@ public class DatabaseInitializer {
         
         userSportProfileService.save(admin.getProfileForSport(tennis));
         userSportProfileService.save(pedro.getProfileForSport(tennis));
-        userSportProfileService.save(maria.getProfileForSport(paddle));
         userSportProfileService.save(luis.getProfileForSport(tennis));
+        userSportProfileService.save(pedro.getProfileForSport(paddle));
+        userSportProfileService.save(luis.getProfileForSport(paddle));
+        userSportProfileService.save(maria.getProfileForSport(paddle));
+        userSportProfileService.save(admin.getProfileForSport(paddle));
         userSportProfileService.save(juan.getProfileForSport(football));
         userSportProfileService.save(carlos.getProfileForSport(football));
         userSportProfileService.save(silvia.getProfileForSport(volley));
@@ -638,6 +644,70 @@ public class DatabaseInitializer {
             club3
         );
 
+                Match tennisMatch4 = new Match(
+            LocalDateTime.of(2025, 10, 5, 11, 0),
+            true,
+            false,
+            false,
+            0,
+            120,
+            admin,
+            6.50,
+            tennis,
+            club1
+        );
+
+       Match tennisMatch5 = new Match(
+            LocalDateTime.of(2025, 10, 8, 18, 0),
+            true,
+            false,
+            false,
+            1,
+            120,
+            pedro,
+            5.25,
+            tennis,
+            club7
+        );
+        Match tennisMatch6 = new Match(
+            LocalDateTime.of(2025, 10, 12, 17, 30),
+            true,
+            false,
+            false,
+            0,
+            120,
+            pedro,
+            4.75,
+            tennis,
+            club9
+        );
+
+        Match tennisMatch7 = new Match(
+            LocalDateTime.of(2025, 10, 17, 10, 0),
+            true,
+            false,
+            false,
+            0,
+            120,
+            maria,
+            5.10,
+            tennis,
+            club10
+        );
+
+        Match tennisMatch8 = new Match(
+            LocalDateTime.of(2025, 10, 21, 16, 0),
+            true,
+            false,
+            false,
+            0,
+            120,
+            admin,
+            7.00,
+            tennis,
+            club3
+        );
+
         Match volleyMatch1 = new Match(
             LocalDateTime.of(2025, 10, 15, 18, 30),
             true,
@@ -673,6 +743,20 @@ public class DatabaseInitializer {
         tennisMatch3.setTeam1Players(Set.of(maria));
         tennisMatch3.setTeam2Players(Set.of(pedro));
 
+        tennisMatch4.setTeam1Players(Set.of(admin));
+        tennisMatch4.setTeam2Players(Set.of(pedro));
+
+        tennisMatch5.setTeam1Players(Set.of(pedro, maria));
+        tennisMatch5.setTeam2Players(Set.of(luis, admin));
+
+        tennisMatch6.setTeam1Players(Set.of(pedro));
+        tennisMatch6.setTeam2Players(Set.of(admin));
+
+        tennisMatch7.setTeam1Players(Set.of(maria));
+        tennisMatch7.setTeam2Players(Set.of(luis));
+
+        tennisMatch8.setTeam1Players(Set.of(admin));
+        tennisMatch8.setTeam2Players(Set.of(maria));
 
         volleyMatch1.setTeam1Players(Set.of(silvia, ana));
         volleyMatch1.setTeam2Players(Set.of(fernando, jorge));
@@ -685,6 +769,11 @@ public class DatabaseInitializer {
         matchService.save(tennisMatch1);
         matchService.save(tennisMatch2);
         matchService.save(tennisMatch3);
+        matchService.save(tennisMatch4);
+        matchService.save(tennisMatch5);
+        matchService.save(tennisMatch6);
+        matchService.save(tennisMatch7);
+        matchService.save(tennisMatch8);
 
         matchService.save(volleyMatch1);
         matchService.save(volleyMatch2);
@@ -746,6 +835,123 @@ public class DatabaseInitializer {
 
         chatMessageService.save(tennisChat3Msg1);
         chatMessageService.save(tennisChat3Msg2);
+
+        ChatMessage tennisChat4Msg1 = ChatMessage.builder()
+            .content(admin.getUsername() + " ha creado el partido")
+            .sender(admin)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch4.getDate().minusDays(1).withHour(18))
+            .match(tennisMatch4)
+            .build();
+
+        ChatMessage tennisChat4Msg2 = ChatMessage.builder()
+            .content(pedro.getUsername() + " se ha unido al partido")
+            .sender(pedro)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch4.getDate().minusHours(2))
+            .match(tennisMatch4)
+            .build();
+
+        chatMessageService.save(tennisChat4Msg1);
+        chatMessageService.save(tennisChat4Msg2);
+
+
+        ChatMessage tennisChat5Msg1 = ChatMessage.builder()
+            .content(luis.getUsername() + " ha creado el partido")
+            .sender(luis)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch5.getDate().minusDays(1).withHour(19))
+            .match(tennisMatch5)
+            .build();
+
+        ChatMessage tennisChat5Msg2 = ChatMessage.builder()
+            .content(maria.getUsername() + " se ha unido al partido")
+            .sender(maria)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch5.getDate().minusHours(3))
+            .match(tennisMatch5)
+            .build();
+
+        ChatMessage tennisChat5Msg3 = ChatMessage.builder()
+            .content(pedro.getUsername() + " se ha unido")
+            .sender(pedro)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch5.getDate().minusHours(2))
+            .match(tennisMatch5)
+            .build();
+
+        ChatMessage tennisChat5Msg4 = ChatMessage.builder()
+            .content(admin.getUsername() + " se ha unido al partido")
+            .sender(admin)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch5.getDate().minusHours(2).minusMinutes(30))
+            .match(tennisMatch5)
+            .build();
+
+        chatMessageService.save(tennisChat5Msg1);
+        chatMessageService.save(tennisChat5Msg2);
+        chatMessageService.save(tennisChat5Msg3);
+        chatMessageService.save(tennisChat5Msg4);
+
+
+        ChatMessage tennisChat6Msg1 = ChatMessage.builder()
+            .content(pedro.getUsername() + " ha creado el partido")
+            .sender(pedro)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch6.getDate().minusDays(1).withHour(20))
+            .match(tennisMatch6)
+            .build();
+
+        ChatMessage tennisChat6Msg2 = ChatMessage.builder()
+            .content(admin.getUsername() + " se ha unido al partido")
+            .sender(admin)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch6.getDate().minusHours(2))
+            .match(tennisMatch6)
+            .build();
+
+        chatMessageService.save(tennisChat6Msg1);
+        chatMessageService.save(tennisChat6Msg2);
+
+
+        ChatMessage tennisChat7Msg1 = ChatMessage.builder()
+            .content(maria.getUsername() + " ha creado el partido")
+            .sender(maria)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch7.getDate().minusDays(1).withHour(18))
+            .match(tennisMatch7)
+            .build();
+
+        ChatMessage tennisChat7Msg2 = ChatMessage.builder()
+            .content(luis.getUsername() + " se ha unido al partido")
+            .sender(luis)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch7.getDate().minusHours(1))
+            .match(tennisMatch7)
+            .build();
+
+        chatMessageService.save(tennisChat7Msg1);
+        chatMessageService.save(tennisChat7Msg2);
+
+
+        ChatMessage tennisChat8Msg1 = ChatMessage.builder()
+            .content(admin.getUsername() + " ha creado el partido")
+            .sender(admin)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch8.getDate().minusDays(1).withHour(19))
+            .match(tennisMatch8)
+            .build();
+
+        ChatMessage tennisChat8Msg2 = ChatMessage.builder()
+            .content(maria.getUsername() + " se ha unido al partido")
+            .sender(maria)
+            .type(MessageType.JOIN)
+            .timestamp(tennisMatch8.getDate().minusHours(2))
+            .match(tennisMatch8)
+            .build();
+
+        chatMessageService.save(tennisChat8Msg1);
+        chatMessageService.save(tennisChat8Msg2);
 
         ChatMessage volleyChat1Msg1 = ChatMessage.builder()
             .content(silvia.getUsername() + " ha creado el partido")
@@ -834,6 +1040,56 @@ public class DatabaseInitializer {
         matchService.applyMatchResult(
             tennisMatch3,
             new MatchResult("Maria Lopez", "Pedro Garcia",List.of(2,1), List.of(6,6)) // Pedro wins
+        );
+
+         matchService.applyMatchResult(
+            tennisMatch4,
+            new MatchResult(
+                "Admin",
+                "Pedro Garcia",
+                List.of(6, 7, 6),
+                List.of(4, 5, 3)
+            )
+        );
+
+         matchService.applyMatchResult(
+            tennisMatch5,
+            new MatchResult(
+                "Pedro Garcia / Maria Lopez",
+                "Luis Sanchez / Admin",
+                List.of(6, 6),
+                List.of(4, 3)
+            )
+        );
+
+        matchService.applyMatchResult(
+            tennisMatch6,
+            new MatchResult(
+                "Pedro Garcia",
+                "Admin",
+                List.of(4, 3),
+                List.of(6, 6)
+            )
+        );
+
+        matchService.applyMatchResult(
+            tennisMatch7,
+            new MatchResult(
+                "Maria Lopez",
+                "Luis Sanchez",
+                List.of(6, 2, 6),
+                List.of(3, 6, 4)
+            )
+        );
+
+        matchService.applyMatchResult(
+            tennisMatch8,
+            new MatchResult(
+                "Admin",
+                "Maria Lopez",
+                List.of(6, 6),
+                List.of(1, 2)
+            )
         );
 
         matchService.applyMatchResult(

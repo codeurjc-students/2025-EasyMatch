@@ -73,6 +73,7 @@ export class UserComponent implements OnInit {
   sportProfile = signal<UserSportProfile | null>(null);
   sportHistory = signal<LevelHistory[]>([]);
   sports = signal<Sport[]>([]);
+  chartRange = signal<'last5' | 'all'>('all');
   
   private apiUrl = environment.apiUrl;
   private sportsLoaded = false;
@@ -333,20 +334,28 @@ export class UserComponent implements OnInit {
           return;
         }
       
-        const series = history.map(h => ({
+        const filteredHistory =
+          this.chartRange() === 'last5'
+            ? history.slice(-5)
+            : history;
+
+        const series = filteredHistory.map(h => ({
           name: new Date(h.date).toLocaleDateString(),
           value: Math.round(h.levelBefore * 100) / 100
         }));
+
         series.push({
           name: 'Actual',
           value: (Math.round(profile.level*100))/100
         });
+
         this.levelChartData.set([
           {
             name: 'Nivel',
             series
           }
         ]);
+
         this.sportHistory.set(history);
       },
       error: err => {
@@ -355,6 +364,18 @@ export class UserComponent implements OnInit {
       }
     });
 
+  }
+
+  onChartRangeChange(range: 'last5' | 'all'): void {
+    this.chartRange.set(range);
+
+    const profile = this.sportProfile();
+
+    if (!profile) {
+      return;
+    }
+
+    this.buildSportChart(profile);
   }
 
   selectSport(sportId: number | null): void {
