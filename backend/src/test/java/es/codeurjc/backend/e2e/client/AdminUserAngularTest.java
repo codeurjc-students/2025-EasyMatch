@@ -70,12 +70,12 @@ class AdminUserAngularTest extends BaseAngularUITest {
         scrollIntoView(lastPageButton);
         lastPageButton.click();
 
-        waitForTableReady();
-
         List<WebElement> initialRows = driver.findElements(
                 By.cssSelector("table.admin-table tr.mat-mdc-row")
         );
         int initialCount = initialRows.size();
+
+        waitForTableReady();
 
         WebElement btnCreate = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".new-entity-btn")));
         scrollIntoView(btnCreate);
@@ -212,6 +212,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         );
         int initialCount = initialRows.size();
 
+
         WebElement rowToDelete = initialRows.getLast();
 
         WebElement deleteBtn = rowToDelete.findElement(By.cssSelector("button .delete-icon"));
@@ -221,8 +222,9 @@ class AdminUserAngularTest extends BaseAngularUITest {
         WebElement confirmBtn = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[.//span[contains(text(), 'Eliminar cuenta')]]")
         ));
+
         //WebElement element = rowToDelete;
-        scrollIntoView(deleteBtn);
+        scrollIntoView(confirmBtn);
         confirmBtn.click();
 
         //wait.until(ExpectedConditions.stalenessOf(element));
@@ -243,8 +245,7 @@ class AdminUserAngularTest extends BaseAngularUITest {
         List<WebElement> finalRows = wait.until(
                 ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("table.admin-table tr.mat-mdc-row"), 0)
         );
-        int finalCount = initialCount - 1;
-        assertThat(finalRows.size() % 10, is(finalCount));
+        assertThat(finalRows.size() % 10, is(initialCount - 1));
     }
 
     /* @Test
